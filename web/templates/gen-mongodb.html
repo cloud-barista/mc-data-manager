@@ -1,0 +1,37 @@
+{{ define "gen-mongodb.html" }}
+
+<h1 class="mt-4">데이터 생성 MongoDB</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">데이터 생성</li>
+    <li class="breadcrumb-item active">MongoDB</li>
+</ol>
+
+<div class="card mb-4 col-auto">
+    <div class="card-header">
+        <i class="fab fa-linux"></i>
+        MongoDB
+    </div>
+    <div class="card-body">
+        <form action="/generate/mongodb/submit" method="POST">
+            <div class="input-group mb-3">
+                <span class="input-group-text">호스트명/IP</span>
+                <input type="text" class="form-control" placeholder="호스트명/IP" name="address">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">사용자</span>
+                <input type="text" class="form-control" placeholder="사용자" name="user">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">패스워드</span>
+                <input type="password" class="form-control" placeholder="패스워드" name="password">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">포트</span>
+                <input type="text" class="form-control" placeholder="3389" name="port">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
+
+{{ end }}

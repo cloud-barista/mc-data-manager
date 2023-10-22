@@ -1,0 +1,24 @@
+{{ define "gen-windows.html" }}
+
+<h1 class="mt-4">데이터 생성 Windows</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">데이터 생성</li>
+    <li class="breadcrumb-item active">Windows</li>
+</ol>
+
+<div class="card mb-4 col-auto">
+    <div class="card-header">
+        <i class="fab fa-windows"></i>
+        Windows
+    </div>
+    <div class="card-body">
+        <form action="/generate/windows/submit" method="POST">
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-globe"></i></span>
+                <input type="text" class="form-control" placeholder="Address" aria-label="Address" aria-describedby="basic-addon1" id="address" name="address">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
+{{ end }}

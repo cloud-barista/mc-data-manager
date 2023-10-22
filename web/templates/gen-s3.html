@@ -1,0 +1,41 @@
+{{ define "gen-s3.html" }}
+
+<h1 class="mt-4">데이터 생성 S3</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">데이터 생성</li>
+    <li class="breadcrumb-item active">S3</li>
+</ol>
+
+<div class="card mb-4 col-auto">
+    <div class="card-header">
+        <i class="fab fa-linux"></i>
+        S3
+    </div>
+    <div class="card-body">
+        <form action="/generate/s3/submit" method="POST">
+            <div class="input-group mb-3">
+                <select class="form-select form-select-sm">
+                <option selected>Region</option>
+                {{ range $index, $value := .Regions }}
+                <option value="{{ $value }}">{{ $value }}</option>
+                {{ end }}
+                </select>
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">EndPoint</span>
+                <input type="text" class="form-control" placeholder="Endpoint" name="endpoint">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">API Key</span>
+                <input type="text" class="form-control" placeholder="API Key" name="apikey">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">API Secret</span>
+                <input type="password" class="form-control" placeholder="API Secret" name="apisecret">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
+
+{{ end }}
