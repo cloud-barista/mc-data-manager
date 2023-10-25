@@ -11,29 +11,29 @@ func MainRoutes(g *gin.RouterGroup) {
 
 func GenerateRoutes(g *gin.RouterGroup) {
 	g.GET("/linux", controllers.GenerateLinuxGetHandler())
-	g.POST("/linux/submit", controllers.GenerateLinuxSubmitPostHandler())
+	g.POST("/linux", controllers.GenerateLinuxPostHandler())
 
 	g.GET("/windows", controllers.GenerateWindowsGetHandler())
-	g.POST("/windows/submit", controllers.GenerateWindowsSubmitPostHandler())
+	g.POST("/windows", controllers.GenerateWindowsPostHandler())
 
 	g.GET("/s3", controllers.GenerateS3GetHandler())
-	g.POST("/s3/submit", controllers.GenerateS3SubmitPostHandler())
+	g.POST("/s3", controllers.GenerateS3PostHandler())
 
 	g.GET("/gcs", controllers.GenerateGCSGetHandler())
-	g.POST("/gcs/submit", controllers.GenerateGCSSubmitPostHandler())
+	g.POST("/gcs", controllers.GenerateGCSPostHandler())
 
 	g.GET("/ncs", controllers.GenerateNCSGetHandler())
-	g.POST("/ncs/submit", controllers.GenerateNCSSubmitPostHandler())
+	g.POST("/ncs", controllers.GenerateNCSPostHandler())
 
 	g.GET("/mysql", controllers.GenerateMySQLGetHandler())
-	g.POST("/mysql/submit", controllers.GenerateMySQLSubmitPostHandler())
+	g.POST("/mysql", controllers.GenerateMySQLPostHandler())
 
 	g.GET("/dynamodb", controllers.GenerateDynamoDBGetHandler())
-	g.POST("/dynamodb/submit", controllers.GenerateDynamoDBSubmitPostHandler())
+	g.POST("/dynamodb", controllers.GenerateDynamoDBPostHandler())
 
 	g.GET("/firestore", controllers.GenerateFirestoreGetHandler())
-	g.POST("/firestore/submit", controllers.GenerateFirestoreSubmitPostHandler())
+	g.POST("/firestore", controllers.GenerateFirestorePostHandler())
 
 	g.GET("/mongodb", controllers.GenerateMongoDBGetHandler())
-	g.POST("/mongodb/submit", controllers.GenerateMongoDBSubmitPostHandler())
+	g.POST("/mongodb", controllers.GenerateMongoDBPostHandler())
 }

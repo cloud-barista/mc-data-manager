@@ -1,0 +1,90 @@
+<h1 class="mt-4">마이그레이션 Google Cloud Storage</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">마이그레이션</li>
+    <li class="breadcrumb-item active">GCS to NCS</li>
+</ol>
+
+<div class="card mb-4 col-auto">
+    <div class="card-header">
+        Google Cloud Storage to Naver Cloud Storage
+    </div>
+    <div class="card-body">
+        <form action="/migration/gcs/ncs" method="POST">
+
+            <div class="mb-3">
+                <label for="mig-gcs-region" class="form-label">Google Cloud Storage</label>
+
+                <div class="form-floating">
+                    <select class="form-select form-select-sm w-50" id="mig-gcs-region" name="gcpRegion">
+                    <!-- <option selected>Region</option> -->
+                    {{ range $index, $value := .GCPRegions }}
+                    <option value="{{ $value }}">{{ $value }}</option>
+                    {{ end }}
+                    </select>
+                    <label for="mig-gcs-region">리전 선택</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-gcs-bucket" name="gcsBucket" placeholder="Bucket">
+                    <label for="mig-gcs-bucket">Bucket</label>
+                </div>
+            </div>
+           
+            <div class="mb-3">
+                <label for="mig-gcs-credential" class="form-label">Credentials 파일</label>
+                <input class="form-control" type="file" id="mig-gcs-credential" name="gcsCredential">
+            </div>
+
+            <div class="mb-3">
+                <label for="mig-ncs-region" class="form-label">Naver Cloud Storage</label>
+
+                <div class="form-floating">
+                    <select class="form-select form-select-sm w-50" id="mig-ncs-region" name="ncsRegion">
+                    <!-- <option selected>Region</option> -->
+                    {{ range $index, $value := .NCPRegions }}
+                    <option value="{{ $value }}">{{ $value }}</option>
+                    {{ end }}
+                    </select>
+                    <label for="mig-ncs-region">리전 선택</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-ncs-bucket" name="ncsBucket" placeholder="Bucket">
+                    <label for="mig-ncs-bucket">Bucket</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-flag"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-ncs-endpoint" name="ncsEndpoint" placeholder="Endpoint">
+                    <label for="mig-ncs-endpoint">Endpoint</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-ncs-accessKey" name="ncsAccessKey" placeholder="Access Key">
+                    <label for="mig-ncs-apiKey">Access Key</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="mig-ncs-secretKey" name="ncsSecretKey" placeholder="Secret Key">
+                    <label for="mig-ncs-secretKey">Secret Key</label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">실행</button>
+        </form>
+    </div>
+</div>

@@ -8,28 +8,45 @@
 
 <div class="card mb-4 col-auto">
     <div class="card-header">
-        <i class="fab fa-linux"></i>
+        <i class="bi bi-database"></i>
         MongoDB
     </div>
     <div class="card-body">
-        <form action="/generate/mongodb/submit" method="POST">
+        <form action="/generate/mongodb" method="POST">
+           
             <div class="input-group mb-3">
-                <span class="input-group-text">호스트명/IP</span>
-                <input type="text" class="form-control" placeholder="호스트명/IP" name="address">
+                <span class="input-group-text"><i class="fa-solid fa-house"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gen-mongodb-host" name="host" placeholder="호스트명 / IP">
+                    <label for="gen-mongodb-host">호스트명 / IP</label>
+                </div>
             </div>
+
             <div class="input-group mb-3">
-                <span class="input-group-text">사용자</span>
-                <input type="text" class="form-control" placeholder="사용자" name="user">
+                <span class="input-group-text"><i class="fa-solid fa-flag"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gen-mongodb-port" name="port" placeholder="포트">
+                    <label for="gen-mongodb-port">포트</label>
+                </div>
             </div>
+
             <div class="input-group mb-3">
-                <span class="input-group-text">패스워드</span>
-                <input type="password" class="form-control" placeholder="패스워드" name="password">
+                <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gen-mongodb-username" name="username" placeholder="사용자">
+                    <label for="gen-mongodb-username">사용자</label>
+                </div>
             </div>
+
             <div class="input-group mb-3">
-                <span class="input-group-text">포트</span>
-                <input type="text" class="form-control" placeholder="3389" name="port">
+                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="gen-mongodb-password" name="password" placeholder="패스워드">
+                    <label for="gen-mongodb-password">패스워드</label>
+                </div>
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+
+            <button type="submit" class="btn btn-primary">생성</button>
         </form>
     </div>
 </div>

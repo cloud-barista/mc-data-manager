@@ -8,31 +8,61 @@
 
 <div class="card mb-4 col-auto">
     <div class="card-header">
-        <i class="fab fa-linux"></i>
+        <i class="fab fa-google"></i>
         Google Cloud Storage
     </div>
     <div class="card-body">
-        <form action="/generate/gcs/submit" method="POST">
-            <div class="input-group mb-3">
-                <select class="form-select form-select-sm">
-                <option selected>Region</option>
-                {{ range $index, $value := .Regions }}
-                <option value="{{ $value }}">{{ $value }}</option>
-                {{ end }}
-                </select>
+        <form action="/generate/gcs" method="POST">
+            
+            <div class="mb-3">
+                <div class="form-floating">
+                    <select class="form-select form-select-sm w-50" id="gen-gcs-region" name="region">
+                    <!-- <option selected>Region</option> -->
+                    {{ range $index, $value := .Regions }}
+                    <option value="{{ $value }}">{{ $value }}</option>
+                    {{ end }}
+                    </select>
+                    <label for="gen-gcs-region">리전 선택</label>
+                </div>
             </div>
-            <div class="input-group mb-3">
-                <span class="input-group-text">EndPoint</span>
-                <input type="text" class="form-control" placeholder="Endpoint" name="endpoint">
+
+            <div class="mb-3">
+                <label for="gen-gcs-credential" class="form-label">Credentials 파일</label>
+                <input class="form-control" type="file" id="mig-gcs-credential" name="gcsCredential">
             </div>
+
             <div class="input-group mb-3">
-                <span class="input-group-text">API Key</span>
-                <input type="text" class="form-control" placeholder="API Key" name="apikey">
+                <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gen-s3-bucket" name="bucket" placeholder="Bucket">
+                    <label for="gen-s3-bucket">Bucket</label>
+                </div>
             </div>
-            <div class="input-group mb-3">
-                <span class="input-group-text">API Secret</span>
-                <input type="password" class="form-control" placeholder="API Secret" name="apisecret">
+
+            <div class="mb-3">
+                <label for="gen-s3-jsonCount" class="form-label">생성할 데이터 선택</label>
+
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-filetype-json"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="gen-s3-jsonCount" name="jsonCnt" value="0">
+                        <label for="gen-s3-jsonCount">JSON 파일 개수</label>
+                    </div>
+
+                    <span class="input-group-text"><i class="bi bi-filetype-sql"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="gen-s3-sqlCount" name="sqlCnt" value="0">
+                        <label for="gen-s3-sqlCount">SQL 파일 개수</label>
+                    </div>
+
+                    <span class="input-group-text"><i class="bi bi-filetype-png"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="gen-s3-pngCount" name="pngCnt" value="0">
+                        <label for="gen-s3-pngCount">PNG 파일 개수</label>
+                    </div>
+                </div>
             </div>
+
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>

@@ -12,12 +12,45 @@
         Windows
     </div>
     <div class="card-body">
-        <form action="/generate/windows/submit" method="POST">
-            <div class="input-group mb-3">
-                <span class="input-group-text"><i class="fa-solid fa-globe"></i></span>
-                <input type="text" class="form-control" placeholder="Address" aria-label="Address" aria-describedby="basic-addon1" id="address" name="address">
+        <form action="/generate/windows" method="POST">
+            
+            <div class="mb-3">
+                <label for="gen-windows-path" class="form-label">데이터를 생성할 경로</label>
+
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-folder"></i></span>
+                    <div class="form-floating">
+                      <input type="text" class="form-control" id="gen-windows-path" name="path" value="C:\PATH" placeholder="디렉토리 경로">
+                      <label for="gen-windows-path">디렉토리 경로</label>
+                    </div>
+                </div>
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+
+            <div class="mb-3">
+                <label for="gen-windows-jsonCount" class="form-label">생성할 데이터 선택</label>
+
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-filetype-json"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="gen-windows-jsonCount" name="jsonCnt" value="0" placeholder="JSON 파일 개수">
+                        <label for="gen-windows-jsonCount">JSON 파일 개수</label>
+                    </div>
+
+                    <span class="input-group-text"><i class="bi bi-filetype-sql"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="gen-windows-sqlCount" name="sqlCnt" value="0" placeholder="SQL 파일 개수">
+                        <label for="gen-windows-sqlCount">SQL 파일 개수</label>
+                    </div>
+
+                    <span class="input-group-text"><i class="bi bi-filetype-png"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="gen-windows-pngCount" name="pngCnt" value="0" placeholder="PNG 파일 개수">
+                        <label for="gen-windows-pngCount">PNG 파일 개수</label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">생성</button>
         </form>
     </div>
 </div>

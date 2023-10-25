@@ -8,31 +8,80 @@
 
 <div class="card mb-4 col-auto">
     <div class="card-header">
-        <i class="fab fa-linux"></i>
+        <i class="fa-solid fa-n"></i>
         Naver Cloud Storage
     </div>
     <div class="card-body">
-        <form action="/generate/ncs/submit" method="POST">
-            <div class="input-group mb-3">
-                <select class="form-select form-select-sm">
-                <option selected>Region</option>
-                {{ range $index, $value := .Regions }}
-                <option value="{{ $value }}">{{ $value }}</option>
-                {{ end }}
-                </select>
+        <form action="/generate/ncs" method="POST">
+            
+            <div class="mb-3">
+                <div class="form-floating">
+                    <select class="form-select form-select-sm w-50" id="gen-ncs-region" name="region">
+                    <!-- <option selected>Region</option> -->
+                    {{ range $index, $value := .Regions }}
+                    <option value="{{ $value }}">{{ $value }}</option>
+                    {{ end }}
+                    </select>
+                    <label for="gen-ncs-region">리전 선택</label>
+                </div>
             </div>
+
             <div class="input-group mb-3">
-                <span class="input-group-text">EndPoint</span>
-                <input type="text" class="form-control" placeholder="Endpoint" name="endpoint">
+                <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gen-ncs-bucket" name="bucket" placeholder="Bucket">
+                    <label for="gen-ncs-bucket">Bucket</label>
+                </div>
             </div>
+
             <div class="input-group mb-3">
-                <span class="input-group-text">API Key</span>
-                <input type="text" class="form-control" placeholder="API Key" name="apikey">
+                <span class="input-group-text"><i class="fa-solid fa-location-dot"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gen-ncs-endpoint" name="endpoint" placeholder="Endpoint">
+                    <label for="gen-ncs-endpoint">Endpoint</label>
+                </div>
             </div>
+
             <div class="input-group mb-3">
-                <span class="input-group-text">API Secret</span>
-                <input type="password" class="form-control" placeholder="API Secret" name="apisecret">
+                <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gen-ncs-accessKey" name="accessKey" placeholder="Access Key">
+                    <label for="gen-ncs-accessKey">Access Key</label>
+                </div>
             </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="gen-ncs-secretKey" name="secretKey" placeholder="Secret Key">
+                    <label for="gen-ncs-secretKey">Secret Key</label>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="gen-ncs-jsonCount" class="form-label">생성할 데이터 선택</label>
+
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-filetype-json"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="gen-ncs-jsonCount" name="jsonCnt" value="0">
+                        <label for="gen-ncs-jsonCount">JSON 파일 개수</label>
+                    </div>
+
+                    <span class="input-group-text"><i class="bi bi-filetype-sql"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="gen-ncs-sqlCount" name="sqlCnt" value="0">
+                        <label for="gen-ncs-sqlCount">SQL 파일 개수</label>
+                    </div>
+
+                    <span class="input-group-text"><i class="bi bi-filetype-png"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="gen-ncs-pngCount" name="pngCnt" value="0">
+                        <label for="gen-ncs-pngCount">PNG 파일 개수</label>
+                    </div>
+                </div>
+            </div>
+
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>

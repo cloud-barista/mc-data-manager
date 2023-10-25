@@ -16,7 +16,7 @@ func GenerateLinuxGetHandler() gin.HandlerFunc {
 	}
 }
 
-func GenerateLinuxSubmitPostHandler() gin.HandlerFunc {
+func GenerateLinuxPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		addr := ctx.PostForm("address")
 		fmt.Println("postform:", addr)
@@ -37,7 +37,7 @@ func GenerateWindowsGetHandler() gin.HandlerFunc {
 	}
 }
 
-func GenerateWindowsSubmitPostHandler() gin.HandlerFunc {
+func GenerateWindowsPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// TODO: Get POST params
 		// Generate data function
@@ -58,7 +58,7 @@ func GenerateS3GetHandler() gin.HandlerFunc {
 	}
 }
 
-func GenerateS3SubmitPostHandler() gin.HandlerFunc {
+func GenerateS3PostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		endpoint := ctx.PostForm("endpoint")
 		apiKey := ctx.PostForm("apikey")
@@ -70,6 +70,7 @@ func GenerateS3SubmitPostHandler() gin.HandlerFunc {
 
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-S3",
+			"Regions": GetAWSRegions(),
 			"error":   nil,
 		})
 	}
@@ -79,17 +80,19 @@ func GenerateGCSGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-GCS",
+			"Regions": GetGCPRegions(),
 			"error":   nil,
 		})
 	}
 }
 
-func GenerateGCSSubmitPostHandler() gin.HandlerFunc {
+func GenerateGCSPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// TODO: Get POST params
 		// Generate data function
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-GCS",
+			"Regions": GetGCPRegions(),
 			"error":   nil,
 		})
 	}
@@ -99,17 +102,19 @@ func GenerateNCSGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-NCS",
+			"Regions": GetNCPRegions(),
 			"error":   nil,
 		})
 	}
 }
 
-func GenerateNCSSubmitPostHandler() gin.HandlerFunc {
+func GenerateNCSPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// TODO: Get POST params
 		// Generate data function
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-NCS",
+			"Regions": GetNCPRegions(),
 			"error":   nil,
 		})
 	}
@@ -124,7 +129,7 @@ func GenerateMySQLGetHandler() gin.HandlerFunc {
 	}
 }
 
-func GenerateMySQLSubmitPostHandler() gin.HandlerFunc {
+func GenerateMySQLPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// TODO: Get POST params
 		// Generate data function
@@ -139,17 +144,19 @@ func GenerateDynamoDBGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-DynamoDB",
+			"Regions": GetAWSRegions(),
 			"error":   nil,
 		})
 	}
 }
 
-func GenerateDynamoDBSubmitPostHandler() gin.HandlerFunc {
+func GenerateDynamoDBPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// TODO: Get POST params
 		// Generate data function
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-DynamoDB",
+			"Regions": GetAWSRegions(),
 			"error":   nil,
 		})
 	}
@@ -159,17 +166,19 @@ func GenerateFirestoreGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-Firestore",
+			"Regions": GetGCPRegions(),
 			"error":   nil,
 		})
 	}
 }
 
-func GenerateFirestoreSubmitPostHandler() gin.HandlerFunc {
+func GenerateFirestorePostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// TODO: Get POST params
 		// Generate data function
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-Firestore",
+			"Regions": GetGCPRegions(),
 			"error":   nil,
 		})
 	}
@@ -184,7 +193,7 @@ func GenerateMongoDBGetHandler() gin.HandlerFunc {
 	}
 }
 
-func GenerateMongoDBSubmitPostHandler() gin.HandlerFunc {
+func GenerateMongoDBPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// TODO: Get POST params
 		// Generate data function

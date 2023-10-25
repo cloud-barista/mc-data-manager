@@ -23,6 +23,9 @@ func InitServer() *gin.Engine {
 	generateGroup := router.Group("/generate")
 	routes.GenerateRoutes(generateGroup)
 
+	migrationGroup := router.Group("/migration")
+	routes.MigrationRoutes(migrationGroup)
+
 	return router
 }
 
