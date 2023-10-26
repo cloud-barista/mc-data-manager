@@ -151,6 +151,8 @@
                                     
                                 </nav>
                             </div>
+
+                            <!-- SQL 마이그레이션 사이드 메뉴 -->
                             
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseSQLMigration" aria-expanded="false" aria-controls="collapseSQLMigration">
                                 <div class="sb-nav-link-icon"><i class="bi bi-database-fill"></i></div>
@@ -162,6 +164,53 @@
                                     <a class="nav-link" href="/migration/mysql">MySQL</a>
                                 </nav>
                             </div>
+
+                            <!-- No-SQL 마이그레이션 사이드 메뉴 -->
+
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseNoSQLMigration" aria-expanded="false" aria-controls="collapseNoSQLMigration">
+                                <div class="sb-nav-link-icon"><i class="fas fa-cloud"></i></div>
+                                No-SQL
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseNoSQLMigration" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionNoSQLMigration">
+
+                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#migrationCollapseDynamoDB" aria-expanded="false" aria-controls="migrationCollapseDynamoDB">
+                                        AWS DynamoDB to
+                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                    </a>
+                                    <div class="collapse" id="migrationCollapseDynamoDB" data-bs-parent="#sidenavAccordionNoSQLMigration">
+                                        <nav class="sb-sidenav-menu-nested nav">
+                                            <a class="nav-link" href="/migration/dynamodb/firestore">Firestore</a>
+                                            <a class="nav-link" href="/migration/dynamodb/mongodb">MongoDB</a>
+                                        </nav>
+                                    </div>
+
+                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#migrationCollapseFirestore" aria-expanded="false" aria-controls="migrationCollapseFirestore">
+                                        GCP Firestore to
+                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                    </a>
+                                    <div class="collapse" id="migrationCollapseFirestore" data-bs-parent="#sidenavAccordionNoSQLMigration">
+                                        <nav class="sb-sidenav-menu-nested nav">
+                                            <a class="nav-link" href="/migration/firestore/dynamodb">DynamoDB</a>
+                                            <a class="nav-link" href="/migration/firestore/mongodb">MongoDB</a>
+                                        </nav>
+                                    </div>
+
+                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#migrationCollapseMongoDB" aria-expanded="false" aria-controls="migrationCollapseMongoDB">
+                                        NCP MongoDB to
+                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                    </a>
+                                    <div class="collapse" id="migrationCollapseMongoDB" data-bs-parent="#sidenavAccordionNoSQLMigration">
+                                        <nav class="sb-sidenav-menu-nested nav">
+                                            <a class="nav-link" href="/migration/mongodb/dynamodb">DynamoDB</a>
+                                            <a class="nav-link" href="/migration/mongodb/firestore">Firestore</a>
+                                        </nav>
+                                    </div>
+
+                                </nav>
+                            </div>
+
 
                         </div>
                     </div>  <!-- sb-sidenav-menu END -->

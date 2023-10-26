@@ -16,6 +16,9 @@ func MigrationRoutes(g *gin.RouterGroup) {
 	MigrationFromS3Routes(g)
 	MigrationFromGCSRoutes(g)
 	MigrationFromNCSRoutes(g)
+
+	// Migration No-SQL to the other No-SQL
+	MigrationNoSQLRoutes(g)
 }
 
 func MigrationFromOnpremiseToObjectStorage(g *gin.RouterGroup) {
@@ -83,4 +86,24 @@ func MigrationFromNCSRoutes(g *gin.RouterGroup) {
 
 	g.GET("/ncs/gcs", controllers.MigrationNCSToGCSGetHandler())
 	g.POST("/ncs/gcs", controllers.MigrationNCSToGCSPostHandler())
+}
+
+func MigrationNoSQLRoutes(g *gin.RouterGroup) {
+	g.GET("/dynamodb/firestore", controllers.MigrationDynamoDBToFirestoreGetHandler())
+	g.POST("/dynamodb/firestore", controllers.MigrationDynamoDBToFirestorePostHandler())
+
+	g.GET("/dynamodb/mongodb", controllers.MigrationDynamoDBToMongoDBPostHandler())
+	g.POST("/dynamodb/mongodb", controllers.MigrationDynamoDBToMongoDBPostHandler())
+
+	g.GET("/firestore/dynamodb", controllers.MigrationFirestoreToDynamoDBGetHandler())
+	g.POST("/firestore/dynamodb", controllers.MigrationFirestoreToDynamoDBPostHandler())
+
+	g.GET("/firestore/mongodb", controllers.MigrationFirestoreToMongoDBGetHandler())
+	g.POST("/firestore/mongodb", controllers.MigrationFirestoreToMongoDBPostHandler())
+
+	g.GET("/mongodb/dynamodb", controllers.MigrationMongoDBToDynamoDBGetHandler())
+	g.POST("/mongodb/dynamodb", controllers.MigrationMongoDBToDynamoDBPostHandler())
+
+	g.GET("/mongodb/firestore", controllers.MigrationMongoDBToFirestoreGetHandler())
+	g.POST("/mongodb/firestore", controllers.MigrationMongoDBToFirestorePostHandler())
 }

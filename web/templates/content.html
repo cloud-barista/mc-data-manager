@@ -127,6 +127,32 @@
                 {{ template "mig-ncsToGcs.html" . }}
             {{ end }}
 
+
+            <!-- No-SQL 마이그레이션 템플릿 -->
+
+            {{ if eq .Content "Migration-DynamoDB-Firestore" }}
+                {{ template "mig-dynamodbToFirestore.html" . }}
+            {{ end }}
+
+            {{ if eq .Content "Migration-DynamoDB-MongoDB" }}
+                {{ template "mig-dynamodbToMongodb.html" . }}
+            {{ end }}
+
+            {{ if eq .Content "Migration-Firestore-DynamoDB" }}
+                {{ template "mig-firestoreToDynamodb.html" . }}
+            {{ end }}
+
+            {{ if eq .Content "Migration-Firestore-MongoDB" }}
+                {{ template "mig-firestoreToMongodb.html" . }}
+            {{ end }}
+
+            {{ if eq .Content "Migration-MongoDB-DynamoDB" }}
+                {{ template "mig-mongodbToDynamodb.html" . }}
+            {{ end }}
+
+            {{ if eq .Content "Migration-MongoDB-Firestore" }}
+                {{ template "mig-mongodbToFirestore.html" . }}
+            {{ end }}
         </div>
     </main>
 </div>
