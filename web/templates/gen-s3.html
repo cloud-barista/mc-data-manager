@@ -58,29 +58,7 @@
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label for="gen-s3-jsonCount" class="form-label">생성할 데이터 선택</label>
-
-                <div class="input-group">
-                    <span class="input-group-text"><i class="bi bi-filetype-json"></i></span>
-                    <div class="form-floating">
-                        <input type="text" class="form-control" id="gen-s3-jsonCount" name="jsonCnt" value="0">
-                        <label for="gen-s3-jsonCount">JSON 파일 개수</label>
-                    </div>
-
-                    <span class="input-group-text"><i class="bi bi-filetype-sql"></i></span>
-                    <div class="form-floating">
-                        <input type="text" class="form-control" id="gen-s3-sqlCount" name="sqlCnt" value="0">
-                        <label for="gen-s3-sqlCount">SQL 파일 개수</label>
-                    </div>
-
-                    <span class="input-group-text"><i class="bi bi-filetype-png"></i></span>
-                    <div class="form-floating">
-                        <input type="text" class="form-control" id="gen-s3-pngCount" name="pngCnt" value="0">
-                        <label for="gen-s3-pngCount">PNG 파일 개수</label>
-                    </div>
-                </div>
-            </div>
+            {{ template "gen-data.html" . }}
 
             <button type="submit" class="btn btn-primary">생성</button>
         </form>
