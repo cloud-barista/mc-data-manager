@@ -12,6 +12,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+// mysqlDBMS struct
 type MysqlDBMS struct {
 	provider utils.Provider
 
