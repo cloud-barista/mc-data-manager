@@ -22,6 +22,8 @@ const (
 	NCP Provider = "ncp"
 )
 
+
+// Distinguish between directory and file or directory
 func IsDir(path string) error {
 	fInfo, err := os.Stat(path)
 	if err != nil {
