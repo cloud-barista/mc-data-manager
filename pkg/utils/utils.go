@@ -2,7 +2,17 @@ package utils
 
 import (
 	"os"
+	"time"
 )
+
+type Object struct {
+	ChecksumAlgorithm []string
+	ETag              string
+	Key               string
+	LastModified      time.Time
+	Size              int64
+	StorageClass      string
+}
 
 type Provider string
 
@@ -11,6 +21,7 @@ const (
 	GCP Provider = "gcp"
 	NCP Provider = "ncp"
 )
+
 
 // Distinguish between directory and file or directory
 func IsDir(path string) error {
@@ -30,4 +41,11 @@ func IsDir(path string) error {
 		}
 	}
 	return nil
+}
+
+func FileExists(filePath string) bool {
+	if fi, err := os.Stat(filePath); os.IsExist(err) {
+		return !fi.IsDir()
+	}
+	return false
 }
