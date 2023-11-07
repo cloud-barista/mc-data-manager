@@ -1,30 +1,104 @@
 /*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
+Copyright © 2023 cychoi, tykim <dev@zconverter.com>
 
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 */
 package cmd
 
 import (
+	"io"
 	"os"
+
+	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
 )
 
+var (
+	logger *logrus.Logger
+	// credential
+	credentialPath string
+	configData     map[string]map[string]map[string]string
 
+	//src
+	cSrcProvider    string
+	cSrcAccessKey   string
+	cSrcSecretKey   string
+	cSrcRegion      string
+	cSrcBucketName  string
+	cSrcGcpCredPath string
+	cSrcProjectID   string
+	cSrcEndpoint    string
+	cSrcUsername    string
+	cSrcPassword    string
+	cSrcHost        string
+	cSrcPort        string
+	cSrcDBName      string
+
+	//dst
+	cDstProvider    string
+	cDstAccessKey   string
+	cDstSecretKey   string
+	cDstRegion      string
+	cDstBucketName  string
+	cDstGcpCredPath string
+	cDstProjectID   string
+	cDstEndpoint    string
+	cDstUsername    string
+	cDstPassword    string
+	cDstHost        string
+	cDstPort        string
+	cDstDBName      string
+
+	// dummy
+	dstPath  string
+	sqlSize  int
+	csvSize  int
+	jsonSize int
+	xmlSize  int
+	txtSize  int
+	pngSize  int
+	gifSize  int
+	zipSize  int
+
+	deleteBktList   []string
+	deleteDBList    []string
+	deleteTableList []string
+)
+
+func logFile() {
+	logFile, err := os.Create("app.log")
+	if err != nil {
+		log.Fatal("Failed to create log file")
+	}
+
+	logger = logrus.New()
+	logger.SetLevel(log.DebugLevel)
+	logger.SetFormatter(&CustomTextFormatter{})
+	logger.SetOutput(io.MultiWriter(os.Stdout, logFile))
+}
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "cm-data-mold",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Short: "Data migration validation environment deployment and test data generation tools",
+	Long: `It is a tool that builds an environment for verification of data migration technology and 
+generates test data necessary for data migration.`,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		logFile()
+		return nil
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -37,15 +111,6 @@ func Execute() {
 }
 
 func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cm-data-mold.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.CompletionOptions.DisableDefaultCmd = true
+	rootCmd.SetHelpCommand(&cobra.Command{Hidden: true})
 }
-
-
