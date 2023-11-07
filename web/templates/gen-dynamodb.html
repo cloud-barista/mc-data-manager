@@ -1,0 +1,76 @@
+{{ define "gen-dynamodb.html" }}
+
+<h1 class="mt-4">데이터 생성 DynamoDB</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">데이터 생성</li>
+    <li class="breadcrumb-item active">DynamoDB</li>
+</ol>
+
+<div class="card mb-4 col-auto">
+    <div class="card-header">
+        <i class="bi bi-database"></i>
+        DynamoDB
+    </div>
+    <div class="card-body">
+        <form action="/generate/dynamodb" method="POST">
+            
+            <div class="mb-3">
+                <div class="form-floating">
+                    <select class="form-select form-select-sm w-50" id="gen-dynamodb-region" name="region">
+                    <!-- <option selected>Region</option> -->
+                    {{ range $index, $value := .Regions }}
+                    <option value="{{ $value }}">{{ $value }}</option>
+                    {{ end }}
+                    </select>
+                    <label for="gen-dynamodb-region">리전 선택</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gen-dynamodb-accessKey" name="accessKey" placeholder="Access Key">
+                    <label for="gen-dynamodb-apiKey">Access Key</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="gen-dynamodb-secretKey" name="secretKey" placeholder="Secret Key">
+                    <label for="gen-dynamodb-secretKey">Secret Key</label>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <div class="alert alert-dark w-50" role="alert">
+                    생성할 데이터 선택
+                </div>
+
+                <div class="mb-3">
+                    <label for="gen-dynamodb-json" class="form-label">JSON 파일</label>
+                    <input class="form-control" type="file" id="gen-dynamodb-json" name="jsonFile">
+                </div>
+
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-table"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="gen-dynamodb-tablename" name="tablename" placeholder="테이블 이름">
+                        <label for="gen-dynamodb-tablename">테이블 이름</label>
+                    </div>
+
+                    <span class="input-group-text"><i class="bi bi-key"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="gen-dynamodb-primarykey" name="primarykey" placeholder="Primary Key 이름">
+                        <label for="gen-dynamodb-primarykey">Primary Key 이름</label>
+                    </div>
+
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">생성</button>
+        </form>
+    </div>
+</div>
+
+{{ end }}

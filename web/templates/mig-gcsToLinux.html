@@ -1,0 +1,56 @@
+<h1 class="mt-4">마이그레이션 Google Cloud Storage</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">마이그레이션</li>
+    <li class="breadcrumb-item active">GCS to Linux</li>
+</ol>
+
+<div class="card mb-4 col-auto">
+    <div class="card-header">
+        Google Cloud Storage to Linux
+    </div>
+    <div class="card-body">
+        <form action="/migration/gcs/linux" method="POST">
+
+            <div class="mb-3">
+                <label for="mig-gcs-region" class="form-label">Google Cloud Storage</label>
+
+                <div class="form-floating">
+                    <select class="form-select form-select-sm w-50" id="mig-gcs-region" name="region">
+                    <!-- <option selected>Region</option> -->
+                    {{ range $index, $value := .Regions }}
+                    <option value="{{ $value }}">{{ $value }}</option>
+                    {{ end }}
+                    </select>
+                    <label for="mig-gcs-region">리전 선택</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-gcs-bucket" name="bucket" placeholder="Bucket">
+                    <label for="mig-gcs-bucket">Bucket</label>
+                </div>
+            </div>
+           
+            <div class="mb-3">
+                <label for="mig-gcs-credential" class="form-label">Credentials 파일</label>
+                <input class="form-control" type="file" id="mig-gcs-credential" name="gcsCredential">
+            </div>
+
+            <div class="mb-3">
+                <label for="mig-linux-path" class="form-label">Linux 마이그레이션 목표 데이터 경로</label>
+
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-folder"></i></span>
+                    <div class="form-floating">
+                      <input type="text" class="form-control" id="mig-linux-path" name="path" value="/path" placeholder="디렉토리 경로">
+                      <label for="mig-linux-path">디렉토리 경로</label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">실행</button>
+        </form>
+    </div>
+</div>

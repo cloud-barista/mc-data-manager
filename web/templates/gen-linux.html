@@ -1,0 +1,36 @@
+{{ define "gen-linux.html" }}
+
+<h1 class="mt-4">데이터 생성 Linux</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">데이터 생성</li>
+    <li class="breadcrumb-item active">Linux</li>
+</ol>
+
+<div class="card mb-4 col-auto">
+    <div class="card-header">
+        <i class="fab fa-linux"></i>
+        Linux
+    </div>
+    <div class="card-body">
+        <form action="/generate/linux" method="POST">
+
+            <div class="mb-3">
+                <label for="gen-linux-path" class="form-label">데이터를 생성할 경로</label>
+
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-folder"></i></span>
+                    <div class="form-floating">
+                      <input type="text" class="form-control" id="gen-linux-path" name="path" value="/path" placeholder="디렉토리 경로">
+                      <label for="gen-linux-path">디렉토리 경로</label>
+                    </div>
+                </div>
+            </div>
+
+            {{ template "gen-data.html" . }}
+
+            <button type="submit" class="btn btn-primary">생성</button>
+        </form>
+    </div>
+</div>
+
+{{ end }}

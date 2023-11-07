@@ -1,0 +1,49 @@
+{{ define "gen-gcs.html" }}
+
+<h1 class="mt-4">데이터 생성 GCS</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">데이터 생성</li>
+    <li class="breadcrumb-item active">GCS</li>
+</ol>
+
+<div class="card mb-4 col-auto">
+    <div class="card-header">
+        <i class="fab fa-google"></i>
+        Google Cloud Storage
+    </div>
+    <div class="card-body">
+        <form action="/generate/gcs" method="POST">
+            
+            <div class="mb-3">
+                <div class="form-floating">
+                    <select class="form-select form-select-sm w-50" id="gen-gcs-region" name="region">
+                    <!-- <option selected>Region</option> -->
+                    {{ range $index, $value := .Regions }}
+                    <option value="{{ $value }}">{{ $value }}</option>
+                    {{ end }}
+                    </select>
+                    <label for="gen-gcs-region">리전 선택</label>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="gen-gcs-credential" class="form-label">Credentials 파일</label>
+                <input class="form-control" type="file" id="mig-gcs-credential" name="gcsCredential">
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gen-s3-bucket" name="bucket" placeholder="Bucket">
+                    <label for="gen-s3-bucket">Bucket</label>
+                </div>
+            </div>
+
+            {{ template "gen-data.html" . }}
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
+
+{{ end }}

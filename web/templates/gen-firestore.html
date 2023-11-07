@@ -1,0 +1,72 @@
+{{ define "gen-firestore.html" }}
+
+<h1 class="mt-4">데이터 생성 Firestore</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">데이터 생성</li>
+    <li class="breadcrumb-item active">Firestore</li>
+</ol>
+
+<div class="card mb-4 col-auto">
+    <div class="card-header">
+        <i class="bi bi-database"></i>
+        Firestore
+    </div>
+    <div class="card-body">
+        <form action="/generate/firestore" method="POST">
+            
+            <div class="mb-3">
+                <div class="form-floating">
+                    <select class="form-select form-select-sm w-50" id="gen-firestore-region" name="region">
+                    <!-- <option selected>Region</option> -->
+                    {{ range $index, $value := .Regions }}
+                    <option value="{{ $value }}">{{ $value }}</option>
+                    {{ end }}
+                    </select>
+                    <label for="gen-firestore-region">리전 선택</label>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="gen-firestore-credential" class="form-label">Credentials 파일</label>
+                <input class="form-control" type="file" id="mig-gcs-credential" name="gcsCredential">
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-user-shield"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gen-firestore-projectid" name="projectid" placeholder="Project ID">
+                    <label for="gen-firestore-projectid">Project ID</label>
+                </div>
+            </div>
+
+
+            <div class="mb-3">
+                <label for="gen-firestore-jsonCount" class="form-label">생성할 데이터 선택</label>
+
+                <div class="mb-3">
+                    <label for="gen-firestore-json" class="form-label">JSON 파일</label>
+                    <input class="form-control" type="file" id="gen-firestore-json">
+                </div>
+
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-table"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="gen-firestore-tablename" name="tablename" placeholder="테이블 이름">
+                        <label for="gen-firestore-tablename">테이블 이름</label>
+                    </div>
+
+                    <span class="input-group-text"><i class="bi bi-key"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="gen-firestore-primarykey" name="primarykey" placeholder="Primary Key 이름">
+                        <label for="gen-firestore-primarykey">Primary Key 이름</label>
+                    </div>
+
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
+
+{{ end }}

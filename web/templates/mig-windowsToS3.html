@@ -1,0 +1,75 @@
+<h1 class="mt-4">마이그레이션 Windows</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">마이그레이션</li>
+    <li class="breadcrumb-item active">Windows to AWS S3</li>
+</ol>
+
+<div class="card mb-4 col-auto">
+    <div class="card-header">
+        Windows to AWS S3
+    </div>
+    <div class="card-body">
+        <form action="/migration/windows/s3" method="POST">
+
+            <div class="mb-3">
+                <label for="mig-windows-path" class="form-label">Windows 마이그레이션 대상 데이터 경로</label>
+
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-folder"></i></span>
+                    <div class="form-floating">
+                      <input type="text" class="form-control" id="mig-windows-path" name="path" value="C:\PATH" placeholder="디렉토리 경로">
+                      <label for="mig-windows-path">디렉토리 경로</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="mig-s3-region" class="form-label">AWS S3</label>
+
+                <div class="form-floating">
+                    <select class="form-select form-select-sm w-50" id="mig-s3-region" name="region">
+                    <!-- <option selected>Region</option> -->
+                    {{ range $index, $value := .Regions }}
+                    <option value="{{ $value }}">{{ $value }}</option>
+                    {{ end }}
+                    </select>
+                    <label for="mig-s3-region">리전 선택</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-s3-bucket" name="bucket" placeholder="Bucket">
+                    <label for="mig-s3-bucket">Bucket</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-flag"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-s3-endpoint" name="endpoint" placeholder="Endpoint">
+                    <label for="mig-s3-endpoint">Endpoint</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-s3-accessKey" name="accessKey" placeholder="Access Key">
+                    <label for="mig-s3-apiKey">Access Key</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="mig-s3-secretKey" name="secretKey" placeholder="Secret Key">
+                    <label for="mig-s3-secretKey">Secret Key</label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">실행</button>
+        </form>
+    </div>
+</div>
