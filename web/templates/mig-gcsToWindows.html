@@ -9,7 +9,7 @@
         Google Cloud Storage to Windows
     </div>
     <div class="card-body">
-        <form action="/migration/s3/windows" method="POST">
+        <form action="/migration/s3/windows" method="POST" enctype="multipart/form-data">
 
             <div class="mb-3">
                 <label for="mig-gcs-region" class="form-label">Google Cloud Storage</label>
@@ -24,6 +24,19 @@
                     <label for="mig-gcs-region">리전 선택</label>
                 </div>
             </div>
+           
+            <div class="mb-3">
+                <label for="mig-gcs-credential" class="form-label">Credentials 파일</label>
+                <input class="form-control" type="file" id="mig-gcs-credential" name="gcsCredential">
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-id-card"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gen-s3-projectid" name="projectid" placeholder="ProjectID">
+                    <label for="mig-gcs-projectID">ProjectID</label>
+                </div>
+            </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
@@ -32,11 +45,6 @@
                     <label for="mig-gcs-bucket">Bucket</label>
                 </div>
             </div>
-           
-            <div class="mb-3">
-                <label for="mig-gcs-credential" class="form-label">Credentials 파일</label>
-                <input class="form-control" type="file" id="mig-gcs-credential" name="gcsCredential">
-            </div>
 
             <div class="mb-3">
                 <label for="mig-windows-path" class="form-label">Windows 마이그레이션 목표 데이터 경로</label>
@@ -44,7 +52,7 @@
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-folder"></i></span>
                     <div class="form-floating">
-                      <input type="text" class="form-control" id="mig-windows-path" name="path" value="C:\PATH" placeholder="디렉토리 경로">
+                      <input type="text" class="form-control" id="mig-windows-path" name="path" value={{ .tmpPath }} placeholder="디렉토리 경로">
                       <label for="mig-windows-path">디렉토리 경로</label>
                     </div>
                 </div>

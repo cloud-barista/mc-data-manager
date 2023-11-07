@@ -9,7 +9,7 @@
         NCP MongoDB to GCP Firestore
     </div>
     <div class="card-body">
-        <form action="/migration/mongoDB/firestore" method="POST">
+        <form action="/migration/mongoDB/firestore" method="POST" enctype="multipart/form-data">
             <label for="mig-mongodb-host" class="form-label">MongoDB</label>
 
             <div class="input-group mb-3">
@@ -44,6 +44,14 @@
                 </div>
             </div>
 
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-database"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-mongodb-databaseName" name="databaseName" placeholder="DB 이름">
+                    <label for="mig-mongodb-databaseName">데이터베이스 이름</label>
+                </div>
+            </div>
+
             <div class="mb-3">
                 <label for="mig-gcp-region" class="form-label">Google Cloud Firestore</label>
 
@@ -57,6 +65,11 @@
                     <label for="mig-gcp-region">리전 선택</label>
                 </div>
             </div>
+           
+            <div class="mb-3">
+                <label for="mig-gcp-credential" class="form-label">Credentials 파일</label>
+                <input class="form-control" type="file" id="mig-gcp-credential" name="gcpCredential">
+            </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-user-shield"></i></span>
@@ -64,11 +77,6 @@
                     <input type="text" class="form-control" id="mig-firestore-projectid" name="projectid" placeholder="Project ID">
                     <label for="mig-firestore-projectid">Project ID</label>
                 </div>
-            </div>
-           
-            <div class="mb-3">
-                <label for="mig-gcp-credential" class="form-label">Credentials 파일</label>
-                <input class="form-control" type="file" id="mig-gcp-credential" name="gcpCredential">
             </div>
 
             <button type="submit" class="btn btn-primary">실행</button>

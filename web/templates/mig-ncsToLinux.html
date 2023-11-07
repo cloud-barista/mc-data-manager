@@ -26,16 +26,35 @@
             </div>
 
             <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-ncs-accessKey" name="accessKey" placeholder="Access Key">
+                    <label for="mig-ncs-apiKey">Access Key</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="mig-ncs-secretKey" name="secretKey" placeholder="Secret Key">
+                    <label for="mig-ncs-secretKey">Secret Key</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-flag"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-ncs-endpoint" name="endpoint" placeholder="Endpoint">
+                    <label for="mig-ncs-endpoint">Endpoint</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
                 <div class="form-floating">
                     <input type="text" class="form-control" id="mig-ncs-bucket" name="bucket" placeholder="Bucket">
                     <label for="mig-ncs-bucket">Bucket</label>
                 </div>
-            </div>
-           
-            <div class="mb-3">
-                <label for="mig-ncs-credential" class="form-label">Credentials 파일</label>
-                <input class="form-control" type="file" id="mig-ncs-credential" name="ncsCredential">
             </div>
 
             <div class="mb-3">
@@ -44,7 +63,7 @@
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-folder"></i></span>
                     <div class="form-floating">
-                      <input type="text" class="form-control" id="mig-linux-path" name="path" value="/path" placeholder="디렉토리 경로">
+                      <input type="text" class="form-control" id="mig-linux-path" name="path" value="/tmp/dummy" placeholder="디렉토리 경로">
                       <label for="mig-linux-path">디렉토리 경로</label>
                     </div>
                 </div>

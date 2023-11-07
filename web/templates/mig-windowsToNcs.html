@@ -17,7 +17,7 @@
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-folder"></i></span>
                     <div class="form-floating">
-                      <input type="text" class="form-control" id="mig-windows-path" name="path" value="C:\PATH" placeholder="디렉토리 경로">
+                      <input type="text" class="form-control" id="mig-windows-path" name="path" value={{ .tmpPath }} placeholder="디렉토리 경로">
                       <label for="mig-windows-path">디렉토리 경로</label>
                     </div>
                 </div>
@@ -38,22 +38,6 @@
             </div>
 
             <div class="input-group mb-3">
-                <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
-                <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-ncs-bucket" name="bucket" placeholder="Bucket">
-                    <label for="mig-ncs-bucket">Bucket</label>
-                </div>
-            </div>
-
-            <div class="input-group mb-3">
-                <span class="input-group-text"><i class="fa-solid fa-flag"></i></span>
-                <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-ncs-endpoint" name="endpoint" placeholder="Endpoint">
-                    <label for="mig-ncs-endpoint">Endpoint</label>
-                </div>
-            </div>
-
-            <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
                 <div class="form-floating">
                     <input type="text" class="form-control" id="mig-ncs-accessKey" name="accessKey" placeholder="Access Key">
@@ -66,6 +50,22 @@
                 <div class="form-floating">
                     <input type="password" class="form-control" id="mig-ncs-secretKey" name="secretKey" placeholder="Secret Key">
                     <label for="mig-ncs-secretKey">Secret Key</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-flag"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-ncs-endpoint" name="endpoint" placeholder="Endpoint">
+                    <label for="mig-ncs-endpoint">Endpoint</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-ncs-bucket" name="bucket" placeholder="Bucket">
+                    <label for="mig-ncs-bucket">Bucket</label>
                 </div>
             </div>
 

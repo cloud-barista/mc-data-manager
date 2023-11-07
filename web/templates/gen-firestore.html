@@ -12,7 +12,7 @@
         Firestore
     </div>
     <div class="card-body">
-        <form action="/generate/firestore" method="POST">
+        <form action="/generate/firestore" method="POST" enctype="multipart/form-data">
             
             <div class="mb-3">
                 <div class="form-floating">
@@ -32,35 +32,10 @@
             </div>
 
             <div class="input-group mb-3">
-                <span class="input-group-text"><i class="fa-solid fa-user-shield"></i></span>
+                <span class="input-group-text"><i class="fa-solid fa-id-card"></i></span>
                 <div class="form-floating">
                     <input type="text" class="form-control" id="gen-firestore-projectid" name="projectid" placeholder="Project ID">
                     <label for="gen-firestore-projectid">Project ID</label>
-                </div>
-            </div>
-
-
-            <div class="mb-3">
-                <label for="gen-firestore-jsonCount" class="form-label">생성할 데이터 선택</label>
-
-                <div class="mb-3">
-                    <label for="gen-firestore-json" class="form-label">JSON 파일</label>
-                    <input class="form-control" type="file" id="gen-firestore-json">
-                </div>
-
-                <div class="input-group">
-                    <span class="input-group-text"><i class="fas fa-table"></i></span>
-                    <div class="form-floating">
-                        <input type="text" class="form-control" id="gen-firestore-tablename" name="tablename" placeholder="테이블 이름">
-                        <label for="gen-firestore-tablename">테이블 이름</label>
-                    </div>
-
-                    <span class="input-group-text"><i class="bi bi-key"></i></span>
-                    <div class="form-floating">
-                        <input type="text" class="form-control" id="gen-firestore-primarykey" name="primarykey" placeholder="Primary Key 이름">
-                        <label for="gen-firestore-primarykey">Primary Key 이름</label>
-                    </div>
-
                 </div>
             </div>
 

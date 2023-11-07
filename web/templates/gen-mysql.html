@@ -15,6 +15,16 @@
         <form action="/generate/mysql" method="POST">
 
             <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-cloud"></i></span>
+                <select class="form-select" id="provider" name="provider">
+                    <option value="aws">AWS</option>
+                    <option value="gcp">GCP</option>
+                    <option value="ncp">NCP</option>
+                    <option value="on-premise">On-premise</option>
+                </select>
+            </div>
+
+            <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-house"></i></span>
                 <div class="form-floating">
                     <input type="text" class="form-control" id="gen-mysql-host" name="host" placeholder="호스트명 / IP">

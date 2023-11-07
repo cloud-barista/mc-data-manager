@@ -15,6 +15,16 @@
             <label for="mig-mysql-srcHost" class="form-label">소스 MySQL</label>
 
             <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-cloud"></i></span>
+                <select class="form-select" id="srcProvider" name="srcProvider">
+                    <option value="aws">AWS</option>
+                    <option value="gcp">GCP</option>
+                    <option value="ncp">NCP</option>
+                    <option value="on-premise">On-premise</option>
+                </select>
+            </div>
+
+            <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-house"></i></span>
                 <div class="form-floating">
                     <input type="text" class="form-control" id="mig-mysql-srcHost" name="srcHost" placeholder="호스트명 / IP">
@@ -47,6 +57,16 @@
             </div>
 
             <label for="mig-mysql-srcHost" class="form-label">목표 MySQL</label>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-cloud"></i></span>
+                <select class="form-select" id="targetProvider" name="targetProvider">
+                    <option value="aws">AWS</option>
+                    <option value="gcp">GCP</option>
+                    <option value="ncp">NCP</option>
+                    <option value="onpremise">On-premise</option>
+                </select>
+            </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-house"></i></span>

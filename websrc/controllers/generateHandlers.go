@@ -1,9 +1,31 @@
 package controllers
 
 import (
+	"database/sql"
+	"encoding/json"
+	"errors"
 	"fmt"
+	"io/fs"
 	"net/http"
+	"os"
+	"path/filepath"
+	"runtime"
+	"strconv"
+	"strings"
 
+	"github.com/cloud-barista/cm-data-mold/config"
+	"github.com/cloud-barista/cm-data-mold/pkg/dummy/semistructed"
+	"github.com/cloud-barista/cm-data-mold/pkg/dummy/structed"
+	"github.com/cloud-barista/cm-data-mold/pkg/nrdbms/awsdnmdb"
+	"github.com/cloud-barista/cm-data-mold/pkg/nrdbms/gcpfsdb"
+	"github.com/cloud-barista/cm-data-mold/pkg/nrdbms/ncpmgdb"
+	"github.com/cloud-barista/cm-data-mold/pkg/objectstorage/gcsfs"
+	"github.com/cloud-barista/cm-data-mold/pkg/objectstorage/s3fs"
+	"github.com/cloud-barista/cm-data-mold/pkg/rdbms/mysql"
+	"github.com/cloud-barista/cm-data-mold/pkg/utils"
+	"github.com/cloud-barista/cm-data-mold/service/nrdbc"
+	"github.com/cloud-barista/cm-data-mold/service/osc"
+	"github.com/cloud-barista/cm-data-mold/service/rdbc"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,8 +40,40 @@ func GenerateLinuxGetHandler() gin.HandlerFunc {
 
 func GenerateLinuxPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		addr := ctx.PostForm("address")
-		fmt.Println("postform:", addr)
+		if runtime.GOOS != "linux" {
+			ctx.HTML(http.StatusBadRequest, "index.html", gin.H{
+				"Content": "Generate-Linux",
+				"error":   errors.New("your current operating system is not linux"),
+			})
+			return
+		}
+
+		dummyPath := ctx.PostForm("path")
+		checkSQL := ctx.PostForm("checkSQL")
+		sizeSQL := ctx.PostForm("sizeSQL")
+		checkCSV := ctx.PostForm("checkCSV")
+		sizeCSV := ctx.PostForm("sizeCSV")
+		checkTXT := ctx.PostForm("checkTXT")
+		sizeTXT := ctx.PostForm("sizeTXT")
+		checkPNG := ctx.PostForm("checkPNG")
+		sizePNG := ctx.PostForm("sizePNG")
+		checkGIF := ctx.PostForm("checkGIF")
+		sizeGIF := ctx.PostForm("sizeGIF")
+		checkZIP := ctx.PostForm("checkZIP")
+		sizeZIP := ctx.PostForm("sizeZIP")
+		checkJSON := ctx.PostForm("checkJSON")
+		sizeJSON := ctx.PostForm("sizeJSON")
+		checkXML := ctx.PostForm("checkXML")
+		sizeXML := ctx.PostForm("sizeXML")
+
+		err := genData(dummyPath, checkSQL, sizeSQL, checkCSV, sizeCSV, checkTXT, sizeTXT, checkPNG, sizePNG, checkGIF, sizeGIF, checkZIP, sizeZIP, checkJSON, sizeJSON, checkXML, sizeXML)
+		if err != nil {
+			ctx.HTML(http.StatusOK, "index.html", gin.H{
+				"Content": "Generate-Linux",
+				"error":   err,
+			})
+			return
+		}
 
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-Linux",
@@ -29,20 +83,58 @@ func GenerateLinuxPostHandler() gin.HandlerFunc {
 }
 
 func GenerateWindowsGetHandler() gin.HandlerFunc {
+	tmpPath := filepath.Join(os.TempDir(), "dummy")
 	return func(ctx *gin.Context) {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-Windows",
+			"tmpPath": tmpPath,
 			"error":   nil,
 		})
 	}
 }
 
 func GenerateWindowsPostHandler() gin.HandlerFunc {
+	tmpPath := filepath.Join(os.TempDir(), "dummy")
 	return func(ctx *gin.Context) {
-		// TODO: Get POST params
-		// Generate data function
+		if runtime.GOOS != "windows" {
+			ctx.HTML(http.StatusBadRequest, "index.html", gin.H{
+				"Content": "Generate-Windows",
+				"tmpPath": tmpPath,
+				"error":   errors.New("your current operating system is not windows"),
+			})
+		}
+
+		dummyPath := ctx.PostForm("path")
+		checkSQL := ctx.PostForm("checkSQL")
+		sizeSQL := ctx.PostForm("sizeSQL")
+		checkCSV := ctx.PostForm("checkCSV")
+		sizeCSV := ctx.PostForm("sizeCSV")
+		checkTXT := ctx.PostForm("checkTXT")
+		sizeTXT := ctx.PostForm("sizeTXT")
+		checkPNG := ctx.PostForm("checkPNG")
+		sizePNG := ctx.PostForm("sizePNG")
+		checkGIF := ctx.PostForm("checkGIF")
+		sizeGIF := ctx.PostForm("sizeGIF")
+		checkZIP := ctx.PostForm("checkZIP")
+		sizeZIP := ctx.PostForm("sizeZIP")
+		checkJSON := ctx.PostForm("checkJSON")
+		sizeJSON := ctx.PostForm("sizeJSON")
+		checkXML := ctx.PostForm("checkXML")
+		sizeXML := ctx.PostForm("sizeXML")
+
+		err := genData(dummyPath, checkSQL, sizeSQL, checkCSV, sizeCSV, checkTXT, sizeTXT, checkPNG, sizePNG, checkGIF, sizeGIF, checkZIP, sizeZIP, checkJSON, sizeJSON, checkXML, sizeXML)
+		if err != nil {
+			ctx.HTML(http.StatusOK, "index.html", gin.H{
+				"Content": "Generate-Windows",
+				"tmpPath": tmpPath,
+				"error":   err,
+			})
+			return
+		}
+
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-Windows",
+			"tmpPath": tmpPath,
 			"error":   nil,
 		})
 	}
@@ -60,13 +152,76 @@ func GenerateS3GetHandler() gin.HandlerFunc {
 
 func GenerateS3PostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		endpoint := ctx.PostForm("endpoint")
-		apiKey := ctx.PostForm("apikey")
-		apiSecret := ctx.PostForm("apisecret")
+		region := ctx.PostForm("region")
+		accessKey := ctx.PostForm("accessKey")
+		secretKey := ctx.PostForm("secretKey")
+		bucket := ctx.PostForm("bucket")
+		checkSQL := ctx.PostForm("checkSQL")
+		sizeSQL := ctx.PostForm("sizeSQL")
+		checkCSV := ctx.PostForm("checkCSV")
+		sizeCSV := ctx.PostForm("sizeCSV")
+		checkTXT := ctx.PostForm("checkTXT")
+		sizeTXT := ctx.PostForm("sizeTXT")
+		checkPNG := ctx.PostForm("checkPNG")
+		sizePNG := ctx.PostForm("sizePNG")
+		checkGIF := ctx.PostForm("checkGIF")
+		sizeGIF := ctx.PostForm("sizeGIF")
+		checkZIP := ctx.PostForm("checkZIP")
+		sizeZIP := ctx.PostForm("sizeZIP")
+		checkJSON := ctx.PostForm("checkJSON")
+		sizeJSON := ctx.PostForm("sizeJSON")
+		checkXML := ctx.PostForm("checkXML")
+		sizeXML := ctx.PostForm("sizeXML")
 
-		fmt.Println("Endpoint:", endpoint)
-		fmt.Println("API Key:", apiKey)
-		fmt.Println("API Secret:", apiSecret)
+		tmpDir, err := os.MkdirTemp("", "datamold-dummy")
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-S3",
+				"Regions": GetAWSRegions(),
+				"error":   fmt.Errorf("failed to create tmpdir : %v", err),
+			})
+			return
+		}
+		defer os.RemoveAll(tmpDir)
+
+		err = genData(tmpDir, checkSQL, sizeSQL, checkCSV, sizeCSV, checkTXT, sizeTXT, checkPNG, sizePNG, checkGIF, sizeGIF, checkZIP, sizeZIP, checkJSON, sizeJSON, checkXML, sizeXML)
+		if err != nil {
+			ctx.HTML(http.StatusOK, "index.html", gin.H{
+				"Content": "Generate-S3",
+				"Regions": GetAWSRegions(),
+				"error":   err,
+			})
+			return
+		}
+
+		s3c, err := config.NewS3Client(accessKey, secretKey, region)
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-S3",
+				"Regions": GetAWSRegions(),
+				"error":   fmt.Errorf("s3 client creation failed : %v", err),
+			})
+			return
+		}
+
+		awsOSC, err := osc.New(s3fs.New(utils.AWS, s3c, bucket, region))
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-S3",
+				"Regions": GetAWSRegions(),
+				"error":   fmt.Errorf("OSController creation failed : %v", err),
+			})
+			return
+		}
+
+		if err := awsOSC.MPut(tmpDir); err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-S3",
+				"Regions": GetAWSRegions(),
+				"error":   fmt.Errorf("OSController import failed : %v", err),
+			})
+			return
+		}
 
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-S3",
@@ -88,8 +243,110 @@ func GenerateGCSGetHandler() gin.HandlerFunc {
 
 func GenerateGCSPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		// TODO: Get POST params
-		// Generate data function
+		region := ctx.PostForm("region")
+		gcsCredentialFile, gcsCredentialHeader, err := ctx.Request.FormFile("gcsCredential")
+		if err != nil {
+			ctx.HTML(http.StatusBadRequest, "index.html", gin.H{
+				"Content": "Generate-GCS",
+				"Regions": GetGCPRegions(),
+				"error":   nil,
+			})
+			return
+		}
+		defer gcsCredentialFile.Close()
+
+		credTmpDir, err := os.MkdirTemp("", "datamold-gcs-cred-")
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-GCS",
+				"Regions": GetGCPRegions(),
+				"error":   fmt.Errorf("failed to create tmpdir : %v", err),
+			})
+			return
+		}
+		defer os.RemoveAll(credTmpDir)
+
+		projectid := ctx.PostForm("projectid")
+		bucket := ctx.PostForm("bucket")
+
+		credFileName := filepath.Join(credTmpDir, gcsCredentialHeader.Filename)
+		err = ctx.SaveUploadedFile(gcsCredentialHeader, credFileName)
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-GCS",
+				"Regions": GetGCPRegions(),
+				"error":   fmt.Errorf("failed to save uploaded file : %v", err),
+			})
+			return
+		}
+
+		checkSQL := ctx.PostForm("checkSQL")
+		sizeSQL := ctx.PostForm("sizeSQL")
+		checkCSV := ctx.PostForm("checkCSV")
+		sizeCSV := ctx.PostForm("sizeCSV")
+		checkTXT := ctx.PostForm("checkTXT")
+		sizeTXT := ctx.PostForm("sizeTXT")
+		checkPNG := ctx.PostForm("checkPNG")
+		sizePNG := ctx.PostForm("sizePNG")
+		checkGIF := ctx.PostForm("checkGIF")
+		sizeGIF := ctx.PostForm("sizeGIF")
+		checkZIP := ctx.PostForm("checkZIP")
+		sizeZIP := ctx.PostForm("sizeZIP")
+		checkJSON := ctx.PostForm("checkJSON")
+		sizeJSON := ctx.PostForm("sizeJSON")
+		checkXML := ctx.PostForm("checkXML")
+		sizeXML := ctx.PostForm("sizeXML")
+
+		tmpDir, err := os.MkdirTemp("", "datamold-dummy")
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-GCS",
+				"Regions": GetGCPRegions(),
+				"error":   fmt.Errorf("failed to create tmpdir : %v", err),
+			})
+			return
+		}
+		defer os.RemoveAll(tmpDir)
+
+		err = genData(tmpDir, checkSQL, sizeSQL, checkCSV, sizeCSV, checkTXT, sizeTXT, checkPNG, sizePNG, checkGIF, sizeGIF, checkZIP, sizeZIP, checkJSON, sizeJSON, checkXML, sizeXML)
+		if err != nil {
+			ctx.HTML(http.StatusOK, "index.html", gin.H{
+				"Content": "Generate-GCS",
+				"Regions": GetGCPRegions(),
+				"error":   err,
+			})
+			return
+		}
+
+		gc, err := config.NewGCSClient(credFileName)
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-GCS",
+				"Regions": GetGCPRegions(),
+				"error":   fmt.Errorf("gcs client generate error : %v", err),
+			})
+			return
+		}
+
+		gcsOSC, err := osc.New(gcsfs.New(gc, projectid, bucket, region))
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-GCS",
+				"Regions": GetGCPRegions(),
+				"error":   fmt.Errorf("OSController generate error : %v", err),
+			})
+			return
+		}
+
+		if err := gcsOSC.MPut(tmpDir); err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-GCS",
+				"Regions": GetGCPRegions(),
+				"error":   fmt.Errorf("GCS MPut error : %v", err),
+			})
+			return
+		}
+
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-GCS",
 			"Regions": GetGCPRegions(),
@@ -110,8 +367,78 @@ func GenerateNCSGetHandler() gin.HandlerFunc {
 
 func GenerateNCSPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		// TODO: Get POST params
-		// Generate data function
+		region := ctx.PostForm("region")
+		accessKey := ctx.PostForm("accessKey")
+		secretKey := ctx.PostForm("secretKey")
+		endpoint := ctx.PostForm("endpoint")
+		bucket := ctx.PostForm("bucket")
+		checkSQL := ctx.PostForm("checkSQL")
+		sizeSQL := ctx.PostForm("sizeSQL")
+		checkCSV := ctx.PostForm("checkCSV")
+		sizeCSV := ctx.PostForm("sizeCSV")
+		checkTXT := ctx.PostForm("checkTXT")
+		sizeTXT := ctx.PostForm("sizeTXT")
+		checkPNG := ctx.PostForm("checkPNG")
+		sizePNG := ctx.PostForm("sizePNG")
+		checkGIF := ctx.PostForm("checkGIF")
+		sizeGIF := ctx.PostForm("sizeGIF")
+		checkZIP := ctx.PostForm("checkZIP")
+		sizeZIP := ctx.PostForm("sizeZIP")
+		checkJSON := ctx.PostForm("checkJSON")
+		sizeJSON := ctx.PostForm("sizeJSON")
+		checkXML := ctx.PostForm("checkXML")
+		sizeXML := ctx.PostForm("sizeXML")
+
+		tmpDir, err := os.MkdirTemp("", "datamold-dummy")
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-NCS",
+				"Regions": GetNCPRegions(),
+				"error":   fmt.Errorf("failed to create tmpdir : %v", err),
+			})
+			return
+		}
+		defer os.RemoveAll(tmpDir)
+
+		err = genData(tmpDir, checkSQL, sizeSQL, checkCSV, sizeCSV, checkTXT, sizeTXT, checkPNG, sizePNG, checkGIF, sizeGIF, checkZIP, sizeZIP, checkJSON, sizeJSON, checkXML, sizeXML)
+		if err != nil {
+			ctx.HTML(http.StatusOK, "index.html", gin.H{
+				"Content": "Generate-NCS",
+				"Regions": GetNCPRegions(),
+				"error":   err,
+			})
+			return
+		}
+
+		s3c, err := config.NewS3ClientWithEndpoint(accessKey, secretKey, region, endpoint)
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-NCS",
+				"Regions": GetNCPRegions(),
+				"error":   fmt.Errorf("s3 compatible client creation failed : %v", err),
+			})
+			return
+		}
+
+		ncpOSC, err := osc.New(s3fs.New(utils.NCP, s3c, bucket, region))
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-NCS",
+				"Regions": GetNCPRegions(),
+				"error":   fmt.Errorf("OSController creation failed : %v", err),
+			})
+			return
+		}
+
+		if err := ncpOSC.MPut(tmpDir); err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-NCS",
+				"Regions": GetNCPRegions(),
+				"error":   fmt.Errorf("OSController import failed : %v", err),
+			})
+			return
+		}
+
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-NCS",
 			"Regions": GetNCPRegions(),
@@ -131,8 +458,87 @@ func GenerateMySQLGetHandler() gin.HandlerFunc {
 
 func GenerateMySQLPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		// TODO: Get POST params
-		// Generate data function
+		provider := ctx.PostForm("provider")
+		host := ctx.PostForm("host")
+		port := ctx.PostForm("port")
+		username := ctx.PostForm("username")
+		password := ctx.PostForm("password")
+
+		tmpDir, err := os.MkdirTemp("", "datamold-dummy")
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-MySQL",
+				"error":   fmt.Errorf("failed to create tmpdir : %v", err),
+			})
+			return
+		}
+		defer os.RemoveAll(tmpDir)
+
+		if err := structed.GenerateRandomSQL(tmpDir, 1); err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-MySQL",
+				"error":   fmt.Errorf("sql generate error : %v", err),
+			})
+			return
+		}
+
+		sqlDB, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", username, password, host, port))
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-MySQL",
+				"error":   fmt.Errorf("sqlDB generate error : %v", err),
+			})
+			return
+		}
+
+		rdbController, err := rdbc.New(mysql.New(utils.Provider(provider), sqlDB))
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-MySQL",
+				"error":   fmt.Errorf("RDBController generate error : %v", err),
+			})
+			return
+		}
+
+		sqlList := []string{}
+		err = filepath.Walk(tmpDir, func(path string, info fs.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+
+			if filepath.Ext(path) == ".sql" {
+				sqlList = append(sqlList, path)
+			}
+
+			return nil
+		})
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-MySQL",
+				"error":   fmt.Errorf("walk error : %v", err),
+			})
+			return
+		}
+
+		for _, sql := range sqlList {
+			data, err := os.ReadFile(sql)
+			if err != nil {
+				ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+					"Content": "Generate-MySQL",
+					"error":   fmt.Errorf("readfile error : %v", err),
+				})
+				return
+			}
+
+			if err := rdbController.Put(string(data)); err != nil {
+				ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+					"Content": "Generate-MySQL",
+					"error":   fmt.Errorf("put error : %v", err),
+				})
+				return
+			}
+		}
+
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-MySQL",
 			"error":   nil,
@@ -152,8 +558,105 @@ func GenerateDynamoDBGetHandler() gin.HandlerFunc {
 
 func GenerateDynamoDBPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		// TODO: Get POST params
-		// Generate data function
+		region := ctx.PostForm("region")
+		accessKey := ctx.PostForm("accessKey")
+		secretKey := ctx.PostForm("secretKey")
+
+		tmpDir, err := os.MkdirTemp("", "datamold-dummy")
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-DynamoDB",
+				"Regions": GetAWSRegions(),
+				"error":   fmt.Errorf("failed to create tmpdir : %v", err),
+			})
+			return
+		}
+		defer os.RemoveAll(tmpDir)
+
+		if err := semistructed.GenerateRandomJSON(tmpDir, 1); err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-DynamoDB",
+				"Regions": GetAWSRegions(),
+				"error":   fmt.Errorf("json generate error : %v", err),
+			})
+			return
+		}
+
+		dc, err := config.NewDynamoDBClient(accessKey, secretKey, region)
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-DynamoDB",
+				"Regions": GetAWSRegions(),
+				"error":   fmt.Errorf("dynamoDB client generate error : %v", err),
+			})
+			return
+		}
+
+		awsNRDB, err := nrdbc.New(awsdnmdb.New(dc, region))
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-DynamoDB",
+				"Regions": GetAWSRegions(),
+				"error":   fmt.Errorf("NRDBController generate error : %v", err),
+			})
+			return
+		}
+
+		jsonList := []string{}
+		err = filepath.Walk(tmpDir, func(path string, info fs.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+
+			if filepath.Ext(path) == ".json" {
+				jsonList = append(jsonList, path)
+			}
+
+			return nil
+		})
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-DynamoDB",
+				"Regions": GetAWSRegions(),
+				"error":   fmt.Errorf("walk error : %v", err),
+			})
+			return
+		}
+
+		for _, j := range jsonList {
+			data, err := os.ReadFile(j)
+			if err != nil {
+				ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+					"Content": "Generate-DynamoDB",
+					"Regions": GetAWSRegions(),
+					"error":   fmt.Errorf("read json file error : %v", err),
+				})
+				return
+			}
+
+			var jsonData []map[string]interface{}
+			err = json.Unmarshal(data, &jsonData)
+			if err != nil {
+				ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+					"Content": "Generate-DynamoDB",
+					"Regions": GetAWSRegions(),
+					"error":   fmt.Errorf("json unmarshal error : %v", err),
+				})
+				return
+			}
+
+			tableName := strings.TrimSuffix(filepath.Base(j), ".json")
+
+			if err := awsNRDB.Put(tableName, &jsonData); err != nil {
+				ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+					"Content": "Generate-DynamoDB",
+					"Regions": GetAWSRegions(),
+					"error":   fmt.Errorf("put error : %v", err),
+				})
+				return
+			}
+		}
+
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-DynamoDB",
 			"Regions": GetAWSRegions(),
@@ -174,8 +677,137 @@ func GenerateFirestoreGetHandler() gin.HandlerFunc {
 
 func GenerateFirestorePostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		// TODO: Get POST params
-		// Generate data function
+		region := ctx.PostForm("region")
+		gcsCredentialFile, gcsCredentialHeader, err := ctx.Request.FormFile("gcsCredential")
+		if err != nil {
+			ctx.HTML(http.StatusBadRequest, "index.html", gin.H{
+				"Content": "Generate-Firestore",
+				"Regions": GetGCPRegions(),
+				"error":   nil,
+			})
+			return
+		}
+		defer gcsCredentialFile.Close()
+
+		credTmpDir, err := os.MkdirTemp("", "datamold-gcs-cred-")
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-Firestore",
+				"Regions": GetGCPRegions(),
+				"error":   fmt.Errorf("failed to create tmpdir : %v", err),
+			})
+			return
+		}
+		defer os.RemoveAll(credTmpDir)
+
+		projectid := ctx.PostForm("projectid")
+
+		credFileName := filepath.Join(credTmpDir, gcsCredentialHeader.Filename)
+		err = ctx.SaveUploadedFile(gcsCredentialHeader, credFileName)
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-Firestore",
+				"Regions": GetGCPRegions(),
+				"error":   fmt.Errorf("failed to save uploaded file : %v", err),
+			})
+			return
+		}
+
+		tmpDir, err := os.MkdirTemp("", "datamold-dummy")
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-Firestore",
+				"Regions": GetGCPRegions(),
+				"error":   fmt.Errorf("failed to create tmpdir : %v", err),
+			})
+			return
+		}
+		defer os.RemoveAll(tmpDir)
+
+		if err := semistructed.GenerateRandomJSON(tmpDir, 1); err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-Firestore",
+				"Regions": GetGCPRegions(),
+				"error":   fmt.Errorf("json generate error : %v", err),
+			})
+			return
+		}
+
+		jsonList := []string{}
+		err = filepath.Walk(tmpDir, func(path string, info fs.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+
+			if filepath.Ext(path) == ".json" {
+				jsonList = append(jsonList, path)
+			}
+
+			return nil
+		})
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-Firestore",
+				"Regions": GetGCPRegions(),
+				"error":   fmt.Errorf("walk error : %v", err),
+			})
+			return
+		}
+
+		fc, err := config.NewFireStoreClient(credFileName, projectid)
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-Firestore",
+				"Regions": GetGCPRegions(),
+				"error":   fmt.Errorf("walk error : %v", err),
+			})
+			return
+		}
+
+		gcpNRDB, err := nrdbc.New(gcpfsdb.New(fc, region))
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-Firestore",
+				"Regions": GetGCPRegions(),
+				"error":   fmt.Errorf("firestore error : %v", err),
+			})
+			return
+		}
+
+		for _, j := range jsonList {
+			data, err := os.ReadFile(j)
+			if err != nil {
+				ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+					"Content": "Generate-Firestore",
+					"Regions": GetGCPRegions(),
+					"error":   fmt.Errorf("read json file error : %v", err),
+				})
+				return
+			}
+
+			var jsonData []map[string]interface{}
+			err = json.Unmarshal(data, &jsonData)
+			if err != nil {
+				ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+					"Content": "Generate-Firestore",
+					"Regions": GetGCPRegions(),
+					"error":   fmt.Errorf("json unmarshal error : %v", err),
+				})
+				return
+			}
+
+			tableName := strings.TrimSuffix(filepath.Base(j), ".json")
+
+			if err := gcpNRDB.Put(tableName, &jsonData); err != nil {
+				ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+					"Content": "Generate-Firestore",
+					"Regions": GetGCPRegions(),
+					"error":   fmt.Errorf("put error : %v", err),
+				})
+				return
+			}
+		}
+
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-Firestore",
 			"Regions": GetGCPRegions(),
@@ -195,8 +827,107 @@ func GenerateMongoDBGetHandler() gin.HandlerFunc {
 
 func GenerateMongoDBPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		// TODO: Get POST params
-		// Generate data function
+		host := ctx.PostForm("host")
+		port := ctx.PostForm("port")
+		username := ctx.PostForm("username")
+		password := ctx.PostForm("password")
+		databaseName := ctx.PostForm("databaseName")
+
+		tmpDir, err := os.MkdirTemp("", "datamold-dummy")
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-MongoDB",
+				"error":   fmt.Errorf("failed to create tmpdir : %v", err),
+			})
+			return
+		}
+		defer os.RemoveAll(tmpDir)
+
+		if err := semistructed.GenerateRandomJSON(tmpDir, 1); err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-MongoDB",
+				"error":   fmt.Errorf("json generate error : %v", err),
+			})
+			return
+		}
+
+		jsonList := []string{}
+		err = filepath.Walk(tmpDir, func(path string, info fs.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+
+			if filepath.Ext(path) == ".json" {
+				jsonList = append(jsonList, path)
+			}
+
+			return nil
+		})
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-MongoDB",
+				"error":   fmt.Errorf("walk error : %v", err),
+			})
+			return
+		}
+		Port, err := strconv.Atoi(port)
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-MongoDB",
+				"error":   fmt.Errorf("atoi error : %v", err),
+			})
+			return
+		}
+
+		mc, err := config.NewNCPMongoDBClient(username, password, host, Port)
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-MongoDB",
+				"error":   fmt.Errorf("mongodb client generate error : %v", err),
+			})
+			return
+		}
+
+		ncpNRDB, err := nrdbc.New(ncpmgdb.New(mc, databaseName))
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+				"Content": "Generate-MongoDB",
+				"error":   fmt.Errorf("NRDBController generate error : %v", err),
+			})
+			return
+		}
+
+		for _, j := range jsonList {
+			data, err := os.ReadFile(j)
+			if err != nil {
+				ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+					"Content": "Generate-MongoDB",
+					"error":   fmt.Errorf("read json file error : %v", err),
+				})
+				return
+			}
+
+			var jsonData []map[string]interface{}
+			err = json.Unmarshal(data, &jsonData)
+			if err != nil {
+				ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+					"Content": "Generate-MongoDB",
+					"error":   fmt.Errorf("json unmarshal error : %v", err),
+				})
+				return
+			}
+
+			tableName := strings.TrimSuffix(filepath.Base(j), ".json")
+
+			if err := ncpNRDB.Put(tableName, &jsonData); err != nil {
+				ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
+					"Content": "Generate-MongoDB",
+					"error":   fmt.Errorf("put error : %v", err),
+				})
+				return
+			}
+		}
+
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-MongoDB",
 			"error":   nil,
