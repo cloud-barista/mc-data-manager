@@ -16,6 +16,7 @@ limitations under the License.
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -37,7 +38,7 @@ var deleteDummyCmd = &cobra.Command{
 			logger.Error("Failed to delete")
 			return err
 		}
-		logger.Info("Deletion success: %s\n", dstPath)
+		logger.Info(fmt.Sprintf("Deletion success: %s\n", dstPath))
 		return nil
 	},
 }

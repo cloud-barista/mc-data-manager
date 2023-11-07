@@ -20,7 +20,6 @@ import (
 	"os"
 
 	"github.com/sirupsen/logrus"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
 )
@@ -72,7 +71,6 @@ var (
 	gifSize  int
 	zipSize  int
 
-	deleteBktList   []string
 	deleteDBList    []string
 	deleteTableList []string
 )
@@ -80,11 +78,11 @@ var (
 func logFile() {
 	logFile, err := os.Create("app.log")
 	if err != nil {
-		log.Fatal("Failed to create log file")
+		logrus.Fatal("Failed to create log file")
 	}
 
 	logger = logrus.New()
-	logger.SetLevel(log.DebugLevel)
+	logger.SetLevel(logrus.DebugLevel)
 	logger.SetFormatter(&CustomTextFormatter{})
 	logger.SetOutput(io.MultiWriter(os.Stdout, logFile))
 }
