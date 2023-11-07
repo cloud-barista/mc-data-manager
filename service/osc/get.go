@@ -14,11 +14,14 @@ import (
 
 func (osc *OSController) MGet(dirPath string) error {
 	if fileExists(dirPath) {
-		return errors.New("directory does not exist")
+		err := errors.New("directory does not exist")
+		utils.LogWirte(osc.logger, "Error", "fileExists", "", err)
+		return err
 	}
 
 	err := os.MkdirAll(dirPath, 0755)
 	if err != nil {
+		utils.LogWirte(osc.logger, "Error", "MkdirAll", "", err)
 		return err
 	}
 
@@ -44,18 +47,24 @@ func (osc *OSController) MGet(dirPath string) error {
 	})
 
 	if err != nil {
+		utils.LogWirte(osc.logger, "Error", "Walk", "", err)
 		return err
 	}
 
 	objList, err := osc.osfs.ObjectList()
 	if err != nil {
+		utils.LogWirte(osc.logger, "Error", "ObjectList", "", err)
 		return err
 	}
 
-	downlaodList := getDownloadList(fileList, objList, dirPath)
+	downlaodList, skipList := getDownloadList(fileList, objList, dirPath)
+
+	for _, skipObj := range skipList {
+		utils.LogWirte(osc.logger, "Info", "mPutWorker", fmt.Sprintf("%s skipped", skipObj.Key), nil)
+	}
 
 	jobs := make(chan utils.Object, len(downlaodList))
-	resultChan := make(chan error, len(downlaodList))
+	resultChan := make(chan Result, len(downlaodList))
 
 	var wg sync.WaitGroup
 	for i := 0; i < osc.threads; i++ {
@@ -76,26 +85,32 @@ func (osc *OSController) MGet(dirPath string) error {
 		close(resultChan)
 	}()
 
-	for err := range resultChan {
-		if err != nil {
-			return err
+	for ret := range resultChan {
+		if ret.err != nil {
+			utils.LogWirte(osc.logger, "Error", "mPutWorker", ret.name, ret.err)
+		} else {
+			utils.LogWirte(osc.logger, "Info", "mPutWorker", fmt.Sprintf("%s exported", ret.name), nil)
 		}
 	}
-
+	utils.LogWirte(osc.logger, "Info", "MGet", "Export Done", nil)
 	return nil
 }
 
-func getDownloadList(fileList, objList []*utils.Object, dirPath string) []*utils.Object {
+func getDownloadList(fileList, objList []*utils.Object, dirPath string) ([]*utils.Object, []*utils.Object) {
 	downloadList := []*utils.Object{}
+	skipList := []*utils.Object{}
 
 	for _, obj := range objList {
 		chk := false
 		for _, file := range fileList {
 			fileName, _ := filepath.Rel(dirPath, file.Key)
-			if obj.Key == strings.ReplaceAll(fileName, "\\", "/") {
+			objName, _ := filepath.Rel(filepath.Base(dirPath), obj.Key)
+			if objName == fileName {
 				chk = true
 				if obj.Size != file.Size {
 					downloadList = append(downloadList, obj)
+				} else {
+					skipList = append(skipList, obj)
 				}
 				break
 			}
@@ -105,7 +120,7 @@ func getDownloadList(fileList, objList []*utils.Object, dirPath string) []*utils
 		}
 	}
 
-	return downloadList
+	return downloadList, skipList
 }
 
 func combinePaths(basePath, relativePath string) (string, error) {
@@ -118,50 +133,59 @@ func combinePaths(basePath, relativePath string) (string, error) {
 	return filepath.Join(basePath, relativePath), nil
 }
 
-func mGetWorker(osc *OSController, dirPath string, jobs chan utils.Object, resultChan chan<- error) {
+func mGetWorker(osc *OSController, dirPath string, jobs chan utils.Object, resultChan chan<- Result) {
 	for obj := range jobs {
+		ret := Result{
+			name: obj.Key,
+			err:  nil,
+		}
+
 		src, err := osc.osfs.Open(obj.Key)
 		if err != nil {
-			resultChan <- err
+			ret.err = err
+			resultChan <- ret
 			continue
 		}
 		defer src.Close()
 
 		fileName, err := combinePaths(dirPath, obj.Key)
 		if err != nil {
-			resultChan <- err
+			ret.err = err
+			resultChan <- ret
 			continue
 		}
 
 		err = os.MkdirAll(filepath.Dir(fileName), 0755)
 		if err != nil {
-			resultChan <- err
+			ret.err = err
+			resultChan <- ret
 			continue
 		}
 
-		fmt.Println(fileName)
-
 		dst, err := os.Create(fileName)
 		if err != nil {
-			resultChan <- err
+			ret.err = err
+			resultChan <- ret
 			continue
 		}
 		defer dst.Close()
 
 		n, err := io.Copy(dst, src)
 		if err != nil {
-			resultChan <- err
+			ret.err = err
+			resultChan <- ret
 			continue
 		}
 
 		if n != obj.Size {
-			resultChan <- errors.New("get failed")
+			ret.err = errors.New("get failed")
+			resultChan <- ret
 			continue
 		}
 
 		dst.Close()
 		src.Close()
 
-		resultChan <- nil
+		resultChan <- ret
 	}
 }

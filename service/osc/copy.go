@@ -10,15 +10,31 @@ import (
 )
 
 func (src *OSController) Copy(dst *OSController) error {
-	dst.osfs.CreateBucket()
-
-	objList, err := src.osfs.ObjectList()
-	if err != nil {
-		return nil
+	if err := dst.osfs.CreateBucket(); err != nil {
+		utils.LogWirte(src.logger, "Error", "CreateBucket", "", err)
+		return err
 	}
 
-	jobs := make(chan utils.Object)
-	resultChan := make(chan error)
+	srcObjList, err := src.osfs.ObjectList()
+	if err != nil {
+		utils.LogWirte(src.logger, "Error", "ObjectList", "src ObjectList", err)
+		return err
+	}
+
+	dstObjList, err := dst.osfs.ObjectList()
+	if err != nil {
+		utils.LogWirte(src.logger, "Error", "ObjectList", "src ObjectList", err)
+		return err
+	}
+
+	copyList, skipList := getDownloadList(dstObjList, srcObjList, "")
+
+	for _, skipObj := range skipList {
+		utils.LogWirte(src.logger, "Info", "mPutWorker", fmt.Sprintf("%s skipped", skipObj.Key), nil)
+	}
+
+	jobs := make(chan utils.Object, len(copyList))
+	resultChan := make(chan Result, len(copyList))
 
 	var wg sync.WaitGroup
 	for i := 0; i < src.threads; i++ {
@@ -29,7 +45,7 @@ func (src *OSController) Copy(dst *OSController) error {
 		}()
 	}
 
-	for _, obj := range objList {
+	for _, obj := range copyList {
 		jobs <- *obj
 	}
 	close(jobs)
@@ -39,49 +55,63 @@ func (src *OSController) Copy(dst *OSController) error {
 		close(resultChan)
 	}()
 
-	for err := range resultChan {
-		if err != nil {
-			return err
+	for ret := range resultChan {
+		if ret.err != nil {
+			utils.LogWirte(src.logger, "Error", "copyWorker", ret.name, ret.err)
+		} else {
+			utils.LogWirte(src.logger, "Info", "copyWorker", fmt.Sprintf("%s Copied", ret.name), nil)
 		}
 	}
+	utils.LogWirte(src.logger, "Info", "Copy", "Replication Done", nil)
 
 	return nil
 }
 
-func copyWorker(src *OSController, dst *OSController, jobs chan utils.Object, resultChan chan<- error) {
+func copyWorker(src *OSController, dst *OSController, jobs chan utils.Object, resultChan chan<- Result) {
 	for obj := range jobs {
+		ret := Result{
+			name: obj.Key,
+			err:  nil,
+		}
+
 		srcFile, err := src.osfs.Open(obj.Key)
 		if err != nil {
-			resultChan <- err
+			ret.err = err
+			resultChan <- ret
 			continue
 		}
 
-		fmt.Println(obj.Key)
 		dstFile, err := dst.osfs.Create(obj.Key)
 		if err != nil {
-			resultChan <- err
+			ret.err = err
+			resultChan <- ret
 			continue
 		}
 
 		n, err := io.Copy(dstFile, srcFile)
 		if err != nil {
-			resultChan <- err
+			ret.err = err
+			resultChan <- ret
 			continue
 		}
 
 		if n != obj.Size {
-			resultChan <- errors.New("copy failed")
+			ret.err = errors.New("copy failed")
+			resultChan <- ret
 			continue
 		}
 
 		if err := srcFile.Close(); err != nil {
-			resultChan <- err
+			ret.err = err
+			resultChan <- ret
 			continue
 		}
 
 		if err := dstFile.Close(); err != nil {
-			resultChan <- err
+			ret.err = err
+			resultChan <- ret
 			continue
 		}
+		resultChan <- ret
 	}
 }
