@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/cloud-barista/cm-data-mold/pkg/utils"
 	"github.com/sirupsen/logrus"
 )
 
@@ -59,10 +58,8 @@ func New(rdb RDBMS, opts ...Option) (*RDBController, error) {
 func (rdb *RDBController) ListDB(dst *[]string) error {
 	err := rdb.client.ListDB(dst)
 	if err != nil {
-		utils.LogWirte(rdb.logger, "Error", "ListDB", "get listDB failed", err)
 		return err
 	}
-	utils.LogWirte(rdb.logger, "Info", "ListDB", "get listDB success", nil)
 	return nil
 }
 
@@ -77,7 +74,7 @@ func (rdb *RDBController) Put(sql string) error {
 		if line != "" {
 			err := rdb.client.Exec(line)
 			if err != nil {
-				utils.LogWirte(rdb.logger, "Error", "Put", "db exec failed", err)
+				rdb.logWrite("Error", "sql exec error", err)
 				return err
 			}
 		}
@@ -85,7 +82,6 @@ func (rdb *RDBController) Put(sql string) error {
 
 	err := scanner.Err()
 	if err != nil {
-		utils.LogWirte(rdb.logger, "Error", "Put", "scan failed", err)
 		return err
 	}
 	return nil
@@ -96,21 +92,22 @@ func (rdb *RDBController) Copy(dst *RDBController) error {
 	var dbList []string
 	var sql string
 	if err := rdb.ListDB(&dbList); err != nil {
+		rdb.logWrite("Error", "ListDB error", err)
 		return err
 	}
 
 	for _, db := range dbList {
 		sql = ""
 		if err := rdb.Get(db, &sql); err != nil {
-			utils.LogWirte(rdb.logger, "Error", "Copy", fmt.Sprintf("%s copy failed", db), nil)
+			rdb.logWrite("Error", "Get error", err)
 			return err
 		}
 
 		if err := dst.Put(sql); err != nil {
-			utils.LogWirte(rdb.logger, "Error", "Copy", fmt.Sprintf("%s copy failed", db), nil)
+			rdb.logWrite("Error", "Get error", err)
 			return err
 		}
-		utils.LogWirte(rdb.logger, "Info", "Copy", fmt.Sprintf("%s copied", db), nil)
+		rdb.logWrite("Info", fmt.Sprintf("Replication success: src:/%s -> dst:/%s", db, db), nil)
 	}
 	return nil
 }
@@ -119,7 +116,6 @@ func (rdb *RDBController) Copy(dst *RDBController) error {
 func (rdb *RDBController) Get(dbName string, sql *string) error {
 	var sqlTemp string
 	if err := rdb.client.ShowCreateDBSql(dbName, &sqlTemp); err != nil {
-		utils.LogWirte(rdb.logger, "Error", "ShowCreateDBSql", "get db create sql failed", err)
 		return err
 	}
 	sqlWrite(sql, sqlTemp)
@@ -127,7 +123,6 @@ func (rdb *RDBController) Get(dbName string, sql *string) error {
 
 	var tableList []string
 	if err := rdb.client.ListTable(dbName, &tableList); err != nil {
-		utils.LogWirte(rdb.logger, "Error", "ListTable", "get listTable failed", err)
 		return err
 	}
 
@@ -135,7 +130,6 @@ func (rdb *RDBController) Get(dbName string, sql *string) error {
 		sqlWrite(sql, fmt.Sprintf("DROP TABLE IF EXISTS %s;", table))
 
 		if err := rdb.client.ShowCreateTableSql(dbName, table, &sqlTemp); err != nil {
-			utils.LogWirte(rdb.logger, "Error", "ListTable", "get table create sql failed", err)
 			return err
 		}
 		sqlWrite(sql, sqlTemp)
@@ -144,7 +138,6 @@ func (rdb *RDBController) Get(dbName string, sql *string) error {
 	for _, table := range tableList {
 		var insertData []string
 		if err := rdb.client.GetInsert(dbName, table, &insertData); err != nil {
-			utils.LogWirte(rdb.logger, "Error", "GetInsert", "get insert sql failed", err)
 			return err
 		}
 
@@ -177,10 +170,19 @@ func splitLine(data []byte, atEOF bool) (int, []byte, error) {
 func (rdb *RDBController) DeleteDB(dbName ...string) error {
 	for _, db := range dbName {
 		if err := rdb.client.DeleteDB(db); err != nil {
-			utils.LogWirte(rdb.logger, "Error", "DeleteDB", fmt.Sprintf("%s delete failed", db), err)
 			return err
 		}
-		utils.LogWirte(rdb.logger, "Info", "DeleteDB", fmt.Sprintf("%s deleted", db), nil)
 	}
 	return nil
+}
+
+func (rdbc *RDBController) logWrite(logLevel, msg string, err error) {
+	if rdbc.logger != nil {
+		switch logLevel {
+		case "Info":
+			rdbc.logger.Info(msg)
+		case "Error":
+			rdbc.logger.Errorf("%s : %v", msg, err)
+		}
+	}
 }

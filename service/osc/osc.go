@@ -31,30 +31,24 @@ type Result struct {
 func (osc *OSController) CreateBucket() error {
 	err := osc.osfs.CreateBucket()
 	if err != nil {
-		utils.LogWirte(osc.logger, "Error", "CreateBucket", "bucket create failed", err)
 		return err
 	}
-	utils.LogWirte(osc.logger, "Info", "CreateBucket", "bucket create success", nil)
 	return nil
 }
 
 func (osc *OSController) DeleteBucket() error {
 	err := osc.osfs.DeleteBucket()
 	if err != nil {
-		utils.LogWirte(osc.logger, "Error", "DeleteBucket", "bucket delete failed", err)
 		return err
 	}
-	utils.LogWirte(osc.logger, "Info", "DeleteBucket", "bucket delete success", nil)
 	return nil
 }
 
 func (osc *OSController) ObjectList() ([]*utils.Object, error) {
 	objList, err := osc.osfs.ObjectList()
 	if err != nil {
-		utils.LogWirte(osc.logger, "Error", "ObjectList", "get objectList failed", err)
 		return objList, err
 	}
-	utils.LogWirte(osc.logger, "Info", "DeleteBucket", "get objctList success", nil)
 	return objList, nil
 }
 
@@ -86,4 +80,15 @@ func New(osfs OSFS, opts ...Option) (*OSController, error) {
 	}
 
 	return osc, nil
+}
+
+func (osc *OSController) logWrite(logLevel, msg string, err error) {
+	if osc.logger != nil {
+		switch logLevel {
+		case "Info":
+			osc.logger.Info(msg)
+		case "Error":
+			osc.logger.Errorf("%s : %v", msg, err)
+		}
+	}
 }

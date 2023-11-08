@@ -19,7 +19,7 @@ import (
 	"github.com/cloud-barista/cm-data-mold/pkg/dummy/semistructed"
 	"github.com/cloud-barista/cm-data-mold/pkg/dummy/structed"
 	"github.com/cloud-barista/cm-data-mold/pkg/dummy/unstructed"
-	"github.com/cloud-barista/cm-data-mold/pkg/utils"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -37,58 +37,79 @@ Semi-structured data: json, xml
 
 You must enter the data size in GB.`,
 	RunE: func(_ *cobra.Command, _ []string) error {
-		if err := utils.IsDir(dstPath); err != nil {
-			return err
-		}
-
+		logrus.SetFormatter(&CustomTextFormatter{cmdName: "create", jobName: "dummy create"})
+		logrus.Info("check directory paths")
 		if sqlSize != 0 {
+			logrus.Info("start sql generation")
 			if err := structed.GenerateRandomSQL(dstPath, sqlSize); err != nil {
+				logrus.Error("failed to generate sql")
 				return err
 			}
+			logrus.Infof("successfully generated sql : %s", dstPath)
 		}
 
 		if csvSize != 0 {
+			logrus.Info("start csv generation")
 			if err := structed.GenerateRandomCSV(dstPath, csvSize); err != nil {
+				logrus.Error("failed to generate csv")
 				return err
 			}
+			logrus.Infof("successfully generated csv : %s", dstPath)
 		}
 
 		if jsonSize != 0 {
+			logrus.Info("start json generation")
 			if err := semistructed.GenerateRandomJSON(dstPath, jsonSize); err != nil {
+				logrus.Error("failed to generate json")
 				return err
 			}
+			logrus.Infof("successfully generated json : %s", dstPath)
 		}
 
 		if xmlSize != 0 {
+			logrus.Info("start xml generation")
 			if err := semistructed.GenerateRandomXML(dstPath, xmlSize); err != nil {
+				logrus.Error("failed to generate xml")
 				return err
 			}
+			logrus.Infof("successfully generated xml : %s", dstPath)
 		}
 
 		if txtSize != 0 {
+			logrus.Info("start txt generation")
 			if err := unstructed.GenerateRandomTXT(dstPath, txtSize); err != nil {
+				logrus.Error("failed to generate txt")
 				return err
 			}
+			logrus.Infof("successfully generated txt : %s", dstPath)
 		}
 
 		if pngSize != 0 {
+			logrus.Info("start png generation")
 			if err := unstructed.GenerateRandomPNGImage(dstPath, pngSize); err != nil {
+				logrus.Error("failed to generate png")
 				return err
 			}
+			logrus.Infof("successfully generated png : %s", dstPath)
 		}
 
 		if gifSize != 0 {
+			logrus.Info("start gif generation")
 			if err := unstructed.GenerateRandomGIF(dstPath, gifSize); err != nil {
+				logrus.Error("failed to generate gif")
 				return err
 			}
+			logrus.Infof("successfully generated gif : %s", dstPath)
 		}
 
 		if zipSize != 0 {
+			logrus.Info("start zip generation")
 			if err := unstructed.GenerateRandomZIP(dstPath, zipSize); err != nil {
+				logrus.Error("failed to generate zip")
 				return err
 			}
+			logrus.Infof("successfully generated zip : %s", dstPath)
 		}
-
 		return nil
 	},
 }

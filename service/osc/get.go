@@ -13,15 +13,15 @@ import (
 )
 
 func (osc *OSController) MGet(dirPath string) error {
-	if fileExists(dirPath) {
+	if utils.FileExists(dirPath) {
 		err := errors.New("directory does not exist")
-		utils.LogWirte(osc.logger, "Error", "fileExists", "", err)
+		osc.logWrite("Error", "FileExists error", err)
 		return err
 	}
 
 	err := os.MkdirAll(dirPath, 0755)
 	if err != nil {
-		utils.LogWirte(osc.logger, "Error", "MkdirAll", "", err)
+		osc.logWrite("Error", "MkdirAll error", err)
 		return err
 	}
 
@@ -47,20 +47,20 @@ func (osc *OSController) MGet(dirPath string) error {
 	})
 
 	if err != nil {
-		utils.LogWirte(osc.logger, "Error", "Walk", "", err)
+		osc.logWrite("Error", "Walk error", err)
 		return err
 	}
 
 	objList, err := osc.osfs.ObjectList()
 	if err != nil {
-		utils.LogWirte(osc.logger, "Error", "ObjectList", "", err)
+		osc.logWrite("Error", "ObjectList error", err)
 		return err
 	}
 
 	downlaodList, skipList := getDownloadList(fileList, objList, dirPath)
 
-	for _, skipObj := range skipList {
-		utils.LogWirte(osc.logger, "Info", "mPutWorker", fmt.Sprintf("%s skipped", skipObj.Key), nil)
+	for _, skip := range skipList {
+		osc.logWrite("Info", fmt.Sprintf("skip file : %s", skip.Key), nil)
 	}
 
 	jobs := make(chan utils.Object, len(downlaodList))
@@ -87,12 +87,9 @@ func (osc *OSController) MGet(dirPath string) error {
 
 	for ret := range resultChan {
 		if ret.err != nil {
-			utils.LogWirte(osc.logger, "Error", "mPutWorker", ret.name, ret.err)
-		} else {
-			utils.LogWirte(osc.logger, "Info", "mPutWorker", fmt.Sprintf("%s exported", ret.name), nil)
+			osc.logWrite("Error", fmt.Sprintf("Export failed: %s", ret.name), ret.err)
 		}
 	}
-	utils.LogWirte(osc.logger, "Info", "MGet", "Export Done", nil)
 	return nil
 }
 
@@ -185,6 +182,8 @@ func mGetWorker(osc *OSController, dirPath string, jobs chan utils.Object, resul
 
 		dst.Close()
 		src.Close()
+
+		osc.logWrite("Info", fmt.Sprintf("Export success: %s -> %s", obj.Key, fileName), nil)
 
 		resultChan <- ret
 	}

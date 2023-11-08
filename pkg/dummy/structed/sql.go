@@ -12,6 +12,7 @@ import (
 
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/cloud-barista/cm-data-mold/pkg/utils"
+	"github.com/sirupsen/logrus"
 )
 
 type sqlData struct {
@@ -112,6 +113,7 @@ INSERT INTO BorrowedBooks (MemberID, BookID, BorrowedDate, DueDate, ReturnedDate
 func GenerateRandomSQL(dummyDir string, capacitySize int) error {
 	dummyDir = filepath.Join(dummyDir, "sql")
 	if err := utils.IsDir(dummyDir); err != nil {
+		logrus.WithFields(logrus.Fields{"jobName": "sql create"}).Errorf("IsDir function error : %v", err)
 		return err
 	}
 
@@ -141,6 +143,7 @@ func GenerateRandomSQL(dummyDir string, capacitySize int) error {
 
 	for ret := range resultChan {
 		if ret != nil {
+			logrus.WithFields(logrus.Fields{"jobName": "sql create"}).Errorf("result error : %v", ret)
 			return ret
 		}
 	}
@@ -198,6 +201,7 @@ func randomSQLWorker(countNum chan int, dirPath string, resultChan chan<- error)
 			continue
 		}
 
+		logrus.WithFields(logrus.Fields{"jobName": "sql create"}).Infof("Creation success: %v", file.Name())
 		file.Close()
 
 		resultChan <- nil

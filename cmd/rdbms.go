@@ -21,52 +21,49 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/cloud-barista/cm-data-mold/pkg/utils"
+	"github.com/cloud-barista/cm-data-mold/service/rdbc"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
 // rdbmsCmd represents the rdbms command
 var importRDBCmd = &cobra.Command{
-	Use: "rdbms",
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return preRunE(cmd.Parent().Use, "rdbms")
-	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		utils.LogWirte(logger, "Info", "importRDMFunc", "import start", nil)
-		return importRDMFunc()
+	Use:    "rdbms",
+	PreRun: preRun("rdbms"),
+	Run: func(cmd *cobra.Command, args []string) {
+		if err := importRDMFunc(); err != nil {
+			os.Exit(1)
+		}
 	},
 }
 
 var exportRDBCmd = &cobra.Command{
-	Use: "rdbms",
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return preRunE(cmd.Parent().Use, "rdbms")
-	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		utils.LogWirte(logger, "Info", "exportRDMFunc", "export start", nil)
-		return exportRDMFunc()
+	Use:    "rdbms",
+	PreRun: preRun("rdbms"),
+	Run: func(cmd *cobra.Command, args []string) {
+		if err := exportRDMFunc(); err != nil {
+			os.Exit(1)
+		}
 	},
 }
 
 var replicationRDBCmd = &cobra.Command{
-	Use: "rdbms",
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return preRunE(cmd.Parent().Use, "rdbms")
-	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		utils.LogWirte(logger, "Info", "replicationRDMFunc", "replication start", nil)
-		return replicationRDMFunc()
+	Use:    "rdbms",
+	PreRun: preRun("rdbms"),
+	Run: func(cmd *cobra.Command, args []string) {
+		if err := replicationRDMFunc(); err != nil {
+			os.Exit(1)
+		}
 	},
 }
 
 var deleteRDBMSCmd = &cobra.Command{
-	Use: "rdbms",
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return preRunE(cmd.Parent().Use, "rdbms")
-	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		utils.LogWirte(logger, "Info", "deleteRDMFunc", "delete start", nil)
-		return deleteRDMFunc()
+	Use:    "rdbms",
+	PreRun: preRun("rdbms"),
+	Run: func(cmd *cobra.Command, args []string) {
+		if err := deleteRDMFunc(); err != nil {
+			os.Exit(1)
+		}
 	},
 }
 
@@ -82,9 +79,16 @@ func init() {
 }
 
 func importRDMFunc() error {
-	rdbc, err := getSrcRDMS()
+	var RDBC *rdbc.RDBController
+	var err error
+	logrus.Infof("User Information")
+	if !taskTarget {
+		RDBC, err = getSrcRDMS()
+	} else {
+		RDBC, err = getDstRDMS()
+	}
 	if err != nil {
-		utils.LogWirte(logger, "Error", "getSrcRDMS", "failed to get source rdbms information", err)
+		logrus.Errorf("RDBController error importing into rdbms : %v", err)
 		return err
 	}
 
@@ -99,97 +103,141 @@ func importRDMFunc() error {
 		return nil
 	})
 	if err != nil {
-		utils.LogWirte(logger, "Error", "Walk", "failed to get file list in dstPath", err)
+		logrus.Errorf("Walk error : %v", err)
 		return err
 	}
 
 	for _, sqlPath := range sqlList {
 		data, err := os.ReadFile(sqlPath)
 		if err != nil {
-			utils.LogWirte(logger, "Error", "ReadFile", "sql file read failed", err)
+			logrus.Errorf("ReadFile error : %v", err)
 			return err
 		}
-
-		if err := rdbc.Put(string(data)); err != nil {
+		logrus.Infof("Import start: %s", sqlPath)
+		if err := RDBC.Put(string(data)); err != nil {
+			logrus.Error("Put error importing into rdbms")
 			return err
 		}
-
-		utils.LogWirte(logger, "Info", "Put", fmt.Sprintf("%s imported", sqlPath), nil)
+		logrus.Infof("Import success: %s", sqlPath)
 	}
+	logrus.Infof("successfully imported : %s", dstPath)
 	return nil
 }
 
 func exportRDMFunc() error {
-	rdbc, err := getSrcRDMS()
+	var RDBC *rdbc.RDBController
+	var err error
+	logrus.Infof("User Information")
+	if !taskTarget {
+		RDBC, err = getSrcRDMS()
+	} else {
+		RDBC, err = getDstRDMS()
+	}
 	if err != nil {
-		utils.LogWirte(logger, "Error", "getSrcRDMS", "failed to get source rdbms information", err)
+		logrus.Errorf("RDBController error exporting into rdbms : %v", err)
 		return err
 	}
 
 	err = os.MkdirAll(dstPath, 0755)
 	if err != nil {
-		utils.LogWirte(logger, "Error", "MkdirAll", "mkdir failed", err)
+		logrus.Errorf("MkdirAll error : %v", err)
 		return err
 	}
 
 	dbList := []string{}
-	if err := rdbc.ListDB(&dbList); err != nil {
+	if err := RDBC.ListDB(&dbList); err != nil {
+		logrus.Errorf("ListDB error : %v", err)
 		return err
 	}
 
 	var sqlData string
 	for _, db := range dbList {
 		sqlData = ""
-		if err := rdbc.Get(db, &sqlData); err != nil {
+		logrus.Infof("Export start: %s", db)
+		if err := RDBC.Get(db, &sqlData); err != nil {
+			logrus.Errorf("Get error : %v", err)
 			return err
 		}
 
 		file, err := os.Create(filepath.Join(dstPath, fmt.Sprintf("%s.sql", db)))
 		if err != nil {
-			utils.LogWirte(logger, "Error", "Create", "create file failed", err)
+			logrus.Errorf("File create error : %v", err)
 			return err
 		}
 		defer file.Close()
 
 		_, err = file.WriteString(sqlData)
 		if err != nil {
-			utils.LogWirte(logger, "Error", "WriteString", "writeString failed", err)
+			logrus.Errorf("File write error : %v", err)
 			return err
 		}
-
-		utils.LogWirte(logger, "Info", "Get", fmt.Sprintf("%s exported", db), err)
+		logrus.Infof("successfully exported : %s", file.Name())
 		file.Close()
 	}
+	logrus.Infof("successfully exported : %s", dstPath)
 	return nil
 }
 
 func replicationRDMFunc() error {
-	src, err := getSrcRDMS()
-	if err != nil {
-		utils.LogWirte(logger, "Error", "getSrcRDMS", "failed to get source rdbms information", err)
-		return err
+	var srcRDBC *rdbc.RDBController
+	var srcErr error
+	var dstRDBC *rdbc.RDBController
+	var dstErr error
+	if !taskTarget {
+		logrus.Infof("Source Information")
+		srcRDBC, srcErr = getSrcRDMS()
+		if srcErr != nil {
+			logrus.Errorf("RDBController error replication into rdbms : %v", srcErr)
+			return srcErr
+		}
+		logrus.Infof("Target Information")
+		dstRDBC, dstErr = getDstRDMS()
+		if dstErr != nil {
+			logrus.Errorf("RDBController error replication into rdbms : %v", dstErr)
+			return dstErr
+		}
+	} else {
+		logrus.Infof("Source Information")
+		srcRDBC, srcErr = getDstRDMS()
+		if srcErr != nil {
+			logrus.Errorf("RDBController error replication into rdbms : %v", srcErr)
+			return srcErr
+		}
+		logrus.Infof("Target Information")
+		dstRDBC, dstErr = getSrcRDMS()
+		if dstErr != nil {
+			logrus.Errorf("RDBController error replication into rdbms : %v", dstErr)
+			return dstErr
+		}
 	}
 
-	dst, err := getDstRDMS()
-	if err != nil {
-		utils.LogWirte(logger, "Error", "getDstRDMS", "failed to get target rdbms information", err)
+	logrus.Info("Launch RDBController Copy")
+	if err := srcRDBC.Copy(dstRDBC); err != nil {
+		logrus.Errorf("Copy error copying into rdbms : %v", err)
 		return err
 	}
-
-	err = src.Copy(dst)
-	utils.LogWirte(logger, "Info", "Copy", "Replication Done", nil)
-	return err
+	logrus.Info("successfully replicationed")
+	return nil
 }
 
 func deleteRDMFunc() error {
-	src, err := getSrcRDMS()
+	var RDBC *rdbc.RDBController
+	var err error
+	if !taskTarget {
+		RDBC, err = getSrcRDMS()
+	} else {
+		RDBC, err = getDstRDMS()
+	}
 	if err != nil {
-		utils.LogWirte(logger, "Error", "getSrcRDMS", "failed to get source rdbms information", err)
+		logrus.Errorf("RDBController error deleting into rdbms : %v", err)
 		return err
 	}
 
-	if err := src.DeleteDB(deleteDBList...); err != nil {
+	logrus.Info("Launch RDBController Delete")
+	if err := RDBC.DeleteDB(deleteDBList...); err != nil {
+		logrus.Errorf("Delete error deleting into rdbms : %v", err)
 		return err
 	}
+	logrus.Info("successfully deleted")
 	return nil
 }

@@ -25,10 +25,10 @@ import (
 )
 
 var (
-	logger *logrus.Logger
 	// credential
 	credentialPath string
 	configData     map[string]map[string]map[string]string
+	taskTarget     bool
 
 	//src
 	cSrcProvider    string
@@ -76,15 +76,14 @@ var (
 )
 
 func logFile() {
-	logFile, err := os.Create("app.log")
+	logFile, err := os.OpenFile("datamold.log", os.O_CREATE|os.O_APPEND, os.FileMode(0644))
 	if err != nil {
 		logrus.Fatal("Failed to create log file")
 	}
 
-	logger = logrus.New()
-	logger.SetLevel(logrus.DebugLevel)
-	logger.SetFormatter(&CustomTextFormatter{})
-	logger.SetOutput(io.MultiWriter(os.Stdout, logFile))
+	logrus.SetLevel(logrus.DebugLevel)
+	logrus.SetFormatter(&CustomTextFormatter{})
+	logrus.SetOutput(io.MultiWriter(os.Stdout, logFile))
 }
 
 // rootCmd represents the base command when called without any subcommands

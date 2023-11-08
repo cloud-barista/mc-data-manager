@@ -28,7 +28,7 @@ var replicationCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(replicationCmd)
-
+	replicationCmd.PersistentFlags().BoolVarP(&taskTarget, "task", "T", false, "Select a destination(src, dst) to work with in the credential-path")
 	replicationCmd.PersistentFlags().StringVarP(&credentialPath, "credential-path", "C", "", "Json file path containing the user's credentials")
 	replicationCmd.MarkFlagRequired("credential-path")
 }

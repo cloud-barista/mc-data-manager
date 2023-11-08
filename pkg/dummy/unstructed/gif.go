@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/cloud-barista/cm-data-mold/pkg/utils"
+	"github.com/sirupsen/logrus"
 )
 
 // GIF generation function using gofakeit
@@ -23,20 +24,25 @@ import (
 func GenerateRandomGIF(dummyDir string, capacitySize int) error {
 	dummyDir = filepath.Join(dummyDir, "gif")
 	if err := utils.IsDir(dummyDir); err != nil {
+		logrus.WithFields(logrus.Fields{"jobName": "gif create"}).Errorf("IsDir function error : %v", err)
 		return err
 	}
 
 	tempPath := filepath.Join(dummyDir, "tmpImg")
 	if err := os.MkdirAll(tempPath, 0755); err != nil {
+		logrus.WithFields(logrus.Fields{"jobName": "gif create"}).Errorf("MkdirAll function error : %v", err)
 		return err
 	}
 	defer os.RemoveAll(tempPath)
 
+	logrus.WithFields(logrus.Fields{"jobName": "gif create"}).Info("start gif generation")
 	if err := GenerateRandomPNGImage(tempPath, 1); err != nil {
+		logrus.WithFields(logrus.Fields{"jobName": "gif create"}).Error("failed to generate gif")
 		return err
 	}
-	var files []string
+	logrus.WithFields(logrus.Fields{"jobName": "gif create"}).Info("successfully generated gif")
 
+	var files []string
 	size := capacitySize * 34 * 10
 
 	err := filepath.Walk(tempPath, func(path string, _ os.FileInfo, err error) error {
@@ -44,32 +50,33 @@ func GenerateRandomGIF(dummyDir string, capacitySize int) error {
 			return err
 		}
 
-		files = append(files, path)
+		if filepath.Ext(path) == ".png" {
+			files = append(files, path)
+		}
 
 		return nil
 	})
 
 	if err != nil {
+		logrus.WithFields(logrus.Fields{"jobName": "gif create"}).Errorf("Walk function error : %v", err)
 		return err
 	}
 
 	var imgList []image.Image
 	for _, imgName := range files {
-		fileExt := filepath.Ext(imgName)
-		if fileExt == ".png" {
-			imgFile, err := os.Open(imgName)
-			if err != nil {
-				return err
-			}
-			defer imgFile.Close()
-
-			img, err := png.Decode(imgFile)
-			if err != nil {
-				return err
-			}
-			imgList = append(imgList, img)
+		imgFile, err := os.Open(imgName)
+		if err != nil {
+			logrus.WithFields(logrus.Fields{"jobName": "gif create"}).Errorf("file open error : %v", err)
+			return err
 		}
+		defer imgFile.Close()
 
+		img, err := png.Decode(imgFile)
+		if err != nil {
+			logrus.WithFields(logrus.Fields{"jobName": "gif create"}).Errorf("file decoding error : %v", err)
+			return err
+		}
+		imgList = append(imgList, img)
 	}
 
 	countNum := make(chan int, size)
@@ -96,6 +103,7 @@ func GenerateRandomGIF(dummyDir string, capacitySize int) error {
 
 	for err := range resultChan {
 		if err != nil {
+			logrus.WithFields(logrus.Fields{"jobName": "gif create"}).Errorf("result error : %v", err)
 			return err
 		}
 	}
@@ -133,6 +141,14 @@ func randomGIFWorker(imgList []image.Image, countNum chan int, tmpDir string, re
 		}
 		defer gifFile.Close()
 
-		resultChan <- gif.EncodeAll(gifFile, gifImage)
+		err = gif.EncodeAll(gifFile, gifImage)
+		if err == nil {
+			logrus.WithFields(logrus.Fields{"jobName": "sql create"}).Infof("Creation success: %v", gifFile.Name())
+		}
+
+		if cerr := gifFile.Close(); cerr != nil {
+			err = cerr
+		}
+		resultChan <- err
 	}
 }

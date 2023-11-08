@@ -11,26 +11,26 @@ import (
 
 func (src *OSController) Copy(dst *OSController) error {
 	if err := dst.osfs.CreateBucket(); err != nil {
-		utils.LogWirte(src.logger, "Error", "CreateBucket", "", err)
+		src.logWrite("Error", "CreateBucket error", err)
 		return err
 	}
 
 	srcObjList, err := src.osfs.ObjectList()
 	if err != nil {
-		utils.LogWirte(src.logger, "Error", "ObjectList", "src ObjectList", err)
+		src.logWrite("Error", "source objectList error", err)
 		return err
 	}
 
 	dstObjList, err := dst.osfs.ObjectList()
 	if err != nil {
-		utils.LogWirte(src.logger, "Error", "ObjectList", "src ObjectList", err)
+		src.logWrite("Error", "target objectList error", err)
 		return err
 	}
 
 	copyList, skipList := getDownloadList(dstObjList, srcObjList, "")
 
-	for _, skipObj := range skipList {
-		utils.LogWirte(src.logger, "Info", "mPutWorker", fmt.Sprintf("%s skipped", skipObj.Key), nil)
+	for _, skip := range skipList {
+		src.logWrite("Info", fmt.Sprintf("skip file : %s", skip.Key), nil)
 	}
 
 	jobs := make(chan utils.Object, len(copyList))
@@ -57,12 +57,9 @@ func (src *OSController) Copy(dst *OSController) error {
 
 	for ret := range resultChan {
 		if ret.err != nil {
-			utils.LogWirte(src.logger, "Error", "copyWorker", ret.name, ret.err)
-		} else {
-			utils.LogWirte(src.logger, "Info", "copyWorker", fmt.Sprintf("%s Copied", ret.name), nil)
+			src.logWrite("Error", fmt.Sprintf("Replication failed: %s", ret.name), ret.err)
 		}
 	}
-	utils.LogWirte(src.logger, "Info", "Copy", "Replication Done", nil)
 
 	return nil
 }
@@ -112,6 +109,9 @@ func copyWorker(src *OSController, dst *OSController, jobs chan utils.Object, re
 			resultChan <- ret
 			continue
 		}
+
+		src.logWrite("Info", fmt.Sprintf("Replication success: src:/%s -> dst:/%s", obj.Key, obj.Key), nil)
+
 		resultChan <- ret
 	}
 }

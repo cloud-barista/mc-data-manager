@@ -16,9 +16,9 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
 	"os"
 
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -32,13 +32,16 @@ which are CSP or local dummy data`,
 
 var deleteDummyCmd = &cobra.Command{
 	Use: "dummy",
+
 	RunE: func(cmd *cobra.Command, args []string) error {
+		logrus.SetFormatter(&CustomTextFormatter{cmdName: "delete"})
+		logrus.WithFields(logrus.Fields{"jobName": "dummy delete"}).Info("start deleting dummy")
 		err := os.RemoveAll(dstPath)
 		if err != nil {
-			logger.Error("Failed to delete")
+			logrus.WithFields(logrus.Fields{"jobName": "dummy delete"}).Errorf("failed to delete dummy : %v", err)
 			return err
 		}
-		logger.Info(fmt.Sprintf("Deletion success: %s\n", dstPath))
+		logrus.Infof("successfully deleted : %s\n", dstPath)
 		return nil
 	},
 }
@@ -47,6 +50,7 @@ func init() {
 	rootCmd.AddCommand(deleteCmd)
 	deleteCmd.AddCommand(deleteDummyCmd)
 
+	deleteCmd.PersistentFlags().BoolVarP(&taskTarget, "task", "T", false, "Select a destination(src, dst) to work with in the credential-path")
 	deleteDummyCmd.Flags().StringVarP(&dstPath, "dst-path", "d", "", "Delete data in directory paths")
 	deleteDummyCmd.MarkFlagRequired("dst-path")
 }

@@ -2,6 +2,7 @@ package s3fs
 
 import (
 	"context"
+	"errors"
 	"io"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -73,13 +74,33 @@ type S3FS struct {
 //
 // Aws imposes location constraints when creating buckets
 func (f *S3FS) CreateBucket() error {
-	input := &s3.CreateBucketInput{Bucket: aws.String(f.bucketName)}
-	if f.provider == "aws" {
-		input.CreateBucketConfiguration = &types.CreateBucketConfiguration{
-			LocationConstraint: types.BucketLocationConstraint(f.region),
+	_, err := f.client.HeadBucket(f.ctx, &s3.HeadBucketInput{
+		Bucket: aws.String(f.bucketName),
+	})
+
+	if err != nil {
+		var bae *types.BucketAlreadyExists
+		if errors.As(err, &bae) {
+			return nil
 		}
+		var baoby *types.BucketAlreadyOwnedByYou
+		if errors.As(err, &baoby) {
+			return nil
+		}
+		var nf *types.NotFound
+		var nsb *types.NoSuchBucket
+		if errors.As(err, &nsb) || errors.As(err, &nf) {
+			input := &s3.CreateBucketInput{Bucket: aws.String(f.bucketName)}
+			if f.provider == "aws" {
+				input.CreateBucketConfiguration = &types.CreateBucketConfiguration{
+					LocationConstraint: types.BucketLocationConstraint(f.region),
+				}
+			}
+			_, err := f.client.CreateBucket(f.ctx, input)
+			return err
+		}
+		return err
 	}
-	_, err := f.client.CreateBucket(f.ctx, input)
 	return err
 }
 

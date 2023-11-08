@@ -22,10 +22,17 @@ type GCSfs struct {
 
 // Creating a Bucket
 func (f *GCSfs) CreateBucket() error {
-	return f.bktclient.Create(f.ctx, f.projectID, &storage.BucketAttrs{
-		Name:     f.bucketName,
-		Location: f.region,
-	})
+	_, err := f.bktclient.Attrs(f.ctx)
+	if err != nil {
+		if err == storage.ErrBucketNotExist {
+			return f.bktclient.Create(f.ctx, f.projectID, &storage.BucketAttrs{
+				Name:     f.bucketName,
+				Location: f.region,
+			})
+		}
+		return err
+	}
+	return nil
 }
 
 // Delete Bucket

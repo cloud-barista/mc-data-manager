@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/cloud-barista/cm-data-mold/config"
 	"github.com/cloud-barista/cm-data-mold/pkg/nrdbms/awsdnmdb"
@@ -20,45 +21,84 @@ import (
 	"github.com/cloud-barista/cm-data-mold/service/osc"
 	"github.com/cloud-barista/cm-data-mold/service/rdbc"
 	_ "github.com/go-sql-driver/mysql"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
 )
 
-type CustomTextFormatter struct{}
+type CustomTextFormatter struct {
+	cmdName string
+	jobName string
+}
 
-func (f *CustomTextFormatter) Format(entry *log.Entry) ([]byte, error) {
+func (f *CustomTextFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	timeFormatted := entry.Time.Format("2006-01-02T15:04:05-07:00")
-	return []byte(fmt.Sprintf("[%s] [%s] %s\n", timeFormatted, entry.Level, entry.Message)), nil
+	cn := f.cmdName
+	jn := f.jobName
+	if _, ok := entry.Data["cmdbName"]; ok {
+		cn = entry.Data["cmdbName"].(string)
+	}
+	if _, ok := entry.Data["jobName"]; ok {
+		jn = entry.Data["jobName"].(string)
+	}
+	return []byte(fmt.Sprintf("[%s] [%s] [%s] [%s] %s\n", timeFormatted, entry.Level, cn, jn, strings.ToUpper(entry.Message[:1])+entry.Message[1:])), nil
+}
+
+func preRun(task string) func(cmd *cobra.Command, args []string) {
+	return func(cmd *cobra.Command, args []string) {
+		logrus.SetFormatter(&CustomTextFormatter{cmdName: cmd.Parent().Use, jobName: task})
+		logrus.Infof("launch an %s to %s", cmd.Parent().Use, task)
+		err := preRunE(cmd.Parent().Use, task)
+		if err != nil {
+			logrus.Errorf("Pre-check for %s operation errors : %v", task, err)
+			os.Exit(1)
+		}
+		logrus.Infof("successful pre-check %s into %s", cmd.Parent().Use, task)
+	}
 }
 
 func getSrcOS() (*osc.OSController, error) {
 	var OSC *osc.OSController
+	logrus.Infof("Provider : %s", cSrcProvider)
 	if cSrcProvider == "aws" {
+		logrus.Infof("AccessKey : %s", cSrcAccessKey)
+		logrus.Infof("SecretKey : %s", cSrcSecretKey)
+		logrus.Infof("Region : %s", cSrcRegion)
+		logrus.Infof("BucketName : %s", cSrcBucketName)
 		s3c, err := config.NewS3Client(cSrcAccessKey, cSrcSecretKey, cSrcRegion)
 		if err != nil {
 			return nil, fmt.Errorf("NewS3Client error : %v", err)
 		}
 
-		OSC, err = osc.New(s3fs.New(utils.AWS, s3c, cSrcBucketName, cSrcRegion), osc.WithLogger(logger))
+		OSC, err = osc.New(s3fs.New(utils.AWS, s3c, cSrcBucketName, cSrcRegion), osc.WithLogger(logrus.StandardLogger()))
 		if err != nil {
 			return nil, fmt.Errorf("osc error : %v", err)
 		}
 	} else if cSrcProvider == "gcp" {
+		logrus.Infof("CredentialsFilePath : %s", cSrcGcpCredPath)
+		logrus.Infof("ProjectID : %s", cSrcProjectID)
+		logrus.Infof("Region : %s", cSrcRegion)
+		logrus.Infof("BucketName : %s", cSrcBucketName)
 		gc, err := config.NewGCSClient(cSrcGcpCredPath)
 		if err != nil {
 			return nil, fmt.Errorf("NewGCSClient error : %v", err)
 		}
 
-		OSC, err = osc.New(gcsfs.New(gc, cSrcProjectID, cSrcBucketName, cSrcRegion), osc.WithLogger(logger))
+		OSC, err = osc.New(gcsfs.New(gc, cSrcProjectID, cSrcBucketName, cSrcRegion), osc.WithLogger(logrus.StandardLogger()))
 		if err != nil {
 			return nil, fmt.Errorf("osc error : %v", err)
 		}
 	} else if cSrcProvider == "ncp" {
+		logrus.Infof("AccessKey : %s", cSrcAccessKey)
+		logrus.Infof("SecretKey : %s", cSrcSecretKey)
+		logrus.Infof("Endpoint : %s", cSrcEndpoint)
+		logrus.Infof("Region : %s", cSrcRegion)
+		logrus.Infof("BucketName : %s", cSrcBucketName)
 		s3c, err := config.NewS3ClientWithEndpoint(cSrcAccessKey, cSrcSecretKey, cSrcRegion, cSrcEndpoint)
 		if err != nil {
 			return nil, fmt.Errorf("NewS3ClientWithEndpint error : %v", err)
 		}
 
-		OSC, err = osc.New(s3fs.New(utils.AWS, s3c, cSrcBucketName, cSrcRegion), osc.WithLogger(logger))
+		OSC, err = osc.New(s3fs.New(utils.AWS, s3c, cSrcBucketName, cSrcRegion), osc.WithLogger(logrus.StandardLogger()))
 		if err != nil {
 			return nil, fmt.Errorf("osc error : %v", err)
 		}
@@ -68,33 +108,47 @@ func getSrcOS() (*osc.OSController, error) {
 
 func getDstOS() (*osc.OSController, error) {
 	var OSC *osc.OSController
+	logrus.Infof("Provider : %s", cDstProvider)
 	if cDstProvider == "aws" {
+		logrus.Infof("AccessKey : %s", cDstAccessKey)
+		logrus.Infof("SecretKey : %s", cDstSecretKey)
+		logrus.Infof("Region : %s", cDstRegion)
+		logrus.Infof("BucketName : %s", cDstBucketName)
 		s3c, err := config.NewS3Client(cDstAccessKey, cDstSecretKey, cDstRegion)
 		if err != nil {
 			return nil, fmt.Errorf("NewS3Client error : %v", err)
 		}
 
-		OSC, err = osc.New(s3fs.New(utils.AWS, s3c, cDstBucketName, cDstRegion), osc.WithLogger(logger))
+		OSC, err = osc.New(s3fs.New(utils.AWS, s3c, cDstBucketName, cDstRegion), osc.WithLogger(logrus.StandardLogger()))
 		if err != nil {
 			return nil, fmt.Errorf("osc error : %v", err)
 		}
 	} else if cDstProvider == "gcp" {
+		logrus.Infof("CredentialsFilePath : %s", cDstGcpCredPath)
+		logrus.Infof("ProjectID : %s", cDstProjectID)
+		logrus.Infof("Region : %s", cDstRegion)
+		logrus.Infof("BucketName : %s", cDstBucketName)
 		gc, err := config.NewGCSClient(cDstGcpCredPath)
 		if err != nil {
 			return nil, fmt.Errorf("NewGCSClient error : %v", err)
 		}
 
-		OSC, err = osc.New(gcsfs.New(gc, cDstProjectID, cDstBucketName, cDstRegion), osc.WithLogger(logger))
+		OSC, err = osc.New(gcsfs.New(gc, cDstProjectID, cDstBucketName, cDstRegion), osc.WithLogger(logrus.StandardLogger()))
 		if err != nil {
 			return nil, fmt.Errorf("osc error : %v", err)
 		}
 	} else if cDstProvider == "ncp" {
+		logrus.Infof("AccessKey : %s", cDstAccessKey)
+		logrus.Infof("SecretKey : %s", cDstSecretKey)
+		logrus.Infof("Endpoint : %s", cDstEndpoint)
+		logrus.Infof("Region : %s", cDstRegion)
+		logrus.Infof("BucketName : %s", cDstBucketName)
 		s3c, err := config.NewS3ClientWithEndpoint(cDstAccessKey, cDstSecretKey, cDstRegion, cDstEndpoint)
 		if err != nil {
 			return nil, fmt.Errorf("NewS3ClientWithEndpint error : %v", err)
 		}
 
-		OSC, err = osc.New(s3fs.New(utils.AWS, s3c, cDstBucketName, cDstRegion), osc.WithLogger(logger))
+		OSC, err = osc.New(s3fs.New(utils.AWS, s3c, cDstBucketName, cDstRegion), osc.WithLogger(logrus.StandardLogger()))
 		if err != nil {
 			return nil, fmt.Errorf("osc error : %v", err)
 		}
@@ -103,44 +157,66 @@ func getDstOS() (*osc.OSController, error) {
 }
 
 func getSrcRDMS() (*rdbc.RDBController, error) {
+	logrus.Infof("Provider : %s", cSrcProvider)
+	logrus.Infof("Username : %s", cSrcUsername)
+	logrus.Infof("Password : %s", cSrcPassword)
+	logrus.Infof("Host : %s", cSrcHost)
+	logrus.Infof("Port : %s", cSrcPort)
 	src, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", cSrcUsername, cSrcPassword, cSrcHost, cSrcPort))
 	if err != nil {
 		return nil, err
 	}
-	return rdbc.New(mysql.New(utils.Provider(cSrcProvider), src), rdbc.WithLogger(logger))
+	return rdbc.New(mysql.New(utils.Provider(cSrcProvider), src), rdbc.WithLogger(logrus.StandardLogger()))
 }
 
 func getDstRDMS() (*rdbc.RDBController, error) {
+	logrus.Infof("Provider : %s", cDstProvider)
+	logrus.Infof("Username : %s", cDstUsername)
+	logrus.Infof("Password : %s", cDstPassword)
+	logrus.Infof("Host : %s", cDstHost)
+	logrus.Infof("Port : %s", cDstPort)
 	dst, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", cDstUsername, cDstPassword, cDstHost, cDstPort))
 	if err != nil {
 		return nil, err
 	}
-	return rdbc.New(mysql.New(utils.Provider(cDstProvider), dst), rdbc.WithLogger(logger))
+	return rdbc.New(mysql.New(utils.Provider(cDstProvider), dst), rdbc.WithLogger(logrus.StandardLogger()))
 }
 
 func getSrcNRDMS() (*nrdbc.NRDBController, error) {
+
 	var NRDBC *nrdbc.NRDBController
+	logrus.Infof("Provider : %s", cSrcProvider)
 	if cSrcProvider == "aws" {
+		logrus.Infof("AccessKey : %s", cSrcAccessKey)
+		logrus.Infof("SecretKey : %s", cSrcSecretKey)
+		logrus.Infof("Region : %s", cSrcRegion)
 		awsnrdb, err := config.NewDynamoDBClient(cSrcAccessKey, cSrcSecretKey, cSrcRegion)
 		if err != nil {
 			return nil, err
 		}
 
-		NRDBC, err = nrdbc.New(awsdnmdb.New(awsnrdb, cSrcRegion), nrdbc.WithLogger(logger))
+		NRDBC, err = nrdbc.New(awsdnmdb.New(awsnrdb, cSrcRegion), nrdbc.WithLogger(logrus.StandardLogger()))
 		if err != nil {
 			return nil, err
 		}
 	} else if cSrcProvider == "gcp" {
+		logrus.Infof("CredentialsFilePath : %s", cSrcGcpCredPath)
+		logrus.Infof("ProjectID : %s", cSrcProjectID)
+		logrus.Infof("Region : %s", cSrcRegion)
 		gcpnrdb, err := config.NewFireStoreClient(cSrcGcpCredPath, cSrcProjectID)
 		if err != nil {
 			return nil, err
 		}
 
-		NRDBC, err = nrdbc.New(gcpfsdb.New(gcpnrdb, cSrcRegion), nrdbc.WithLogger(logger))
+		NRDBC, err = nrdbc.New(gcpfsdb.New(gcpnrdb, cSrcRegion), nrdbc.WithLogger(logrus.StandardLogger()))
 		if err != nil {
 			return nil, err
 		}
 	} else if cSrcProvider == "ncp" {
+		logrus.Infof("Username : %s", cSrcUsername)
+		logrus.Infof("Password : %s", cSrcPassword)
+		logrus.Infof("Host : %s", cSrcHost)
+		logrus.Infof("Port : %s", cSrcPort)
 		port, err := strconv.Atoi(cSrcPort)
 		if err != nil {
 			return nil, err
@@ -151,7 +227,7 @@ func getSrcNRDMS() (*nrdbc.NRDBController, error) {
 			return nil, err
 		}
 
-		NRDBC, err = nrdbc.New(ncpmgdb.New(ncpnrdb, cSrcDBName), nrdbc.WithLogger(logger))
+		NRDBC, err = nrdbc.New(ncpmgdb.New(ncpnrdb, cSrcDBName), nrdbc.WithLogger(logrus.StandardLogger()))
 		if err != nil {
 			return nil, err
 		}
@@ -161,27 +237,38 @@ func getSrcNRDMS() (*nrdbc.NRDBController, error) {
 
 func getDstNRDMS() (*nrdbc.NRDBController, error) {
 	var NRDBC *nrdbc.NRDBController
+	logrus.Infof("Provider : %s", cDstProvider)
 	if cDstProvider == "aws" {
+		logrus.Infof("AccessKey : %s", cDstAccessKey)
+		logrus.Infof("SecretKey : %s", cDstSecretKey)
+		logrus.Infof("Region : %s", cDstRegion)
 		awsnrdb, err := config.NewDynamoDBClient(cDstAccessKey, cDstSecretKey, cDstRegion)
 		if err != nil {
 			return nil, err
 		}
 
-		NRDBC, err = nrdbc.New(awsdnmdb.New(awsnrdb, cDstRegion), nrdbc.WithLogger(logger))
+		NRDBC, err = nrdbc.New(awsdnmdb.New(awsnrdb, cDstRegion), nrdbc.WithLogger(logrus.StandardLogger()))
 		if err != nil {
 			return nil, err
 		}
 	} else if cDstProvider == "gcp" {
+		logrus.Infof("CredentialsFilePath : %s", cDstGcpCredPath)
+		logrus.Infof("ProjectID : %s", cDstProjectID)
+		logrus.Infof("Region : %s", cDstRegion)
 		gcpnrdb, err := config.NewFireStoreClient(cDstGcpCredPath, cDstProjectID)
 		if err != nil {
 			return nil, err
 		}
 
-		NRDBC, err = nrdbc.New(gcpfsdb.New(gcpnrdb, cDstRegion), nrdbc.WithLogger(logger))
+		NRDBC, err = nrdbc.New(gcpfsdb.New(gcpnrdb, cDstRegion), nrdbc.WithLogger(logrus.StandardLogger()))
 		if err != nil {
 			return nil, err
 		}
 	} else if cDstProvider == "ncp" {
+		logrus.Infof("Username : %s", cDstUsername)
+		logrus.Infof("Password : %s", cDstPassword)
+		logrus.Infof("Host : %s", cDstHost)
+		logrus.Infof("Port : %s", cDstPort)
 		port, err := strconv.Atoi(cDstPort)
 		if err != nil {
 			return nil, err
@@ -192,7 +279,7 @@ func getDstNRDMS() (*nrdbc.NRDBController, error) {
 			return nil, err
 		}
 
-		NRDBC, err = nrdbc.New(ncpmgdb.New(ncpnrdb, cDstDBName), nrdbc.WithLogger(logger))
+		NRDBC, err = nrdbc.New(ncpmgdb.New(ncpnrdb, cDstDBName), nrdbc.WithLogger(logrus.StandardLogger()))
 		if err != nil {
 			return nil, err
 		}
@@ -214,29 +301,48 @@ func getConfig(credPath string) error {
 }
 
 func preRunE(pName string, cmdName string) error {
+	logrus.Info("initiate a configuration scan")
 	if err := getConfig(credentialPath); err != nil {
 		return fmt.Errorf("get config error : %s", err)
 	}
 
 	if cmdName == "objectstorage" {
 		if value, ok := configData["objectstorage"]; ok {
-			if src, ok := value["src"]; ok {
-				if err := applyOSValue(src, "src"); err != nil {
-					return err
+			if !taskTarget {
+				if src, ok := value["src"]; ok {
+					if err := applyOSValue(src, "src"); err != nil {
+						return err
+					}
+				}
+			} else {
+				if dst, ok := value["dst"]; ok {
+					if err := applyOSValue(dst, "dst"); err != nil {
+						return err
+					}
 				}
 			}
 		} else {
-			return errors.New("does not exist objectstorage src")
+			return errors.New("does not exist objectstorage")
 		}
 
 		if pName != "replication" && pName != "delete" {
 			if err := utils.IsDir(dstPath); err != nil {
 				return errors.New("dstPath error")
 			}
-		} else {
+		} else if pName == "replication" {
 			if value, ok := configData["objectstorage"]; ok {
-				if dst, ok := value["dst"]; ok {
-					return applyOSValue(dst, "dst")
+				if !taskTarget {
+					if dst, ok := value["dst"]; ok {
+						if err := applyOSValue(dst, "dst"); err != nil {
+							return err
+						}
+					}
+				} else {
+					if src, ok := value["src"]; ok {
+						if err := applyOSValue(src, "src"); err != nil {
+							return err
+						}
+					}
 				}
 			} else {
 				return errors.New("does not exist objectstorage dst")
@@ -244,9 +350,17 @@ func preRunE(pName string, cmdName string) error {
 		}
 	} else if cmdName == "rdbms" {
 		if value, ok := configData["rdbms"]; ok {
-			if src, ok := value["src"]; ok {
-				if err := applyRDMValue(src, "src"); err != nil {
-					return err
+			if !taskTarget {
+				if src, ok := value["src"]; ok {
+					if err := applyRDMValue(src, "src"); err != nil {
+						return err
+					}
+				}
+			} else {
+				if value, ok := configData["rdbms"]; ok {
+					if dst, ok := value["dst"]; ok {
+						return applyRDMValue(dst, "dst")
+					}
 				}
 			}
 		} else {
@@ -257,10 +371,20 @@ func preRunE(pName string, cmdName string) error {
 			if err := utils.IsDir(dstPath); err != nil {
 				return errors.New("dstPath error")
 			}
-		} else {
+		} else if pName == "replication" {
 			if value, ok := configData["rdbms"]; ok {
-				if dst, ok := value["dst"]; ok {
-					return applyRDMValue(dst, "dst")
+				if !taskTarget {
+					if value, ok := configData["rdbms"]; ok {
+						if dst, ok := value["dst"]; ok {
+							return applyRDMValue(dst, "dst")
+						}
+					}
+				} else {
+					if src, ok := value["src"]; ok {
+						if err := applyRDMValue(src, "src"); err != nil {
+							return err
+						}
+					}
 				}
 			} else {
 				return errors.New("does not exist rdbms dst")
@@ -268,9 +392,17 @@ func preRunE(pName string, cmdName string) error {
 		}
 	} else if cmdName == "nrdbms" {
 		if value, ok := configData["nrdbms"]; ok {
-			if src, ok := value["src"]; ok {
-				if err := applyNRDMValue(src, "src"); err != nil {
-					return err
+			if !taskTarget {
+				if src, ok := value["src"]; ok {
+					if err := applyNRDMValue(src, "src"); err != nil {
+						return err
+					}
+				}
+			} else {
+				if dst, ok := value["dst"]; ok {
+					if err := applyNRDMValue(dst, "dst"); err != nil {
+						return err
+					}
 				}
 			}
 		} else {
@@ -281,17 +413,26 @@ func preRunE(pName string, cmdName string) error {
 			if err := utils.IsDir(dstPath); err != nil {
 				return errors.New("dstPath error")
 			}
-		} else {
+		} else if pName == "replication" {
 			if value, ok := configData["nrdbms"]; ok {
-				if dst, ok := value["dst"]; ok {
-					return applyNRDMValue(dst, "dst")
+				if !taskTarget {
+					if value, ok := configData["nrdbms"]; ok {
+						if dst, ok := value["dst"]; ok {
+							return applyNRDMValue(dst, "dst")
+						}
+					}
+				} else {
+					if src, ok := value["src"]; ok {
+						if err := applyNRDMValue(src, "src"); err != nil {
+							return err
+						}
+					}
 				}
 			} else {
 				return errors.New("does not exist nrdbms dst")
 			}
 		}
 	}
-
 	return nil
 }
 

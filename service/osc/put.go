@@ -12,56 +12,16 @@ import (
 	"github.com/cloud-barista/cm-data-mold/pkg/utils"
 )
 
-func fileExists(filePath string) bool {
-	if fi, err := os.Stat(filePath); os.IsExist(err) {
-		return !fi.IsDir()
-	}
-	return false
-}
-
-func (osc *OSController) Put(filePath string) error {
-	if !fileExists(filePath) {
-		return errors.New("file does not exist")
-	}
-
-	src, err := os.Open(filePath)
-	if err != nil {
-		return err
-	}
-	defer src.Close()
-
-	dst, err := osc.osfs.Create(filepath.Base(filePath))
-	if err != nil {
-		return err
-	}
-
-	n, err := io.Copy(dst, src)
-	if err != nil {
-		return err
-	}
-
-	sinfo, err := src.Stat()
-	if err != nil {
-		return err
-	}
-
-	if n != sinfo.Size() {
-		return errors.New("put failed")
-	}
-
-	return nil
-}
-
 func (osc *OSController) MPut(dirPath string) error {
 	if err := osc.osfs.CreateBucket(); err != nil {
-		utils.LogWirte(osc.logger, "Error", "CreateBucket", "", err)
+		osc.logWrite("Error", "CreateBucket error", err)
 		return err
 	}
 
-	if fileExists(dirPath) {
-		ferr := errors.New("directory does not exist")
-		utils.LogWirte(osc.logger, "Error", "fileExists", "", ferr)
-		return ferr
+	if utils.FileExists(dirPath) {
+		err := errors.New("directory does not exist")
+		osc.logWrite("Error", "FileExists error", err)
+		return err
 	}
 
 	var objList []utils.Object
@@ -86,7 +46,7 @@ func (osc *OSController) MPut(dirPath string) error {
 	})
 
 	if err != nil {
-		utils.LogWirte(osc.logger, "Error", "Walk", "", err)
+		osc.logWrite("Error", "Walk error", err)
 		return err
 	}
 
@@ -114,12 +74,9 @@ func (osc *OSController) MPut(dirPath string) error {
 
 	for ret := range resultChan {
 		if ret.err != nil {
-			utils.LogWirte(osc.logger, "Error", "mPutWorker", ret.name, ret.err)
-		} else {
-			utils.LogWirte(osc.logger, "Info", "mPutWorker", fmt.Sprintf("%s imported", ret.name), nil)
+			osc.logWrite("Error", fmt.Sprintf("Import failed: %s", ret.name), ret.err)
 		}
 	}
-	utils.LogWirte(osc.logger, "Info", "MPut", "Import Done", nil)
 	return nil
 }
 
@@ -169,6 +126,8 @@ func mPutWorker(osc *OSController, dirPath string, jobs chan utils.Object, resul
 
 		dst.Close()
 		src.Close()
+
+		osc.logWrite("Info", fmt.Sprintf("Import success: %s -> %s", obj.Key, fileName), nil)
 
 		resultChan <- ret
 	}

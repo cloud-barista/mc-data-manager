@@ -22,7 +22,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/cloud-barista/cm-data-mold/pkg/utils"
+	"github.com/cloud-barista/cm-data-mold/service/nrdbc"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -30,45 +31,41 @@ import (
 var importNRDBCmd = &cobra.Command{
 	Use:     "nrdbms",
 	Aliases: []string{"ndb"},
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return preRunE(cmd.Parent().Use, "nrdbms")
-	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		utils.LogWirte(logger, "Info", "importNRDMFunc", "import start", nil)
-		return importNRDMFunc()
+	PreRun:  preRun("nrdbms"),
+	Run: func(cmd *cobra.Command, args []string) {
+		if err := importNRDMFunc(); err != nil {
+			os.Exit(1)
+		}
 	},
 }
 
 var exportNRDBCmd = &cobra.Command{
-	Use: "nrdbms",
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return preRunE(cmd.Parent().Use, "nrdbms")
-	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		utils.LogWirte(logger, "Info", "exportNRDMFunc", "export start", nil)
-		return exportNRDMFunc()
+	Use:    "nrdbms",
+	PreRun: preRun("nrdbms"),
+	Run: func(cmd *cobra.Command, args []string) {
+		if err := exportNRDMFunc(); err != nil {
+			os.Exit(1)
+		}
 	},
 }
 
 var replicationNRDBCmd = &cobra.Command{
-	Use: "nrdbms",
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return preRunE(cmd.Parent().Use, "nrdbms")
-	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		utils.LogWirte(logger, "Info", "replicationNRDMFunc", "replication start", nil)
-		return replicationNRDMFunc()
+	Use:    "nrdbms",
+	PreRun: preRun("nrdbms"),
+	Run: func(cmd *cobra.Command, args []string) {
+		if err := replicationNRDMFunc(); err != nil {
+			os.Exit(1)
+		}
 	},
 }
 
 var deleteNRDBMSCmd = &cobra.Command{
-	Use: "nrdbms",
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return preRunE(cmd.Parent().Use, "nrdbms")
-	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		utils.LogWirte(logger, "Info", "deleteNRDMFunc", "delete start", nil)
-		return deleteNRDMFunc()
+	Use:    "nrdbms",
+	PreRun: preRun("nrdbms"),
+	Run: func(cmd *cobra.Command, args []string) {
+		if err := deleteNRDMFunc(); err != nil {
+			os.Exit(1)
+		}
 	},
 }
 
@@ -84,9 +81,16 @@ func init() {
 }
 
 func importNRDMFunc() error {
-	nrdb, err := getSrcNRDMS()
+	var NRDBC *nrdbc.NRDBController
+	var err error
+	if !taskTarget {
+		NRDBC, err = getSrcNRDMS()
+	} else {
+		NRDBC, err = getDstNRDMS()
+	}
+
 	if err != nil {
-		utils.LogWirte(logger, "Error", "getSrcNRDMS", "failed to get source nrdbms information", err)
+		logrus.Errorf("NRDBController error importing into nrdbms : %v", err)
 		return err
 	}
 
@@ -102,7 +106,7 @@ func importNRDMFunc() error {
 	})
 
 	if err != nil {
-		utils.LogWirte(logger, "Error", "Walk", "Failed to get file list from dstPath", err)
+		logrus.Errorf("Walk error : %v", err)
 		return err
 	}
 
@@ -112,54 +116,62 @@ func importNRDMFunc() error {
 
 		file, err := os.Open(jsonFile)
 		if err != nil {
-			utils.LogWirte(logger, "Error", "Open", "Failed to open json file", err)
+			logrus.Errorf("file open error : %v", err)
 			return err
 		}
 		defer file.Close()
 
 		if err := json.NewDecoder(file).Decode(&srcData); err != nil {
-			utils.LogWirte(logger, "Error", "Decode", "json decoding failed", err)
+			logrus.Errorf("file decoding error : %v", err)
 			return err
 		}
 
 		fileName := filepath.Base(jsonFile)
 		tableName := fileName[:len(fileName)-len(filepath.Ext(fileName))]
 
-		if err := nrdb.Put(tableName, &srcData); err != nil {
-			utils.LogWirte(logger, "Error", "Put", fmt.Sprintf("%s import failed", tableName), err)
+		logrus.Infof("Import start: %s", fileName)
+		if err := NRDBC.Put(tableName, &srcData); err != nil {
+			logrus.Error("Put error importing into nrdbms")
 			return err
 		}
-		utils.LogWirte(logger, "Info", "Put", fmt.Sprintf("%s imported", tableName), nil)
+		logrus.Infof("successfully imported : %s", dstPath)
 	}
-	utils.LogWirte(logger, "Info", "Put", "Import Done", nil)
 	return nil
 }
 
 func exportNRDMFunc() error {
-	nrdb, err := getSrcNRDMS()
+	var NRDBC *nrdbc.NRDBController
+	var err error
+	logrus.Infof("User Information")
+	if !taskTarget {
+		NRDBC, err = getSrcNRDMS()
+	} else {
+		NRDBC, err = getDstNRDMS()
+	}
 	if err != nil {
-		utils.LogWirte(logger, "Error", "getSrcNRDMS", "Failed to get source nrdbms information", err)
+		logrus.Errorf("NRDBController error exporting into rdbms : %v", err)
 		return err
 	}
 
-	tableList, err := nrdb.ListTables()
+	tableList, err := NRDBC.ListTables()
 	if err != nil {
-		utils.LogWirte(logger, "Error", "ListTables", "Table list lookup failed", err)
+		logrus.Errorf("ListTables error : %v", err)
 		return err
 	}
 
 	var dstData []map[string]interface{}
 	for _, table := range tableList {
+		logrus.Infof("Export start: %s", table)
 		dstData = []map[string]interface{}{}
 
-		if err := nrdb.Get(table, &dstData); err != nil {
-			utils.LogWirte(logger, "Error", "Get", fmt.Sprintf("%s export failed", table), err)
+		if err := NRDBC.Get(table, &dstData); err != nil {
+			logrus.Errorf("Get error : %v", err)
 			return err
 		}
 
 		file, err := os.Create(filepath.Join(dstPath, fmt.Sprintf("%s.json", table)))
 		if err != nil {
-			utils.LogWirte(logger, "Error", "Create", "File creation failed", err)
+			logrus.Errorf("File create error : %v", err)
 			return err
 		}
 		defer file.Close()
@@ -167,39 +179,74 @@ func exportNRDMFunc() error {
 		encoder := json.NewEncoder(file)
 		encoder.SetIndent("", "    ")
 		if err := encoder.Encode(dstData); err != nil {
-			utils.LogWirte(logger, "Error", "Encode", "json encoding failed", err)
+			logrus.Errorf("data encoding error : %v", err)
 			return err
 		}
-		utils.LogWirte(logger, "Info", "Get", fmt.Sprintf("%s exported", table), err)
+		logrus.Infof("successfully exported : %s", file.Name())
 	}
-
+	logrus.Infof("successfully exported : %s", dstPath)
 	return nil
 }
 
 func replicationNRDMFunc() error {
-	src, err := getSrcNRDMS()
-	if err != nil {
-		utils.LogWirte(logger, "Error", "getSrcNRDMS", "Failed to get source nrdbms information", err)
+	var srcNRDBC *nrdbc.NRDBController
+	var srcErr error
+	var dstNRDBC *nrdbc.NRDBController
+	var dstErr error
+	if !taskTarget {
+		logrus.Infof("Source Information")
+		srcNRDBC, srcErr = getSrcNRDMS()
+		if srcErr != nil {
+			logrus.Errorf("NRDBController error replication into nrdbms : %v", srcErr)
+			return srcErr
+		}
+		logrus.Infof("Target Information")
+		dstNRDBC, dstErr = getDstNRDMS()
+		if dstErr != nil {
+			logrus.Errorf("NRDBController error replication into nrdbms : %v", dstErr)
+			return dstErr
+		}
+	} else {
+		logrus.Infof("Source Information")
+		srcNRDBC, srcErr = getDstNRDMS()
+		if srcErr != nil {
+			logrus.Errorf("NRDBController error replication into nrdbms : %v", srcErr)
+			return srcErr
+		}
+		logrus.Infof("Target Information")
+		dstNRDBC, dstErr = getSrcNRDMS()
+		if dstErr != nil {
+			logrus.Errorf("NRDBController error replication into nrdbms : %v", dstErr)
+			return dstErr
+		}
+	}
+	logrus.Info("Launch NRDBController Copy")
+	if err := srcNRDBC.Copy(dstNRDBC); err != nil {
+		logrus.Errorf("Copy error copying into nrdbms : %v", err)
 		return err
 	}
-
-	dst, err := getDstNRDMS()
-	if err != nil {
-		utils.LogWirte(logger, "Error", "getDstNRDMS", "Failed to get target nrdbms information", err)
-		return err
-	}
-
-	return src.Copy(dst)
+	logrus.Info("successfully replicationed")
+	return nil
 }
 
 func deleteNRDMFunc() error {
-	src, err := getSrcNRDMS()
+	var NRDBC *nrdbc.NRDBController
+	var err error
+	if !taskTarget {
+		NRDBC, err = getSrcNRDMS()
+	} else {
+		NRDBC, err = getDstNRDMS()
+	}
 	if err != nil {
-		utils.LogWirte(logger, "Error", "getSrcNRDMS", "Failed to get source nrdbms information", err)
+		logrus.Errorf("NRDBController error deleting into nrdbms : %v", err)
 		return err
 	}
 
-	err = src.DeleteTables(deleteTableList...)
-	utils.LogWirte(logger, "Info", "DeleteTables", "Delete Done", nil)
-	return err
+	logrus.Info("Launch NRDBController Delete")
+	if err := NRDBC.DeleteTables(deleteTableList...); err != nil {
+		logrus.Errorf("Delete error deleting into nrdbms : %v", err)
+		return err
+	}
+	logrus.Info("successfully deleted")
+	return nil
 }

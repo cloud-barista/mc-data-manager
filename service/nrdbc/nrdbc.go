@@ -3,7 +3,6 @@ package nrdbc
 import (
 	"fmt"
 
-	"github.com/cloud-barista/cm-data-mold/pkg/utils"
 	"github.com/sirupsen/logrus"
 )
 
@@ -45,10 +44,8 @@ func New(nrdb NRDBMS, opts ...Option) (*NRDBController, error) {
 func (nrdbc *NRDBController) ListTables() ([]string, error) {
 	tableList, err := nrdbc.client.ListTables()
 	if err != nil {
-		utils.LogWirte(nrdbc.logger, "Error", "ListTables", "Failed to get table list", err)
 		return tableList, err
 	}
-	utils.LogWirte(nrdbc.logger, "Info", "ListTables", "Get Table List Successfully", nil)
 	return tableList, nil
 }
 
@@ -56,10 +53,8 @@ func (nrdbc *NRDBController) ListTables() ([]string, error) {
 func (nrdbc *NRDBController) CreateTable(tableName string) error {
 	err := nrdbc.client.CreateTable(tableName)
 	if err != nil {
-		utils.LogWirte(nrdbc.logger, "Error", "CreateTable", "Failed to create table", err)
 		return err
 	}
-	utils.LogWirte(nrdbc.logger, "Info", "CreateTable", "Table creation successful", nil)
 	return nil
 }
 
@@ -67,10 +62,8 @@ func (nrdbc *NRDBController) CreateTable(tableName string) error {
 func (nrdbc *NRDBController) DeleteTables(tableName ...string) error {
 	for _, table := range tableName {
 		if err := nrdbc.client.DeleteTables(table); err != nil {
-			utils.LogWirte(nrdbc.logger, "Error", "DeleteTables", "Failed to delete table", err)
 			return err
 		}
-		utils.LogWirte(nrdbc.logger, "Info", "DeleteTables", fmt.Sprintf("%s Deletion Successful", table), nil)
 	}
 	return nil
 }
@@ -79,6 +72,7 @@ func (nrdbc *NRDBController) DeleteTables(tableName ...string) error {
 func (nrdbc *NRDBController) Put(tableName string, srcData *[]map[string]interface{}) error {
 	tableList, err := nrdbc.client.ListTables()
 	if err != nil {
+		nrdbc.logWrite("Error", "ListTables error", err)
 		return err
 	}
 
@@ -92,15 +86,17 @@ func (nrdbc *NRDBController) Put(tableName string, srcData *[]map[string]interfa
 
 	if !isTable {
 		if err := nrdbc.client.CreateTable(tableName); err != nil {
+			nrdbc.logWrite("Error", "CreateTable error", err)
 			return err
 		}
+		nrdbc.logWrite("Info", fmt.Sprintf("Table creation successful: %s", tableName), nil)
 	}
 
 	if err := nrdbc.client.ImportTable(tableName, srcData); err != nil {
-		utils.LogWirte(nrdbc.logger, "Error", "ImportTable", "Table import failed", err)
+		nrdbc.logWrite("Error", "ImportTable error", err)
 		return err
 	}
-	utils.LogWirte(nrdbc.logger, "Info", "ImportTable", "Table Import Successful", nil)
+	nrdbc.logWrite("Info", fmt.Sprintf("Table import success: %s", tableName), err)
 	return nil
 }
 
@@ -108,10 +104,8 @@ func (nrdbc *NRDBController) Put(tableName string, srcData *[]map[string]interfa
 func (nrdbc *NRDBController) Get(tableName string, dstData *[]map[string]interface{}) error {
 	err := nrdbc.client.ExportTable(tableName, dstData)
 	if err != nil {
-		utils.LogWirte(nrdbc.logger, "Error", "ExportTable", "Export table failed", err)
 		return err
 	}
-	utils.LogWirte(nrdbc.logger, "Info", "ExportTable", "Table Export Successful", nil)
 	return nil
 }
 
@@ -119,22 +113,34 @@ func (nrdbc *NRDBController) Get(tableName string, dstData *[]map[string]interfa
 func (src *NRDBController) Copy(dst *NRDBController) error {
 	tableList, err := src.client.ListTables()
 	if err != nil {
+		src.logWrite("Error", "ListTables error", err)
 		return err
 	}
 
 	for _, table := range tableList {
-
+		src.logWrite("Info", fmt.Sprintf("Replication start: %s", table), nil)
 		data := []map[string]interface{}{}
 		if err := src.Get(table, &data); err != nil {
+			src.logWrite("Error", "Get error", err)
 			return err
 		}
 
 		if err := dst.Put(table, &data); err != nil {
+			src.logWrite("Error", "Put error", err)
 			return err
 		}
-
-		utils.LogWirte(src.logger, "Info", "Copy", fmt.Sprintf("%s Copied", table), nil)
+		src.logWrite("Info", fmt.Sprintf("Replication success: src:/%s -> dst:/%s", table, table), nil)
 	}
-	utils.LogWirte(src.logger, "Info", "Copy", "Replication Done", nil)
 	return nil
+}
+
+func (nrdbc *NRDBController) logWrite(logLevel, msg string, err error) {
+	if nrdbc.logger != nil {
+		switch logLevel {
+		case "Info":
+			nrdbc.logger.Info(msg)
+		case "Error":
+			nrdbc.logger.Errorf("%s : %v", msg, err)
+		}
+	}
 }
