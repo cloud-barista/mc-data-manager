@@ -12,8 +12,8 @@
         Google Cloud Storage
     </div>
     <div class="card-body">
-        <form action="/generate/gcs" method="POST" enctype="multipart/form-data">
-            
+        <!-- <form action="/generate/gcs" method="POST" enctype="multipart/form-data"> -->
+        <form id="genForm">
             <div class="mb-3">
                 <div class="form-floating">
                     <select class="form-select form-select-sm w-50" id="gen-gcs-region" name="region">
@@ -50,6 +50,7 @@
             {{ template "gen-data.html" . }}
 
             <button type="submit" class="btn btn-primary">Submit</button>
+            <input type="hidden" id="genTarget" value="gcs">
         </form>
     </div>
 </div>

@@ -1,5 +1,5 @@
 <div id="layoutSidenav_content">
-    <main>
+    <main class="w-75">
         <div class="container-fluid px-4">
             {{ if eq .Content "main" }}
                 {{ template "main.html" }}
@@ -153,6 +153,11 @@
             {{ if eq .Content "Migration-MongoDB-Firestore" }}
                 {{ template "mig-mongodbToFirestore.html" . }}
             {{ end }}
+            
+            {{ if ne .Content "main" }}
+                {{ template "result.html" . }}
+            {{ end }}
         </div>
+
     </main>
-</div>
+<!-- </div> -->
