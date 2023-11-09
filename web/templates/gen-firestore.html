@@ -12,7 +12,8 @@
         Firestore
     </div>
     <div class="card-body">
-        <form action="/generate/firestore" method="POST" enctype="multipart/form-data">
+        <!-- <form action="/generate/firestore" method="POST" enctype="multipart/form-data"> -->
+        <form id="genForm">
             
             <div class="mb-3">
                 <div class="form-floating">
@@ -40,6 +41,7 @@
             </div>
 
             <button type="submit" class="btn btn-primary">Submit</button>
+            <input type="hidden" id="genTarget" value="firestore">
         </form>
     </div>
 </div>

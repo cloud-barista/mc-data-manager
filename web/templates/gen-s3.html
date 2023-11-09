@@ -12,7 +12,8 @@
         S3
     </div>
     <div class="card-body">
-        <form action="/generate/s3" method="POST">
+        <!-- <form action="/generate/s3" method="POST"> -->
+        <form id="genForm">
 
             <div class="mb-3">
                 <div class="form-floating">
@@ -53,6 +54,7 @@
             {{ template "gen-data.html" . }}
 
             <button type="submit" class="btn btn-primary">생성</button>
+            <input type="hidden" id="genTarget" value="s3">
         </form>
     </div>
 </div>

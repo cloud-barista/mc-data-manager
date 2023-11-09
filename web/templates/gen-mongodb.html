@@ -12,7 +12,8 @@
         MongoDB
     </div>
     <div class="card-body">
-        <form action="/generate/mongodb" method="POST">
+        <!-- <form action="/generate/mongodb" method="POST"> -->
+        <form id="genForm">
            
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-house"></i></span>
@@ -55,6 +56,7 @@
             </div>
 
             <button type="submit" class="btn btn-primary">생성</button>
+            <input type="hidden" id="genTarget" value="mongodb">
         </form>
     </div>
 </div>
