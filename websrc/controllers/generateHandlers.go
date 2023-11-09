@@ -41,9 +41,9 @@ func GenerateLinuxGetHandler() gin.HandlerFunc {
 func GenerateLinuxPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		if runtime.GOOS != "linux" {
-			ctx.HTML(http.StatusBadRequest, "index.html", gin.H{
-				"Content": "Generate-Linux",
-				"error":   errors.New("your current operating system is not linux"),
+			ctx.JSONP(http.StatusOK, gin.H{
+				"Result": "failed",
+				"Error":  "your current operating system is not linux",
 			})
 			return
 		}
@@ -54,16 +54,16 @@ func GenerateLinuxPostHandler() gin.HandlerFunc {
 
 		err := genData(params)
 		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Generate-Linux",
-				"error":   err,
+			ctx.JSONP(http.StatusOK, gin.H{
+				"Result": "error",
+				"Error":  err,
 			})
 			return
 		}
 
 		ctx.JSONP(http.StatusOK, gin.H{
-			"Data":  "dddd",
-			"Error": nil,
+			"Result": "dddd",
+			"Error":  nil,
 		})
 	}
 }

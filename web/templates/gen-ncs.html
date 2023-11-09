@@ -12,7 +12,8 @@
         Naver Cloud Storage
     </div>
     <div class="card-body">
-        <form action="/generate/ncs" method="POST">
+        <!-- <form action="/generate/ncs" method="POST"> -->
+        <form id="genForm">
             
             <div class="mb-3">
                 <div class="form-floating">
@@ -61,6 +62,7 @@
             {{ template "gen-data.html" . }}
 
             <button type="submit" class="btn btn-primary">Submit</button>
+            <input type="hidden" id="genTarget" value="ncs">
         </form>
     </div>
 </div>

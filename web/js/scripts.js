@@ -23,7 +23,7 @@ window.addEventListener('DOMContentLoaded', event => {
         });
     }
 
-    generateFormSubmit()
+    generateFormSubmit();
     
 });
 
@@ -33,7 +33,6 @@ function generateFormSubmit() {
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-
         loadingButtonOn();
         resultCollpase();
 
@@ -54,16 +53,21 @@ function generateFormSubmit() {
 
         fetch(url, req)
         .then(response => {
-            const j = response.json()
-            console.log(j);
+            return response.json();
+        })
+        .then(json => {
+            const resultText = document.getElementById('resultText');
+            resultText.value = json.Result;
+            console.log(json);
             console.log("generate done.");
         })
-        .then(data => {
-            console.log(data);
+        .catch(reason => {
+            console.log(reason);
+            alert(reason);
         })
         .finally(() => {
-            loadingButtonOff()
-        })
+            loadingButtonOff();
+        });
 
         console.log("generate progressing...");
 
