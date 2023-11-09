@@ -48,25 +48,11 @@ func GenerateLinuxPostHandler() gin.HandlerFunc {
 			return
 		}
 
-		dummyPath := ctx.PostForm("path")
-		checkSQL := ctx.PostForm("checkSQL")
-		sizeSQL := ctx.PostForm("sizeSQL")
-		checkCSV := ctx.PostForm("checkCSV")
-		sizeCSV := ctx.PostForm("sizeCSV")
-		checkTXT := ctx.PostForm("checkTXT")
-		sizeTXT := ctx.PostForm("sizeTXT")
-		checkPNG := ctx.PostForm("checkPNG")
-		sizePNG := ctx.PostForm("sizePNG")
-		checkGIF := ctx.PostForm("checkGIF")
-		sizeGIF := ctx.PostForm("sizeGIF")
-		checkZIP := ctx.PostForm("checkZIP")
-		sizeZIP := ctx.PostForm("sizeZIP")
-		checkJSON := ctx.PostForm("checkJSON")
-		sizeJSON := ctx.PostForm("sizeJSON")
-		checkXML := ctx.PostForm("checkXML")
-		sizeXML := ctx.PostForm("sizeXML")
+		data, _ := ctx.GetRawData()
+		params := GenDataParams{}
+		json.Unmarshal(data, &params)
 
-		err := genData(dummyPath, checkSQL, sizeSQL, checkCSV, sizeCSV, checkTXT, sizeTXT, checkPNG, sizePNG, checkGIF, sizeGIF, checkZIP, sizeZIP, checkJSON, sizeJSON, checkXML, sizeXML)
+		err := genData(params)
 		if err != nil {
 			ctx.HTML(http.StatusOK, "index.html", gin.H{
 				"Content": "Generate-Linux",
@@ -75,9 +61,9 @@ func GenerateLinuxPostHandler() gin.HandlerFunc {
 			return
 		}
 
-		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content": "Generate-Linux",
-			"error":   nil,
+		ctx.JSONP(http.StatusOK, gin.H{
+			"Data":  "dddd",
+			"Error": nil,
 		})
 	}
 }
@@ -104,25 +90,11 @@ func GenerateWindowsPostHandler() gin.HandlerFunc {
 			})
 		}
 
-		dummyPath := ctx.PostForm("path")
-		checkSQL := ctx.PostForm("checkSQL")
-		sizeSQL := ctx.PostForm("sizeSQL")
-		checkCSV := ctx.PostForm("checkCSV")
-		sizeCSV := ctx.PostForm("sizeCSV")
-		checkTXT := ctx.PostForm("checkTXT")
-		sizeTXT := ctx.PostForm("sizeTXT")
-		checkPNG := ctx.PostForm("checkPNG")
-		sizePNG := ctx.PostForm("sizePNG")
-		checkGIF := ctx.PostForm("checkGIF")
-		sizeGIF := ctx.PostForm("sizeGIF")
-		checkZIP := ctx.PostForm("checkZIP")
-		sizeZIP := ctx.PostForm("sizeZIP")
-		checkJSON := ctx.PostForm("checkJSON")
-		sizeJSON := ctx.PostForm("sizeJSON")
-		checkXML := ctx.PostForm("checkXML")
-		sizeXML := ctx.PostForm("sizeXML")
+		data, _ := ctx.GetRawData()
+		params := GenDataParams{}
+		json.Unmarshal(data, &params)
 
-		err := genData(dummyPath, checkSQL, sizeSQL, checkCSV, sizeCSV, checkTXT, sizeTXT, checkPNG, sizePNG, checkGIF, sizeGIF, checkZIP, sizeZIP, checkJSON, sizeJSON, checkXML, sizeXML)
+		err := genData(params)
 		if err != nil {
 			ctx.HTML(http.StatusOK, "index.html", gin.H{
 				"Content": "Generate-Windows",
@@ -152,26 +124,9 @@ func GenerateS3GetHandler() gin.HandlerFunc {
 
 func GenerateS3PostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		region := ctx.PostForm("region")
-		accessKey := ctx.PostForm("accessKey")
-		secretKey := ctx.PostForm("secretKey")
-		bucket := ctx.PostForm("bucket")
-		checkSQL := ctx.PostForm("checkSQL")
-		sizeSQL := ctx.PostForm("sizeSQL")
-		checkCSV := ctx.PostForm("checkCSV")
-		sizeCSV := ctx.PostForm("sizeCSV")
-		checkTXT := ctx.PostForm("checkTXT")
-		sizeTXT := ctx.PostForm("sizeTXT")
-		checkPNG := ctx.PostForm("checkPNG")
-		sizePNG := ctx.PostForm("sizePNG")
-		checkGIF := ctx.PostForm("checkGIF")
-		sizeGIF := ctx.PostForm("sizeGIF")
-		checkZIP := ctx.PostForm("checkZIP")
-		sizeZIP := ctx.PostForm("sizeZIP")
-		checkJSON := ctx.PostForm("checkJSON")
-		sizeJSON := ctx.PostForm("sizeJSON")
-		checkXML := ctx.PostForm("checkXML")
-		sizeXML := ctx.PostForm("sizeXML")
+		data, _ := ctx.GetRawData()
+		params := GenDataParams{}
+		json.Unmarshal(data, &params)
 
 		tmpDir, err := os.MkdirTemp("", "datamold-dummy")
 		if err != nil {
@@ -184,7 +139,9 @@ func GenerateS3PostHandler() gin.HandlerFunc {
 		}
 		defer os.RemoveAll(tmpDir)
 
-		err = genData(tmpDir, checkSQL, sizeSQL, checkCSV, sizeCSV, checkTXT, sizeTXT, checkPNG, sizePNG, checkGIF, sizeGIF, checkZIP, sizeZIP, checkJSON, sizeJSON, checkXML, sizeXML)
+		params.DummyPath = tmpDir
+
+		err = genData(params)
 		if err != nil {
 			ctx.HTML(http.StatusOK, "index.html", gin.H{
 				"Content": "Generate-S3",
@@ -194,7 +151,7 @@ func GenerateS3PostHandler() gin.HandlerFunc {
 			return
 		}
 
-		s3c, err := config.NewS3Client(accessKey, secretKey, region)
+		s3c, err := config.NewS3Client(params.AccessKey, params.SecretKey, params.Region)
 		if err != nil {
 			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
 				"Content": "Generate-S3",
@@ -204,7 +161,7 @@ func GenerateS3PostHandler() gin.HandlerFunc {
 			return
 		}
 
-		awsOSC, err := osc.New(s3fs.New(utils.AWS, s3c, bucket, region))
+		awsOSC, err := osc.New(s3fs.New(utils.AWS, s3c, params.Bucket, params.Region))
 		if err != nil {
 			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
 				"Content": "Generate-S3",
@@ -280,22 +237,24 @@ func GenerateGCSPostHandler() gin.HandlerFunc {
 			return
 		}
 
-		checkSQL := ctx.PostForm("checkSQL")
-		sizeSQL := ctx.PostForm("sizeSQL")
-		checkCSV := ctx.PostForm("checkCSV")
-		sizeCSV := ctx.PostForm("sizeCSV")
-		checkTXT := ctx.PostForm("checkTXT")
-		sizeTXT := ctx.PostForm("sizeTXT")
-		checkPNG := ctx.PostForm("checkPNG")
-		sizePNG := ctx.PostForm("sizePNG")
-		checkGIF := ctx.PostForm("checkGIF")
-		sizeGIF := ctx.PostForm("sizeGIF")
-		checkZIP := ctx.PostForm("checkZIP")
-		sizeZIP := ctx.PostForm("sizeZIP")
-		checkJSON := ctx.PostForm("checkJSON")
-		sizeJSON := ctx.PostForm("sizeJSON")
-		checkXML := ctx.PostForm("checkXML")
-		sizeXML := ctx.PostForm("sizeXML")
+		params := GenDataParams{
+			CheckSQL:  ctx.PostForm("checkSQL"),
+			SizeSQL:   ctx.PostForm("sizeSQL"),
+			CheckCSV:  ctx.PostForm("checkCSV"),
+			SizeCSV:   ctx.PostForm("sizeCSV"),
+			CheckTXT:  ctx.PostForm("checkTXT"),
+			SizeTXT:   ctx.PostForm("sizeTXT"),
+			CheckPNG:  ctx.PostForm("checkPNG"),
+			SizePNG:   ctx.PostForm("sizePNG"),
+			CheckGIF:  ctx.PostForm("checkGIF"),
+			SizeGIF:   ctx.PostForm("sizeGIF"),
+			CheckZIP:  ctx.PostForm("checkZIP"),
+			SizeZIP:   ctx.PostForm("sizeZIP"),
+			CheckJSON: ctx.PostForm("checkJSON"),
+			SizeJSON:  ctx.PostForm("sizeJSON"),
+			CheckXML:  ctx.PostForm("checkXML"),
+			SizeXML:   ctx.PostForm("sizeXML"),
+		}
 
 		tmpDir, err := os.MkdirTemp("", "datamold-dummy")
 		if err != nil {
@@ -308,7 +267,9 @@ func GenerateGCSPostHandler() gin.HandlerFunc {
 		}
 		defer os.RemoveAll(tmpDir)
 
-		err = genData(tmpDir, checkSQL, sizeSQL, checkCSV, sizeCSV, checkTXT, sizeTXT, checkPNG, sizePNG, checkGIF, sizeGIF, checkZIP, sizeZIP, checkJSON, sizeJSON, checkXML, sizeXML)
+		params.DummyPath = tmpDir
+
+		err = genData(params)
 		if err != nil {
 			ctx.HTML(http.StatusOK, "index.html", gin.H{
 				"Content": "Generate-GCS",
@@ -367,27 +328,9 @@ func GenerateNCSGetHandler() gin.HandlerFunc {
 
 func GenerateNCSPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		region := ctx.PostForm("region")
-		accessKey := ctx.PostForm("accessKey")
-		secretKey := ctx.PostForm("secretKey")
-		endpoint := ctx.PostForm("endpoint")
-		bucket := ctx.PostForm("bucket")
-		checkSQL := ctx.PostForm("checkSQL")
-		sizeSQL := ctx.PostForm("sizeSQL")
-		checkCSV := ctx.PostForm("checkCSV")
-		sizeCSV := ctx.PostForm("sizeCSV")
-		checkTXT := ctx.PostForm("checkTXT")
-		sizeTXT := ctx.PostForm("sizeTXT")
-		checkPNG := ctx.PostForm("checkPNG")
-		sizePNG := ctx.PostForm("sizePNG")
-		checkGIF := ctx.PostForm("checkGIF")
-		sizeGIF := ctx.PostForm("sizeGIF")
-		checkZIP := ctx.PostForm("checkZIP")
-		sizeZIP := ctx.PostForm("sizeZIP")
-		checkJSON := ctx.PostForm("checkJSON")
-		sizeJSON := ctx.PostForm("sizeJSON")
-		checkXML := ctx.PostForm("checkXML")
-		sizeXML := ctx.PostForm("sizeXML")
+		data, _ := ctx.GetRawData()
+		params := GenDataParams{}
+		json.Unmarshal(data, &params)
 
 		tmpDir, err := os.MkdirTemp("", "datamold-dummy")
 		if err != nil {
@@ -400,7 +343,9 @@ func GenerateNCSPostHandler() gin.HandlerFunc {
 		}
 		defer os.RemoveAll(tmpDir)
 
-		err = genData(tmpDir, checkSQL, sizeSQL, checkCSV, sizeCSV, checkTXT, sizeTXT, checkPNG, sizePNG, checkGIF, sizeGIF, checkZIP, sizeZIP, checkJSON, sizeJSON, checkXML, sizeXML)
+		params.DummyPath = tmpDir
+
+		err = genData(params)
 		if err != nil {
 			ctx.HTML(http.StatusOK, "index.html", gin.H{
 				"Content": "Generate-NCS",
@@ -410,7 +355,7 @@ func GenerateNCSPostHandler() gin.HandlerFunc {
 			return
 		}
 
-		s3c, err := config.NewS3ClientWithEndpoint(accessKey, secretKey, region, endpoint)
+		s3c, err := config.NewS3ClientWithEndpoint(params.AccessKey, params.SecretKey, params.Region, params.Endpoint)
 		if err != nil {
 			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
 				"Content": "Generate-NCS",
@@ -420,7 +365,7 @@ func GenerateNCSPostHandler() gin.HandlerFunc {
 			return
 		}
 
-		ncpOSC, err := osc.New(s3fs.New(utils.NCP, s3c, bucket, region))
+		ncpOSC, err := osc.New(s3fs.New(utils.NCP, s3c, params.Bucket, params.Region))
 		if err != nil {
 			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
 				"Content": "Generate-NCS",
@@ -458,11 +403,9 @@ func GenerateMySQLGetHandler() gin.HandlerFunc {
 
 func GenerateMySQLPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		provider := ctx.PostForm("provider")
-		host := ctx.PostForm("host")
-		port := ctx.PostForm("port")
-		username := ctx.PostForm("username")
-		password := ctx.PostForm("password")
+		data, _ := ctx.GetRawData()
+		params := GenDataParams{}
+		json.Unmarshal(data, &params)
 
 		tmpDir, err := os.MkdirTemp("", "datamold-dummy")
 		if err != nil {
@@ -474,6 +417,8 @@ func GenerateMySQLPostHandler() gin.HandlerFunc {
 		}
 		defer os.RemoveAll(tmpDir)
 
+		params.DummyPath = tmpDir
+
 		if err := structed.GenerateRandomSQL(tmpDir, 1); err != nil {
 			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
 				"Content": "Generate-MySQL",
@@ -482,7 +427,7 @@ func GenerateMySQLPostHandler() gin.HandlerFunc {
 			return
 		}
 
-		sqlDB, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", username, password, host, port))
+		sqlDB, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", params.DBUser, params.DBPassword, params.DBHost, params.DBPort))
 		if err != nil {
 			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
 				"Content": "Generate-MySQL",
@@ -491,7 +436,7 @@ func GenerateMySQLPostHandler() gin.HandlerFunc {
 			return
 		}
 
-		rdbController, err := rdbc.New(mysql.New(utils.Provider(provider), sqlDB))
+		rdbController, err := rdbc.New(mysql.New(utils.Provider(params.DBProvider), sqlDB))
 		if err != nil {
 			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
 				"Content": "Generate-MySQL",

@@ -23,4 +23,68 @@ window.addEventListener('DOMContentLoaded', event => {
         });
     }
 
+    generateFormSubmit()
+    
 });
+
+
+function generateFormSubmit() {
+    const form = document.getElementById('genForm');
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        loadingButtonOn();
+        resultCollpase();
+
+        const payload = new FormData(form);
+        let jsonData = JSON.stringify(Object.fromEntries(payload));
+        console.log(jsonData);
+        const target= document.getElementById('genTarget').value;
+        const url = "/generate/" + target;
+
+        console.log(url);
+   
+        let req;
+        if (target == "gcs" || target == "firestore") {
+            req = { method: 'POST', body: payload };
+        } else {
+            req = { method: 'POST', body: jsonData };
+        }
+
+        fetch(url, req)
+        .then(response => {
+            const j = response.json()
+            console.log(j);
+            console.log("generate done.");
+        })
+        .then(data => {
+            console.log(data);
+        })
+        .finally(() => {
+            loadingButtonOff()
+        })
+
+        console.log("generate progressing...");
+
+    });
+}
+
+function loadingButtonOn() {
+    let btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;진행 중..';
+}
+
+function loadingButtonOff() {
+    let btn = document.getElementById('submitBtn');
+    btn.disabled = false;
+    btn.innerHTML = '생성';
+}
+
+function resultCollpase() {
+    const colp = new bootstrap.Collapse('#resultCollapse', {
+        toggle: true
+    });
+    colp.show();
+}

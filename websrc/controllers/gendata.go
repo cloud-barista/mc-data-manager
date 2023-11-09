@@ -8,59 +8,96 @@ import (
 	"github.com/cloud-barista/cm-data-mold/pkg/dummy/unstructed"
 )
 
-func genData(dummyPath, checkSQL, sizeSQL, checkCSV, sizeCSV, checkTXT, sizeTXT, checkPNG, sizePNG, checkGIF, sizeGIF, checkZIP, sizeZIP, checkJSON, sizeJSON, checkXML, sizeXML string) error {
-	if checkSQL == "sql" {
-		sql, _ := strconv.Atoi(sizeSQL)
-		if err := structed.GenerateRandomSQL(dummyPath, sql); err != nil {
+type GenDataParams struct {
+	Region    string `json:"region"`
+	AccessKey string `json:"accessKey"`
+	SecretKey string `json:"secretKey"`
+	Bucket    string `json:"bucket"`
+	Endpoint  string `json:"endpoint"`
+	DummyPath string `json:"path"`
+
+	CheckSQL  string `json:"checkSQL"`
+	CheckCSV  string `json:"checkCSV"`
+	CheckTXT  string `json:"checkTXT"`
+	CheckPNG  string `json:"checkPNG"`
+	CheckGIF  string `json:"checkGIF"`
+	CheckZIP  string `json:"checkZIP"`
+	CheckJSON string `json:"checkJSON"`
+	CheckXML  string `json:"checkXML"`
+
+	SizeSQL  string `json:"sizeSQL"`
+	SizeCSV  string `json:"sizeCSV"`
+	SizeTXT  string `json:"sizeTXT"`
+	SizePNG  string `json:"sizePNG"`
+	SizeGIF  string `json:"sizeGIF"`
+	SizeZIP  string `json:"sizeZIP"`
+	SizeJSON string `json:"sizeJSON"`
+	SizeXML  string `json:"sizeXML"`
+
+	DBProvider   string `json:"provider"`
+	DBHost       string `json:"host"`
+	DBPort       string `json:"port"`
+	DBUser       string `json:"username"`
+	DBPassword   string `json:"password"`
+	DatabaseName string `json:"databaseName"`
+}
+
+type CloudParams struct {
+}
+
+func genData(params GenDataParams) error {
+	if params.CheckSQL == "on" {
+		sql, _ := strconv.Atoi(params.SizeSQL)
+		if err := structed.GenerateRandomSQL(params.DummyPath, sql); err != nil {
 			return err
 		}
 	}
 
-	if checkCSV == "csv" {
-		csv, _ := strconv.Atoi(sizeCSV)
-		if err := structed.GenerateRandomCSV(dummyPath, csv); err != nil {
+	if params.CheckCSV == "on" {
+		csv, _ := strconv.Atoi(params.SizeCSV)
+		if err := structed.GenerateRandomCSV(params.DummyPath, csv); err != nil {
 			return err
 		}
 	}
 
-	if checkTXT == "txt" {
-		txt, _ := strconv.Atoi(sizeTXT)
-		if err := unstructed.GenerateRandomTXT(dummyPath, txt); err != nil {
+	if params.CheckTXT == "on" {
+		txt, _ := strconv.Atoi(params.SizeTXT)
+		if err := unstructed.GenerateRandomTXT(params.DummyPath, txt); err != nil {
 			return err
 		}
 	}
 
-	if checkPNG == "png" {
-		png, _ := strconv.Atoi(sizePNG)
-		if err := unstructed.GenerateRandomPNGImage(dummyPath, png); err != nil {
+	if params.CheckPNG == "on" {
+		png, _ := strconv.Atoi(params.SizePNG)
+		if err := unstructed.GenerateRandomPNGImage(params.DummyPath, png); err != nil {
 			return err
 		}
 	}
 
-	if checkGIF == "gif" {
-		gif, _ := strconv.Atoi(sizeGIF)
-		if err := unstructed.GenerateRandomGIF(dummyPath, gif); err != nil {
+	if params.CheckGIF == "on" {
+		gif, _ := strconv.Atoi(params.SizeGIF)
+		if err := unstructed.GenerateRandomGIF(params.DummyPath, gif); err != nil {
 			return err
 		}
 	}
 
-	if checkZIP == "zip" {
-		zip, _ := strconv.Atoi(sizeZIP)
-		if err := unstructed.GenerateRandomZIP(dummyPath, zip); err != nil {
+	if params.CheckZIP == "on" {
+		zip, _ := strconv.Atoi(params.SizeZIP)
+		if err := unstructed.GenerateRandomZIP(params.DummyPath, zip); err != nil {
 			return err
 		}
 	}
 
-	if checkJSON == "json" {
-		json, _ := strconv.Atoi(sizeJSON)
-		if err := semistructed.GenerateRandomJSON(dummyPath, json); err != nil {
+	if params.CheckJSON == "on" {
+		json, _ := strconv.Atoi(params.SizeJSON)
+		if err := semistructed.GenerateRandomJSON(params.DummyPath, json); err != nil {
 			return err
 		}
 	}
 
-	if checkXML == "xml" {
-		xml, _ := strconv.Atoi(sizeXML)
-		if err := semistructed.GenerateRandomXML(dummyPath, xml); err != nil {
+	if params.CheckXML == "on" {
+		xml, _ := strconv.Atoi(params.SizeXML)
+		if err := semistructed.GenerateRandomXML(params.DummyPath, xml); err != nil {
 			return err
 		}
 	}
