@@ -24,23 +24,23 @@ import (
 func GenerateRandomGIF(dummyDir string, capacitySize int) error {
 	dummyDir = filepath.Join(dummyDir, "gif")
 	if err := utils.IsDir(dummyDir); err != nil {
-		logrus.WithFields(logrus.Fields{"jobName": "gif create"}).Errorf("IsDir function error : %v", err)
+		logrus.Errorf("IsDir function error : %v", err)
 		return err
 	}
 
 	tempPath := filepath.Join(dummyDir, "tmpImg")
 	if err := os.MkdirAll(tempPath, 0755); err != nil {
-		logrus.WithFields(logrus.Fields{"jobName": "gif create"}).Errorf("MkdirAll function error : %v", err)
+		logrus.Errorf("MkdirAll function error : %v", err)
 		return err
 	}
 	defer os.RemoveAll(tempPath)
 
-	logrus.WithFields(logrus.Fields{"jobName": "gif create"}).Info("start gif generation")
+	logrus.Info("start gif generation")
 	if err := GenerateRandomPNGImage(tempPath, 1); err != nil {
-		logrus.WithFields(logrus.Fields{"jobName": "gif create"}).Error("failed to generate gif")
+		logrus.Error("failed to generate gif")
 		return err
 	}
-	logrus.WithFields(logrus.Fields{"jobName": "gif create"}).Info("successfully generated gif")
+	logrus.Info("successfully generated gif")
 
 	var files []string
 	size := capacitySize * 34 * 10
@@ -58,7 +58,7 @@ func GenerateRandomGIF(dummyDir string, capacitySize int) error {
 	})
 
 	if err != nil {
-		logrus.WithFields(logrus.Fields{"jobName": "gif create"}).Errorf("Walk function error : %v", err)
+		logrus.Errorf("Walk function error : %v", err)
 		return err
 	}
 
@@ -66,14 +66,14 @@ func GenerateRandomGIF(dummyDir string, capacitySize int) error {
 	for _, imgName := range files {
 		imgFile, err := os.Open(imgName)
 		if err != nil {
-			logrus.WithFields(logrus.Fields{"jobName": "gif create"}).Errorf("file open error : %v", err)
+			logrus.Errorf("file open error : %v", err)
 			return err
 		}
 		defer imgFile.Close()
 
 		img, err := png.Decode(imgFile)
 		if err != nil {
-			logrus.WithFields(logrus.Fields{"jobName": "gif create"}).Errorf("file decoding error : %v", err)
+			logrus.Errorf("file decoding error : %v", err)
 			return err
 		}
 		imgList = append(imgList, img)
@@ -103,7 +103,7 @@ func GenerateRandomGIF(dummyDir string, capacitySize int) error {
 
 	for err := range resultChan {
 		if err != nil {
-			logrus.WithFields(logrus.Fields{"jobName": "gif create"}).Errorf("result error : %v", err)
+			logrus.Errorf("result error : %v", err)
 			return err
 		}
 	}

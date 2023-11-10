@@ -113,7 +113,7 @@ INSERT INTO BorrowedBooks (MemberID, BookID, BorrowedDate, DueDate, ReturnedDate
 func GenerateRandomSQL(dummyDir string, capacitySize int) error {
 	dummyDir = filepath.Join(dummyDir, "sql")
 	if err := utils.IsDir(dummyDir); err != nil {
-		logrus.WithFields(logrus.Fields{"jobName": "sql create"}).Errorf("IsDir function error : %v", err)
+		logrus.Errorf("IsDir function error : %v", err)
 		return err
 	}
 
@@ -201,7 +201,7 @@ func randomSQLWorker(countNum chan int, dirPath string, resultChan chan<- error)
 			continue
 		}
 
-		logrus.WithFields(logrus.Fields{"jobName": "sql create"}).Infof("Creation success: %v", file.Name())
+		logrus.Infof("Creation success: %v", file.Name())
 		file.Close()
 
 		resultChan <- nil

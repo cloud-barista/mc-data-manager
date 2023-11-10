@@ -19,7 +19,7 @@ import (
 func GenerateRandomZIP(dummyDir string, capacitySize int) error {
 	dummyDir = filepath.Join(dummyDir, "zip")
 	if err := utils.IsDir(dummyDir); err != nil {
-		logrus.WithFields(logrus.Fields{"jobName": "zip create"}).Errorf("IsDir function error : %v", err)
+		logrus.Errorf("IsDir function error : %v", err)
 		return err
 	}
 
@@ -30,12 +30,12 @@ func GenerateRandomZIP(dummyDir string, capacitySize int) error {
 	}
 	defer os.RemoveAll(tempPath)
 
-	logrus.WithFields(logrus.Fields{"jobName": "zip create"}).Info("start txt generation")
+	logrus.Info("start txt generation")
 	if err := GenerateRandomTXT(tempPath, 1); err != nil {
-		logrus.WithFields(logrus.Fields{"jobName": "zip create"}).Error("failed to generate txt")
+		logrus.Error("failed to generate txt")
 		return err
 	}
-	logrus.WithFields(logrus.Fields{"jobName": "zip create"}).Info("successfully generated txt")
+	logrus.Info("successfully generated txt")
 
 	countNum := make(chan int, capacitySize)
 	resultChan := make(chan error, capacitySize)
@@ -61,7 +61,7 @@ func GenerateRandomZIP(dummyDir string, capacitySize int) error {
 
 	for ret := range resultChan {
 		if ret != nil {
-			logrus.WithFields(logrus.Fields{"jobName": "zip create"}).Errorf("result error : %v", ret)
+			logrus.Errorf("result error : %v", ret)
 			return ret
 		}
 	}

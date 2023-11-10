@@ -18,6 +18,7 @@ package cmd
 import (
 	"os"
 
+	"github.com/cloud-barista/cm-data-mold/internal/logformatter"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -34,7 +35,7 @@ var deleteDummyCmd = &cobra.Command{
 	Use: "dummy",
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		logrus.SetFormatter(&CustomTextFormatter{cmdName: "delete"})
+		logrus.SetFormatter(&logformatter.CustomTextFormatter{CmdName: "delete"})
 		logrus.WithFields(logrus.Fields{"jobName": "dummy delete"}).Info("start deleting dummy")
 		err := os.RemoveAll(dstPath)
 		if err != nil {

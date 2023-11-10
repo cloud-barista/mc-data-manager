@@ -91,7 +91,7 @@ type personInfo struct {
 func GenerateRandomJSON(dummyDir string, capacitySize int) error {
 	dummyDir = filepath.Join(dummyDir, "json")
 	if err := utils.IsDir(dummyDir); err != nil {
-		logrus.WithFields(logrus.Fields{"jobName": "json create"}).Errorf("IsDir function error : %v", err)
+		logrus.Errorf("IsDir function error : %v", err)
 		return err
 	}
 
@@ -119,7 +119,7 @@ func GenerateRandomJSON(dummyDir string, capacitySize int) error {
 
 	for ret := range resultChan {
 		if ret != nil {
-			logrus.WithFields(logrus.Fields{"jobName": "json create"}).Errorf("return error : %v", ret)
+			logrus.Errorf("return error : %v", ret)
 			return ret
 		}
 	}
@@ -172,7 +172,7 @@ func generateJSONBook(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.WithFields(logrus.Fields{"jobName": "json create"}).Infof("Creation success: %v", file.Name())
+		logrus.Infof("Creation success: %v", file.Name())
 	}
 	return err
 }
@@ -202,7 +202,7 @@ func generateJSONCar(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.WithFields(logrus.Fields{"jobName": "json create"}).Infof("Creation success: %v", file.Name())
+		logrus.Infof("Creation success: %v", file.Name())
 	}
 	return err
 }
@@ -232,7 +232,7 @@ func generateJSONAddress(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.WithFields(logrus.Fields{"jobName": "json create"}).Infof("Creation success: %v", file.Name())
+		logrus.Infof("Creation success: %v", file.Name())
 	}
 	return err
 }
@@ -262,7 +262,7 @@ func generateJSONCreditCard(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.WithFields(logrus.Fields{"jobName": "json create"}).Infof("Creation success: %v", file.Name())
+		logrus.Infof("Creation success: %v", file.Name())
 	}
 	return err
 }
@@ -292,7 +292,7 @@ func generateJSONJob(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.WithFields(logrus.Fields{"jobName": "json create"}).Infof("Creation success: %v", file.Name())
+		logrus.Infof("Creation success: %v", file.Name())
 	}
 	return err
 }
@@ -322,7 +322,7 @@ func generateJSONMovie(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.WithFields(logrus.Fields{"jobName": "json create"}).Infof("Creation success: %v", file.Name())
+		logrus.Infof("Creation success: %v", file.Name())
 	}
 	return err
 }
@@ -352,7 +352,7 @@ func generateJSONPerson(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.WithFields(logrus.Fields{"jobName": "json create"}).Infof("Creation success: %v", file.Name())
+		logrus.Infof("Creation success: %v", file.Name())
 	}
 	return err
 }
