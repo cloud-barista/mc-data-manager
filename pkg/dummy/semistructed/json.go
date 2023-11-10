@@ -95,8 +95,10 @@ func GenerateRandomJSON(dummyDir string, capacitySize int) error {
 		return err
 	}
 
-	countNum := make(chan int, capacitySize*1000)
-	resultChan := make(chan error, capacitySize*1000)
+	size := capacitySize * 1000
+
+	countNum := make(chan int, size)
+	resultChan := make(chan error, size)
 
 	var wg sync.WaitGroup
 	for i := 0; i < capacitySize; i++ {
@@ -107,7 +109,52 @@ func GenerateRandomJSON(dummyDir string, capacitySize int) error {
 		}()
 	}
 
-	for i := 0; i < capacitySize*1000; i++ {
+	for i := 0; i < size; i++ {
+		countNum <- i
+	}
+	close(countNum)
+
+	go func() {
+		wg.Wait()
+		close(resultChan)
+	}()
+
+	for ret := range resultChan {
+		if ret != nil {
+			logrus.Errorf("return error : %v", ret)
+			return ret
+		}
+	}
+
+	return nil
+}
+
+// json generation function using gofakeit
+//
+// CapacitySize is in GB and generates json files
+// within the entered dummyDir path.
+func GenerateRandomJSONWithServer(dummyDir string, capacitySize int) error {
+	dummyDir = filepath.Join(dummyDir, "json")
+	if err := utils.IsDir(dummyDir); err != nil {
+		logrus.Errorf("IsDir function error : %v", err)
+		return err
+	}
+
+	size := capacitySize
+
+	countNum := make(chan int, size)
+	resultChan := make(chan error, size)
+
+	var wg sync.WaitGroup
+	for i := 0; i < capacitySize; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			randomJsonWorker(countNum, dummyDir, resultChan)
+		}()
+	}
+
+	for i := 0; i < size; i++ {
 		countNum <- i
 	}
 	close(countNum)
