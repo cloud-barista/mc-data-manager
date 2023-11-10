@@ -20,7 +20,7 @@ import (
 func GenerateRandomCSV(dummyDir string, capacitySize int) error {
 	dummyDir = filepath.Join(dummyDir, "csv")
 	if err := utils.IsDir(dummyDir); err != nil {
-		logrus.WithFields(logrus.Fields{"jobName": "csv create"}).Errorf("IsDir function error : %v", err)
+		logrus.Errorf("IsDir function error : %v", err)
 		return err
 	}
 
@@ -48,7 +48,7 @@ func GenerateRandomCSV(dummyDir string, capacitySize int) error {
 
 	for ret := range resultChan {
 		if ret != nil {
-			logrus.WithFields(logrus.Fields{"jobName": "csv create"}).Errorf("return error : %v", ret)
+			logrus.Errorf("return error : %v", ret)
 			return ret
 		}
 	}
@@ -113,7 +113,7 @@ func generateCSVBook(cnt int, dirPath string, count int) error {
 		}
 	}
 
-	logrus.WithFields(logrus.Fields{"jobName": "csv create"}).Infof("Creation success: %v", file.Name())
+	logrus.Infof("Creation success: %v", file.Name())
 
 	csvWriter.Flush()
 	return csvWriter.Error()
@@ -155,7 +155,7 @@ func generateCSVCar(cnt int, dirPath string, count int) error {
 			return err
 		}
 	}
-	logrus.WithFields(logrus.Fields{"jobName": "csv create"}).Infof("Creation success: %v", file.Name())
+	logrus.Infof("Creation success: %v", file.Name())
 	csvWriter.Flush()
 	return csvWriter.Error()
 }
@@ -196,7 +196,7 @@ func generateCSVAddress(cnt int, dirPath string, count int) error {
 			return err
 		}
 	}
-	logrus.WithFields(logrus.Fields{"jobName": "csv create"}).Infof("Creation success: %v", file.Name())
+	logrus.Infof("Creation success: %v", file.Name())
 
 	csvWriter.Flush()
 	return csvWriter.Error()
@@ -238,7 +238,7 @@ func generateCSVCreditCard(cnt int, dirPath string, count int) error {
 			return err
 		}
 	}
-	logrus.WithFields(logrus.Fields{"jobName": "csv create"}).Infof("Creation success: %v", file.Name())
+	logrus.Infof("Creation success: %v", file.Name())
 
 	csvWriter.Flush()
 	return csvWriter.Error()
@@ -280,7 +280,7 @@ func generateCSVJob(cnt int, dirPath string, count int) error {
 			return err
 		}
 	}
-	logrus.WithFields(logrus.Fields{"jobName": "csv create"}).Infof("Creation success: %v", file.Name())
+	logrus.Infof("Creation success: %v", file.Name())
 
 	csvWriter.Flush()
 	return csvWriter.Error()
@@ -322,7 +322,7 @@ func generateCSVMovie(cnt int, dirPath string, count int) error {
 			return err
 		}
 	}
-	logrus.WithFields(logrus.Fields{"jobName": "csv create"}).Infof("Creation success: %v", file.Name())
+	logrus.Infof("Creation success: %v", file.Name())
 
 	csvWriter.Flush()
 	return csvWriter.Error()
@@ -364,7 +364,7 @@ func generateCSVPerson(cnt int, dirPath string, count int) error {
 			return err
 		}
 	}
-	logrus.WithFields(logrus.Fields{"jobName": "csv create"}).Infof("Creation success: %v", file.Name())
+	logrus.Infof("Creation success: %v", file.Name())
 
 	csvWriter.Flush()
 	return csvWriter.Error()

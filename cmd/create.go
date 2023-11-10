@@ -16,6 +16,7 @@ limitations under the License.
 package cmd
 
 import (
+	"github.com/cloud-barista/cm-data-mold/internal/logformatter"
 	"github.com/cloud-barista/cm-data-mold/pkg/dummy/semistructed"
 	"github.com/cloud-barista/cm-data-mold/pkg/dummy/structed"
 	"github.com/cloud-barista/cm-data-mold/pkg/dummy/unstructed"
@@ -37,7 +38,7 @@ Semi-structured data: json, xml
 
 You must enter the data size in GB.`,
 	RunE: func(_ *cobra.Command, _ []string) error {
-		logrus.SetFormatter(&CustomTextFormatter{cmdName: "create", jobName: "dummy create"})
+		logrus.SetFormatter(&logformatter.CustomTextFormatter{CmdName: "create", JobName: "dummy create"})
 		logrus.Info("check directory paths")
 		if sqlSize != 0 {
 			logrus.Info("start sql generation")

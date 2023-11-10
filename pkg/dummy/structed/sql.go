@@ -113,7 +113,7 @@ INSERT INTO BorrowedBooks (MemberID, BookID, BorrowedDate, DueDate, ReturnedDate
 func GenerateRandomSQL(dummyDir string, capacitySize int) error {
 	dummyDir = filepath.Join(dummyDir, "sql")
 	if err := utils.IsDir(dummyDir); err != nil {
-		logrus.WithFields(logrus.Fields{"jobName": "sql create"}).Errorf("IsDir function error : %v", err)
+		logrus.Errorf("IsDir function error : %v", err)
 		return err
 	}
 
@@ -143,7 +143,48 @@ func GenerateRandomSQL(dummyDir string, capacitySize int) error {
 
 	for ret := range resultChan {
 		if ret != nil {
-			logrus.WithFields(logrus.Fields{"jobName": "sql create"}).Errorf("result error : %v", ret)
+			logrus.Errorf("result error : %v", ret)
+			return ret
+		}
+	}
+
+	return nil
+}
+
+func GenerateRandomSQLWithServer(dummyDir string, capacitySize int) error {
+	dummyDir = filepath.Join(dummyDir, "sql")
+	if err := utils.IsDir(dummyDir); err != nil {
+		logrus.Errorf("IsDir function error : %v", err)
+		return err
+	}
+
+	size := capacitySize
+
+	countNum := make(chan int, size)
+	resultChan := make(chan error, size)
+
+	var wg sync.WaitGroup
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			randomSQLWorker(countNum, dummyDir, resultChan)
+		}()
+	}
+
+	for i := 0; i < size; i++ {
+		countNum <- i
+	}
+	close(countNum)
+
+	go func() {
+		wg.Wait()
+		close(resultChan)
+	}()
+
+	for ret := range resultChan {
+		if ret != nil {
+			logrus.Errorf("result error : %v", ret)
 			return ret
 		}
 	}
@@ -201,7 +242,7 @@ func randomSQLWorker(countNum chan int, dirPath string, resultChan chan<- error)
 			continue
 		}
 
-		logrus.WithFields(logrus.Fields{"jobName": "sql create"}).Infof("Creation success: %v", file.Name())
+		logrus.Infof("Creation success: %v", file.Name())
 		file.Close()
 
 		resultChan <- nil

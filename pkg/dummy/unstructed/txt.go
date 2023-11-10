@@ -18,7 +18,7 @@ import (
 func GenerateRandomTXT(dummyDir string, capacitySize int) error {
 	dummyDir = filepath.Join(dummyDir, "txt")
 	if err := utils.IsDir(dummyDir); err != nil {
-		logrus.WithFields(logrus.Fields{"jobName": "txt create"}).Errorf("IsDir function error : %v", err)
+		logrus.Errorf("IsDir function error : %v", err)
 		return err
 	}
 
@@ -46,7 +46,7 @@ func GenerateRandomTXT(dummyDir string, capacitySize int) error {
 
 	for ret := range resultChan {
 		if ret != nil {
-			logrus.WithFields(logrus.Fields{"jobName": "txt create"}).Errorf("result error : %v", ret)
+			logrus.Errorf("result error : %v", ret)
 			return ret
 		}
 	}
@@ -68,7 +68,7 @@ func randomTxtWorker(countNum chan int, dirPath string, resultChan chan<- error)
 			}
 		}
 
-		logrus.WithFields(logrus.Fields{"jobName": "txt create"}).Infof("successfully generated : %s", file.Name())
+		logrus.Infof("successfully generated : %s", file.Name())
 
 		if err := file.Close(); err != nil {
 			resultChan <- err
