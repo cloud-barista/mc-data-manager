@@ -20,7 +20,7 @@ type ImageType string
 func GenerateRandomPNGImage(dummyDir string, capacitySize int) error {
 	dummyDir = filepath.Join(dummyDir, "png")
 	if err := utils.IsDir(dummyDir); err != nil {
-		logrus.WithFields(logrus.Fields{"jobName": "png create"}).Errorf("IsDir function error : %v", err)
+		logrus.Errorf("IsDir function error : %v", err)
 		return err
 	}
 
@@ -50,7 +50,7 @@ func GenerateRandomPNGImage(dummyDir string, capacitySize int) error {
 
 	for ret := range resultChan {
 		if ret != nil {
-			logrus.WithFields(logrus.Fields{"jobName": "png create"}).Errorf("result error : %v", ret)
+			logrus.Errorf("result error : %v", ret)
 			return ret
 		}
 	}
@@ -70,7 +70,7 @@ func randomImageWorker(countNum chan int, dirPath string, resultChan chan<- erro
 		if _, err := file.Write(gofakeit.ImagePng(500, 500)); err != nil {
 			resultChan <- err
 		}
-		logrus.WithFields(logrus.Fields{"jobName": "png create"}).Infof("Creation success: %v", file.Name())
+		logrus.Infof("Creation success: %v", file.Name())
 
 		file.Close()
 	}

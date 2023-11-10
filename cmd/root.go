@@ -19,6 +19,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/cloud-barista/cm-data-mold/internal/logformatter"
 	"github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
@@ -82,7 +83,7 @@ func logFile() {
 	}
 
 	logrus.SetLevel(logrus.DebugLevel)
-	logrus.SetFormatter(&CustomTextFormatter{})
+	logrus.SetFormatter(&logformatter.CustomTextFormatter{})
 	logrus.SetOutput(io.MultiWriter(os.Stdout, logFile))
 }
 

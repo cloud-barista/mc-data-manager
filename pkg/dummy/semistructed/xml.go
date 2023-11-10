@@ -19,7 +19,7 @@ import (
 func GenerateRandomXML(dummyDir string, capacitySize int) error {
 	dummyDir = filepath.Join(dummyDir, "xml")
 	if err := utils.IsDir(dummyDir); err != nil {
-		logrus.WithFields(logrus.Fields{"jobName": "xml create"}).Errorf("IsDir function error : %v", err)
+		logrus.Errorf("IsDir function error : %v", err)
 		return err
 	}
 
@@ -48,7 +48,7 @@ func GenerateRandomXML(dummyDir string, capacitySize int) error {
 
 	for ret := range resultChan {
 		if ret != nil {
-			logrus.WithFields(logrus.Fields{"jobName": "xml create"}).Errorf("return error : %v", ret)
+			logrus.Errorf("return error : %v", ret)
 			return ret
 		}
 	}
@@ -107,7 +107,7 @@ func generateXMLBook(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.WithFields(logrus.Fields{"jobName": "xml create"}).Infof("Creation success: %v", file.Name())
+		logrus.Infof("Creation success: %v", file.Name())
 	}
 	return err
 }
@@ -142,7 +142,7 @@ func generateXMLCar(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.WithFields(logrus.Fields{"jobName": "xml create"}).Infof("Creation success: %v", file.Name())
+		logrus.Infof("Creation success: %v", file.Name())
 	}
 	return err
 }
@@ -177,7 +177,7 @@ func generateXMLAddress(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.WithFields(logrus.Fields{"jobName": "xml create"}).Infof("Creation success: %v", file.Name())
+		logrus.Infof("Creation success: %v", file.Name())
 	}
 	return err
 }
@@ -212,7 +212,7 @@ func generateXMLCreditCard(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.WithFields(logrus.Fields{"jobName": "xml create"}).Infof("Creation success: %v", file.Name())
+		logrus.Infof("Creation success: %v", file.Name())
 	}
 	return err
 }
@@ -247,7 +247,7 @@ func generateXMLJob(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.WithFields(logrus.Fields{"jobName": "xml create"}).Infof("Creation success: %v", file.Name())
+		logrus.Infof("Creation success: %v", file.Name())
 	}
 	return err
 }
@@ -282,7 +282,7 @@ func generateXMLMovie(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.WithFields(logrus.Fields{"jobName": "xml create"}).Infof("Creation success: %v", file.Name())
+		logrus.Infof("Creation success: %v", file.Name())
 	}
 	return err
 }
@@ -317,7 +317,7 @@ func generateXMLPerson(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.WithFields(logrus.Fields{"jobName": "xml create"}).Infof("Creation success: %v", file.Name())
+		logrus.Infof("Creation success: %v", file.Name())
 	}
 	return err
 }

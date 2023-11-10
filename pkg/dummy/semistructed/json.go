@@ -91,12 +91,14 @@ type personInfo struct {
 func GenerateRandomJSON(dummyDir string, capacitySize int) error {
 	dummyDir = filepath.Join(dummyDir, "json")
 	if err := utils.IsDir(dummyDir); err != nil {
-		logrus.WithFields(logrus.Fields{"jobName": "json create"}).Errorf("IsDir function error : %v", err)
+		logrus.Errorf("IsDir function error : %v", err)
 		return err
 	}
 
-	countNum := make(chan int, capacitySize*1000)
-	resultChan := make(chan error, capacitySize*1000)
+	size := capacitySize * 1000
+
+	countNum := make(chan int, size)
+	resultChan := make(chan error, size)
 
 	var wg sync.WaitGroup
 	for i := 0; i < capacitySize; i++ {
@@ -107,7 +109,7 @@ func GenerateRandomJSON(dummyDir string, capacitySize int) error {
 		}()
 	}
 
-	for i := 0; i < capacitySize*1000; i++ {
+	for i := 0; i < size; i++ {
 		countNum <- i
 	}
 	close(countNum)
@@ -119,7 +121,52 @@ func GenerateRandomJSON(dummyDir string, capacitySize int) error {
 
 	for ret := range resultChan {
 		if ret != nil {
-			logrus.WithFields(logrus.Fields{"jobName": "json create"}).Errorf("return error : %v", ret)
+			logrus.Errorf("return error : %v", ret)
+			return ret
+		}
+	}
+
+	return nil
+}
+
+// json generation function using gofakeit
+//
+// CapacitySize is in GB and generates json files
+// within the entered dummyDir path.
+func GenerateRandomJSONWithServer(dummyDir string, capacitySize int) error {
+	dummyDir = filepath.Join(dummyDir, "json")
+	if err := utils.IsDir(dummyDir); err != nil {
+		logrus.Errorf("IsDir function error : %v", err)
+		return err
+	}
+
+	size := capacitySize
+
+	countNum := make(chan int, size)
+	resultChan := make(chan error, size)
+
+	var wg sync.WaitGroup
+	for i := 0; i < capacitySize; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			randomJsonWorker(countNum, dummyDir, resultChan)
+		}()
+	}
+
+	for i := 0; i < size; i++ {
+		countNum <- i
+	}
+	close(countNum)
+
+	go func() {
+		wg.Wait()
+		close(resultChan)
+	}()
+
+	for ret := range resultChan {
+		if ret != nil {
+			logrus.Errorf("return error : %v", ret)
 			return ret
 		}
 	}
@@ -172,7 +219,7 @@ func generateJSONBook(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.WithFields(logrus.Fields{"jobName": "json create"}).Infof("Creation success: %v", file.Name())
+		logrus.Infof("Creation success: %v", file.Name())
 	}
 	return err
 }
@@ -202,7 +249,7 @@ func generateJSONCar(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.WithFields(logrus.Fields{"jobName": "json create"}).Infof("Creation success: %v", file.Name())
+		logrus.Infof("Creation success: %v", file.Name())
 	}
 	return err
 }
@@ -232,7 +279,7 @@ func generateJSONAddress(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.WithFields(logrus.Fields{"jobName": "json create"}).Infof("Creation success: %v", file.Name())
+		logrus.Infof("Creation success: %v", file.Name())
 	}
 	return err
 }
@@ -262,7 +309,7 @@ func generateJSONCreditCard(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.WithFields(logrus.Fields{"jobName": "json create"}).Infof("Creation success: %v", file.Name())
+		logrus.Infof("Creation success: %v", file.Name())
 	}
 	return err
 }
@@ -292,7 +339,7 @@ func generateJSONJob(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.WithFields(logrus.Fields{"jobName": "json create"}).Infof("Creation success: %v", file.Name())
+		logrus.Infof("Creation success: %v", file.Name())
 	}
 	return err
 }
@@ -322,7 +369,7 @@ func generateJSONMovie(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.WithFields(logrus.Fields{"jobName": "json create"}).Infof("Creation success: %v", file.Name())
+		logrus.Infof("Creation success: %v", file.Name())
 	}
 	return err
 }
@@ -352,7 +399,7 @@ func generateJSONPerson(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.WithFields(logrus.Fields{"jobName": "json create"}).Infof("Creation success: %v", file.Name())
+		logrus.Infof("Creation success: %v", file.Name())
 	}
 	return err
 }
