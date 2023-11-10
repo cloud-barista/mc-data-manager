@@ -200,13 +200,14 @@ func GenerateGCSGetHandler() gin.HandlerFunc {
 
 func GenerateGCSPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		region := ctx.PostForm("region")
+		params := GenDataParams{}
+		ctx.ShouldBind(&params)
+
 		gcsCredentialFile, gcsCredentialHeader, err := ctx.Request.FormFile("gcsCredential")
 		if err != nil {
-			ctx.HTML(http.StatusBadRequest, "index.html", gin.H{
-				"Content": "Generate-GCS",
-				"Regions": GetGCPRegions(),
-				"error":   nil,
+			ctx.JSONP(http.StatusOK, gin.H{
+				"Result": "Failed to upload credential file",
+				"Error":  err,
 			})
 			return
 		}
@@ -214,54 +215,29 @@ func GenerateGCSPostHandler() gin.HandlerFunc {
 
 		credTmpDir, err := os.MkdirTemp("", "datamold-gcs-cred-")
 		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content": "Generate-GCS",
-				"Regions": GetGCPRegions(),
-				"error":   fmt.Errorf("failed to create tmpdir : %v", err),
+			ctx.JSONP(http.StatusOK, gin.H{
+				"Result": "failed to create tmpdir",
+				"Error":  err,
 			})
 			return
 		}
 		defer os.RemoveAll(credTmpDir)
 
-		projectid := ctx.PostForm("projectid")
-		bucket := ctx.PostForm("bucket")
-
 		credFileName := filepath.Join(credTmpDir, gcsCredentialHeader.Filename)
 		err = ctx.SaveUploadedFile(gcsCredentialHeader, credFileName)
 		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content": "Generate-GCS",
-				"Regions": GetGCPRegions(),
-				"error":   fmt.Errorf("failed to save uploaded file : %v", err),
+			ctx.JSONP(http.StatusOK, gin.H{
+				"Result": "failed to save uploaded file",
+				"Error":  err,
 			})
 			return
 		}
 
-		params := GenDataParams{
-			CheckSQL:  ctx.PostForm("checkSQL"),
-			SizeSQL:   ctx.PostForm("sizeSQL"),
-			CheckCSV:  ctx.PostForm("checkCSV"),
-			SizeCSV:   ctx.PostForm("sizeCSV"),
-			CheckTXT:  ctx.PostForm("checkTXT"),
-			SizeTXT:   ctx.PostForm("sizeTXT"),
-			CheckPNG:  ctx.PostForm("checkPNG"),
-			SizePNG:   ctx.PostForm("sizePNG"),
-			CheckGIF:  ctx.PostForm("checkGIF"),
-			SizeGIF:   ctx.PostForm("sizeGIF"),
-			CheckZIP:  ctx.PostForm("checkZIP"),
-			SizeZIP:   ctx.PostForm("sizeZIP"),
-			CheckJSON: ctx.PostForm("checkJSON"),
-			SizeJSON:  ctx.PostForm("sizeJSON"),
-			CheckXML:  ctx.PostForm("checkXML"),
-			SizeXML:   ctx.PostForm("sizeXML"),
-		}
-
 		tmpDir, err := os.MkdirTemp("", "datamold-dummy")
 		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content": "Generate-GCS",
-				"Regions": GetGCPRegions(),
-				"error":   fmt.Errorf("failed to create tmpdir : %v", err),
+			ctx.JSONP(http.StatusOK, gin.H{
+				"Result": "failed to create tmpdir",
+				"Error":  err,
 			})
 			return
 		}
@@ -271,47 +247,42 @@ func GenerateGCSPostHandler() gin.HandlerFunc {
 
 		err = genData(params)
 		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Generate-GCS",
-				"Regions": GetGCPRegions(),
-				"error":   err,
+			ctx.JSONP(http.StatusOK, gin.H{
+				"Result": "failed to generate data",
+				"Error":  err,
 			})
 			return
 		}
 
 		gc, err := config.NewGCSClient(credFileName)
 		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content": "Generate-GCS",
-				"Regions": GetGCPRegions(),
-				"error":   fmt.Errorf("gcs client generate error : %v", err),
+			ctx.JSONP(http.StatusOK, gin.H{
+				"Result": "gcs client generate error",
+				"Error":  err,
 			})
 			return
 		}
 
-		gcsOSC, err := osc.New(gcsfs.New(gc, projectid, bucket, region))
+		gcsOSC, err := osc.New(gcsfs.New(gc, params.ProjectID, params.Bucket, params.Region))
 		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content": "Generate-GCS",
-				"Regions": GetGCPRegions(),
-				"error":   fmt.Errorf("OSController generate error : %v", err),
+			ctx.JSONP(http.StatusOK, gin.H{
+				"Result": "OSController generate error",
+				"Error":  err,
 			})
 			return
 		}
 
 		if err := gcsOSC.MPut(tmpDir); err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content": "Generate-GCS",
-				"Regions": GetGCPRegions(),
-				"error":   fmt.Errorf("GCS MPut error : %v", err),
+			ctx.JSONP(http.StatusOK, gin.H{
+				"Result": "GCS MPut error",
+				"Error":  err,
 			})
 			return
 		}
 
-		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content": "Generate-GCS",
-			"Regions": GetGCPRegions(),
-			"error":   nil,
+		ctx.JSONP(http.StatusOK, gin.H{
+			"Result": "generated",
+			"Error":  nil,
 		})
 	}
 }

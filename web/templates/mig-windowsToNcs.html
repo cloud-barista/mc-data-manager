@@ -9,7 +9,10 @@
         Windows to Naver Cloud Storage
     </div>
     <div class="card-body">
-        <form action="/migration/windows/ncs" method="POST">
+        <!-- <form action="/migration/windows/ncs" method="POST"> -->
+        <form id="migForm">
+            <input type="hidden" id="migSource" value="windows">
+            <input type="hidden" id="migDest" value="ncs">
 
             <div class="mb-3">
                 <label for="mig-windows-path" class="form-label">Windows 마이그레이션 대상 데이터 경로</label>
@@ -24,52 +27,52 @@
             </div>
 
             <div class="mb-3">
-                <label for="mig-ncs-region" class="form-label">Naver Cloud Storage</label>
+                <label for="mig-ncp-region" class="form-label">Naver Cloud Storage</label>
 
                 <div class="form-floating">
-                    <select class="form-select form-select-sm w-50" id="mig-ncs-region" name="region">
+                    <select class="form-select form-select-sm w-50" id="mig-ncp-region" name="ncpRegion">
                     <!-- <option selected>Region</option> -->
                     {{ range $index, $value := .Regions }}
                     <option value="{{ $value }}">{{ $value }}</option>
                     {{ end }}
                     </select>
-                    <label for="mig-ncs-region">리전 선택</label>
+                    <label for="mig-ncp-region">리전 선택</label>
                 </div>
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-ncs-accessKey" name="accessKey" placeholder="Access Key">
-                    <label for="mig-ncs-apiKey">Access Key</label>
+                    <input type="text" class="form-control" id="mig-ncp-accessKey" name="ncpAccessKey" placeholder="Access Key">
+                    <label for="mig-ncp-accessKey">Access Key</label>
                 </div>
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
                 <div class="form-floating">
-                    <input type="password" class="form-control" id="mig-ncs-secretKey" name="secretKey" placeholder="Secret Key">
-                    <label for="mig-ncs-secretKey">Secret Key</label>
+                    <input type="password" class="form-control" id="mig-ncp-secretKey" name="ncpSecretKey" placeholder="Secret Key">
+                    <label for="mig-ncp-secretKey">Secret Key</label>
                 </div>
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-flag"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-ncs-endpoint" name="endpoint" placeholder="Endpoint">
-                    <label for="mig-ncs-endpoint">Endpoint</label>
+                    <input type="text" class="form-control" id="mig-ncp-endpoint" name="ncpEndpoint" placeholder="Endpoint">
+                    <label for="mig-ncp-endpoint">Endpoint</label>
                 </div>
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-ncs-bucket" name="bucket" placeholder="Bucket">
-                    <label for="mig-ncs-bucket">Bucket</label>
+                    <input type="text" class="form-control" id="mig-ncp-bucket" name="ncpBucket" placeholder="Bucket">
+                    <label for="mig-ncp-bucket">Bucket</label>
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary">실행</button>
+            <button type="submit" class="btn btn-primary" id="submitBtn">실행</button>
         </form>
     </div>
 </div>

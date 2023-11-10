@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"mime/multipart"
 	"strconv"
 
 	"github.com/cloud-barista/cm-data-mold/pkg/dummy/semistructed"
@@ -9,30 +10,30 @@ import (
 )
 
 type GenDataParams struct {
-	Region    string `json:"region"`
+	Region    string `json:"region" form:"region"`
 	AccessKey string `json:"accessKey"`
 	SecretKey string `json:"secretKey"`
-	Bucket    string `json:"bucket"`
+	Bucket    string `json:"bucket" form:"bucket"`
 	Endpoint  string `json:"endpoint"`
 	DummyPath string `json:"path"`
 
-	CheckSQL  string `json:"checkSQL"`
-	CheckCSV  string `json:"checkCSV"`
-	CheckTXT  string `json:"checkTXT"`
-	CheckPNG  string `json:"checkPNG"`
-	CheckGIF  string `json:"checkGIF"`
-	CheckZIP  string `json:"checkZIP"`
-	CheckJSON string `json:"checkJSON"`
-	CheckXML  string `json:"checkXML"`
+	CheckSQL  string `json:"checkSQL" form:"checkSQL"`
+	CheckCSV  string `json:"checkCSV" form:"checkCSV"`
+	CheckTXT  string `json:"checkTXT" form:"checkTXT"`
+	CheckPNG  string `json:"checkPNG" form:"checkPNG"`
+	CheckGIF  string `json:"checkGIF" form:"checkGIF"`
+	CheckZIP  string `json:"checkZIP" form:"checkZIP"`
+	CheckJSON string `json:"checkJSON" form:"checkJSON"`
+	CheckXML  string `json:"checkXML" form:"checkXML"`
 
-	SizeSQL  string `json:"sizeSQL"`
-	SizeCSV  string `json:"sizeCSV"`
-	SizeTXT  string `json:"sizeTXT"`
-	SizePNG  string `json:"sizePNG"`
-	SizeGIF  string `json:"sizeGIF"`
-	SizeZIP  string `json:"sizeZIP"`
-	SizeJSON string `json:"sizeJSON"`
-	SizeXML  string `json:"sizeXML"`
+	SizeSQL  string `json:"sizeSQL" form:"sizeSQL"`
+	SizeCSV  string `json:"sizeCSV" form:"sizeCSV"`
+	SizeTXT  string `json:"sizeTXT" form:"sizeTXT"`
+	SizePNG  string `json:"sizePNG" form:"sizePNG"`
+	SizeGIF  string `json:"sizeGIF" form:"sizeGIF"`
+	SizeZIP  string `json:"sizeZIP" form:"sizeZIP"`
+	SizeJSON string `json:"sizeJSON" form:"sizeJSON"`
+	SizeXML  string `json:"sizeXML" form:"sizeXML"`
 
 	DBProvider   string `json:"provider"`
 	DBHost       string `json:"host"`
@@ -40,9 +41,9 @@ type GenDataParams struct {
 	DBUser       string `json:"username"`
 	DBPassword   string `json:"password"`
 	DatabaseName string `json:"databaseName"`
-}
 
-type CloudParams struct {
+	GCSCredential *multipart.FileHeader `form:"gcsCredential"`
+	ProjectID     string                `form:"projectid"`
 }
 
 func genData(params GenDataParams) error {

@@ -9,7 +9,10 @@
         AWS DynamoDB to NCP MongoDB
     </div>
     <div class="card-body">
-        <form action="/migration/dynamodb/mongodb" method="POST">
+        <!-- <form action="/migration/dynamodb/mongodb" method="POST"> -->
+        <form id="migForm">
+            <input type="hidden" id="migSource" value="dynamodb">
+            <input type="hidden" id="migDest" value="mongodb">
 
             <div class="mb-3">
                 <label for="mig-aws-region" class="form-label">AWS DynamoDB</label>
@@ -29,7 +32,7 @@
                 <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
                 <div class="form-floating">
                     <input type="text" class="form-control" id="mig-aws-accessKey" name="awsAccessKey" placeholder="Access Key">
-                    <label for="mig-aws-apiKey">Access Key</label>
+                    <label for="mig-aws-accessKey">Access Key</label>
                 </div>
             </div>
 
@@ -83,7 +86,8 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary">실행</button>
+            <button type="submit" class="btn btn-primary" id="submitBtn">실행</button>
+
         </form>
     </div>
 </div>

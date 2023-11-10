@@ -23,7 +23,12 @@ window.addEventListener('DOMContentLoaded', event => {
         });
     }
 
-    generateFormSubmit();
+    if (document.getElementById('genForm')) {
+        generateFormSubmit();
+    }
+    if (document.getElementById('migForm')) {
+        migrationFormSubmit();
+    }
     
 });
 
@@ -39,11 +44,12 @@ function generateFormSubmit() {
         const payload = new FormData(form);
         let jsonData = JSON.stringify(Object.fromEntries(payload));
         console.log(jsonData);
+
         const target= document.getElementById('genTarget').value;
         const url = "/generate/" + target;
-
+        
         console.log(url);
-   
+
         let req;
         if (target == "gcs" || target == "firestore") {
             req = { method: 'POST', body: payload };
@@ -74,6 +80,49 @@ function generateFormSubmit() {
     });
 }
 
+function migrationFormSubmit() {
+    const form = document.getElementById('migForm');
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        loadingButtonOn();
+        resultCollpase();
+
+        const payload = new FormData(form);
+        const dest = document.getElementById('migDest').value;
+        const source = document.getElementById('migSource').value;
+        let url = "/migration/" + source;
+        if (source != dest) {
+            url = url + "/" + dest;
+        }
+
+        console.log(url);
+
+        fetch(url, {
+            method: 'POST',
+            body: payload
+        })
+        .then(response => {
+            return response.json();
+        })
+        .then(json => {
+            const resultText = document.getElementById('resultText');
+            resultText.value = json.Result;
+            console.log(json);
+            console.log("migration done.");
+        })
+        .catch(reason => {
+            console.log(reason);
+            alert(reason);
+        })
+        .finally(() => {
+            loadingButtonOff();
+        });
+
+        console.log("migration progressing...");
+    });
+}
+
 function loadingButtonOn() {
     let btn = document.getElementById('submitBtn');
     btn.disabled = true;
@@ -91,4 +140,9 @@ function resultCollpase() {
         toggle: true
     });
     colp.show();
+}
+
+
+function test() {
+
 }
