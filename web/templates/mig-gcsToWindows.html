@@ -9,40 +9,43 @@
         Google Cloud Storage to Windows
     </div>
     <div class="card-body">
-        <form action="/migration/s3/windows" method="POST" enctype="multipart/form-data">
+        <!-- <form action="/migration/s3/windows" method="POST" enctype="multipart/form-data"> -->
+        <form id="migForm">
+            <input type="hidden" id="migSource" value="gcs">
+            <input type="hidden" id="migDest" value="windows">
 
             <div class="mb-3">
-                <label for="mig-gcs-region" class="form-label">Google Cloud Storage</label>
+                <label for="mig-gcp-region" class="form-label">Google Cloud Storage</label>
 
                 <div class="form-floating">
-                    <select class="form-select form-select-sm w-50" id="mig-gcs-region" name="region">
+                    <select class="form-select form-select-sm w-50" id="mig-gcp-region" name="gcpRegion">
                     <!-- <option selected>Region</option> -->
                     {{ range $index, $value := .Regions }}
                     <option value="{{ $value }}">{{ $value }}</option>
                     {{ end }}
                     </select>
-                    <label for="mig-gcs-region">리전 선택</label>
+                    <label for="mig-gcp-region">리전 선택</label>
                 </div>
             </div>
            
             <div class="mb-3">
-                <label for="mig-gcs-credential" class="form-label">Credentials 파일</label>
-                <input class="form-control" type="file" id="mig-gcs-credential" name="gcsCredential">
+                <label for="mig-gcp-credential" class="form-label">Credentials 파일</label>
+                <input class="form-control" type="file" id="mig-gcp-credential" name="gcpCredential">
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-id-card"></i></span>
                 <div class="form-floating">
                     <input type="text" class="form-control" id="gen-s3-projectid" name="projectid" placeholder="ProjectID">
-                    <label for="mig-gcs-projectID">ProjectID</label>
+                    <label for="mig-gcp-projectID">ProjectID</label>
                 </div>
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-gcs-bucket" name="bucket" placeholder="Bucket">
-                    <label for="mig-gcs-bucket">Bucket</label>
+                    <input type="text" class="form-control" id="mig-gcp-bucket" name="gcpBucket" placeholder="Bucket">
+                    <label for="mig-gcp-bucket">Bucket</label>
                 </div>
             </div>
 
@@ -58,7 +61,8 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary">실행</button>
+            <button type="submit" class="btn btn-primary" id="submitBtn">실행</button>
+
         </form>
     </div>
 </div>

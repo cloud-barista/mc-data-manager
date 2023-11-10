@@ -9,82 +9,85 @@
         AWS S3 to Google Cloud Storage
     </div>
     <div class="card-body">
-        <form action="/migration/s3/gcs" method="POST"  enctype="multipart/form-data">
+        <!-- <form action="/migration/s3/gcs" method="POST"  enctype="multipart/form-data"> -->
+        <form id="migForm">
+            <input type="hidden" id="migSource" value="s3">
+            <input type="hidden" id="migDest" value="gcs">
 
             <div class="mb-3">
-                <label for="mig-s3-region" class="form-label">AWS S3</label>
+                <label for="mig-aws-region" class="form-label">AWS S3</label>
 
                 <div class="form-floating">
-                    <select class="form-select form-select-sm w-50" id="mig-s3-region" name="awsRegion">
+                    <select class="form-select form-select-sm w-50" id="mig-aws-region" name="awsRegion">
                     <!-- <option selected>Region</option> -->
                     {{ range $index, $value := .AWSRegions }}
                     <option value="{{ $value }}">{{ $value }}</option>
                     {{ end }}
                     </select>
-                    <label for="mig-s3-region">리전 선택</label>
+                    <label for="mig-aws-region">리전 선택</label>
                 </div>
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-s3-accessKey" name="s3AccessKey" placeholder="Access Key">
-                    <label for="mig-s3-apiKey">Access Key</label>
+                    <input type="text" class="form-control" id="mig-aws-accessKey" name="awsAccessKey" placeholder="Access Key">
+                    <label for="mig-aws-accessKey">Access Key</label>
                 </div>
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
                 <div class="form-floating">
-                    <input type="password" class="form-control" id="mig-s3-secretKey" name="s3SecretKey" placeholder="Secret Key">
-                    <label for="mig-s3-secretKey">Secret Key</label>
+                    <input type="password" class="form-control" id="mig-aws-secretKey" name="awsSecretKey" placeholder="Secret Key">
+                    <label for="mig-aws-secretKey">Secret Key</label>
                 </div>
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-s3-bucket" name="s3Bucket" placeholder="Bucket">
-                    <label for="mig-s3-bucket">Bucket</label>
+                    <input type="text" class="form-control" id="mig-aws-bucket" name="awsBucket" placeholder="Bucket">
+                    <label for="mig-aws-bucket">Bucket</label>
                 </div>
             </div>
 
             <div class="mb-3">
-                <label for="mig-gcs-region" class="form-label">Google Cloud Storage</label>
+                <label for="mig-gcp-region" class="form-label">Google Cloud Storage</label>
 
                 <div class="form-floating">
-                    <select class="form-select form-select-sm w-50" id="mig-gcs-region" name="gcpRegion">
+                    <select class="form-select form-select-sm w-50" id="mig-gcp-region" name="gcpRegion">
                     <!-- <option selected>Region</option> -->
                     {{ range $index, $value := .GCPRegions }}
                     <option value="{{ $value }}">{{ $value }}</option>
                     {{ end }}
                     </select>
-                    <label for="mig-gcs-region">리전 선택</label>
+                    <label for="mig-gcp-region">리전 선택</label>
                 </div>
             </div>
            
             <div class="mb-3">
-                <label for="mig-gcs-credential" class="form-label">Credentials 파일</label>
-                <input class="form-control" type="file" id="mig-gcs-credential" name="gcsCredential">
+                <label for="mig-gcp-credential" class="form-label">Credentials 파일</label>
+                <input class="form-control" type="file" id="mig-gcp-credential" name="gcpCredential">
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-id-card"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="gen-s3-projectid" name="projectid" placeholder="ProjectID">
-                    <label for="gen-s3-bucket">ProjectID</label>
+                    <input type="text" class="form-control" id="gen-gcp-projectid" name="projectid" placeholder="ProjectID">
+                    <label for="gen-gcp-projectid">ProjectID</label>
                 </div>
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-gcs-bucket" name="gcsBucket" placeholder="Bucket">
-                    <label for="mig-gcs-bucket">Bucket</label>
+                    <input type="text" class="form-control" id="mig-gcp-bucket" name="gcpBucket" placeholder="Bucket">
+                    <label for="mig-gcp-bucket">Bucket</label>
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary">실행</button>
+            <button type="submit" class="btn btn-primary" id="submitBtn">실행</button>
         </form>
     </div>
 </div>

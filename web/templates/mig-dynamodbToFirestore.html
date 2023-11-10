@@ -9,7 +9,10 @@
         AWS DynamoDB to GCP Firestore
     </div>
     <div class="card-body">
-        <form action="/migration/dynamodb/firestore" method="POST" enctype="multipart/form-data">
+        <!-- <form action="/migration/dynamodb/firestore" method="POST" enctype="multipart/form-data"> -->
+        <form id="migForm">
+            <input type="hidden" id="migSource" value="dynamodb">
+            <input type="hidden" id="migDest" value="firestore">
 
             <div class="mb-3">
                 <label for="mig-aws-region" class="form-label">AWS DynamoDB</label>
@@ -63,12 +66,13 @@
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-user-shield"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-firestore-projectid" name="projectid" placeholder="Project ID">
-                    <label for="mig-firestore-projectid">Project ID</label>
+                    <input type="text" class="form-control" id="mig-gcp-projectid" name="projectid" placeholder="Project ID">
+                    <label for="mig-gcp-projectid">Project ID</label>
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary">실행</button>
+            <button type="submit" class="btn btn-primary" id="submitBtn">실행</button>
+
         </form>
     </div>
 </div>
