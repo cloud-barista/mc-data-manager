@@ -676,7 +676,7 @@ func GenerateMySQLPostHandler() gin.HandlerFunc {
 			logger.Infof("Put start : %s", filepath.Base(sql))
 			if err := rdbController.Put(string(data)); err != nil {
 				end := time.Now()
-				logger.Errorf("OSController import failed : %v", err)
+				logger.Errorf("RDBController import failed : %v", err)
 				logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
 				logger.Infof("Elapsed time : %s", end.Sub(start).String())
 				ctx.JSONP(http.StatusOK, gin.H{

@@ -46,8 +46,6 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 
-	fmt.Println(dstData)
-
 	// dynamo to firestore
 	if err := awsnrdbc.Copy(gcpnrdc); err != nil {
 		panic(err)
