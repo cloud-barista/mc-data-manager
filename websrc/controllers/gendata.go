@@ -51,9 +51,6 @@ type GenDataParams struct {
 	ProjectID     string                `form:"projectid"`
 }
 
-type CloudParams struct {
-}
-
 func genData(params GenDataParams, logger *logrus.Logger) error {
 	if params.CheckSQL == "on" {
 		logger.Info("Start creating sql dummy")
