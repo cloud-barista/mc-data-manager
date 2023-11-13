@@ -49,11 +49,11 @@ var exportNRDBCmd = &cobra.Command{
 	},
 }
 
-var replicationNRDBCmd = &cobra.Command{
+var migrationNRDBCmd = &cobra.Command{
 	Use:    "nrdbms",
 	PreRun: preRun("nrdbms"),
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := replicationNRDMFunc(); err != nil {
+		if err := migrationNRDMFunc(); err != nil {
 			os.Exit(1)
 		}
 	},
@@ -72,7 +72,7 @@ var deleteNRDBMSCmd = &cobra.Command{
 func init() {
 	importCmd.AddCommand(importNRDBCmd)
 	exportCmd.AddCommand(exportNRDBCmd)
-	replicationCmd.AddCommand(replicationNRDBCmd)
+	migrationCmd.AddCommand(migrationNRDBCmd)
 	deleteCmd.AddCommand(deleteNRDBMSCmd)
 
 	deleteNRDBMSCmd.Flags().StringVarP(&credentialPath, "credential-path", "C", "", "Json file path containing the user's credentials")
@@ -188,7 +188,7 @@ func exportNRDMFunc() error {
 	return nil
 }
 
-func replicationNRDMFunc() error {
+func migrationNRDMFunc() error {
 	var srcNRDBC *nrdbc.NRDBController
 	var srcErr error
 	var dstNRDBC *nrdbc.NRDBController
@@ -197,26 +197,26 @@ func replicationNRDMFunc() error {
 		logrus.Infof("Source Information")
 		srcNRDBC, srcErr = getSrcNRDMS()
 		if srcErr != nil {
-			logrus.Errorf("NRDBController error replication into nrdbms : %v", srcErr)
+			logrus.Errorf("NRDBController error migration into nrdbms : %v", srcErr)
 			return srcErr
 		}
 		logrus.Infof("Target Information")
 		dstNRDBC, dstErr = getDstNRDMS()
 		if dstErr != nil {
-			logrus.Errorf("NRDBController error replication into nrdbms : %v", dstErr)
+			logrus.Errorf("NRDBController error migration into nrdbms : %v", dstErr)
 			return dstErr
 		}
 	} else {
 		logrus.Infof("Source Information")
 		srcNRDBC, srcErr = getDstNRDMS()
 		if srcErr != nil {
-			logrus.Errorf("NRDBController error replication into nrdbms : %v", srcErr)
+			logrus.Errorf("NRDBController error migration into nrdbms : %v", srcErr)
 			return srcErr
 		}
 		logrus.Infof("Target Information")
 		dstNRDBC, dstErr = getSrcNRDMS()
 		if dstErr != nil {
-			logrus.Errorf("NRDBController error replication into nrdbms : %v", dstErr)
+			logrus.Errorf("NRDBController error migration into nrdbms : %v", dstErr)
 			return dstErr
 		}
 	}
@@ -225,7 +225,7 @@ func replicationNRDMFunc() error {
 		logrus.Errorf("Copy error copying into nrdbms : %v", err)
 		return err
 	}
-	logrus.Info("successfully replicationed")
+	logrus.Info("successfully migrationed")
 	return nil
 }
 

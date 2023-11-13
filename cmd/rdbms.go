@@ -47,11 +47,11 @@ var exportRDBCmd = &cobra.Command{
 	},
 }
 
-var replicationRDBCmd = &cobra.Command{
+var migrationRDBCmd = &cobra.Command{
 	Use:    "rdbms",
 	PreRun: preRun("rdbms"),
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := replicationRDMFunc(); err != nil {
+		if err := migrationRDMFunc(); err != nil {
 			os.Exit(1)
 		}
 	},
@@ -70,7 +70,7 @@ var deleteRDBMSCmd = &cobra.Command{
 func init() {
 	importCmd.AddCommand(importRDBCmd)
 	exportCmd.AddCommand(exportRDBCmd)
-	replicationCmd.AddCommand(replicationRDBCmd)
+	migrationCmd.AddCommand(migrationRDBCmd)
 	deleteCmd.AddCommand(deleteRDBMSCmd)
 
 	deleteRDBMSCmd.Flags().StringVarP(&credentialPath, "credential-path", "C", "", "Json file path containing the user's credentials")
@@ -178,7 +178,7 @@ func exportRDMFunc() error {
 	return nil
 }
 
-func replicationRDMFunc() error {
+func migrationRDMFunc() error {
 	var srcRDBC *rdbc.RDBController
 	var srcErr error
 	var dstRDBC *rdbc.RDBController
@@ -187,26 +187,26 @@ func replicationRDMFunc() error {
 		logrus.Infof("Source Information")
 		srcRDBC, srcErr = getSrcRDMS()
 		if srcErr != nil {
-			logrus.Errorf("RDBController error replication into rdbms : %v", srcErr)
+			logrus.Errorf("RDBController error migration into rdbms : %v", srcErr)
 			return srcErr
 		}
 		logrus.Infof("Target Information")
 		dstRDBC, dstErr = getDstRDMS()
 		if dstErr != nil {
-			logrus.Errorf("RDBController error replication into rdbms : %v", dstErr)
+			logrus.Errorf("RDBController error migration into rdbms : %v", dstErr)
 			return dstErr
 		}
 	} else {
 		logrus.Infof("Source Information")
 		srcRDBC, srcErr = getDstRDMS()
 		if srcErr != nil {
-			logrus.Errorf("RDBController error replication into rdbms : %v", srcErr)
+			logrus.Errorf("RDBController error migration into rdbms : %v", srcErr)
 			return srcErr
 		}
 		logrus.Infof("Target Information")
 		dstRDBC, dstErr = getSrcRDMS()
 		if dstErr != nil {
-			logrus.Errorf("RDBController error replication into rdbms : %v", dstErr)
+			logrus.Errorf("RDBController error migration into rdbms : %v", dstErr)
 			return dstErr
 		}
 	}
@@ -216,7 +216,7 @@ func replicationRDMFunc() error {
 		logrus.Errorf("Copy error copying into rdbms : %v", err)
 		return err
 	}
-	logrus.Info("successfully replicationed")
+	logrus.Info("successfully migrationed")
 	return nil
 }
 

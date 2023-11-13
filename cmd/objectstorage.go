@@ -43,11 +43,11 @@ var exportOSCmd = &cobra.Command{
 	},
 }
 
-var replicationOSCmd = &cobra.Command{
+var migrationOSCmd = &cobra.Command{
 	Use:    "objectstorage",
 	PreRun: preRun("objectstorage"),
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := replicationOSFunc(); err != nil {
+		if err := migrationOSFunc(); err != nil {
 			os.Exit(1)
 		}
 	},
@@ -66,7 +66,7 @@ var deleteOSCmd = &cobra.Command{
 func init() {
 	importCmd.AddCommand(importOSCmd)
 	exportCmd.AddCommand(exportOSCmd)
-	replicationCmd.AddCommand(replicationOSCmd)
+	migrationCmd.AddCommand(migrationOSCmd)
 	deleteCmd.AddCommand(deleteOSCmd)
 
 	deleteOSCmd.Flags().StringVarP(&credentialPath, "credential-path", "C", "", "Json file path containing the user's credentials")
@@ -120,7 +120,7 @@ func exportOSFunc() error {
 	return nil
 }
 
-func replicationOSFunc() error {
+func migrationOSFunc() error {
 	var src *osc.OSController
 	var srcErr error
 	var dst *osc.OSController
@@ -129,26 +129,26 @@ func replicationOSFunc() error {
 		logrus.Infof("Source Information")
 		src, srcErr = getSrcOS()
 		if srcErr != nil {
-			logrus.Errorf("OSController error replication into objectstorage : %v", srcErr)
+			logrus.Errorf("OSController error migration into objectstorage : %v", srcErr)
 			return srcErr
 		}
 		logrus.Infof("Target Information")
 		dst, dstErr = getDstOS()
 		if dstErr != nil {
-			logrus.Errorf("OSController error replication into objectstorage : %v", dstErr)
+			logrus.Errorf("OSController error migration into objectstorage : %v", dstErr)
 			return dstErr
 		}
 	} else {
 		logrus.Infof("Source Information")
 		src, srcErr = getDstOS()
 		if srcErr != nil {
-			logrus.Errorf("OSController error replication into objectstorage : %v", srcErr)
+			logrus.Errorf("OSController error migration into objectstorage : %v", srcErr)
 			return srcErr
 		}
 		logrus.Infof("Target Information")
 		dst, dstErr = getSrcOS()
 		if dstErr != nil {
-			logrus.Errorf("OSController error replication into objectstorage : %v", dstErr)
+			logrus.Errorf("OSController error migration into objectstorage : %v", dstErr)
 			return dstErr
 		}
 	}
@@ -158,7 +158,7 @@ func replicationOSFunc() error {
 		logrus.Errorf("Copy error copying into objectstorage : %v", err)
 		return err
 	}
-	logrus.Info("successfully replicationed")
+	logrus.Info("successfully migrationed")
 	return nil
 }
 

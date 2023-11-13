@@ -118,7 +118,7 @@ func (src *NRDBController) Copy(dst *NRDBController) error {
 	}
 
 	for _, table := range tableList {
-		src.logWrite("Info", fmt.Sprintf("Replication start: %s", table), nil)
+		src.logWrite("Info", fmt.Sprintf("Migration start: %s", table), nil)
 		data := []map[string]interface{}{}
 		if err := src.Get(table, &data); err != nil {
 			src.logWrite("Error", "Get error", err)
@@ -129,7 +129,7 @@ func (src *NRDBController) Copy(dst *NRDBController) error {
 			src.logWrite("Error", "Put error", err)
 			return err
 		}
-		src.logWrite("Info", fmt.Sprintf("Replication success: src:/%s -> dst:/%s", table, table), nil)
+		src.logWrite("Info", fmt.Sprintf("Migration success: src:/%s -> dst:/%s", table, table), nil)
 	}
 	return nil
 }

@@ -57,7 +57,7 @@ func (src *OSController) Copy(dst *OSController) error {
 
 	for ret := range resultChan {
 		if ret.err != nil {
-			src.logWrite("Error", fmt.Sprintf("Replication failed: %s", ret.name), ret.err)
+			src.logWrite("Error", fmt.Sprintf("Migration failed: %s", ret.name), ret.err)
 		}
 	}
 
@@ -110,7 +110,7 @@ func copyWorker(src *OSController, dst *OSController, jobs chan utils.Object, re
 			continue
 		}
 
-		src.logWrite("Info", fmt.Sprintf("Replication success: src:/%s -> dst:/%s", obj.Key, obj.Key), nil)
+		src.logWrite("Info", fmt.Sprintf("Migration success: src:/%s -> dst:/%s", obj.Key, obj.Key), nil)
 
 		resultChan <- ret
 	}

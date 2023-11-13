@@ -19,16 +19,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// replicationCmd represents the replication command
-var replicationCmd = &cobra.Command{
-	Use:   "replication",
-	Short: "Replicate data to other csps",
-	Long:  `Replicating unstructured, semi-structured, and structured data between CSPs`,
+// migrationCmd represents the migration command
+var migrationCmd = &cobra.Command{
+	Use:   "migration",
+	Short: "Migrate data to other csps",
+	Long:  `Migrating unstructured, semi-structured, and structured data between CSPs`,
 }
 
 func init() {
-	rootCmd.AddCommand(replicationCmd)
-	replicationCmd.PersistentFlags().BoolVarP(&taskTarget, "task", "T", false, "Select a destination(src, dst) to work with in the credential-path")
-	replicationCmd.PersistentFlags().StringVarP(&credentialPath, "credential-path", "C", "", "Json file path containing the user's credentials")
-	replicationCmd.MarkFlagRequired("credential-path")
+	rootCmd.AddCommand(migrationCmd)
+	migrationCmd.PersistentFlags().BoolVarP(&taskTarget, "task", "T", false, "Select a destination(src, dst) to work with in the credential-path")
+	migrationCmd.PersistentFlags().StringVarP(&credentialPath, "credential-path", "C", "", "Json file path containing the user's credentials")
+	migrationCmd.MarkFlagRequired("credential-path")
 }
