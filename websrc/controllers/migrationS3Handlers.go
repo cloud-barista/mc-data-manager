@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -20,6 +21,7 @@ func MigrationS3ToLinuxGetHandler() gin.HandlerFunc {
 			"Content": "Migration-S3-Linux",
 			"Regions": GetAWSRegions(),
 			"error":   nil,
+			"os":      runtime.GOOS,
 		})
 	}
 }
@@ -82,6 +84,7 @@ func MigrationS3ToWindowsGetHandler() gin.HandlerFunc {
 			"Content": "Migration-S3-Windows",
 			"Regions": GetAWSRegions(),
 			"tmpPath": tmpPath,
+			"os":      runtime.GOOS,
 			"error":   nil,
 		})
 	}
@@ -144,6 +147,7 @@ func MigrationS3ToGCSGetHandler() gin.HandlerFunc {
 			"Content":    "Migration-S3-GCS",
 			"AWSRegions": GetAWSRegions(),
 			"GCPRegions": GetGCPRegions(),
+			"os":         runtime.GOOS,
 			"error":      nil,
 		})
 	}
@@ -221,6 +225,7 @@ func MigrationS3ToNCSGetHandler() gin.HandlerFunc {
 			"Content":    "Migration-S3-NCS",
 			"AWSRegions": GetAWSRegions(),
 			"NCPRegions": GetNCPRegions(),
+			"os":         runtime.GOOS,
 			"error":      nil,
 		})
 	}

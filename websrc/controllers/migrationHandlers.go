@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,7 @@ func MigrationLinuxToS3GetHandler() gin.HandlerFunc {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-Linux-S3",
 			"Regions": GetAWSRegions(),
+			"os":      runtime.GOOS,
 			"error":   nil,
 		})
 	}
@@ -77,6 +79,7 @@ func MigrationLinuxToGCSGetHandler() gin.HandlerFunc {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-Linux-GCS",
 			"Regions": GetGCPRegions(),
+			"os":      runtime.GOOS,
 			"error":   nil,
 		})
 	}
@@ -148,6 +151,7 @@ func MigrationLinuxToNCSGetHandler() gin.HandlerFunc {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-Linux-NCS",
 			"Regions": GetNCPRegions(),
+			"os":      runtime.GOOS,
 			"error":   nil,
 		})
 	}
@@ -210,6 +214,7 @@ func MigrationWindowsToS3GetHandler() gin.HandlerFunc {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-Windows-S3",
 			"Regions": GetAWSRegions(),
+			"os":      runtime.GOOS,
 			"tmpPath": tmpPath,
 			"error":   nil,
 		})
@@ -273,6 +278,7 @@ func MigrationWindowsToGCSGetHandler() gin.HandlerFunc {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-Windows-GCS",
 			"Regions": GetGCPRegions(),
+			"os":      runtime.GOOS,
 			"tmpPath": tmpPath,
 			"error":   nil,
 		})
@@ -346,6 +352,7 @@ func MigrationWindowsToNCSGetHandler() gin.HandlerFunc {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-Windows-NCS",
 			"Regions": GetNCPRegions(),
+			"os":      runtime.GOOS,
 			"tmpPath": tmpPath,
 			"error":   nil,
 		})
@@ -409,6 +416,7 @@ func MigrationMySQLGetHandler() gin.HandlerFunc {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-MySQL",
 			"error":   nil,
+			"os":      runtime.GOOS,
 		})
 	}
 }

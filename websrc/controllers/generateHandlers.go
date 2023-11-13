@@ -1,10 +1,10 @@
 package controllers
 
 import (
-	"errors"
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -16,6 +16,7 @@ func GenerateLinuxGetHandler() gin.HandlerFunc {
 		logger.Info("genlinux get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-Linux",
+			"os":      runtime.GOOS,
 			"error":   nil,
 		})
 	}
@@ -60,6 +61,7 @@ func GenerateWindowsGetHandler() gin.HandlerFunc {
 		logger.Info("genwindows get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-Windows",
+			"os":      runtime.GOOS,
 			"tmpPath": tmpPath,
 			"error":   nil,
 		})
@@ -75,7 +77,7 @@ func GenerateWindowsPostHandler() gin.HandlerFunc {
 		if !osCheck(logger, start, "windows") {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
-				"Error":  errors.New("Not a windows operating system"),
+				"Error":  nil,
 			})
 			return
 		}
@@ -104,6 +106,7 @@ func GenerateS3GetHandler() gin.HandlerFunc {
 		logger.Info("genS3 get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-S3",
+			"os":      runtime.GOOS,
 			"Regions": GetAWSRegions(),
 			"Error":   nil,
 		})
@@ -168,6 +171,7 @@ func GenerateGCSGetHandler() gin.HandlerFunc {
 		logger.Info("genGCS get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-GCS",
+			"os":      runtime.GOOS,
 			"Regions": GetGCPRegions(),
 			"error":   nil,
 		})
@@ -250,6 +254,7 @@ func GenerateNCSGetHandler() gin.HandlerFunc {
 		logger.Info("genNCS get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-NCS",
+			"os":      runtime.GOOS,
 			"Regions": GetNCPRegions(),
 			"error":   nil,
 		})
@@ -315,6 +320,7 @@ func GenerateMySQLGetHandler() gin.HandlerFunc {
 		logger.Info("genmysql get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-MySQL",
+			"os":      runtime.GOOS,
 			"error":   nil,
 		})
 	}
@@ -413,6 +419,7 @@ func GenerateDynamoDBGetHandler() gin.HandlerFunc {
 		logger.Info("gendynamodb get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-DynamoDB",
+			"os":      runtime.GOOS,
 			"Regions": GetAWSRegions(),
 			"error":   nil,
 		})
@@ -488,6 +495,7 @@ func GenerateFirestoreGetHandler() gin.HandlerFunc {
 		logger.Info("genfirestore get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-Firestore",
+			"os":      runtime.GOOS,
 			"Regions": GetGCPRegions(),
 			"error":   nil,
 		})
@@ -580,6 +588,7 @@ func GenerateMongoDBGetHandler() gin.HandlerFunc {
 		logger.Info("genmongodb get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-MongoDB",
+			"os":      runtime.GOOS,
 			"error":   nil,
 		})
 	}

@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 	"os"
+	"runtime"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -17,6 +18,7 @@ func MigrationDynamoDBToFirestoreGetHandler() gin.HandlerFunc {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content":    "Migration-DynamoDB-Firestore",
 			"AWSRegions": GetAWSRegions(),
+			"os":         runtime.GOOS,
 			"GCPRegions": GetGCPRegions(),
 			"error":      nil,
 		})
@@ -94,6 +96,7 @@ func MigrationDynamoDBToMongoDBeGetHandler() gin.HandlerFunc {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-DynamoDB-MongoDB",
 			"Regions": GetAWSRegions(),
+			"os":      runtime.GOOS,
 			"error":   nil,
 		})
 	}
@@ -161,6 +164,7 @@ func MigrationFirestoreToDynamoDBGetHandler() gin.HandlerFunc {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content":    "Migration-Firestore-DynamoDB",
 			"AWSRegions": GetAWSRegions(),
+			"os":         runtime.GOOS,
 			"GCPRegions": GetGCPRegions(),
 			"error":      nil,
 		})
@@ -238,6 +242,7 @@ func MigrationFirestoreToMongoDBGetHandler() gin.HandlerFunc {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-Firestore-MongoDB",
 			"Regions": GetGCPRegions(),
+			"os":      runtime.GOOS,
 			"error":   nil,
 		})
 	}
@@ -316,6 +321,7 @@ func MigrationMongoDBToDynamoDBGetHandler() gin.HandlerFunc {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-MongoDB-DynamoDB",
 			"Regions": GetAWSRegions(),
+			"os":      runtime.GOOS,
 			"error":   nil,
 		})
 	}
@@ -382,6 +388,7 @@ func MigrationMongoDBToFirestoreGetHandler() gin.HandlerFunc {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-MongoDB-Firestore",
 			"Regions": GetGCPRegions(),
+			"os":      runtime.GOOS,
 			"error":   nil,
 		})
 	}
