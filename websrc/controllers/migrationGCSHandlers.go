@@ -1,18 +1,11 @@
 package controllers
 
 import (
-	"errors"
-	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
-	"runtime"
+	"time"
 
-	"github.com/cloud-barista/cm-data-mold/config"
-	"github.com/cloud-barista/cm-data-mold/pkg/objectstorage/gcsfs"
-	"github.com/cloud-barista/cm-data-mold/pkg/objectstorage/s3fs"
-	"github.com/cloud-barista/cm-data-mold/pkg/utils"
-	"github.com/cloud-barista/cm-data-mold/service/osc"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,6 +14,8 @@ import (
 // FROM Google Cloud Storage
 func MigrationGCSToLinuxGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		logger := getLogger("miglingcs")
+		logger.Info("miglingcs get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-GCS-Linux",
 			"Regions": GetGCPRegions(),
@@ -31,86 +26,59 @@ func MigrationGCSToLinuxGetHandler() gin.HandlerFunc {
 
 func MigrationGCSToLinuxPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		if runtime.GOOS != "linux" {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content": "Migration-GCS-Linux",
-				"Regions": GetGCPRegions(),
-				"error":   errors.New("your current operating system is not linux"),
+		start := time.Now()
+
+		logger, logstrings := pageLogInit("miglingcs", "Export gcs data to windows", start)
+
+		if !osCheck(logger, start, "linux") {
+			ctx.JSONP(http.StatusBadRequest, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		region := ctx.PostForm("region")
-		gcsCredentialFile, gcsCredentialHeader, err := ctx.Request.FormFile("gcsCredential")
-		if err != nil {
-			ctx.HTML(http.StatusBadRequest, "index.html", gin.H{
-				"Content": "Migration-GCS-Linux",
-				"Regions": GetGCPRegions(),
-				"error":   nil,
+		params := MigrationForm{}
+		if !getDataWithBind(logger, start, ctx, params) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
-		defer gcsCredentialFile.Close()
 
-		credTmpDir, err := os.MkdirTemp("", "datamold-gcs-cred-")
-		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content": "Migration-GCS-Linux",
-				"Regions": GetGCPRegions(),
-				"error":   fmt.Errorf("failed to create tmpdir : %v", err),
+		credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
+		if !ok {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 		defer os.RemoveAll(credTmpDir)
 
-		projectid := ctx.PostForm("projectid")
-		bucket := ctx.PostForm("bucket")
-		path := ctx.PostForm("path")
-
-		credFileName := filepath.Join(credTmpDir, gcsCredentialHeader.Filename)
-		err = ctx.SaveUploadedFile(gcsCredentialHeader, credFileName)
-		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content": "Migration-GCS-Linux",
-				"Regions": GetGCPRegions(),
-				"error":   fmt.Errorf("failed to save uploaded file : %v", err),
+		gcsOSC := getGCSCOSC(logger, start, "mig", params, credFileName)
+		if gcsOSC == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		gc, err := config.NewGCSClient(credFileName)
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-GCS-Linux",
-				"Regions": GetGCPRegions(),
-				"error":   nil,
+		if !oscExport(logger, start, "gcs", gcsOSC, params.Path) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		gcpOSC, err := osc.New(gcsfs.New(gc, projectid, bucket, region))
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-GCS-Linux",
-				"Regions": GetGCPRegions(),
-				"error":   nil,
-			})
-			return
-		}
-
-		if err := gcpOSC.MGet(path); err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-GCS-Linux",
-				"Regions": GetGCPRegions(),
-				"error":   nil,
-			})
-			return
-		}
-
-		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content": "Migration-GCS-Linux",
-			"Regions": GetGCPRegions(),
-			"error":   nil,
+		// migration success. Send result to client
+		jobEnd(logger, "Successfully migrated data from gcs to linux", start)
+		ctx.JSONP(http.StatusOK, gin.H{
+			"Result": logstrings.String(),
+			"Error":  nil,
 		})
 	}
 }
@@ -118,6 +86,8 @@ func MigrationGCSToLinuxPostHandler() gin.HandlerFunc {
 func MigrationGCSToWindowsGetHandler() gin.HandlerFunc {
 	tmpPath := filepath.Join(os.TempDir(), "dummy")
 	return func(ctx *gin.Context) {
+		logger := getLogger("miggcswin")
+		logger.Info("miggcswin get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-GCS-Windows",
 			"Regions": GetGCPRegions(),
@@ -128,96 +98,60 @@ func MigrationGCSToWindowsGetHandler() gin.HandlerFunc {
 }
 
 func MigrationGCSToWindowsPostHandler() gin.HandlerFunc {
-	tmpPath := filepath.Join(os.TempDir(), "dummy")
 	return func(ctx *gin.Context) {
-		if runtime.GOOS != "windows" {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content": "Migration-GCS-Windows",
-				"Regions": GetGCPRegions(),
-				"tmpPath": tmpPath,
-				"error":   errors.New("your current operating system is not windows"),
+		start := time.Now()
+
+		logger, logstrings := pageLogInit("miggcswin", "Export gcs data to windows", start)
+
+		if !osCheck(logger, start, "linux") {
+			ctx.JSONP(http.StatusBadRequest, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		region := ctx.PostForm("region")
-		gcsCredentialFile, gcsCredentialHeader, err := ctx.Request.FormFile("gcsCredential")
-		if err != nil {
-			ctx.HTML(http.StatusBadRequest, "index.html", gin.H{
-				"Content": "Migration-GCS-Windows",
-				"Regions": GetGCPRegions(),
-				"tmpPath": tmpPath,
-				"error":   nil,
+		params := MigrationForm{}
+		if !getDataWithBind(logger, start, ctx, params) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
-		defer gcsCredentialFile.Close()
 
-		credTmpDir, err := os.MkdirTemp("", "datamold-gcs-cred-")
-		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content": "Migration-GCS-Windows",
-				"Regions": GetGCPRegions(),
-				"tmpPath": tmpPath,
-				"error":   fmt.Errorf("failed to create tmpdir : %v", err),
+		credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
+		if !ok {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 		defer os.RemoveAll(credTmpDir)
 
-		projectid := ctx.PostForm("projectid")
-		bucket := ctx.PostForm("bucket")
-		path := ctx.PostForm("path")
-
-		credFileName := filepath.Join(credTmpDir, gcsCredentialHeader.Filename)
-		err = ctx.SaveUploadedFile(gcsCredentialHeader, credFileName)
-		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content": "Migration-GCS-Windows",
-				"Regions": GetGCPRegions(),
-				"tmpPath": tmpPath,
-				"error":   fmt.Errorf("failed to save uploaded file : %v", err),
+		gcsOSC := getGCSCOSC(logger, start, "mig", params, credFileName)
+		if gcsOSC == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		gc, err := config.NewGCSClient(credFileName)
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-GCS-Windows",
-				"Regions": GetGCPRegions(),
-				"tmpPath": tmpPath,
-				"error":   nil,
+		if !oscExport(logger, start, "gcs", gcsOSC, params.Path) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		gcpOSC, err := osc.New(gcsfs.New(gc, projectid, bucket, region))
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-GCS-Windows",
-				"Regions": GetGCPRegions(),
-				"tmpPath": tmpPath,
-				"error":   nil,
-			})
-			return
-		}
-
-		if err := gcpOSC.MGet(path); err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-GCS-Windows",
-				"Regions": GetGCPRegions(),
-				"tmpPath": tmpPath,
-				"error":   nil,
-			})
-			return
-		}
-
-		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content": "Migration-GCS-Windows",
-			"Regions": GetGCPRegions(),
-			"tmpPath": tmpPath,
-			"error":   nil,
+		// migration success. Send result to client
+		jobEnd(logger, "Successfully migrated data from gcs to windows", start)
+		ctx.JSONP(http.StatusOK, gin.H{
+			"Result": logstrings.String(),
+			"Error":  nil,
 		})
 	}
 }
@@ -235,115 +169,72 @@ func MigrationGCSToS3GetHandler() gin.HandlerFunc {
 
 func MigrationGCSToS3PostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		gcpRegion := ctx.PostForm("gcpRegion")
-		gcsCredentialFile, gcsCredentialHeader, err := ctx.Request.FormFile("gcsCredential")
-		if err != nil {
-			ctx.HTML(http.StatusBadRequest, "index.html", gin.H{
-				"Content":    "Migration-GCS-S3",
-				"GCPRegions": GetGCPRegions(),
-				"AWSRegions": GetAWSRegions(),
-				"error":      nil,
+		start := time.Now()
+
+		logger, logstrings := pageLogInit("genlinux", "Export gcs data to s3", start)
+
+		params := MigrationForm{}
+		if !getDataWithBind(logger, start, ctx, params) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
-		defer gcsCredentialFile.Close()
 
-		credTmpDir, err := os.MkdirTemp("", "datamold-gcs-cred-")
-		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content":    "Migration-GCS-S3",
-				"GCPRegions": GetGCPRegions(),
-				"AWSRegions": GetAWSRegions(),
-				"error":      fmt.Errorf("failed to create tmpdir : %v", err),
+		credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
+		if !ok {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 		defer os.RemoveAll(credTmpDir)
 
-		projectid := ctx.PostForm("projectid")
-		gcsBucket := ctx.PostForm("gcsBucket")
-		awsRegion := ctx.PostForm("awsRegion")
-		s3AccessKey := ctx.PostForm("s3AccessKey")
-		s3SecretKey := ctx.PostForm("s3SecretKey")
-		s3Bucket := ctx.PostForm("s3Bucket")
-
-		credFileName := filepath.Join(credTmpDir, gcsCredentialHeader.Filename)
-		err = ctx.SaveUploadedFile(gcsCredentialHeader, credFileName)
-		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content":    "Migration-GCS-S3",
-				"GCPRegions": GetGCPRegions(),
-				"AWSRegions": GetAWSRegions(),
-				"error":      fmt.Errorf("failed to save uploaded file : %v", err),
+		gcsOSC := getGCSCOSC(logger, start, "mig", params, credFileName)
+		if gcsOSC == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		gc, err := config.NewGCSClient(credFileName)
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content":    "Migration-GCS-S3",
-				"GCPRegions": GetGCPRegions(),
-				"AWSRegions": GetAWSRegions(),
-				"error":      nil,
+		awsOSC := getS3OSC(logger, start, "mig", params)
+		if awsOSC == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		gcpOSC, err := osc.New(gcsfs.New(gc, projectid, gcsBucket, gcpRegion))
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content":    "Migration-GCS-S3",
-				"GCPRegions": GetGCPRegions(),
-				"AWSRegions": GetAWSRegions(),
-				"error":      nil,
+		if err := gcsOSC.Copy(awsOSC); err != nil {
+			end := time.Now()
+			logger.Errorf("OSController copy failed : %v", err)
+			logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+			logger.Infof("Elapsed time : %s", end.Sub(start).String())
+			ctx.JSONP(http.StatusOK, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		ac, err := config.NewS3Client(s3AccessKey, s3SecretKey, awsRegion)
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content":    "Migration-GCS-S3",
-				"GCPRegions": GetGCPRegions(),
-				"AWSRegions": GetAWSRegions(),
-				"error":      nil,
-			})
-			return
-		}
-
-		awsOSC, err := osc.New(s3fs.New(utils.AWS, ac, s3Bucket, awsRegion))
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content":    "Migration-GCS-S3",
-				"GCPRegions": GetGCPRegions(),
-				"AWSRegions": GetAWSRegions(),
-				"error":      nil,
-			})
-			return
-		}
-
-		if err := gcpOSC.Copy(awsOSC); err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content":    "Migration-GCS-S3",
-				"GCPRegions": GetGCPRegions(),
-				"AWSRegions": GetAWSRegions(),
-				"error":      nil,
-			})
-			return
-		}
-
-		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content":    "Migration-GCS-S3",
-			"GCPRegions": GetGCPRegions(),
-			"AWSRegions": GetAWSRegions(),
-			"error":      nil,
+		// migration success. Send result to client
+		jobEnd(logger, "Successfully migrated data from gcs to s3", start)
+		ctx.JSONP(http.StatusOK, gin.H{
+			"Result": logstrings.String(),
+			"Error":  nil,
 		})
 	}
 }
 
 func MigrationGCSToNCSGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		logger := getLogger("miggcsncp")
+		logger.Info("miggcsncp get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content":    "Migration-GCS-NCS",
 			"GCPRegions": GetGCPRegions(),
@@ -355,109 +246,63 @@ func MigrationGCSToNCSGetHandler() gin.HandlerFunc {
 
 func MigrationGCSToNCSPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		gcpRegion := ctx.PostForm("gcpRegion")
-		gcsCredentialFile, gcsCredentialHeader, err := ctx.Request.FormFile("gcsCredential")
-		if err != nil {
-			ctx.HTML(http.StatusBadRequest, "index.html", gin.H{
-				"Content":    "Migration-GCS-NCS",
-				"GCPRegions": GetGCPRegions(),
-				"NCPRegions": GetNCPRegions(),
-				"error":      nil,
+		start := time.Now()
+
+		logger, logstrings := pageLogInit("miggcsncp", "Export gcs data to ncp objectstorage", start)
+
+		params := MigrationForm{}
+		if !getDataWithBind(logger, start, ctx, params) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
-		defer gcsCredentialFile.Close()
 
-		credTmpDir, err := os.MkdirTemp("", "datamold-gcs-cred-")
-		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content":    "Migration-GCS-NCS",
-				"GCPRegions": GetGCPRegions(),
-				"NCPRegions": GetNCPRegions(),
-				"error":      fmt.Errorf("failed to create tmpdir : %v", err),
+		credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
+		if !ok {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 		defer os.RemoveAll(credTmpDir)
 
-		projectid := ctx.PostForm("projectid")
-		gcsBucket := ctx.PostForm("gcsBucket")
-		ncsRegion := ctx.PostForm("ncsRegion")
-		ncsAccessKey := ctx.PostForm("ncsAccessKey")
-		ncsSecretKey := ctx.PostForm("ncsSecretKey")
-		ncsBucket := ctx.PostForm("ncsBucket")
-		ncsEndpoint := ctx.PostForm("ncsEndpoint")
-
-		credFileName := filepath.Join(credTmpDir, gcsCredentialHeader.Filename)
-		err = ctx.SaveUploadedFile(gcsCredentialHeader, credFileName)
-		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content":    "Migration-GCS-NCS",
-				"GCPRegions": GetGCPRegions(),
-				"NCPRegions": GetNCPRegions(),
-				"error":      fmt.Errorf("failed to save uploaded file : %v", err),
+		gcsOSC := getGCSCOSC(logger, start, "mig", params, credFileName)
+		if gcsOSC == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		gc, err := config.NewGCSClient(credFileName)
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content":    "Migration-GCS-NCS",
-				"GCPRegions": GetGCPRegions(),
-				"NCPRegions": GetNCPRegions(),
-				"error":      nil,
+		ncpOSC := getS3COSC(logger, start, "mig", params)
+		if ncpOSC == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		gcpOSC, err := osc.New(gcsfs.New(gc, projectid, gcsBucket, gcpRegion))
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content":    "Migration-GCS-NCS",
-				"GCPRegions": GetGCPRegions(),
-				"NCPRegions": GetNCPRegions(),
-				"error":      nil,
+		if err := gcsOSC.Copy(ncpOSC); err != nil {
+			end := time.Now()
+			logger.Errorf("OSController copy failed : %v", err)
+			logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+			logger.Infof("Elapsed time : %s", end.Sub(start).String())
+			ctx.JSONP(http.StatusOK, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		ac, err := config.NewS3ClientWithEndpoint(ncsAccessKey, ncsSecretKey, ncsRegion, ncsEndpoint)
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content":    "Migration-GCS-NCS",
-				"GCPRegions": GetGCPRegions(),
-				"NCPRegions": GetNCPRegions(),
-				"error":      nil,
-			})
-			return
-		}
-
-		ncsOSC, err := osc.New(s3fs.New(utils.AWS, ac, ncsBucket, ncsRegion))
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content":    "Migration-GCS-NCS",
-				"GCPRegions": GetGCPRegions(),
-				"NCPRegions": GetNCPRegions(),
-				"error":      nil,
-			})
-			return
-		}
-
-		if err := gcpOSC.Copy(ncsOSC); err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content":    "Migration-GCS-NCS",
-				"GCPRegions": GetGCPRegions(),
-				"NCPRegions": GetNCPRegions(),
-				"error":      nil,
-			})
-			return
-		}
-		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content":    "Migration-GCS-NCS",
-			"GCPRegions": GetGCPRegions(),
-			"NCPRegions": GetNCPRegions(),
-			"error":      nil,
+		jobEnd(logger, "Successfully migrated data from gcs to ncp", start)
+		ctx.JSONP(http.StatusOK, gin.H{
+			"Result": logstrings.String(),
+			"Error":  nil,
 		})
 	}
 }

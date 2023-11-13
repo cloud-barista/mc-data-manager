@@ -25,7 +25,7 @@ func GenerateRandomZIP(dummyDir string, capacitySize int) error {
 
 	tempPath := filepath.Join(dummyDir, "tmpTxt")
 	if err := os.MkdirAll(tempPath, 0755); err != nil {
-		logrus.WithFields(logrus.Fields{"jobName": "gif create"}).Errorf("MkdirAll function error : %v", err)
+		logrus.Errorf("MkdirAll function error : %v", err)
 		return err
 	}
 	defer os.RemoveAll(tempPath)
@@ -84,7 +84,7 @@ func randomZIPWorker(countNum chan int, dummyDir, tempPath string, resultChan ch
 		if err := gzip(tempPath, zipWriter); err != nil {
 			resultChan <- err
 		}
-		logrus.WithFields(logrus.Fields{"jobName": "txt create"}).Infof("successfully generated : %s", w.Name())
+		logrus.Infof("successfully generated : %s", w.Name())
 		zipWriter.Close()
 		w.Close()
 		resultChan <- nil

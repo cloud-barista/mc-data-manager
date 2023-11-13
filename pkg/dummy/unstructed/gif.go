@@ -143,7 +143,7 @@ func randomGIFWorker(imgList []image.Image, countNum chan int, tmpDir string, re
 
 		err = gif.EncodeAll(gifFile, gifImage)
 		if err == nil {
-			logrus.WithFields(logrus.Fields{"jobName": "sql create"}).Infof("Creation success: %v", gifFile.Name())
+			logrus.Infof("Creation success: %v", gifFile.Name())
 		}
 
 		if cerr := gifFile.Close(); cerr != nil {

@@ -28,13 +28,13 @@
 
             <div class="mb-3">
                 <label for="gen-gcs-credential" class="form-label">Credentials 파일</label>
-                <input class="form-control" type="file" id="mig-gcs-credential" name="gcsCredential">
+                <input class="form-control" type="file" id="mig-gcs-credential" name="gcsCredential" required>
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-id-card"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="gen-s3-projectid" name="projectid" placeholder="ProjectID">
+                    <input type="text" class="form-control" id="gen-s3-projectid" name="projectid" placeholder="ProjectID" required>
                     <label for="gen-s3-bucket">ProjectID</label>
                 </div>
             </div>
@@ -42,7 +42,7 @@
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="gen-s3-bucket" name="bucket" placeholder="Bucket">
+                    <input type="text" class="form-control" id="gen-s3-bucket" name="bucket" placeholder="Bucket" required>
                     <label for="gen-s3-bucket">Bucket</label>
                 </div>
             </div>

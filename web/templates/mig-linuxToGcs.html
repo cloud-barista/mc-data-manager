@@ -42,13 +42,13 @@
            
             <div class="mb-3">
                 <label for="mig-gcp-credential" class="form-label">Credentials 파일</label>
-                <input class="form-control" type="file" id="mig-gcp-credential" name="gcpCredential">
+                <input class="form-control" type="file" id="mig-gcp-credential" name="gcpCredential" required>
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-id-card"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-gcp-projectid" name="projectid" placeholder="projectid">
+                    <input type="text" class="form-control" id="mig-gcp-projectid" name="projectid" placeholder="projectid" required>
                     <label for="mig-gcp-projectid">projectID</label>
                 </div>
             </div>
@@ -56,7 +56,7 @@
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-gcp-bucket" name="gcpBucket" placeholder="Bucket">
+                    <input type="text" class="form-control" id="mig-gcp-bucket" name="gcpBucket" placeholder="Bucket" required>
                     <label for="mig-gcp-bucket">Bucket</label>
                 </div>
             </div>

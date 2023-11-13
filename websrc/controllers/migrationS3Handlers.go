@@ -1,18 +1,11 @@
 package controllers
 
 import (
-	"errors"
-	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
-	"runtime"
+	"time"
 
-	"github.com/cloud-barista/cm-data-mold/config"
-	"github.com/cloud-barista/cm-data-mold/pkg/objectstorage/gcsfs"
-	"github.com/cloud-barista/cm-data-mold/pkg/objectstorage/s3fs"
-	"github.com/cloud-barista/cm-data-mold/pkg/utils"
-	"github.com/cloud-barista/cm-data-mold/service/osc"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,6 +14,8 @@ import (
 // FROM AWS S3
 func MigrationS3ToLinuxGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		logger := getLogger("migs3lin")
+		logger.Info("migs3lin get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-S3-Linux",
 			"Regions": GetAWSRegions(),
@@ -31,54 +26,49 @@ func MigrationS3ToLinuxGetHandler() gin.HandlerFunc {
 
 func MigrationS3ToLinuxPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		if runtime.GOOS != "linux" {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content": "Migration-S3-Linux",
-				"Regions": GetAWSRegions(),
-				"error":   errors.New("your current operating system is not linux"),
+		start := time.Now()
+
+		logger, logstrings := pageLogInit("migs3lin", "Export s3 data to linux", start)
+
+		if !osCheck(logger, start, "linux") {
+			ctx.JSONP(http.StatusBadRequest, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		region := ctx.PostForm("region")
-		accessKey := ctx.PostForm("accessKey")
-		secretKey := ctx.PostForm("secretKey")
-		bucket := ctx.PostForm("bucket")
-		path := ctx.PostForm("path")
-
-		sc, err := config.NewS3Client(accessKey, secretKey, region)
-		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content": "Migration-S3-Linux",
-				"Regions": GetAWSRegions(),
-				"error":   err,
+		params := MigrationForm{}
+		if !getDataWithBind(logger, start, ctx, params) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		awsOSC, err := osc.New(s3fs.New(utils.AWS, sc, bucket, region))
-		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content": "Migration-S3-Linux",
-				"Regions": GetAWSRegions(),
-				"error":   err,
+		awsOSC := getS3OSC(logger, start, "mig", params)
+		if awsOSC == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		if err := awsOSC.MGet(path); err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content": "Migration-S3-Linux",
-				"Regions": GetAWSRegions(),
-				"error":   err,
+		if !oscExport(logger, start, "s3", awsOSC, params.Path) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content": "Migration-S3-Linux",
-			"Regions": GetAWSRegions(),
-			"error":   nil,
+		// migration success. Send result to client
+		jobEnd(logger, "Successfully migrated data from S3 to Linux", start)
+		ctx.JSONP(http.StatusOK, gin.H{
+			"Result": logstrings.String(),
+			"Error":  nil,
 		})
 	}
 }
@@ -86,6 +76,8 @@ func MigrationS3ToLinuxPostHandler() gin.HandlerFunc {
 func MigrationS3ToWindowsGetHandler() gin.HandlerFunc {
 	tmpPath := filepath.Join(os.TempDir(), "dummy")
 	return func(ctx *gin.Context) {
+		logger := getLogger("migs3win")
+		logger.Info("migs3win get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-S3-Windows",
 			"Regions": GetAWSRegions(),
@@ -96,67 +88,58 @@ func MigrationS3ToWindowsGetHandler() gin.HandlerFunc {
 }
 
 func MigrationS3ToWindowsPostHandler() gin.HandlerFunc {
-	tmpPath := filepath.Join(os.TempDir(), "dummy")
 	return func(ctx *gin.Context) {
-		if runtime.GOOS != "windows" {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content": "Migration-S3-Windows",
-				"Regions": GetAWSRegions(),
-				"tmpPath": tmpPath,
-				"error":   errors.New("your current operating system is not windows"),
+		start := time.Now()
+
+		logger, logstrings := pageLogInit("genlinux", "Export s3 data to windows", start)
+
+		if !osCheck(logger, start, "windows") {
+			ctx.JSONP(http.StatusBadRequest, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		region := ctx.PostForm("region")
-		accessKey := ctx.PostForm("accessKey")
-		secretKey := ctx.PostForm("secretKey")
-		bucket := ctx.PostForm("bucket")
-		path := ctx.PostForm("path")
-
-		sc, err := config.NewS3Client(accessKey, secretKey, region)
-		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content": "Migration-S3-Windows",
-				"Regions": GetAWSRegions(),
-				"tmpPath": tmpPath,
-				"error":   err,
+		params := MigrationForm{}
+		if !getDataWithBind(logger, start, ctx, params) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		awsOSC, err := osc.New(s3fs.New(utils.AWS, sc, bucket, region))
-		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content": "Migration-S3-Windows",
-				"Regions": GetAWSRegions(),
-				"tmpPath": tmpPath,
-				"error":   err,
+		awsOSC := getS3OSC(logger, start, "mig", params)
+		if awsOSC == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		if err := awsOSC.MGet(path); err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content": "Migration-S3-Windows",
-				"Regions": GetAWSRegions(),
-				"tmpPath": tmpPath,
-				"error":   err,
+		if !oscExport(logger, start, "s3", awsOSC, params.Path) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content": "Migration-S3-Windows",
-			"Regions": GetAWSRegions(),
-			"tmpPath": tmpPath,
-			"error":   nil,
+		// migration success. Send result to client
+		jobEnd(logger, "Successfully migrated data from S3 to Windows", start)
+		ctx.JSONP(http.StatusOK, gin.H{
+			"Result": logstrings.String(),
+			"Error":  nil,
 		})
 	}
 }
 
 func MigrationS3ToGCSGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		logger := getLogger("migs3gcs")
+		logger.Info("migs3gcs get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content":    "Migration-S3-GCS",
 			"AWSRegions": GetAWSRegions(),
@@ -168,115 +151,72 @@ func MigrationS3ToGCSGetHandler() gin.HandlerFunc {
 
 func MigrationS3ToGCSPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		awsRegion := ctx.PostForm("awsRegion")
-		s3AccessKey := ctx.PostForm("s3AccessKey")
-		s3SecretKey := ctx.PostForm("s3SecretKey")
-		s3Bucket := ctx.PostForm("s3Bucket")
-		gcpRegion := ctx.PostForm("gcpRegion")
-		gcsCredentialFile, gcsCredentialHeader, err := ctx.Request.FormFile("gcsCredential")
-		if err != nil {
-			ctx.HTML(http.StatusBadRequest, "index.html", gin.H{
-				"Content":    "Migration-S3-GCS",
-				"AWSRegions": GetAWSRegions(),
-				"GCPRegions": GetGCPRegions(),
-				"error":      nil,
+		start := time.Now()
+
+		logger, logstrings := pageLogInit("migs3gcs", "Export s3 data to gcs", start)
+
+		params := MigrationForm{}
+		if !getDataWithBind(logger, start, ctx, params) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
-		defer gcsCredentialFile.Close()
 
-		credTmpDir, err := os.MkdirTemp("", "datamold-gcs-cred-")
-		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content":    "Migration-S3-GCS",
-				"AWSRegions": GetAWSRegions(),
-				"GCPRegions": GetGCPRegions(),
-				"error":      fmt.Errorf("failed to create tmpdir : %v", err),
+		credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
+		if !ok {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 		defer os.RemoveAll(credTmpDir)
 
-		projectid := ctx.PostForm("projectid")
-		gcsBucket := ctx.PostForm("gcsBucket")
-
-		credFileName := filepath.Join(credTmpDir, gcsCredentialHeader.Filename)
-		err = ctx.SaveUploadedFile(gcsCredentialHeader, credFileName)
-		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content":    "Migration-S3-GCS",
-				"AWSRegions": GetAWSRegions(),
-				"GCPRegions": GetGCPRegions(),
-				"error":      nil,
+		awsOSC := getS3OSC(logger, start, "mig", params)
+		if awsOSC == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		sc, err := config.NewS3Client(s3AccessKey, s3SecretKey, awsRegion)
-		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content":    "Migration-S3-GCS",
-				"AWSRegions": GetAWSRegions(),
-				"GCPRegions": GetGCPRegions(),
-				"error":      nil,
-			})
-			return
-		}
-
-		awsOSC, err := osc.New(s3fs.New(utils.AWS, sc, s3Bucket, awsRegion))
-		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content":    "Migration-S3-GCS",
-				"AWSRegions": GetAWSRegions(),
-				"GCPRegions": GetGCPRegions(),
-				"error":      nil,
-			})
-			return
-		}
-
-		gc, err := config.NewGCSClient(credFileName)
-		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content":    "Migration-S3-GCS",
-				"AWSRegions": GetAWSRegions(),
-				"GCPRegions": GetGCPRegions(),
-				"error":      nil,
-			})
-			return
-		}
-
-		gcsOSC, err := osc.New(gcsfs.New(gc, projectid, gcsBucket, gcpRegion))
-		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content":    "Migration-S3-GCS",
-				"AWSRegions": GetAWSRegions(),
-				"GCPRegions": GetGCPRegions(),
-				"error":      nil,
+		gcsOSC := getGCSCOSC(logger, start, "mig", params, credFileName)
+		if gcsOSC == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
 		if err := awsOSC.Copy(gcsOSC); err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content":    "Migration-S3-GCS",
-				"AWSRegions": GetAWSRegions(),
-				"GCPRegions": GetGCPRegions(),
-				"error":      nil,
+			end := time.Now()
+			logger.Errorf("OSController copy failed : %v", err)
+			logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+			logger.Infof("Elapsed time : %s", end.Sub(start).String())
+			ctx.JSONP(http.StatusOK, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content":    "Migration-S3-GCS",
-			"AWSRegions": GetAWSRegions(),
-			"GCPRegions": GetGCPRegions(),
-			"error":      nil,
+		// migration success. Send result to client
+		jobEnd(logger, "Successfully migrated data from s3 to gcs", start)
+		ctx.JSONP(http.StatusOK, gin.H{
+			"Result": logstrings.String(),
+			"Error":  nil,
 		})
 	}
 }
 
 func MigrationS3ToNCSGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		logger := getLogger("migs3ncp")
+		logger.Info("migs3ncp get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content":    "Migration-S3-NCS",
 			"AWSRegions": GetAWSRegions(),
@@ -288,75 +228,54 @@ func MigrationS3ToNCSGetHandler() gin.HandlerFunc {
 
 func MigrationS3ToNCSPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		awsRegion := ctx.PostForm("awsRegion")
-		s3AccessKey := ctx.PostForm("s3AccessKey")
-		s3SecretKey := ctx.PostForm("s3SecretKey")
-		s3Bucket := ctx.PostForm("s3Bucket")
-		ncsRegion := ctx.PostForm("ncsRegion")
-		ncsAccessKey := ctx.PostForm("ncsAccessKey")
-		ncsSecretKey := ctx.PostForm("ncsSecretKey")
-		ncsEndpoint := ctx.PostForm("ncsEndpoint")
-		ncsBucket := ctx.PostForm("ncsBucket")
+		start := time.Now()
 
-		sc, err := config.NewS3Client(s3AccessKey, s3SecretKey, awsRegion)
-		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content":    "Migration-S3-NCS",
-				"AWSRegions": GetAWSRegions(),
-				"NCPRegions": GetNCPRegions(),
-				"error":      err,
+		logger, logstrings := pageLogInit("migs3ncp", "Export s3 data to ncp objectstorage", start)
+
+		params := MigrationForm{}
+		if !getDataWithBind(logger, start, ctx, params) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		awsOSC, err := osc.New(s3fs.New(utils.AWS, sc, s3Bucket, ncsRegion))
-		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content":    "Migration-S3-NCS",
-				"AWSRegions": GetAWSRegions(),
-				"NCPRegions": GetNCPRegions(),
-				"error":      err,
+		awsOSC := getS3OSC(logger, start, "mig", params)
+		if awsOSC == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		nc, err := config.NewS3ClientWithEndpoint(ncsAccessKey, ncsSecretKey, ncsRegion, ncsEndpoint)
-		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content":    "Migration-S3-NCS",
-				"AWSRegions": GetAWSRegions(),
-				"NCPRegions": GetNCPRegions(),
-				"error":      err,
-			})
-			return
-		}
-
-		ncpOSC, err := osc.New(s3fs.New(utils.NCP, nc, ncsBucket, ncsRegion))
-		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content":    "Migration-S3-NCS",
-				"AWSRegions": GetAWSRegions(),
-				"NCPRegions": GetNCPRegions(),
-				"error":      err,
+		ncpOSC := getS3COSC(logger, start, "mig", params)
+		if ncpOSC == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
 		if err := awsOSC.Copy(ncpOSC); err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{
-				"Content":    "Migration-S3-NCS",
-				"AWSRegions": GetAWSRegions(),
-				"NCPRegions": GetNCPRegions(),
-				"error":      err,
+			end := time.Now()
+			logger.Errorf("OSController copy failed : %v", err)
+			logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+			logger.Infof("Elapsed time : %s", end.Sub(start).String())
+			ctx.JSONP(http.StatusOK, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content":    "Migration-S3-NCS",
-			"AWSRegions": GetAWSRegions(),
-			"NCPRegions": GetNCPRegions(),
-			"error":      nil,
+		// migration success. Send result to client
+		jobEnd(logger, "Successfully migrated data from s3 to ncp", start)
+		ctx.JSONP(http.StatusOK, gin.H{
+			"Result": logstrings.String(),
+			"Error":  nil,
 		})
 	}
 }

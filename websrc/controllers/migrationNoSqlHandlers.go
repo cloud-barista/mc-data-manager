@@ -3,14 +3,8 @@ package controllers
 import (
 	"net/http"
 	"os"
-	"path/filepath"
-	"strconv"
+	"time"
 
-	"github.com/cloud-barista/cm-data-mold/config"
-	"github.com/cloud-barista/cm-data-mold/pkg/nrdbms/awsdnmdb"
-	"github.com/cloud-barista/cm-data-mold/pkg/nrdbms/gcpfsdb"
-	"github.com/cloud-barista/cm-data-mold/pkg/nrdbms/ncpmgdb"
-	"github.com/cloud-barista/cm-data-mold/service/nrdbc"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,6 +12,8 @@ import (
 
 func MigrationDynamoDBToFirestoreGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		logger := getLogger("migDNFS")
+		logger.Info("migDNFS get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content":    "Migration-DynamoDB-Firestore",
 			"AWSRegions": GetAWSRegions(),
@@ -29,112 +25,72 @@ func MigrationDynamoDBToFirestoreGetHandler() gin.HandlerFunc {
 
 func MigrationDynamoDBToFirestorePostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		awsRegion := ctx.PostForm("awsRegion")
-		awsAccessKey := ctx.PostForm("awsAccessKey")
-		awsSecretKey := ctx.PostForm("awsSecretKey")
-		gcpRegion := ctx.PostForm("gcpRegion")
-		gcsCredentialFile, gcsCredentialHeader, err := ctx.Request.FormFile("gcsCredential")
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content":    "Migration-DynamoDB-Firestore",
-				"AWSRegions": GetAWSRegions(),
-				"GCPRegions": GetGCPRegions(),
-				"error":      nil,
+		start := time.Now()
+
+		logger, logstrings := pageLogInit("migDNFS", "Export dynamoDB data to firestoreDB", start)
+
+		params := MigrationForm{}
+		if !getDataWithBind(logger, start, ctx, params) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
-		defer gcsCredentialFile.Close()
 
-		credTmpDir, err := os.MkdirTemp("", "datamold-gcs-cred-")
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content":    "Migration-DynamoDB-Firestore",
-				"AWSRegions": GetAWSRegions(),
-				"GCPRegions": GetGCPRegions(),
-				"error":      nil,
+		credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
+		if !ok {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 		defer os.RemoveAll(credTmpDir)
 
-		projectid := ctx.PostForm("projectid")
-		credFileName := filepath.Join(credTmpDir, gcsCredentialHeader.Filename)
-		err = ctx.SaveUploadedFile(gcsCredentialHeader, credFileName)
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content":    "Migration-DynamoDB-Firestore",
-				"AWSRegions": GetAWSRegions(),
-				"GCPRegions": GetGCPRegions(),
-				"error":      nil,
+		awsNRDB := getDynamoNRDBC(logger, start, "mig", params)
+		if awsNRDB == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		ac, err := config.NewDynamoDBClient(awsAccessKey, awsSecretKey, awsRegion)
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content":    "Migration-DynamoDB-Firestore",
-				"AWSRegions": GetAWSRegions(),
-				"GCPRegions": GetGCPRegions(),
-				"error":      nil,
+		gcpNRDB := getFirestoreNRDBC(logger, start, "mig", params, credFileName)
+		if gcpNRDB == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		awsNRDBC, err := nrdbc.New(awsdnmdb.New(ac, awsRegion))
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content":    "Migration-DynamoDB-Firestore",
-				"AWSRegions": GetAWSRegions(),
-				"GCPRegions": GetGCPRegions(),
-				"error":      nil,
+		if err := awsNRDB.Copy(gcpNRDB); err != nil {
+			end := time.Now()
+			logger.Errorf("NRDBController copy failed : %v", err)
+			logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+			logger.Infof("Elapsed time : %s", end.Sub(start).String())
+			ctx.JSONP(http.StatusOK, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		gc, err := config.NewFireStoreClient(credFileName, projectid)
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content":    "Migration-DynamoDB-Firestore",
-				"AWSRegions": GetAWSRegions(),
-				"GCPRegions": GetGCPRegions(),
-				"error":      nil,
-			})
-			return
-		}
-
-		gcpNRDBC, err := nrdbc.New(gcpfsdb.New(gc, gcpRegion))
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content":    "Migration-DynamoDB-Firestore",
-				"AWSRegions": GetAWSRegions(),
-				"GCPRegions": GetGCPRegions(),
-				"error":      nil,
-			})
-			return
-		}
-
-		if err := awsNRDBC.Copy(gcpNRDBC); err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content":    "Migration-DynamoDB-Firestore",
-				"AWSRegions": GetAWSRegions(),
-				"GCPRegions": GetGCPRegions(),
-				"error":      nil,
-			})
-			return
-		}
-
-		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content":    "Migration-DynamoDB-Firestore",
-			"AWSRegions": GetAWSRegions(),
-			"GCPRegions": GetGCPRegions(),
-			"error":      nil,
+		// migration success. Send result to client
+		jobEnd(logger, "Successfully migrated data from dynamoDB to firestoreDB", start)
+		ctx.JSONP(http.StatusOK, gin.H{
+			"Result": logstrings.String(),
+			"Error":  nil,
 		})
 	}
 }
 
 func MigrationDynamoDBToMongoDBeGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		logger := getLogger("migDNMG")
+		logger.Info("migDNMG get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-DynamoDB-MongoDB",
 			"Regions": GetAWSRegions(),
@@ -145,69 +101,53 @@ func MigrationDynamoDBToMongoDBeGetHandler() gin.HandlerFunc {
 
 func MigrationDynamoDBToMongoDBPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		awsRegion := ctx.PostForm("awsRegion")
-		awsAccessKey := ctx.PostForm("awsAccessKey")
-		awsSecretKey := ctx.PostForm("awsSecretKey")
-		host := ctx.PostForm("host")
-		port := ctx.PostForm("port")
-		username := ctx.PostForm("username")
-		password := ctx.PostForm("password")
-		databaseName := ctx.PostForm("databaseName")
+		start := time.Now()
 
-		ac, err := config.NewDynamoDBClient(awsAccessKey, awsSecretKey, awsRegion)
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-DynamoDB-MongoDB",
-				"Regions": GetAWSRegions(),
-				"error":   nil,
+		logger, logstrings := pageLogInit("migDNMG", "Export dynamoDB data to mongoDB", start)
+		params := MigrationForm{}
+		if !getDataWithBind(logger, start, ctx, params) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		awsNRDBC, err := nrdbc.New(awsdnmdb.New(ac, awsRegion))
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-DynamoDB-MongoDB",
-				"Regions": GetAWSRegions(),
-				"error":   nil,
+		awsNRDB := getDynamoNRDBC(logger, start, "mig", params)
+		if awsNRDB == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		Port, _ := strconv.Atoi(port)
-		nc, err := config.NewNCPMongoDBClient(username, password, host, Port)
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-DynamoDB-MongoDB",
-				"Regions": GetAWSRegions(),
-				"error":   nil,
+		ncpNRDB := getMongoNRDBC(logger, start, "mig", params)
+		if ncpNRDB == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		ncpNRDBC, err := nrdbc.New(ncpmgdb.New(nc, databaseName))
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-DynamoDB-MongoDB",
-				"Regions": GetAWSRegions(),
-				"error":   nil,
+		if err := awsNRDB.Copy(ncpNRDB); err != nil {
+			end := time.Now()
+			logger.Errorf("NRDBController copy failed : %v", err)
+			logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+			logger.Infof("Elapsed time : %s", end.Sub(start).String())
+			ctx.JSONP(http.StatusOK, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		if err := awsNRDBC.Copy(ncpNRDBC); err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-DynamoDB-MongoDB",
-				"Regions": GetAWSRegions(),
-				"error":   nil,
-			})
-			return
-		}
-
-		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content": "Migration-DynamoDB-MongoDB",
-			"Regions": GetAWSRegions(),
-			"error":   nil,
+		// migration success. Send result to client
+		jobEnd(logger, "Successfully migrated data from dynamoDB to ncp mongoDB", start)
+		ctx.JSONP(http.StatusOK, gin.H{
+			"Result": logstrings.String(),
+			"Error":  nil,
 		})
 	}
 }
@@ -216,6 +156,8 @@ func MigrationDynamoDBToMongoDBPostHandler() gin.HandlerFunc {
 
 func MigrationFirestoreToDynamoDBGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		logger := getLogger("migFSDN")
+		logger.Info("migFSDN get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content":    "Migration-Firestore-DynamoDB",
 			"AWSRegions": GetAWSRegions(),
@@ -227,113 +169,72 @@ func MigrationFirestoreToDynamoDBGetHandler() gin.HandlerFunc {
 
 func MigrationFirestoreToDynamoDBPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		gcpRegion := ctx.PostForm("gcpRegion")
-		gcsCredentialFile, gcsCredentialHeader, err := ctx.Request.FormFile("gcsCredential")
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content":    "Migration-Firestore-DynamoDB",
-				"AWSRegions": GetAWSRegions(),
-				"GCPRegions": GetGCPRegions(),
-				"error":      nil,
+		start := time.Now()
+
+		logger, logstrings := pageLogInit("migFSDN", "Export firestoreDB data to dynamoDB", start)
+
+		params := MigrationForm{}
+		if !getDataWithBind(logger, start, ctx, params) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
-		defer gcsCredentialFile.Close()
 
-		credTmpDir, err := os.MkdirTemp("", "datamold-gcs-cred-")
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content":    "Migration-Firestore-DynamoDB",
-				"AWSRegions": GetAWSRegions(),
-				"GCPRegions": GetGCPRegions(),
-				"error":      nil,
+		credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
+		if !ok {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 		defer os.RemoveAll(credTmpDir)
 
-		projectid := ctx.PostForm("projectid")
-		awsRegion := ctx.PostForm("awsRegion")
-		awsAccessKey := ctx.PostForm("awsAccessKey")
-		awsSecretKey := ctx.PostForm("awsSecretKey")
-
-		credFileName := filepath.Join(credTmpDir, gcsCredentialHeader.Filename)
-		err = ctx.SaveUploadedFile(gcsCredentialHeader, credFileName)
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content":    "Migration-Firestore-DynamoDB",
-				"AWSRegions": GetAWSRegions(),
-				"GCPRegions": GetGCPRegions(),
-				"error":      nil,
+		gcpNRDB := getFirestoreNRDBC(logger, start, "mig", params, credFileName)
+		if gcpNRDB == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		ac, err := config.NewDynamoDBClient(awsAccessKey, awsSecretKey, awsRegion)
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content":    "Migration-Firestore-DynamoDB",
-				"AWSRegions": GetAWSRegions(),
-				"GCPRegions": GetGCPRegions(),
-				"error":      nil,
+		awsNRDB := getDynamoNRDBC(logger, start, "mig", params)
+		if awsNRDB == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		awsNRDBC, err := nrdbc.New(awsdnmdb.New(ac, awsRegion))
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content":    "Migration-Firestore-DynamoDB",
-				"AWSRegions": GetAWSRegions(),
-				"GCPRegions": GetGCPRegions(),
-				"error":      nil,
+		if err := gcpNRDB.Copy(awsNRDB); err != nil {
+			end := time.Now()
+			logger.Errorf("NRDBController copy failed : %v", err)
+			logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+			logger.Infof("Elapsed time : %s", end.Sub(start).String())
+			ctx.JSONP(http.StatusOK, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		gc, err := config.NewFireStoreClient(credFileName, projectid)
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content":    "Migration-Firestore-DynamoDB",
-				"AWSRegions": GetAWSRegions(),
-				"GCPRegions": GetGCPRegions(),
-				"error":      nil,
-			})
-			return
-		}
-
-		gcpNRDBC, err := nrdbc.New(gcpfsdb.New(gc, gcpRegion))
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content":    "Migration-Firestore-DynamoDB",
-				"AWSRegions": GetAWSRegions(),
-				"GCPRegions": GetGCPRegions(),
-				"error":      nil,
-			})
-			return
-		}
-
-		if err := gcpNRDBC.Copy(awsNRDBC); err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content":    "Migration-Firestore-DynamoDB",
-				"AWSRegions": GetAWSRegions(),
-				"GCPRegions": GetGCPRegions(),
-				"error":      nil,
-			})
-			return
-		}
-
-		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content":    "Migration-Firestore-DynamoDB",
-			"AWSRegions": GetAWSRegions(),
-			"GCPRegions": GetGCPRegions(),
-			"error":      nil,
+		// migration success. Send result to client
+		jobEnd(logger, "Successfully migrated data from firestoreDB to dynamoDB", start)
+		ctx.JSONP(http.StatusOK, gin.H{
+			"Result": logstrings.String(),
+			"Error":  nil,
 		})
 	}
 }
 
 func MigrationFirestoreToMongoDBGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		logger := getLogger("migFSMG")
+		logger.Info("migFSMG get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-Firestore-MongoDB",
 			"Regions": GetGCPRegions(),
@@ -344,101 +245,64 @@ func MigrationFirestoreToMongoDBGetHandler() gin.HandlerFunc {
 
 func MigrationFirestoreToMongoDBPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		gcpRegion := ctx.PostForm("gcpRegion")
-		gcsCredentialFile, gcsCredentialHeader, err := ctx.Request.FormFile("gcsCredential")
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-Firestore-MongoDB",
-				"Regions": GetGCPRegions(),
-				"error":   nil,
+		start := time.Now()
+
+		logger, logstrings := pageLogInit("migFSMG", "Export firestoreDB data to mongoDB", start)
+
+		params := MigrationForm{}
+		if !getDataWithBind(logger, start, ctx, params) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
-		defer gcsCredentialFile.Close()
 
-		credTmpDir, err := os.MkdirTemp("", "datamold-gcs-cred-")
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-Firestore-MongoDB",
-				"Regions": GetGCPRegions(),
-				"error":   nil,
+		credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
+		if !ok {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 		defer os.RemoveAll(credTmpDir)
 
-		projectid := ctx.PostForm("projectid")
-		host := ctx.PostForm("host")
-		port := ctx.PostForm("port")
-		username := ctx.PostForm("username")
-		password := ctx.PostForm("password")
-		databaseName := ctx.PostForm("databaseName")
-
-		credFileName := filepath.Join(credTmpDir, gcsCredentialHeader.Filename)
-		err = ctx.SaveUploadedFile(gcsCredentialHeader, credFileName)
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-Firestore-MongoDB",
-				"Regions": GetGCPRegions(),
-				"error":   nil,
+		gcpNRDB := getFirestoreNRDBC(logger, start, "mig", params, credFileName)
+		if gcpNRDB == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		gc, err := config.NewFireStoreClient(credFileName, projectid)
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-Firestore-MongoDB",
-				"Regions": GetGCPRegions(),
-				"error":   nil,
+		ncpNRDB := getMongoNRDBC(logger, start, "mig", params)
+		if ncpNRDB == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		gcpNRDBC, err := nrdbc.New(gcpfsdb.New(gc, gcpRegion))
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-Firestore-MongoDB",
-				"Regions": GetGCPRegions(),
-				"error":   nil,
+		if err := gcpNRDB.Copy(ncpNRDB); err != nil {
+			end := time.Now()
+			logger.Errorf("NRDBController copy failed : %v", err)
+			logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+			logger.Infof("Elapsed time : %s", end.Sub(start).String())
+			ctx.JSONP(http.StatusOK, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		Port, _ := strconv.Atoi(port)
-		nc, err := config.NewNCPMongoDBClient(username, password, host, Port)
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-Firestore-MongoDB",
-				"Regions": GetGCPRegions(),
-				"error":   nil,
-			})
-			return
-		}
-
-		ncpNRDBC, err := nrdbc.New(ncpmgdb.New(nc, databaseName))
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-Firestore-MongoDB",
-				"Regions": GetGCPRegions(),
-				"error":   nil,
-			})
-			return
-		}
-
-		if err := gcpNRDBC.Copy(ncpNRDBC); err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-Firestore-MongoDB",
-				"Regions": GetGCPRegions(),
-				"error":   nil,
-			})
-			return
-		}
-
-		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content": "Migration-Firestore-MongoDB",
-			"Regions": GetGCPRegions(),
-			"error":   nil,
+		// migration success. Send result to client
+		jobEnd(logger, "Successfully migrated data from firestoreDB to mongoDB", start)
+		ctx.JSONP(http.StatusOK, gin.H{
+			"Result": logstrings.String(),
+			"Error":  nil,
 		})
 	}
 }
@@ -447,6 +311,8 @@ func MigrationFirestoreToMongoDBPostHandler() gin.HandlerFunc {
 
 func MigrationMongoDBToDynamoDBGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		logger := getLogger("migMGDN")
+		logger.Info("migMGDN get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-MongoDB-DynamoDB",
 			"Regions": GetAWSRegions(),
@@ -457,75 +323,62 @@ func MigrationMongoDBToDynamoDBGetHandler() gin.HandlerFunc {
 
 func MigrationMongoDBToDynamoDBPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		host := ctx.PostForm("host")
-		port := ctx.PostForm("port")
-		username := ctx.PostForm("username")
-		password := ctx.PostForm("password")
-		databaseName := ctx.PostForm("databaseName")
-		awsRegion := ctx.PostForm("awsRegion")
-		awsAccessKey := ctx.PostForm("awsAccessKey")
-		awsSecretKey := ctx.PostForm("awsSecretKey")
+		start := time.Now()
 
-		Port, _ := strconv.Atoi(port)
-		nc, err := config.NewNCPMongoDBClient(username, password, host, Port)
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-MongoDB-DynamoDB",
-				"Regions": GetAWSRegions(),
-				"error":   nil,
+		logger, logstrings := pageLogInit("migMGDN", "Export mongoDB data to dynamoDB", start)
+
+		params := MigrationForm{}
+		if !getDataWithBind(logger, start, ctx, params) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		ncpNRDBC, err := nrdbc.New(ncpmgdb.New(nc, databaseName))
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-MongoDB-DynamoDB",
-				"Regions": GetAWSRegions(),
-				"error":   nil,
+		ncpNRDB := getMongoNRDBC(logger, start, "mig", params)
+		if ncpNRDB == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		ac, err := config.NewDynamoDBClient(awsAccessKey, awsSecretKey, awsRegion)
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-MongoDB-DynamoDB",
-				"Regions": GetAWSRegions(),
-				"error":   nil,
+		awsNRDB := getDynamoNRDBC(logger, start, "mig", params)
+		if awsNRDB == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		awsNRDBC, err := nrdbc.New(awsdnmdb.New(ac, awsRegion))
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-MongoDB-DynamoDB",
-				"Regions": GetAWSRegions(),
-				"error":   nil,
+		if err := ncpNRDB.Copy(awsNRDB); err != nil {
+			end := time.Now()
+			logger.Errorf("NRDBController copy failed : %v", err)
+			logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+			logger.Infof("Elapsed time : %s", end.Sub(start).String())
+			ctx.JSONP(http.StatusOK, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		if err := ncpNRDBC.Copy(awsNRDBC); err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-MongoDB-DynamoDB",
-				"Regions": GetAWSRegions(),
-				"error":   nil,
-			})
-			return
-		}
-
-		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content": "Migration-MongoDB-DynamoDB",
-			"Regions": GetAWSRegions(),
-			"error":   nil,
+		// migration success. Send result to client
+		jobEnd(logger, "Successfully migrated data from mongoDB to dynamoDB", start)
+		ctx.JSONP(http.StatusOK, gin.H{
+			"Result": logstrings.String(),
+			"Error":  nil,
 		})
 	}
 }
 
 func MigrationMongoDBToFirestoreGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		logger := getLogger("migMGFS")
+		logger.Info("migMGFS get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-MongoDB-Firestore",
 			"Regions": GetGCPRegions(),
@@ -536,101 +389,64 @@ func MigrationMongoDBToFirestoreGetHandler() gin.HandlerFunc {
 
 func MigrationMongoDBToFirestorePostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		host := ctx.PostForm("host")
-		port := ctx.PostForm("port")
-		username := ctx.PostForm("username")
-		password := ctx.PostForm("password")
-		databaseName := ctx.PostForm("databaseName")
-		gcpRegion := ctx.PostForm("gcpRegion")
-		gcsCredentialFile, gcsCredentialHeader, err := ctx.Request.FormFile("gcsCredential")
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-Firestore-MongoDB",
-				"Regions": GetGCPRegions(),
-				"error":   nil,
+		start := time.Now()
+
+		logger, logstrings := pageLogInit("migMGFS", "Export mongoDB data to firestoreDB", start)
+
+		params := MigrationForm{}
+		if !getDataWithBind(logger, start, ctx, params) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
-		defer gcsCredentialFile.Close()
 
-		credTmpDir, err := os.MkdirTemp("", "datamold-gcs-cred-")
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-Firestore-MongoDB",
-				"Regions": GetGCPRegions(),
-				"error":   nil,
+		credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
+		if !ok {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 		defer os.RemoveAll(credTmpDir)
 
-		projectid := ctx.PostForm("projectid")
-
-		credFileName := filepath.Join(credTmpDir, gcsCredentialHeader.Filename)
-		err = ctx.SaveUploadedFile(gcsCredentialHeader, credFileName)
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-Firestore-MongoDB",
-				"Regions": GetGCPRegions(),
-				"error":   nil,
+		gcpNRDB := getFirestoreNRDBC(logger, start, "mig", params, credFileName)
+		if gcpNRDB == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		Port, _ := strconv.Atoi(port)
-		nc, err := config.NewNCPMongoDBClient(username, password, host, Port)
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-Firestore-MongoDB",
-				"Regions": GetGCPRegions(),
-				"error":   nil,
+		ncpNRDB := getMongoNRDBC(logger, start, "mig", params)
+		if ncpNRDB == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		ncpNRDBC, err := nrdbc.New(ncpmgdb.New(nc, databaseName))
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-Firestore-MongoDB",
-				"Regions": GetGCPRegions(),
-				"error":   nil,
+		if err := ncpNRDB.Copy(gcpNRDB); err != nil {
+			end := time.Now()
+			logger.Errorf("NRDBController copy failed : %v", err)
+			logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+			logger.Infof("Elapsed time : %s", end.Sub(start).String())
+			ctx.JSONP(http.StatusOK, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		gc, err := config.NewFireStoreClient(credFileName, projectid)
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-Firestore-MongoDB",
-				"Regions": GetGCPRegions(),
-				"error":   nil,
-			})
-			return
-		}
-
-		gcpNRDBC, err := nrdbc.New(gcpfsdb.New(gc, gcpRegion))
-		if err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-Firestore-MongoDB",
-				"Regions": GetGCPRegions(),
-				"error":   nil,
-			})
-			return
-		}
-
-		if err := ncpNRDBC.Copy(gcpNRDBC); err != nil {
-			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"Content": "Migration-Firestore-MongoDB",
-				"Regions": GetGCPRegions(),
-				"error":   nil,
-			})
-			return
-		}
-
-		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content": "Migration-MongoDB-Firestore",
-			"Regions": GetGCPRegions(),
-			"error":   nil,
+		// migration success. Send result to client
+		jobEnd(logger, "Successfully migrated data from mongoDB to firestoreDB", start)
+		ctx.JSONP(http.StatusOK, gin.H{
+			"Result": logstrings.String(),
+			"Error":  nil,
 		})
 	}
 }
