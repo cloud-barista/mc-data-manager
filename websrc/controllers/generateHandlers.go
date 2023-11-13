@@ -1,41 +1,14 @@
 package controllers
 
 import (
-	"database/sql"
-	"encoding/json"
-	"fmt"
-	"io"
-	"io/fs"
+	"errors"
 	"net/http"
 	"os"
 	"path/filepath"
-	"runtime"
-	"strconv"
-	"strings"
-	"sync"
 	"time"
 
-	"github.com/cloud-barista/cm-data-mold/config"
-	"github.com/cloud-barista/cm-data-mold/internal/logformatter"
-	"github.com/cloud-barista/cm-data-mold/pkg/nrdbms/awsdnmdb"
-	"github.com/cloud-barista/cm-data-mold/pkg/nrdbms/gcpfsdb"
-	"github.com/cloud-barista/cm-data-mold/pkg/nrdbms/ncpmgdb"
-	"github.com/cloud-barista/cm-data-mold/pkg/objectstorage/gcsfs"
-	"github.com/cloud-barista/cm-data-mold/pkg/objectstorage/s3fs"
-	"github.com/cloud-barista/cm-data-mold/pkg/rdbms/mysql"
-	"github.com/cloud-barista/cm-data-mold/pkg/utils"
-	"github.com/cloud-barista/cm-data-mold/service/nrdbc"
-	"github.com/cloud-barista/cm-data-mold/service/osc"
-	"github.com/cloud-barista/cm-data-mold/service/rdbc"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 )
-
-func getLogger(jobName string) *logrus.Logger {
-	logger := logrus.StandardLogger()
-	logger.SetFormatter(&logformatter.CustomTextFormatter{CmdName: "server", JobName: jobName})
-	return logger
-}
 
 func GenerateLinuxGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
@@ -50,51 +23,29 @@ func GenerateLinuxGetHandler() gin.HandlerFunc {
 
 func GenerateLinuxPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		logger := getLogger("genlinux")
 		start := time.Now()
-		logrus.Info("genlinux post page accessed")
 
-		var logstrings = strings.Builder{}
-		logger.SetOutput(io.MultiWriter(logger.Out, &logstrings))
+		logger, logstrings := pageLogInit("genlinux", "Create dummy data in linux", start)
 
-		logger.Info("Create dummy data in linux")
-		logger.Infof("start time : %s", start.Format("2006-01-02T15:04:05-07:00"))
-
-		logger.Info("Check the operating system")
-		if runtime.GOOS != "linux" {
-			end := time.Now()
-			logger.Error("Not a Linux operating system")
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
-				"Result": logstrings.String(),
-				"Error":  "your current operating system is not linux",
-			})
-			return
-		}
-
-		data, _ := ctx.GetRawData()
-		params := GenDataParams{}
-		json.Unmarshal(data, &params)
-
-		logger.Info("Start dummy generation")
-		err := genData(params, logger)
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("Failed to generate dummy data : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		if !osCheck(logger, start, "linux") {
+			ctx.JSONP(http.StatusBadRequest, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
 			return
 		}
 
-		end := time.Now()
-		logger.Info("Dummy data generation successfully")
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(start).String())
+		params := getData("gen", ctx).(GenDataParams)
+
+		if !dummyCreate(logger, start, params) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
+			})
+			return
+		}
+
+		jobEnd(logger, "Successfully creating a dummy with Linux", start)
 		ctx.JSONP(http.StatusOK, gin.H{
 			"Result": logstrings.String(),
 			"Error":  nil,
@@ -116,56 +67,31 @@ func GenerateWindowsGetHandler() gin.HandlerFunc {
 }
 
 func GenerateWindowsPostHandler() gin.HandlerFunc {
-	tmpPath := filepath.Join(os.TempDir(), "dummy")
 	return func(ctx *gin.Context) {
-		logger := getLogger("genwindows")
 		start := time.Now()
-		logger.Info("genwindows post page accessed")
 
-		var logstrings = strings.Builder{}
-		logger.SetOutput(io.MultiWriter(logger.Out, &logstrings))
+		logger, logstrings := pageLogInit("genwindows", "Create dummy data in windows", start)
 
-		logger.Info("Create dummy data in windows")
-		logger.Infof("start time : %s", start.Format("2006-01-02T15:04:05-07:00"))
-
-		logger.Info("Check the operating system")
-		if runtime.GOOS != "windows" {
-			end := time.Now()
-			logger.Error("Not a Windows operating system")
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
-				"Result":  logstrings.String(),
-				"tmpPath": tmpPath,
-				"Error":   nil,
+		if !osCheck(logger, start, "windows") {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  errors.New("Not a windows operating system"),
 			})
 			return
 		}
 
-		data, _ := ctx.GetRawData()
-		params := GenDataParams{}
-		json.Unmarshal(data, &params)
+		params := getData("gen", ctx).(GenDataParams)
 
-		logger.Info("Start dummy generation")
-		err := genData(params, logger)
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("Failed to generate dummy data : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
-				"Result":  logstrings.String(),
-				"tmpPath": tmpPath,
-				"Error":   err,
+		if !dummyCreate(logger, start, params) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
 
-		end := time.Now()
-		logger.Info("Dummy data generation successfully")
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(start).String())
-		ctx.JSONP(http.StatusOK, gin.H{
+		jobEnd(logger, "Successfully creating a dummy with Windows", start)
+		ctx.JSONP(http.StatusInternalServerError, gin.H{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
@@ -174,7 +100,7 @@ func GenerateWindowsPostHandler() gin.HandlerFunc {
 
 func GenerateS3GetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		logger := getLogger("gens3")
+		logger := getLogger("genS3")
 		logger.Info("genS3 get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-S3",
@@ -186,96 +112,49 @@ func GenerateS3GetHandler() gin.HandlerFunc {
 
 func GenerateS3PostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		logger := getLogger("gens3")
 		start := time.Now()
-		logger.Info("genS3 post page accessed")
 
-		var logstrings = strings.Builder{}
-		logger.SetOutput(io.MultiWriter(logger.Out, &logstrings))
+		logger, logstrings := pageLogInit("genS3", "Create dummy data and import to s3", start)
 
-		logger.Info("Create dummy data in s3")
-		logger.Infof("start time : %s", start.Format("2006-01-02T15:04:05-07:00"))
+		params := getData("gen", ctx).(GenDataParams)
 
-		data, _ := ctx.GetRawData()
-		params := GenDataParams{}
-		json.Unmarshal(data, &params)
-
-		logger.Info("Create a temporary directory where dummy data will be created")
-		tmpDir, err := os.MkdirTemp("", "datamold-dummy")
-		if err != nil {
-			end := time.Now()
-			logger.Error("Failed to generate dummy data : failed to create tmpdir")
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		tmpDir, ok := createDummyTemp(logger, start)
+		if !ok {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
 			return
 		}
 		defer os.RemoveAll(tmpDir)
-
 		params.DummyPath = tmpDir
 
-		logger.Info("Start dummy generation")
-		err = genData(params, logger)
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("Failed to generate dummy data : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		if !dummyCreate(logger, start, params) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
 			return
 		}
 
-		logger.Info("Get S3 Client")
-		s3c, err := config.NewS3Client(params.AccessKey, params.SecretKey, params.Region)
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("s3 client creation failed : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		awsOSC := getS3OSC(logger, start, "gen", params)
+		if awsOSC == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
 			return
 		}
 
-		logger.Info("Set up the client as an OSController")
-		awsOSC, err := osc.New(s3fs.New(utils.AWS, s3c, params.Bucket, params.Region), osc.WithLogger(logger))
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("OSController creation failed : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		if !oscImport(logger, start, "s3", awsOSC, params.DummyPath) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
 			return
 		}
 
-		logger.Info("Start Import with s3")
-		if err := awsOSC.MPut(tmpDir); err != nil {
-			end := time.Now()
-			logger.Errorf("OSController import failed : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		end := time.Now()
-		logger.Info("Successfully generated dummy data with s3")
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(start).String())
+		jobEnd(logger, "Dummy creation and import successful with s3", start)
 		ctx.JSONP(http.StatusOK, gin.H{
 			"Result": logstrings.String(),
 			"Error":  nil,
@@ -285,7 +164,7 @@ func GenerateS3PostHandler() gin.HandlerFunc {
 
 func GenerateGCSGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		logger := getLogger("gengcs")
+		logger := getLogger("genGCS")
 		logger.Info("genGCS get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-GCS",
@@ -297,41 +176,22 @@ func GenerateGCSGetHandler() gin.HandlerFunc {
 
 func GenerateGCSPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		logger := getLogger("gengcs")
 		start := time.Now()
-		logger.Info("genGCS post page accessed")
 
-		var logstrings = strings.Builder{}
-		logger.SetOutput(io.MultiWriter(logger.Out, &logstrings))
-
-		logger.Info("Create dummy data in gcs")
-		logger.Infof("start time : %s", start.Format("2006-01-02T15:04:05-07:00"))
+		logger, logstrings := pageLogInit("genGCS", "Create dummy data and import to gcs", start)
 
 		params := GenDataParams{}
-		ctx.ShouldBind(&params)
-
-		logger.Info("Create a temporary directory where credential files will be stored")
-		gcsCredentialFile, gcsCredentialHeader, err := ctx.Request.FormFile("gcsCredential")
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("Get CredentialFile error : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		if !getDataWithBind(logger, start, ctx, params) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
 			return
 		}
-		defer gcsCredentialFile.Close()
 
-		credTmpDir, err := os.MkdirTemp("", "datamold-gcs-cred-")
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("Get CredentialFile error : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
+		if !ok {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
@@ -339,28 +199,9 @@ func GenerateGCSPostHandler() gin.HandlerFunc {
 		}
 		defer os.RemoveAll(credTmpDir)
 
-		credFileName := filepath.Join(credTmpDir, gcsCredentialHeader.Filename)
-		err = ctx.SaveUploadedFile(gcsCredentialHeader, credFileName)
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("Get CredentialFile error : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		logger.Info("Create a temporary directory where dummy data will be created")
-		tmpDir, err := os.MkdirTemp("", "datamold-dummy")
-		if err != nil {
-			end := time.Now()
-			logger.Error("Failed to generate dummy data : failed to create tmpdir")
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		tmpDir, ok := createDummyTemp(logger, start)
+		if !ok {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
@@ -370,63 +211,32 @@ func GenerateGCSPostHandler() gin.HandlerFunc {
 
 		params.DummyPath = tmpDir
 
-		err = genData(params, logger)
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("Failed to generate dummy data : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-		}
-
-		logger.Info("Get GCS Client")
-		gc, err := config.NewGCSClient(credFileName)
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("gcs client creation failed : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		if !dummyCreate(logger, start, params) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
 			return
 		}
 
-		logger.Info("Set up the client as an OSController")
-		gcsOSC, err := osc.New(gcsfs.New(gc, params.ProjectID, params.Bucket, params.Region), osc.WithLogger(logger))
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("OSController creation failed : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		gcsOSC := getGCSCOSC(logger, start, "gen", params, credFileName)
+		if gcsOSC == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
 			return
 		}
 
-		logger.Info("Start Import with gcs")
-		if err := gcsOSC.MPut(tmpDir); err != nil {
-			end := time.Now()
-			logger.Errorf("OSController import failed : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		if !oscImport(logger, start, "gcs", gcsOSC, params.DummyPath) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
 			return
 		}
 
-		end := time.Now()
-		logger.Info("Successfully generated dummy data with gcs")
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(start).String())
+		jobEnd(logger, "Dummy creation and import successful with gcs", start)
 		ctx.JSONP(http.StatusOK, gin.H{
 			"Result": logstrings.String(),
 			"Error":  nil,
@@ -436,8 +246,8 @@ func GenerateGCSPostHandler() gin.HandlerFunc {
 
 func GenerateNCSGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		logger := getLogger("gens3")
-		logger.Info("genS3 get page accessed")
+		logger := getLogger("genNCS")
+		logger.Info("genNCS get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-NCS",
 			"Regions": GetNCPRegions(),
@@ -448,28 +258,15 @@ func GenerateNCSGetHandler() gin.HandlerFunc {
 
 func GenerateNCSPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		logger := getLogger("genncs")
 		start := time.Now()
-		logger.Info("genNCP post page accessed")
 
-		var logstrings = strings.Builder{}
-		logger.SetOutput(io.MultiWriter(logger.Out, &logstrings))
+		logger, logstrings := pageLogInit("genNCS", "Create dummy data and import to ncp objectstorage", start)
 
-		logger.Info("Create dummy data in ncp objectstorage")
-		logger.Infof("start time : %s", start.Format("2006-01-02T15:04:05-07:00"))
+		params := getData("gen", ctx).(GenDataParams)
 
-		data, _ := ctx.GetRawData()
-		params := GenDataParams{}
-		json.Unmarshal(data, &params)
-
-		logger.Info("Create a temporary directory where dummy data will be created")
-		tmpDir, err := os.MkdirTemp("", "datamold-dummy")
-		if err != nil {
-			end := time.Now()
-			logger.Error("Failed to generate dummy data : failed to create tmpdir")
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		tmpDir, ok := createDummyTemp(logger, start)
+		if !ok {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
@@ -479,65 +276,32 @@ func GenerateNCSPostHandler() gin.HandlerFunc {
 
 		params.DummyPath = tmpDir
 
-		logger.Info("Start dummy generation")
-		err = genData(params, logger)
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("Failed to generate dummy data : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		if !dummyCreate(logger, start, params) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
 			return
 		}
 
-		logger.Info("Get S3 Compatible Client")
-		s3c, err := config.NewS3ClientWithEndpoint(params.AccessKey, params.SecretKey, params.Region, params.Endpoint)
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("s3 compatible client creation failed : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		ncpOSC := getS3COSC(logger, start, "gen", params)
+		if ncpOSC == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
 			return
 		}
 
-		logger.Info("Set up the client as an OSController")
-		ncpOSC, err := osc.New(s3fs.New(utils.NCP, s3c, params.Bucket, params.Region), osc.WithLogger(logger))
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("OSController creation failed : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		if !oscImport(logger, start, "ncp", ncpOSC, params.DummyPath) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
 			return
 		}
 
-		logger.Info("Start Import with ncp objectstorage")
-		if err := ncpOSC.MPut(tmpDir); err != nil {
-			end := time.Now()
-			logger.Errorf("OSController import failed : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		end := time.Now()
-		logger.Info("Successfully generated dummy data with ncp objectstorage")
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(start).String())
+		jobEnd(logger, "Create dummy data and import to ncp objectstorage", start)
 		ctx.JSONP(http.StatusOK, gin.H{
 			"Result": logstrings.String(),
 			"Error":  nil,
@@ -558,28 +322,15 @@ func GenerateMySQLGetHandler() gin.HandlerFunc {
 
 func GenerateMySQLPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		logger := getLogger("genmysql")
 		start := time.Now()
-		logger.Info("genmysql post page accessed")
 
-		var logstrings = strings.Builder{}
-		logger.SetOutput(io.MultiWriter(logger.Out, &logstrings))
+		logger, logstrings := pageLogInit("genmysql", "Create dummy data and import to mysql", start)
 
-		logger.Info("Create dummy data in mysql")
-		logger.Infof("start time : %s", start.Format("2006-01-02T15:04:05-07:00"))
+		params := getData("gen", ctx).(GenDataParams)
 
-		data, _ := ctx.GetRawData()
-		params := GenDataParams{}
-		json.Unmarshal(data, &params)
-
-		logger.Info("Create a temporary directory where dummy data will be created")
-		tmpDir, err := os.MkdirTemp("", "datamold-dummy")
-		if err != nil {
-			end := time.Now()
-			logger.Error("Failed to generate dummy data : failed to create tmpdir")
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		tmpDir, ok := createDummyTemp(logger, start)
+		if !ok {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
@@ -591,42 +342,17 @@ func GenerateMySQLPostHandler() gin.HandlerFunc {
 		params.CheckServerSQL = "on"
 		params.SizeServerSQL = "5"
 
-		logger.Info("Start dummy generation")
-		err = genData(params, logger)
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("Failed to generate dummy data : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		if !dummyCreate(logger, start, params) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
 			return
 		}
 
-		logger.Info("Get sqlDB Client")
-		sqlDB, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", params.DBUser, params.DBPassword, params.DBHost, params.DBPort))
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("sqlDB client creation failed : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		logger.Info("Set up the client as an RDBController")
-		rdbController, err := rdbc.New(mysql.New(utils.Provider(params.DBProvider), sqlDB), rdbc.WithLogger(logger))
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("RDBController creation failed : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		rdbc := getMysqlRDBC(logger, start, "gen", params)
+		if rdbc == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
@@ -634,23 +360,8 @@ func GenerateMySQLPostHandler() gin.HandlerFunc {
 		}
 
 		sqlList := []string{}
-		err = filepath.Walk(tmpDir, func(path string, info fs.FileInfo, err error) error {
-			if err != nil {
-				return err
-			}
-
-			if filepath.Ext(path) == ".sql" {
-				sqlList = append(sqlList, path)
-			}
-
-			return nil
-		})
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("filepath walk failed : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		if !walk(logger, start, &sqlList, params.DummyPath, ".sql") {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
@@ -666,7 +377,7 @@ func GenerateMySQLPostHandler() gin.HandlerFunc {
 				logger.Errorf("os ReadFile failed : %v", err)
 				logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
 				logger.Infof("Elapsed time : %s", end.Sub(start).String())
-				ctx.JSONP(http.StatusOK, gin.H{
+				ctx.JSONP(http.StatusInternalServerError, gin.H{
 					"Result": logstrings.String(),
 					"Error":  nil,
 				})
@@ -674,12 +385,12 @@ func GenerateMySQLPostHandler() gin.HandlerFunc {
 			}
 
 			logger.Infof("Put start : %s", filepath.Base(sql))
-			if err := rdbController.Put(string(data)); err != nil {
+			if err := rdbc.Put(string(data)); err != nil {
 				end := time.Now()
 				logger.Errorf("RDBController import failed : %v", err)
 				logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
 				logger.Infof("Elapsed time : %s", end.Sub(start).String())
-				ctx.JSONP(http.StatusOK, gin.H{
+				ctx.JSONP(http.StatusInternalServerError, gin.H{
 					"Result": logstrings.String(),
 					"Error":  nil,
 				})
@@ -688,10 +399,7 @@ func GenerateMySQLPostHandler() gin.HandlerFunc {
 			logger.Infof("sql put success : %s", filepath.Base(sql))
 		}
 
-		end := time.Now()
-		logger.Info("Successfully generated dummy data with mysql")
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(start).String())
+		jobEnd(logger, "Dummy creation and import successful with mysql", start)
 		ctx.JSONP(http.StatusOK, gin.H{
 			"Result": logstrings.String(),
 			"Error":  nil,
@@ -713,28 +421,15 @@ func GenerateDynamoDBGetHandler() gin.HandlerFunc {
 
 func GenerateDynamoDBPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		logger := getLogger("gendynamodb")
 		start := time.Now()
-		logrus.Info("gendynamodb post page accessed")
 
-		var logstrings = strings.Builder{}
-		logger.SetOutput(io.MultiWriter(logger.Out, &logstrings))
+		logger, logstrings := pageLogInit("gendynamodb", "Create dummy data and import to dynamoDB", start)
 
-		logger.Info("Create dummy data in dynamodb")
-		logger.Infof("start time : %s", start.Format("2006-01-02T15:04:05-07:00"))
+		params := getData("gen", ctx).(GenDataParams)
 
-		data, _ := ctx.GetRawData()
-		params := GenDataParams{}
-		json.Unmarshal(data, &params)
-
-		logger.Info("Create a temporary directory where dummy data will be created")
-		tmpDir, err := os.MkdirTemp("", "datamold-dummy")
-		if err != nil {
-			end := time.Now()
-			logger.Error("Failed to generate dummy data : failed to create tmpdir")
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		tmpDir, ok := createDummyTemp(logger, start)
+		if !ok {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
@@ -746,42 +441,8 @@ func GenerateDynamoDBPostHandler() gin.HandlerFunc {
 		params.CheckServerJSON = "on"
 		params.SizeServerJSON = "1"
 
-		logger.Info("Start dummy generation")
-		err = genData(params, logger)
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("Failed to generate dummy data : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		logger.Info("Get DynamoDB Client")
-		dc, err := config.NewDynamoDBClient(params.AccessKey, params.SecretKey, params.Region)
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("dynamoDB client creation failed : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		logger.Info("Set up the client as an NRDBController")
-		awsNRDB, err := nrdbc.New(awsdnmdb.New(dc, params.Region), nrdbc.WithLogger(logger))
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("NRDBController creation failed : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		if !dummyCreate(logger, start, params) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
@@ -789,98 +450,31 @@ func GenerateDynamoDBPostHandler() gin.HandlerFunc {
 		}
 
 		jsonList := []string{}
-		err = filepath.Walk(tmpDir, func(path string, info fs.FileInfo, err error) error {
-			if err != nil {
-				return err
-			}
-
-			if filepath.Ext(path) == ".json" {
-				jsonList = append(jsonList, path)
-			}
-
-			return nil
-		})
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("filepath walk failed : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		if !walk(logger, start, &jsonList, params.DummyPath, ".json") {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
 			return
 		}
 
-		var wg sync.WaitGroup
-		var mu sync.Mutex
-		ret := make(chan error)
-
-		logger.Info("Start Import with dynamoDB")
-		for _, j := range jsonList {
-			wg.Add(1)
-			go func(jPath string, jret chan<- error) {
-				defer wg.Done()
-
-				mu.Lock()
-				logger.Infof("Read json file : %s", jPath)
-				mu.Unlock()
-
-				data, err := os.ReadFile(jPath)
-				if err != nil {
-					jret <- err
-					return
-				}
-
-				mu.Lock()
-				logger.Infof("data unmarshal : %s", filepath.Base(jPath))
-				mu.Unlock()
-
-				var jsonData []map[string]interface{}
-				err = json.Unmarshal(data, &jsonData)
-				if err != nil {
-					jret <- err
-					return
-				}
-
-				tableName := strings.TrimSuffix(filepath.Base(jPath), ".json")
-
-				mu.Lock()
-				logger.Infof("Put start : %s", filepath.Base(jPath))
-				mu.Unlock()
-
-				if err := awsNRDB.Put(tableName, &jsonData); err != nil {
-					jret <- err
-					return
-				}
-
-				jret <- nil
-			}(j, ret)
+		awsNRDB := getDynamoNRDBC(logger, start, "mig", params)
+		if awsNRDB == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
+			})
+			return
 		}
 
-		go func() {
-			wg.Wait()
-			close(ret)
-		}()
-
-		for result := range ret {
-			if result != nil {
-				end := time.Now()
-				logger.Errorf("NRDBController Import failed : %v", err)
-				logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-				logger.Infof("Elapsed time : %s", end.Sub(start).String())
-				ctx.JSONP(http.StatusOK, gin.H{
-					"Result": logstrings.String(),
-					"Error":  nil,
-				})
-				return
-			}
+		if !nrdbPutWorker(logger, start, "DynamoDB", awsNRDB, jsonList) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
+			})
 		}
 
-		end := time.Now()
-		logger.Info("Successfully generated dummy data with dynamoDB")
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(start).String())
+		jobEnd(logger, "Dummy creation and import successful with dynamoDB", start)
 		ctx.JSONP(http.StatusOK, gin.H{
 			"Result": logstrings.String(),
 			"Error":  nil,
@@ -902,41 +496,22 @@ func GenerateFirestoreGetHandler() gin.HandlerFunc {
 
 func GenerateFirestorePostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		logger := getLogger("genfirestore")
 		start := time.Now()
-		logger.Info("genfirestore post page accessed")
 
-		var logstrings = strings.Builder{}
-		logger.SetOutput(io.MultiWriter(logger.Out, &logstrings))
-
-		logger.Info("Create dummy data in firestore")
-		logger.Infof("start time : %s", start.Format("2006-01-02T15:04:05-07:00"))
+		logger, logstrings := pageLogInit("genfirestore", "Create dummy data and import to firestoreDB", start)
 
 		params := GenDataParams{}
-		ctx.ShouldBind(&params)
-
-		logger.Info("Create a temporary directory where credential files will be stored")
-		gcsCredentialFile, gcsCredentialHeader, err := ctx.Request.FormFile("gcsCredential")
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("Get CredentialFile error : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		if !getDataWithBind(logger, start, ctx, params) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
 			return
 		}
-		defer gcsCredentialFile.Close()
 
-		credTmpDir, err := os.MkdirTemp("", "datamold-gcs-cred-")
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("Get CredentialFile error : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
+		if !ok {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
@@ -944,28 +519,9 @@ func GenerateFirestorePostHandler() gin.HandlerFunc {
 		}
 		defer os.RemoveAll(credTmpDir)
 
-		credFileName := filepath.Join(credTmpDir, gcsCredentialHeader.Filename)
-		err = ctx.SaveUploadedFile(gcsCredentialHeader, credFileName)
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("Get CredentialFile error : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		logger.Info("Create a temporary directory where dummy data will be created")
-		tmpDir, err := os.MkdirTemp("", "datamold-dummy")
-		if err != nil {
-			end := time.Now()
-			logger.Error("Failed to generate dummy data : failed to create tmpdir")
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		tmpDir, ok := createDummyTemp(logger, start)
+		if !ok {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
@@ -977,135 +533,40 @@ func GenerateFirestorePostHandler() gin.HandlerFunc {
 		params.CheckServerJSON = "on"
 		params.SizeServerJSON = "1"
 
-		err = genData(params, logger)
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("Failed to generate dummy data : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		if !dummyCreate(logger, start, params) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
+			return
 		}
 
 		jsonList := []string{}
-		err = filepath.Walk(tmpDir, func(path string, info fs.FileInfo, err error) error {
-			if err != nil {
-				return err
-			}
-
-			if filepath.Ext(path) == ".json" {
-				jsonList = append(jsonList, path)
-			}
-
-			return nil
-		})
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("filepath walk failed : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-		logger.Info("Get FirestoreDB Client")
-		fc, err := config.NewFireStoreClient(credFileName, params.ProjectID)
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("firestoreDB client creation failed : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		if !walk(logger, start, &jsonList, params.DummyPath, ".json") {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
 			return
 		}
 
-		logger.Info("Set up the client as an NRDBController")
-		gcpNRDB, err := nrdbc.New(gcpfsdb.New(fc, params.Region), nrdbc.WithLogger(logger))
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("NRDBController creation failed : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		gcpNRDB := getFirestoreNRDBC(logger, start, "mig", params, credFileName)
+		if gcpNRDB == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
 			return
 		}
 
-		var wg sync.WaitGroup
-		var mu sync.Mutex
-		ret := make(chan error)
-
-		logger.Info("Start Import with firestoreDB")
-		for _, j := range jsonList {
-			wg.Add(1)
-			go func(jPath string, jret chan<- error) {
-				defer wg.Done()
-
-				mu.Lock()
-				logger.Infof("Read json file : %s", jPath)
-				mu.Unlock()
-
-				data, err := os.ReadFile(jPath)
-				if err != nil {
-					jret <- err
-					return
-				}
-
-				logger.Infof("data unmarshal : %s", filepath.Base(jPath))
-				var jsonData []map[string]interface{}
-				err = json.Unmarshal(data, &jsonData)
-				if err != nil {
-					jret <- err
-					return
-				}
-
-				tableName := strings.TrimSuffix(filepath.Base(jPath), ".json")
-
-				mu.Lock()
-				logger.Infof("Put start : %s", filepath.Base(jPath))
-				mu.Unlock()
-
-				if err := gcpNRDB.Put(tableName, &jsonData); err != nil {
-					jret <- err
-					return
-				}
-
-				jret <- nil
-			}(j, ret)
+		if !nrdbPutWorker(logger, start, "FirestoreDB", gcpNRDB, jsonList) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
+				"Result": logstrings.String(),
+				"Error":  nil,
+			})
 		}
 
-		go func() {
-			wg.Wait()
-			close(ret)
-		}()
-
-		for result := range ret {
-			if result != nil {
-				end := time.Now()
-				logger.Errorf("NRDBController Import failed : %v", err)
-				logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-				logger.Infof("Elapsed time : %s", end.Sub(start).String())
-				ctx.JSONP(http.StatusOK, gin.H{
-					"Result": logstrings.String(),
-					"Error":  nil,
-				})
-				return
-			}
-		}
-
-		end := time.Now()
-		logger.Info("Successfully generated dummy data with firestoreDB")
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(start).String())
+		jobEnd(logger, "Dummy creation and import successful with firestoreDB", start)
 		ctx.JSONP(http.StatusOK, gin.H{
 			"Result": logstrings.String(),
 			"Error":  nil,
@@ -1115,7 +576,7 @@ func GenerateFirestorePostHandler() gin.HandlerFunc {
 
 func GenerateMongoDBGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		logger := getLogger("genmongodb")
+		logger := getLogger("genfirestore")
 		logger.Info("genmongodb get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Generate-MongoDB",
@@ -1126,28 +587,15 @@ func GenerateMongoDBGetHandler() gin.HandlerFunc {
 
 func GenerateMongoDBPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		logger := getLogger("genmongodb")
 		start := time.Now()
-		logger.Info("genmongodb post page accessed")
 
-		var logstrings = strings.Builder{}
-		logger.SetOutput(io.MultiWriter(logger.Out, &logstrings))
+		logger, logstrings := pageLogInit("genmongodb", "Create dummy data and import to mongoDB", start)
 
-		logger.Info("Create dummy data in mongodb")
-		logger.Infof("start time : %s", start.Format("2006-01-02T15:04:05-07:00"))
+		params := getData("gen", ctx).(GenDataParams)
 
-		data, _ := ctx.GetRawData()
-		params := GenDataParams{}
-		json.Unmarshal(data, &params)
-
-		logger.Info("Create a temporary directory where dummy data will be created")
-		tmpDir, err := os.MkdirTemp("", "datamold-dummy")
-		if err != nil {
-			end := time.Now()
-			logger.Error("Failed to generate dummy data : failed to create tmpdir")
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		tmpDir, ok := createDummyTemp(logger, start)
+		if !ok {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
@@ -1159,14 +607,8 @@ func GenerateMongoDBPostHandler() gin.HandlerFunc {
 		params.CheckServerJSON = "on"
 		params.SizeServerJSON = "1"
 
-		logger.Info("Start dummy generation")
-		err = genData(params, logger)
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("Failed to generate dummy data : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		if !dummyCreate(logger, start, params) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
@@ -1174,135 +616,32 @@ func GenerateMongoDBPostHandler() gin.HandlerFunc {
 		}
 
 		jsonList := []string{}
-		err = filepath.Walk(tmpDir, func(path string, info fs.FileInfo, err error) error {
-			if err != nil {
-				return err
-			}
-
-			if filepath.Ext(path) == ".json" {
-				jsonList = append(jsonList, path)
-			}
-
-			return nil
-		})
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("filepath walk failed : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-		Port, err := strconv.Atoi(params.DBPort)
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("port atoi failed : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		if !walk(logger, start, &jsonList, params.DummyPath, ".json") {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
 			return
 		}
 
-		logger.Info("Get MongoDB Client")
-		mc, err := config.NewNCPMongoDBClient(params.DBUser, params.DBPassword, params.DBHost, Port)
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("mongoDB client creation failed : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		ncpNRDB := getMongoNRDBC(logger, start, "mig", params)
+		if ncpNRDB == nil {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
 			return
 		}
 
-		var wg sync.WaitGroup
-		var mu sync.Mutex
-		ret := make(chan error)
-
-		logger.Info("Set up the client as an NRDBController")
-		ncpNRDB, err := nrdbc.New(ncpmgdb.New(mc, params.DatabaseName), nrdbc.WithLogger(logger))
-		if err != nil {
-			end := time.Now()
-			logger.Errorf("NRDBController creation failed : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
-			ctx.JSONP(http.StatusOK, gin.H{
+		if !nrdbPutWorker(logger, start, "MongoDB", ncpNRDB, jsonList) {
+			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
 			})
 			return
 		}
 
-		logger.Info("Start Import with mongoDB")
-		for _, j := range jsonList {
-			wg.Add(1)
-			go func(jPath string, jret chan<- error) {
-				defer wg.Done()
-
-				mu.Lock()
-				logger.Infof("Read json file : %s", jPath)
-				mu.Unlock()
-
-				data, err := os.ReadFile(jPath)
-				if err != nil {
-					jret <- err
-					return
-				}
-
-				logger.Infof("data unmarshal : %s", filepath.Base(jPath))
-				var jsonData []map[string]interface{}
-				err = json.Unmarshal(data, &jsonData)
-				if err != nil {
-					jret <- err
-					return
-				}
-
-				tableName := strings.TrimSuffix(filepath.Base(jPath), ".json")
-
-				mu.Lock()
-				logger.Infof("Put start : %s", filepath.Base(jPath))
-				mu.Unlock()
-
-				if err := ncpNRDB.Put(tableName, &jsonData); err != nil {
-					jret <- err
-					return
-				}
-
-				jret <- nil
-			}(j, ret)
-		}
-
-		go func() {
-			wg.Wait()
-			close(ret)
-		}()
-
-		for result := range ret {
-			if result != nil {
-				end := time.Now()
-				logger.Errorf("NRDBController Import failed : %v", err)
-				logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-				logger.Infof("Elapsed time : %s", end.Sub(start).String())
-				ctx.JSONP(http.StatusOK, gin.H{
-					"Result": logstrings.String(),
-					"Error":  nil,
-				})
-				return
-			}
-		}
-
-		end := time.Now()
-		logger.Info("Successfully generated dummy data with mongoDB")
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(start).String())
+		jobEnd(logger, "Dummy creation and import successful with mongoDB", start)
 		ctx.JSONP(http.StatusOK, gin.H{
 			"Result": logstrings.String(),
 			"Error":  nil,

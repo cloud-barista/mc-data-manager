@@ -28,36 +28,6 @@ type MigrationForm struct {
 	MongoDBName   string `form:"databaseName"`
 }
 
-/* type MigrationParams struct {
-	Path string    `json:"path"`
-	AWS  AWSParams `json:"AWS"`
-	GCP  GCPParams `json:"GCP"`
-	NCP  NCPParams `json:"NCP"`
-	// MySQL []MySQLParams `json:"MySQL"`
-}
-
-type AWSParams struct {
-	Region    string `json:"Region"`
-	AccessKey string `json:"AccessKey"`
-	SecretKey string `json:"SecretKey"`
-	Bucket    string `json:"Bucket"`
-}
-
-type GCPParams struct {
-	Region    string `json:"Region"`
-	ProjectID string `json:"ProjectID"`
-	Bucket    string `json:"Bucket"`
-}
-
-type NCPParams struct {
-	Region    string        `json:"Region"`
-	AccessKey string        `json:"AccessKey"`
-	SecretKey string        `json:"SecretKey"`
-	Endpoint  string        `json:"Endpoint"`
-	Bucket    string        `json:"Bucket"`
-	MongoDB   MongoDBParams `json:"MongoDB"`
-} */
-
 type MigrationMySQLParams struct {
 	Source MySQLParams
 	Dest   MySQLParams
