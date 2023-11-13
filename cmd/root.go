@@ -77,9 +77,9 @@ var (
 )
 
 func logFile() {
-	logFile, err := os.OpenFile("datamold.log", os.O_CREATE|os.O_APPEND, os.FileMode(0644))
+	logFile, err := os.OpenFile("./datamold.log", os.O_CREATE|os.O_APPEND|os.O_RDWR, os.FileMode(0644))
 	if err != nil {
-		logrus.Fatal("Failed to create log file")
+		logrus.WithError(err).Fatal("Failed to create log file")
 	}
 
 	logrus.SetLevel(logrus.DebugLevel)
