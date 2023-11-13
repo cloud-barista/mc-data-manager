@@ -31,7 +31,7 @@
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-aws-accessKey" name="awsAccessKey" placeholder="Access Key">
+                    <input type="text" class="form-control" id="mig-aws-accessKey" name="awsAccessKey" placeholder="Access Key" required>
                     <label for="mig-aws-apiKey">Access Key</label>
                 </div>
             </div>
@@ -39,7 +39,7 @@
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
                 <div class="form-floating">
-                    <input type="password" class="form-control" id="mig-aws-secretKey" name="awsSecretKey" placeholder="Secret Key">
+                    <input type="password" class="form-control" id="mig-aws-secretKey" name="awsSecretKey" placeholder="Secret Key" required>
                     <label for="mig-aws-secretKey">Secret Key</label>
                 </div>
             </div>
@@ -60,13 +60,13 @@
            
             <div class="mb-3">
                 <label for="mig-gcp-credential" class="form-label">Credentials 파일</label>
-                <input class="form-control" type="file" id="mig-gcp-credential" name="gcpCredential">
+                <input class="form-control" type="file" id="mig-gcp-credential" name="gcpCredential" required>
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-user-shield"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-gcp-projectid" name="projectid" placeholder="Project ID">
+                    <input type="text" class="form-control" id="mig-gcp-projectid" name="projectid" placeholder="Project ID" required>
                     <label for="mig-gcp-projectid">Project ID</label>
                 </div>
             </div>
