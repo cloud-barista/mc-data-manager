@@ -163,9 +163,9 @@ func getS3COSC(logger *logrus.Logger, startTime time.Time, jobType string, param
 
 	logger.Info("Set up the client as an OSController")
 	if jobType == "gen" {
-		OSC, err = osc.New(s3fs.New(utils.AWS, s3c, gparam.Bucket, gparam.Region), osc.WithLogger(logger))
+		OSC, err = osc.New(s3fs.New(utils.NCP, s3c, gparam.Bucket, gparam.Region), osc.WithLogger(logger))
 	} else {
-		OSC, err = osc.New(s3fs.New(utils.AWS, s3c, mparam.AWSBucket, mparam.AWSRegion), osc.WithLogger(logger))
+		OSC, err = osc.New(s3fs.New(utils.NCP, s3c, mparam.NCPBucket, mparam.NCPRegion), osc.WithLogger(logger))
 	}
 	if err != nil {
 		end := time.Now()
@@ -525,7 +525,7 @@ func getDataWithBind(logger *logrus.Logger, startTime time.Time, ctx *gin.Contex
 
 func gcpCreateCredFile(logger *logrus.Logger, startTime time.Time, ctx *gin.Context) (string, string, bool) {
 	logger.Info("Create a temporary directory where credential files will be stored")
-	gcsCredentialFile, gcsCredentialHeader, err := ctx.Request.FormFile("gcsCredential")
+	gcsCredentialFile, gcsCredentialHeader, err := ctx.Request.FormFile("gcpCredential")
 	if err != nil {
 		end := time.Now()
 		logger.Errorf("Get CredentialFile error : %v", err)

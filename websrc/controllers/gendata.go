@@ -47,7 +47,7 @@ type GenDataParams struct {
 	DBPassword   string `json:"password"`
 	DatabaseName string `json:"databaseName"`
 
-	GCSCredential *multipart.FileHeader `form:"gcsCredential"`
+	GCSCredential *multipart.FileHeader `form:"gcpCredential"`
 	ProjectID     string                `form:"projectid"`
 }
 

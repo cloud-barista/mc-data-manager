@@ -307,11 +307,11 @@ func preRunE(pName string, cmdName string) error {
 			return errors.New("does not exist objectstorage")
 		}
 
-		if pName != "replication" && pName != "delete" {
+		if pName != "migration" && pName != "delete" {
 			if err := utils.IsDir(dstPath); err != nil {
 				return errors.New("dstPath error")
 			}
-		} else if pName == "replication" {
+		} else if pName == "migration" {
 			if value, ok := configData["objectstorage"]; ok {
 				if !taskTarget {
 					if dst, ok := value["dst"]; ok {
@@ -349,11 +349,11 @@ func preRunE(pName string, cmdName string) error {
 			return errors.New("does not exist rdbms src")
 		}
 
-		if pName != "replication" && pName != "delete" {
+		if pName != "migration" && pName != "delete" {
 			if err := utils.IsDir(dstPath); err != nil {
 				return errors.New("dstPath error")
 			}
-		} else if pName == "replication" {
+		} else if pName == "migration" {
 			if value, ok := configData["rdbms"]; ok {
 				if !taskTarget {
 					if value, ok := configData["rdbms"]; ok {
@@ -391,11 +391,11 @@ func preRunE(pName string, cmdName string) error {
 			return errors.New("does not exist nrdbms src")
 		}
 
-		if pName != "replication" && pName != "delete" {
+		if pName != "migration" && pName != "delete" {
 			if err := utils.IsDir(dstPath); err != nil {
 				return errors.New("dstPath error")
 			}
-		} else if pName == "replication" {
+		} else if pName == "migration" {
 			if value, ok := configData["nrdbms"]; ok {
 				if !taskTarget {
 					if value, ok := configData["nrdbms"]; ok {

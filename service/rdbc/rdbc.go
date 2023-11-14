@@ -87,7 +87,7 @@ func (rdb *RDBController) Put(sql string) error {
 	return nil
 }
 
-// Replication using put and get
+// Migration using put and get
 func (rdb *RDBController) Copy(dst *RDBController) error {
 	var dbList []string
 	var sql string
@@ -107,7 +107,7 @@ func (rdb *RDBController) Copy(dst *RDBController) error {
 			rdb.logWrite("Error", "Get error", err)
 			return err
 		}
-		rdb.logWrite("Info", fmt.Sprintf("Replication success: src:/%s -> dst:/%s", db, db), nil)
+		rdb.logWrite("Info", fmt.Sprintf("Migration success: src:/%s -> dst:/%s", db, db), nil)
 	}
 	return nil
 }

@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -20,6 +21,7 @@ func MigrationS3ToLinuxGetHandler() gin.HandlerFunc {
 			"Content": "Migration-S3-Linux",
 			"Regions": GetAWSRegions(),
 			"error":   nil,
+			"os":      runtime.GOOS,
 		})
 	}
 }
@@ -39,7 +41,7 @@ func MigrationS3ToLinuxPostHandler() gin.HandlerFunc {
 		}
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -82,6 +84,7 @@ func MigrationS3ToWindowsGetHandler() gin.HandlerFunc {
 			"Content": "Migration-S3-Windows",
 			"Regions": GetAWSRegions(),
 			"tmpPath": tmpPath,
+			"os":      runtime.GOOS,
 			"error":   nil,
 		})
 	}
@@ -102,7 +105,7 @@ func MigrationS3ToWindowsPostHandler() gin.HandlerFunc {
 		}
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -144,6 +147,7 @@ func MigrationS3ToGCSGetHandler() gin.HandlerFunc {
 			"Content":    "Migration-S3-GCS",
 			"AWSRegions": GetAWSRegions(),
 			"GCPRegions": GetGCPRegions(),
+			"os":         runtime.GOOS,
 			"error":      nil,
 		})
 	}
@@ -156,7 +160,7 @@ func MigrationS3ToGCSPostHandler() gin.HandlerFunc {
 		logger, logstrings := pageLogInit("migs3gcs", "Export s3 data to gcs", start)
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -221,6 +225,7 @@ func MigrationS3ToNCSGetHandler() gin.HandlerFunc {
 			"Content":    "Migration-S3-NCS",
 			"AWSRegions": GetAWSRegions(),
 			"NCPRegions": GetNCPRegions(),
+			"os":         runtime.GOOS,
 			"error":      nil,
 		})
 	}
@@ -233,7 +238,7 @@ func MigrationS3ToNCSPostHandler() gin.HandlerFunc {
 		logger, logstrings := pageLogInit("migs3ncp", "Export s3 data to ncp objectstorage", start)
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,

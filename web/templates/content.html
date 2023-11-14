@@ -110,7 +110,7 @@
                 {{ template "mig-gcsToNcs.html" . }}
             {{ end }}
 
-            <!-- FROM Naver Cloud Storage -->
+            <!-- FROM Naver Object Storage -->
             {{ if eq .Content "Migration-NCS-Linux" }}
                 {{ template "mig-ncsToLinux.html" . }}
             {{ end }}

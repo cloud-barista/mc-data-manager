@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -18,6 +19,7 @@ func MigrationGCSToLinuxGetHandler() gin.HandlerFunc {
 		logger.Info("miglingcs get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-GCS-Linux",
+			"os":      runtime.GOOS,
 			"Regions": GetGCPRegions(),
 			"error":   nil,
 		})
@@ -39,7 +41,7 @@ func MigrationGCSToLinuxPostHandler() gin.HandlerFunc {
 		}
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -90,6 +92,7 @@ func MigrationGCSToWindowsGetHandler() gin.HandlerFunc {
 		logger.Info("miggcswin get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-GCS-Windows",
+			"os":      runtime.GOOS,
 			"Regions": GetGCPRegions(),
 			"tmpPath": tmpPath,
 			"error":   nil,
@@ -112,7 +115,7 @@ func MigrationGCSToWindowsPostHandler() gin.HandlerFunc {
 		}
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -160,6 +163,7 @@ func MigrationGCSToS3GetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content":    "Migration-GCS-S3",
+			"os":         runtime.GOOS,
 			"GCPRegions": GetGCPRegions(),
 			"AWSRegions": GetAWSRegions(),
 			"error":      nil,
@@ -174,7 +178,7 @@ func MigrationGCSToS3PostHandler() gin.HandlerFunc {
 		logger, logstrings := pageLogInit("genlinux", "Export gcs data to s3", start)
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -237,6 +241,7 @@ func MigrationGCSToNCSGetHandler() gin.HandlerFunc {
 		logger.Info("miggcsncp get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content":    "Migration-GCS-NCS",
+			"os":         runtime.GOOS,
 			"GCPRegions": GetGCPRegions(),
 			"NCPRegions": GetNCPRegions(),
 			"error":      nil,
@@ -251,7 +256,7 @@ func MigrationGCSToNCSPostHandler() gin.HandlerFunc {
 		logger, logstrings := pageLogInit("miggcsncp", "Export gcs data to ncp objectstorage", start)
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,

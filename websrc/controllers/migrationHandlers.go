@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,7 @@ func MigrationLinuxToS3GetHandler() gin.HandlerFunc {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-Linux-S3",
 			"Regions": GetAWSRegions(),
+			"os":      runtime.GOOS,
 			"error":   nil,
 		})
 	}
@@ -36,7 +38,7 @@ func MigrationLinuxToS3PostHandler() gin.HandlerFunc {
 		}
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -77,6 +79,7 @@ func MigrationLinuxToGCSGetHandler() gin.HandlerFunc {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-Linux-GCS",
 			"Regions": GetGCPRegions(),
+			"os":      runtime.GOOS,
 			"error":   nil,
 		})
 	}
@@ -97,7 +100,7 @@ func MigrationLinuxToGCSPostHandler() gin.HandlerFunc {
 		}
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -148,6 +151,7 @@ func MigrationLinuxToNCSGetHandler() gin.HandlerFunc {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-Linux-NCS",
 			"Regions": GetNCPRegions(),
+			"os":      runtime.GOOS,
 			"error":   nil,
 		})
 	}
@@ -168,7 +172,7 @@ func MigrationLinuxToNCSPostHandler() gin.HandlerFunc {
 		}
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -210,6 +214,7 @@ func MigrationWindowsToS3GetHandler() gin.HandlerFunc {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-Windows-S3",
 			"Regions": GetAWSRegions(),
+			"os":      runtime.GOOS,
 			"tmpPath": tmpPath,
 			"error":   nil,
 		})
@@ -231,7 +236,7 @@ func MigrationWindowsToS3PostHandler() gin.HandlerFunc {
 		}
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -273,6 +278,7 @@ func MigrationWindowsToGCSGetHandler() gin.HandlerFunc {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-Windows-GCS",
 			"Regions": GetGCPRegions(),
+			"os":      runtime.GOOS,
 			"tmpPath": tmpPath,
 			"error":   nil,
 		})
@@ -294,7 +300,7 @@ func MigrationWindowsToGCSPostHandler() gin.HandlerFunc {
 		}
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -346,6 +352,7 @@ func MigrationWindowsToNCSGetHandler() gin.HandlerFunc {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-Windows-NCS",
 			"Regions": GetNCPRegions(),
+			"os":      runtime.GOOS,
 			"tmpPath": tmpPath,
 			"error":   nil,
 		})
@@ -367,7 +374,7 @@ func MigrationWindowsToNCSPostHandler() gin.HandlerFunc {
 		}
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusOK, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -409,6 +416,7 @@ func MigrationMySQLGetHandler() gin.HandlerFunc {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"Content": "Migration-MySQL",
 			"error":   nil,
+			"os":      runtime.GOOS,
 		})
 	}
 }
@@ -422,13 +430,21 @@ func MigrationMySQLPostHandler() gin.HandlerFunc {
 		formdata := MigrationMySQLForm{}
 		params := GetMigrationParamsFormFormData(formdata)
 
-		if !getDataWithBind(logger, start, ctx, params) {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
+		if err := ctx.ShouldBind(&params); err != nil {
+			ctx.JSONP(http.StatusOK, gin.H{
+				"Result": "failed to send Form data",
+				"Error":  err,
 			})
 			return
 		}
+
+		// if !getDataWithBind(logger, start, ctx, &params) {
+		// 	ctx.JSONP(http.StatusOK, gin.H{
+		// 		"Result": logstrings.String(),
+		// 		"Error":  nil,
+		// 	})
+		// 	return
+		// }
 
 		srdbc := getMysqlRDBC(logger, start, "smig", params)
 		if srdbc == nil {
