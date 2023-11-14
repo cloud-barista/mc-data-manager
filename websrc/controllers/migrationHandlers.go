@@ -38,7 +38,7 @@ func MigrationLinuxToS3PostHandler() gin.HandlerFunc {
 		}
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -100,7 +100,7 @@ func MigrationLinuxToGCSPostHandler() gin.HandlerFunc {
 		}
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -172,7 +172,7 @@ func MigrationLinuxToNCSPostHandler() gin.HandlerFunc {
 		}
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -236,7 +236,7 @@ func MigrationWindowsToS3PostHandler() gin.HandlerFunc {
 		}
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -300,7 +300,7 @@ func MigrationWindowsToGCSPostHandler() gin.HandlerFunc {
 		}
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -374,7 +374,7 @@ func MigrationWindowsToNCSPostHandler() gin.HandlerFunc {
 		}
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusOK, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -430,13 +430,21 @@ func MigrationMySQLPostHandler() gin.HandlerFunc {
 		formdata := MigrationMySQLForm{}
 		params := GetMigrationParamsFormFormData(formdata)
 
-		if !getDataWithBind(logger, start, ctx, params) {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
+		if err := ctx.ShouldBind(&params); err != nil {
+			ctx.JSONP(http.StatusOK, gin.H{
+				"Result": "failed to send Form data",
+				"Error":  err,
 			})
 			return
 		}
+
+		// if !getDataWithBind(logger, start, ctx, &params) {
+		// 	ctx.JSONP(http.StatusOK, gin.H{
+		// 		"Result": logstrings.String(),
+		// 		"Error":  nil,
+		// 	})
+		// 	return
+		// }
 
 		srdbc := getMysqlRDBC(logger, start, "smig", params)
 		if srdbc == nil {

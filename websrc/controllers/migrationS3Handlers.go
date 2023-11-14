@@ -41,7 +41,7 @@ func MigrationS3ToLinuxPostHandler() gin.HandlerFunc {
 		}
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -105,7 +105,7 @@ func MigrationS3ToWindowsPostHandler() gin.HandlerFunc {
 		}
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -160,7 +160,7 @@ func MigrationS3ToGCSPostHandler() gin.HandlerFunc {
 		logger, logstrings := pageLogInit("migs3gcs", "Export s3 data to gcs", start)
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -238,7 +238,7 @@ func MigrationS3ToNCSPostHandler() gin.HandlerFunc {
 		logger, logstrings := pageLogInit("migs3ncp", "Export s3 data to ncp objectstorage", start)
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,

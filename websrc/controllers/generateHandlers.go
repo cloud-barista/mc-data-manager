@@ -185,7 +185,7 @@ func GenerateGCSPostHandler() gin.HandlerFunc {
 		logger, logstrings := pageLogInit("genGCS", "Create dummy data and import to gcs", start)
 
 		params := GenDataParams{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -212,7 +212,6 @@ func GenerateGCSPostHandler() gin.HandlerFunc {
 			return
 		}
 		defer os.RemoveAll(tmpDir)
-
 		params.DummyPath = tmpDir
 
 		if !dummyCreate(logger, start, params) {
@@ -465,7 +464,7 @@ func GenerateDynamoDBPostHandler() gin.HandlerFunc {
 			return
 		}
 
-		awsNRDB := getDynamoNRDBC(logger, start, "mig", params)
+		awsNRDB := getDynamoNRDBC(logger, start, "gen", params)
 		if awsNRDB == nil {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
@@ -509,7 +508,7 @@ func GenerateFirestorePostHandler() gin.HandlerFunc {
 		logger, logstrings := pageLogInit("genfirestore", "Create dummy data and import to firestoreDB", start)
 
 		params := GenDataParams{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -558,7 +557,7 @@ func GenerateFirestorePostHandler() gin.HandlerFunc {
 			return
 		}
 
-		gcpNRDB := getFirestoreNRDBC(logger, start, "mig", params, credFileName)
+		gcpNRDB := getFirestoreNRDBC(logger, start, "gen", params, credFileName)
 		if gcpNRDB == nil {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
@@ -633,7 +632,7 @@ func GenerateMongoDBPostHandler() gin.HandlerFunc {
 			return
 		}
 
-		ncpNRDB := getMongoNRDBC(logger, start, "mig", params)
+		ncpNRDB := getMongoNRDBC(logger, start, "gen", params)
 		if ncpNRDB == nil {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),

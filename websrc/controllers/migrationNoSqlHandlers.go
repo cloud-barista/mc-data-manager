@@ -32,7 +32,7 @@ func MigrationDynamoDBToFirestorePostHandler() gin.HandlerFunc {
 		logger, logstrings := pageLogInit("migDNFS", "Export dynamoDB data to firestoreDB", start)
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -89,7 +89,7 @@ func MigrationDynamoDBToFirestorePostHandler() gin.HandlerFunc {
 	}
 }
 
-func MigrationDynamoDBToMongoDBeGetHandler() gin.HandlerFunc {
+func MigrationDynamoDBToMongoDBGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		logger := getLogger("migDNMG")
 		logger.Info("migDNMG get page accessed")
@@ -108,7 +108,7 @@ func MigrationDynamoDBToMongoDBPostHandler() gin.HandlerFunc {
 
 		logger, logstrings := pageLogInit("migDNMG", "Export dynamoDB data to mongoDB", start)
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -178,7 +178,7 @@ func MigrationFirestoreToDynamoDBPostHandler() gin.HandlerFunc {
 		logger, logstrings := pageLogInit("migFSDN", "Export firestoreDB data to dynamoDB", start)
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -255,7 +255,7 @@ func MigrationFirestoreToMongoDBPostHandler() gin.HandlerFunc {
 		logger, logstrings := pageLogInit("migFSMG", "Export firestoreDB data to mongoDB", start)
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -334,7 +334,7 @@ func MigrationMongoDBToDynamoDBPostHandler() gin.HandlerFunc {
 		logger, logstrings := pageLogInit("migMGDN", "Export mongoDB data to dynamoDB", start)
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -401,7 +401,7 @@ func MigrationMongoDBToFirestorePostHandler() gin.HandlerFunc {
 		logger, logstrings := pageLogInit("migMGFS", "Export mongoDB data to firestoreDB", start)
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,

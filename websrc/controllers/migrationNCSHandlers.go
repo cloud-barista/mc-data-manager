@@ -12,7 +12,7 @@ import (
 
 // Object Storage
 
-// FROM Naver Cloud Storage
+// FROM Naver Object Storage
 func MigrationNCSToLinuxGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		logger := getLogger("migncplin")
@@ -41,7 +41,7 @@ func MigrationNCSToLinuxPostHandler() gin.HandlerFunc {
 		}
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -104,7 +104,7 @@ func MigrationNCSToWindowsPostHandler() gin.HandlerFunc {
 		}
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -159,7 +159,7 @@ func MigrationNCSToS3PostHandler() gin.HandlerFunc {
 		logger, logstrings := pageLogInit("migncps3", "Export ncp data to s3", start)
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -227,7 +227,7 @@ func MigrationNCSToGCSPostHandler() gin.HandlerFunc {
 		logger, logstrings := pageLogInit("migncpgcs", "Export ncp data to gcs", start)
 
 		params := MigrationForm{}
-		if !getDataWithBind(logger, start, ctx, params) {
+		if !getDataWithBind(logger, start, ctx, &params) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
