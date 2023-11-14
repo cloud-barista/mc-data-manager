@@ -92,7 +92,7 @@ func MigrationNoSQLRoutes(g *gin.RouterGroup) {
 	g.GET("/dynamodb/firestore", controllers.MigrationDynamoDBToFirestoreGetHandler())
 	g.POST("/dynamodb/firestore", controllers.MigrationDynamoDBToFirestorePostHandler())
 
-	g.GET("/dynamodb/mongodb", controllers.MigrationDynamoDBToMongoDBPostHandler())
+	g.GET("/dynamodb/mongodb", controllers.MigrationDynamoDBToMongoDBGetHandler())
 	g.POST("/dynamodb/mongodb", controllers.MigrationDynamoDBToMongoDBPostHandler())
 
 	g.GET("/firestore/dynamodb", controllers.MigrationFirestoreToDynamoDBGetHandler())
