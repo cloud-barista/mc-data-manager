@@ -6,6 +6,14 @@ Data Mold는 데이터 마이그레이션 기술의 검증을 위한 환경을 �
 2. 생성된 소스 데이터 저장소에 테스트 데이터를 생성 및 저장한다.
 3. 소스에서 목표 컴퓨팅 환경으로 데이터 복제/마이그레이션을 수행하며, 이때 데이터 전/후처리 작업을 수행한다.
 
+
+## Environments:
+* OS; Ubuntu 20.04 LTS, Windows 10 Pro
+* Go: 1.21.3
+
+
 ## Installation and Testing Guide
-datamold [설치 및 시험가이드](docs/Installation-and-Testing-Guide.md)
-해당 가이드는 Ubunto 20.04대상으로 설치 및 명령어 사용방법을 작성한 가이드입니다.
+
+해당 가이드는 Ubuntu 20.04 대상으로 설치 및 명령어 사용방법을 작성한 가이드입니다.
+
+* Data Mold [설치 및 시험가이드](docs/Installation-and-Testing-Guide.md)

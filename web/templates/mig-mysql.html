@@ -1,0 +1,109 @@
+<h1 class="mt-4">마이그레이션 MySQL</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">마이그레이션</li>
+    <li class="breadcrumb-item active">MySQL</li>
+</ol>
+
+<div class="card mb-4 col-auto">
+    <div class="card-header">
+        <i class="fa-solid fa-database"></i>
+        MySQL
+    </div>
+    <div class="card-body">
+        <!-- <form action="/migration/mysql" method="POST"> -->
+        <form id="migForm">
+            <input type="hidden" id="migSource" value="mysql">
+            <input type="hidden" id="migDest" value="mysql">
+
+            <label for="mig-mysql-srcHost" class="form-label">소스 MySQL</label>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-cloud"></i></span>
+                <select class="form-select" id="srcProvider" name="srcProvider">
+                    <option value="aws">AWS</option>
+                    <option value="gcp">GCP</option>
+                    <option value="ncp">NCP</option>
+                    <option value="on-premise">On-premise</option>
+                </select>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-house"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-mysql-srcHost" name="srcHost" placeholder="호스트명 / IP" required>
+                    <label for="mig-mysql-host">호스트명 / IP</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-flag"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-mysql-srcPort" name="srcPort" placeholder="포트" required>
+                    <label for="mig-mysql-port">포트</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-mysql-srcUsername" name="srcUsername" placeholder="사용자" required>
+                    <label for="mig-mysql-username">사용자</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="mig-mysql-srcPassword" name="srcPassword" placeholder="패스워드" required>
+                    <label for="mig-mysql-password">패스워드</label>
+                </div>
+            </div>
+
+            <label for="mig-mysql-srcHost" class="form-label">목표 MySQL</label>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-cloud"></i></span>
+                <select class="form-select" id="destProvider" name="destProvider">
+                    <option value="aws">AWS</option>
+                    <option value="gcp">GCP</option>
+                    <option value="ncp">NCP</option>
+                    <option value="onpremise">On-premise</option>
+                </select>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-house"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-mysql-destHost" name="destHost" placeholder="호스트명 / IP" required>
+                    <label for="mig-mysql-host">호스트명 / IP</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-flag"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-mysql-destPort" name="destPort" placeholder="포트" required>
+                    <label for="mig-mysql-port">포트</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-mysql-destUsername" name="destUsername" placeholder="사용자" required>
+                    <label for="mig-mysql-username">사용자</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="mig-mysql-destPassword" name="destPassword" placeholder="패스워드" required>
+                    <label for="mig-mysql-password">패스워드</label>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" id="submitBtn">실행</button>
+        </form>
+    </div>
+</div>
