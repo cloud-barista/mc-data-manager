@@ -42,7 +42,7 @@ type MigrationMySQLForm struct {
 	SDatabaseName string `json:"srcDatabaseName" form:"srcDatabaseName"`
 
 	DProvider     string `json:"destProvider" form:"destProvider"`
-	DHost         string `json:"destHost" form:"desttHost"`
+	DHost         string `json:"destHost" form:"destHost"`
 	DPort         string `json:"destPort" form:"destPort"`
 	DUsername     string `json:"destUsername" form:"destUsername"`
 	DPassword     string `json:"destPassword" form:"destPassword"`
