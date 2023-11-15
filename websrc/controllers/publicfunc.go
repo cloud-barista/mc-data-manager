@@ -18,7 +18,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/cloud-barista/cm-data-mold/config"
-	"github.com/cloud-barista/cm-data-mold/internal/logformatter"
+	"github.com/cloud-barista/cm-data-mold/internal/log"
 	"github.com/cloud-barista/cm-data-mold/pkg/nrdbms/awsdnmdb"
 	"github.com/cloud-barista/cm-data-mold/pkg/nrdbms/gcpfsdb"
 	"github.com/cloud-barista/cm-data-mold/pkg/nrdbms/ncpmgdb"
@@ -36,7 +36,7 @@ import (
 
 func getLogger(jobName string) *logrus.Logger {
 	logger := logrus.StandardLogger()
-	logger.SetFormatter(&logformatter.CustomTextFormatter{CmdName: "server", JobName: jobName})
+	logger.SetFormatter(&log.CustomTextFormatter{CmdName: "server", JobName: jobName})
 	return logger
 }
 

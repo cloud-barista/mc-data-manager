@@ -16,76 +16,14 @@ limitations under the License.
 package cmd
 
 import (
-	"io"
 	"os"
 
-	"github.com/cloud-barista/cm-data-mold/internal/logformatter"
-	"github.com/sirupsen/logrus"
-
+	"github.com/cloud-barista/cm-data-mold/internal/auth"
+	"github.com/cloud-barista/cm-data-mold/internal/log"
 	"github.com/spf13/cobra"
 )
 
-var (
-	// credential
-	credentialPath string
-	configData     map[string]map[string]map[string]string
-	taskTarget     bool
-
-	//src
-	cSrcProvider    string
-	cSrcAccessKey   string
-	cSrcSecretKey   string
-	cSrcRegion      string
-	cSrcBucketName  string
-	cSrcGcpCredPath string
-	cSrcProjectID   string
-	cSrcEndpoint    string
-	cSrcUsername    string
-	cSrcPassword    string
-	cSrcHost        string
-	cSrcPort        string
-	cSrcDBName      string
-
-	//dst
-	cDstProvider    string
-	cDstAccessKey   string
-	cDstSecretKey   string
-	cDstRegion      string
-	cDstBucketName  string
-	cDstGcpCredPath string
-	cDstProjectID   string
-	cDstEndpoint    string
-	cDstUsername    string
-	cDstPassword    string
-	cDstHost        string
-	cDstPort        string
-	cDstDBName      string
-
-	// dummy
-	dstPath  string
-	sqlSize  int
-	csvSize  int
-	jsonSize int
-	xmlSize  int
-	txtSize  int
-	pngSize  int
-	gifSize  int
-	zipSize  int
-
-	deleteDBList    []string
-	deleteTableList []string
-)
-
-func logFile() {
-	logFile, err := os.OpenFile("./datamold.log", os.O_CREATE|os.O_APPEND|os.O_RDWR, os.FileMode(0644))
-	if err != nil {
-		logrus.WithError(err).Fatal("Failed to create log file")
-	}
-
-	logrus.SetLevel(logrus.DebugLevel)
-	logrus.SetFormatter(&logformatter.CustomTextFormatter{})
-	logrus.SetOutput(io.MultiWriter(os.Stdout, logFile))
-}
+var datamoldParams auth.DatamoldParams
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -94,7 +32,7 @@ var rootCmd = &cobra.Command{
 	Long: `It is a tool that builds an environment for verification of data migration technology and 
 generates test data necessary for data migration.`,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		logFile()
+		log.LogFile()
 		return nil
 	},
 }

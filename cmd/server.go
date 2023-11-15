@@ -4,7 +4,7 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"github.com/cloud-barista/cm-data-mold/internal/logformatter"
+	"github.com/cloud-barista/cm-data-mold/internal/log"
 	dmsv "github.com/cloud-barista/cm-data-mold/websrc/serve"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -18,7 +18,7 @@ var serverCmd = &cobra.Command{
 	Short: "Start Web Server",
 	Long:  `Start Web Server`,
 	Run: func(cmd *cobra.Command, args []string) {
-		logrus.SetFormatter(&logformatter.CustomTextFormatter{CmdName: "server", JobName: "web server"})
+		logrus.SetFormatter(&log.CustomTextFormatter{CmdName: "server", JobName: "web server"})
 		logrus.Info("Start Web Server")
 		dmsv.Run(dmsv.InitServer(), listenPort)
 	},
