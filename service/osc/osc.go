@@ -4,6 +4,7 @@ import (
 	"io"
 
 	"github.com/cloud-barista/cm-data-mold/pkg/utils"
+	"github.com/sirupsen/logrus"
 )
 
 type OSFS interface {
@@ -18,19 +19,37 @@ type OSFS interface {
 type OSController struct {
 	osfs OSFS
 
+	logger  *logrus.Logger
 	threads int
 }
 
+type Result struct {
+	name string
+	err  error
+}
+
 func (osc *OSController) CreateBucket() error {
-	return osc.osfs.CreateBucket()
+	err := osc.osfs.CreateBucket()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (osc *OSController) DeleteBucket() error {
-	return osc.osfs.DeleteBucket()
+	err := osc.osfs.DeleteBucket()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (osc *OSController) ObjectList() ([]*utils.Object, error) {
-	return osc.osfs.ObjectList()
+	objList, err := osc.osfs.ObjectList()
+	if err != nil {
+		return objList, err
+	}
+	return objList, nil
 }
 
 type Option func(*OSController)
@@ -43,10 +62,17 @@ func WithThreads(count int) Option {
 	}
 }
 
+func WithLogger(logger *logrus.Logger) Option {
+	return func(o *OSController) {
+		o.logger = logger
+	}
+}
+
 func New(osfs OSFS, opts ...Option) (*OSController, error) {
 	osc := &OSController{
 		osfs:    osfs,
 		threads: 10,
+		logger:  nil,
 	}
 
 	for _, opt := range opts {
@@ -54,4 +80,15 @@ func New(osfs OSFS, opts ...Option) (*OSController, error) {
 	}
 
 	return osc, nil
+}
+
+func (osc *OSController) logWrite(logLevel, msg string, err error) {
+	if osc.logger != nil {
+		switch logLevel {
+		case "Info":
+			osc.logger.Info(msg)
+		case "Error":
+			osc.logger.Errorf("%s : %v", msg, err)
+		}
+	}
 }

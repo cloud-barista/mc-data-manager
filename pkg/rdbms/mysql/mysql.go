@@ -52,15 +52,22 @@ func (d *MysqlDBMS) Exec(query string) error {
 
 // Extract database information
 func extractDatabaseInfo(sql string) (string, string, string) {
-	re := regexp.MustCompile("`([^`]*)`[^']*DEFAULT CHARACTER SET ([^ ]*) COLLATE ([^ ]*)")
-
-	match := re.FindStringSubmatch(sql)
+	match := []string{}
+	if strings.Contains(sql, ";") {
+		re := regexp.MustCompile(`CREATE\s+DATABASE\s+(IF\s+NOT\s+EXISTS\s+)?([^\s;]+)[^;]*;`)
+		match = re.FindStringSubmatch(sql)
+	} else {
+		re := regexp.MustCompile("`([^`]*)`[^']*DEFAULT CHARACTER SET ([^ ]*) COLLATE ([^ ]*)")
+		match = re.FindStringSubmatch(sql)
+	}
 
 	if len(match) == 4 {
 		dbName := match[1]
 		charSet := match[2]
 		collate := match[3]
 		return dbName, charSet, collate
+	} else if len(match) == 3 {
+		return match[2], "", ""
 	}
 
 	return "", "", ""

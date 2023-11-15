@@ -10,6 +10,7 @@ import (
 
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/cloud-barista/cm-data-mold/pkg/utils"
+	"github.com/sirupsen/logrus"
 )
 
 // CSV generation function using gofakeit
@@ -19,6 +20,7 @@ import (
 func GenerateRandomCSV(dummyDir string, capacitySize int) error {
 	dummyDir = filepath.Join(dummyDir, "csv")
 	if err := utils.IsDir(dummyDir); err != nil {
+		logrus.Errorf("IsDir function error : %v", err)
 		return err
 	}
 
@@ -46,6 +48,7 @@ func GenerateRandomCSV(dummyDir string, capacitySize int) error {
 
 	for ret := range resultChan {
 		if ret != nil {
+			logrus.Errorf("return error : %v", ret)
 			return ret
 		}
 	}
@@ -110,6 +113,8 @@ func generateCSVBook(cnt int, dirPath string, count int) error {
 		}
 	}
 
+	logrus.Infof("Creation success: %v", file.Name())
+
 	csvWriter.Flush()
 	return csvWriter.Error()
 }
@@ -150,7 +155,7 @@ func generateCSVCar(cnt int, dirPath string, count int) error {
 			return err
 		}
 	}
-
+	logrus.Infof("Creation success: %v", file.Name())
 	csvWriter.Flush()
 	return csvWriter.Error()
 }
@@ -191,6 +196,7 @@ func generateCSVAddress(cnt int, dirPath string, count int) error {
 			return err
 		}
 	}
+	logrus.Infof("Creation success: %v", file.Name())
 
 	csvWriter.Flush()
 	return csvWriter.Error()
@@ -232,6 +238,7 @@ func generateCSVCreditCard(cnt int, dirPath string, count int) error {
 			return err
 		}
 	}
+	logrus.Infof("Creation success: %v", file.Name())
 
 	csvWriter.Flush()
 	return csvWriter.Error()
@@ -273,6 +280,7 @@ func generateCSVJob(cnt int, dirPath string, count int) error {
 			return err
 		}
 	}
+	logrus.Infof("Creation success: %v", file.Name())
 
 	csvWriter.Flush()
 	return csvWriter.Error()
@@ -314,6 +322,7 @@ func generateCSVMovie(cnt int, dirPath string, count int) error {
 			return err
 		}
 	}
+	logrus.Infof("Creation success: %v", file.Name())
 
 	csvWriter.Flush()
 	return csvWriter.Error()
@@ -355,6 +364,7 @@ func generateCSVPerson(cnt int, dirPath string, count int) error {
 			return err
 		}
 	}
+	logrus.Infof("Creation success: %v", file.Name())
 
 	csvWriter.Flush()
 	return csvWriter.Error()

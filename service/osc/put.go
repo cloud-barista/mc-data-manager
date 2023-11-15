@@ -12,51 +12,16 @@ import (
 	"github.com/cloud-barista/cm-data-mold/pkg/utils"
 )
 
-func fileExists(filePath string) bool {
-	if fi, err := os.Stat(filePath); os.IsExist(err) {
-		return !fi.IsDir()
-	}
-	return false
-}
-
-func (osc *OSController) Put(filePath string) error {
-	if !fileExists(filePath) {
-		return errors.New("file does not exist")
-	}
-
-	src, err := os.Open(filePath)
-	if err != nil {
-		return err
-	}
-	defer src.Close()
-
-	dst, err := osc.osfs.Create(filepath.Base(filePath))
-	if err != nil {
-		return err
-	}
-
-	n, err := io.Copy(dst, src)
-	if err != nil {
-		return err
-	}
-
-	sinfo, err := src.Stat()
-	if err != nil {
-		return err
-	}
-
-	if n != sinfo.Size() {
-		return errors.New("put failed")
-	}
-
-	return nil
-}
-
 func (osc *OSController) MPut(dirPath string) error {
-	osc.osfs.CreateBucket()
+	if err := osc.osfs.CreateBucket(); err != nil {
+		osc.logWrite("Error", "CreateBucket error", err)
+		return err
+	}
 
-	if fileExists(dirPath) {
-		return errors.New("directory does not exist")
+	if utils.FileExists(dirPath) {
+		err := errors.New("directory does not exist")
+		osc.logWrite("Error", "FileExists error", err)
+		return err
 	}
 
 	var objList []utils.Object
@@ -81,11 +46,12 @@ func (osc *OSController) MPut(dirPath string) error {
 	})
 
 	if err != nil {
+		osc.logWrite("Error", "Walk error", err)
 		return err
 	}
 
 	jobs := make(chan utils.Object, len(objList))
-	resultChan := make(chan error, len(objList))
+	resultChan := make(chan Result, len(objList))
 
 	var wg sync.WaitGroup
 	for i := 0; i < osc.threads; i++ {
@@ -106,54 +72,63 @@ func (osc *OSController) MPut(dirPath string) error {
 		close(resultChan)
 	}()
 
-	for err := range resultChan {
-		if err != nil {
-			return err
+	for ret := range resultChan {
+		if ret.err != nil {
+			osc.logWrite("Error", fmt.Sprintf("Import failed: %s", ret.name), ret.err)
 		}
 	}
-
 	return nil
 }
 
-func mPutWorker(osc *OSController, dirPath string, jobs chan utils.Object, resultChan chan<- error) {
+func mPutWorker(osc *OSController, dirPath string, jobs chan utils.Object, resultChan chan<- Result) {
 	for obj := range jobs {
+		ret := Result{
+			name: obj.Key,
+			err:  nil,
+		}
+
 		src, err := os.Open(obj.Key)
 		if err != nil {
-			resultChan <- err
+			ret.err = err
+			resultChan <- ret
 			continue
 		}
 		defer src.Close()
 
 		fileName, err := filepath.Rel(dirPath, obj.Key)
 		if err != nil {
-			resultChan <- err
+			ret.err = err
+			resultChan <- ret
 			continue
 		}
 		fileName = strings.ReplaceAll(filepath.Join(filepath.Base(dirPath), fileName), "\\", "/")
 
-		fmt.Println(fileName)
-
 		dst, err := osc.osfs.Create(fileName)
 		if err != nil {
-			resultChan <- err
+			ret.err = err
+			resultChan <- ret
 			continue
 		}
 		defer dst.Close()
 
 		n, err := io.Copy(dst, src)
 		if err != nil {
-			resultChan <- err
+			ret.err = err
+			resultChan <- ret
 			continue
 		}
 
 		if n != obj.Size {
-			resultChan <- errors.New("put failed")
+			ret.err = errors.New("put failed")
+			resultChan <- ret
 			continue
 		}
 
 		dst.Close()
 		src.Close()
 
-		resultChan <- nil
+		osc.logWrite("Info", fmt.Sprintf("Import success: %s -> %s", obj.Key, fileName), nil)
+
+		resultChan <- ret
 	}
 }

@@ -1,0 +1,71 @@
+<h1 class="mt-4">마이그레이션 Linux</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">마이그레이션</li>
+    <li class="breadcrumb-item active">Linux to AWS S3</li>
+</ol>
+
+<div class="card mb-4 col-auto">
+    <div class="card-header">
+        Linux to AWS S3
+    </div>
+    <div class="card-body">
+        <!-- <form action="/migration/linux/s3" method="POST"> -->
+        <form id="migForm">
+            <input type="hidden" id="migSource" value="linux">
+            <input type="hidden" id="migDest" value="s3">
+
+            <div class="mb-3">
+                <label for="mig-linux-path" class="form-label">Linux 마이그레이션 대상 데이터 경로</label>
+
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-folder"></i></span>
+                    <div class="form-floating">
+                      <input type="text" class="form-control" id="mig-linux-path" name="path" value="/tmp/dummy" placeholder="디렉토리 경로">
+                      <label for="mig-linux-path">디렉토리 경로</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="mig-aws-region" class="form-label">AWS S3</label>
+
+                <div class="form-floating">
+                    <select class="form-select form-select-sm w-50" id="mig-aws-region" name="awsRegion">
+                    <!-- <option selected>Region</option> -->
+                    {{ range $index, $value := .Regions }}
+                    <option value="{{ $value }}">{{ $value }}</option>
+                    {{ end }}
+                    </select>
+                    <label for="mig-aws-region">리전 선택</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-aws-accessKey" name="awsAccessKey" placeholder="Access Key" required>
+                    <label for="mig-aws-accessKey">Access Key</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="mig-aws-secretKey" name="awsSecretKey" placeholder="Secret Key" required>
+                    <label for="mig-aws-secretKey">Secret Key</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-aws-bucket" name="awsBucket" placeholder="Bucket" required>
+                    <label for="mig-aws-bucket">Bucket</label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="submitBtn">실행</button>
+
+        </form>
+    </div>
+</div>

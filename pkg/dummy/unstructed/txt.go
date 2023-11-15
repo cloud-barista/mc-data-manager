@@ -8,6 +8,7 @@ import (
 
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/cloud-barista/cm-data-mold/pkg/utils"
+	"github.com/sirupsen/logrus"
 )
 
 // TXT generation function using gofakeit
@@ -17,6 +18,7 @@ import (
 func GenerateRandomTXT(dummyDir string, capacitySize int) error {
 	dummyDir = filepath.Join(dummyDir, "txt")
 	if err := utils.IsDir(dummyDir); err != nil {
+		logrus.Errorf("IsDir function error : %v", err)
 		return err
 	}
 
@@ -44,6 +46,7 @@ func GenerateRandomTXT(dummyDir string, capacitySize int) error {
 
 	for ret := range resultChan {
 		if ret != nil {
+			logrus.Errorf("result error : %v", ret)
 			return ret
 		}
 	}
@@ -54,7 +57,7 @@ func GenerateRandomTXT(dummyDir string, capacitySize int) error {
 // txt worker
 func randomTxtWorker(countNum chan int, dirPath string, resultChan chan<- error) {
 	for num := range countNum {
-		file, err := os.Create(fmt.Sprintf("%s/randomTxt_%d.txt", dirPath, num))
+		file, err := os.Create(filepath.Join(dirPath, fmt.Sprintf("randomTxt_%d.txt", num)))
 		if err != nil {
 			resultChan <- err
 		}
@@ -65,8 +68,12 @@ func randomTxtWorker(countNum chan int, dirPath string, resultChan chan<- error)
 			}
 		}
 
+		logrus.Infof("successfully generated : %s", file.Name())
+
 		if err := file.Close(); err != nil {
 			resultChan <- err
 		}
+
+		resultChan <- nil
 	}
 }

@@ -9,6 +9,7 @@ import (
 	"sync"
 
 	"github.com/cloud-barista/cm-data-mold/pkg/utils"
+	"github.com/sirupsen/logrus"
 )
 
 // ZIP generation function using gofakeit
@@ -18,18 +19,23 @@ import (
 func GenerateRandomZIP(dummyDir string, capacitySize int) error {
 	dummyDir = filepath.Join(dummyDir, "zip")
 	if err := utils.IsDir(dummyDir); err != nil {
+		logrus.Errorf("IsDir function error : %v", err)
 		return err
 	}
 
 	tempPath := filepath.Join(dummyDir, "tmpTxt")
 	if err := os.MkdirAll(tempPath, 0755); err != nil {
+		logrus.Errorf("MkdirAll function error : %v", err)
 		return err
 	}
 	defer os.RemoveAll(tempPath)
 
+	logrus.Info("start txt generation")
 	if err := GenerateRandomTXT(tempPath, 1); err != nil {
+		logrus.Error("failed to generate txt")
 		return err
 	}
+	logrus.Info("successfully generated txt")
 
 	countNum := make(chan int, capacitySize)
 	resultChan := make(chan error, capacitySize)
@@ -55,6 +61,7 @@ func GenerateRandomZIP(dummyDir string, capacitySize int) error {
 
 	for ret := range resultChan {
 		if ret != nil {
+			logrus.Errorf("result error : %v", ret)
 			return ret
 		}
 	}
@@ -77,7 +84,9 @@ func randomZIPWorker(countNum chan int, dummyDir, tempPath string, resultChan ch
 		if err := gzip(tempPath, zipWriter); err != nil {
 			resultChan <- err
 		}
-
+		logrus.Infof("successfully generated : %s", w.Name())
+		zipWriter.Close()
+		w.Close()
 		resultChan <- nil
 	}
 }

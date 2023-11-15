@@ -1,0 +1,37 @@
+{{ define "gen-windows.html" }}
+
+<h1 class="mt-4">데이터 생성 Windows</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">데이터 생성</li>
+    <li class="breadcrumb-item active">Windows</li>
+</ol>
+
+<div class="card mb-4 col-auto">
+    <div class="card-header">
+        <i class="fab fa-windows"></i>
+        Windows
+    </div>
+    <div class="card-body">
+        <!-- <form action="/generate/windows" method="POST"> -->
+        <form id="genForm">
+            
+            <div class="mb-3">
+                <label for="gen-windows-path" class="form-label">데이터를 생성할 경로</label>
+
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-folder"></i></span>
+                    <div class="form-floating">
+                      <input type="text" class="form-control" id="gen-windows-path" name="path" value={{ .tmpPath }} placeholder="디렉토리 경로">
+                      <label for="gen-windows-path">디렉토리 경로</label>
+                    </div>
+                </div>
+            </div>
+
+            {{ template "gen-data.html" . }}
+
+            <button type="submit" class="btn btn-primary" id="submitBtn">생성</button>
+            <input type="hidden" id="genTarget" value="windows">
+        </form>
+    </div>
+</div>
+{{ end }}

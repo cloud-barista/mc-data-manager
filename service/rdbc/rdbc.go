@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"strings"
+
+	"github.com/sirupsen/logrus"
 )
 
 type EngineType string
@@ -27,15 +29,42 @@ type RDBMS interface {
 
 type RDBController struct {
 	client RDBMS
+
+	logger *logrus.Logger
+}
+
+type Option func(*RDBController)
+
+func WithLogger(logger *logrus.Logger) Option {
+	return func(r *RDBController) {
+		r.logger = logger
+	}
+}
+
+func New(rdb RDBMS, opts ...Option) (*RDBController, error) {
+	rdbc := &RDBController{
+		client: rdb,
+		logger: nil,
+	}
+
+	for _, opt := range opts {
+		opt(rdbc)
+	}
+
+	return rdbc, nil
 }
 
 // Return db list
-func (rdbc *RDBController) ListDB(dst *[]string) error {
-	return rdbc.client.ListDB(dst)
+func (rdb *RDBController) ListDB(dst *[]string) error {
+	err := rdb.client.ListDB(dst)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // sql import
-func (rdbc *RDBController) Put(sql string) error {
+func (rdb *RDBController) Put(sql string) error {
 	scanner := bufio.NewScanner(strings.NewReader(sql))
 	scanner.Split(splitLine)
 
@@ -43,56 +72,64 @@ func (rdbc *RDBController) Put(sql string) error {
 		line := scanner.Text()
 		line = strings.ReplaceAll(line, "\n", "")
 		if line != "" {
-			err := rdbc.client.Exec(line)
+			err := rdb.client.Exec(line)
 			if err != nil {
+				rdb.logWrite("Error", "sql exec error", err)
 				return err
 			}
 		}
 	}
 
-	return scanner.Err()
+	err := scanner.Err()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-// Replication using put and get
-func (src *RDBController) Copy(dst *RDBController) error {
+// Migration using put and get
+func (rdb *RDBController) Copy(dst *RDBController) error {
 	var dbList []string
 	var sql string
-	if err := src.ListDB(&dbList); err != nil {
+	if err := rdb.ListDB(&dbList); err != nil {
+		rdb.logWrite("Error", "ListDB error", err)
 		return err
 	}
 
 	for _, db := range dbList {
 		sql = ""
-		if err := src.Get(db, &sql); err != nil {
+		if err := rdb.Get(db, &sql); err != nil {
+			rdb.logWrite("Error", "Get error", err)
 			return err
 		}
 
 		if err := dst.Put(sql); err != nil {
+			rdb.logWrite("Error", "Get error", err)
 			return err
 		}
-		fmt.Println(db)
+		rdb.logWrite("Info", fmt.Sprintf("Migration success: src:/%s -> dst:/%s", db, db), nil)
 	}
 	return nil
 }
 
 // Export all data in database
-func (rdbc *RDBController) Get(dbName string, sql *string) error {
+func (rdb *RDBController) Get(dbName string, sql *string) error {
 	var sqlTemp string
-	if err := rdbc.client.ShowCreateDBSql(dbName, &sqlTemp); err != nil {
+	if err := rdb.client.ShowCreateDBSql(dbName, &sqlTemp); err != nil {
 		return err
 	}
 	sqlWrite(sql, sqlTemp)
 	sqlWrite(sql, fmt.Sprintf("USE %s;", dbName))
 
 	var tableList []string
-	if err := rdbc.client.ListTable(dbName, &tableList); err != nil {
+	if err := rdb.client.ListTable(dbName, &tableList); err != nil {
 		return err
 	}
 
 	for _, table := range tableList {
 		sqlWrite(sql, fmt.Sprintf("DROP TABLE IF EXISTS %s;", table))
 
-		if err := rdbc.client.ShowCreateTableSql(dbName, table, &sqlTemp); err != nil {
+		if err := rdb.client.ShowCreateTableSql(dbName, table, &sqlTemp); err != nil {
 			return err
 		}
 		sqlWrite(sql, sqlTemp)
@@ -100,7 +137,7 @@ func (rdbc *RDBController) Get(dbName string, sql *string) error {
 
 	for _, table := range tableList {
 		var insertData []string
-		if err := rdbc.client.GetInsert(dbName, table, &insertData); err != nil {
+		if err := rdb.client.GetInsert(dbName, table, &insertData); err != nil {
 			return err
 		}
 
@@ -116,20 +153,6 @@ func sqlWrite(sql *string, data string) {
 	*sql += fmt.Sprintf("%s\n\n", data)
 }
 
-type Option func(*RDBController)
-
-func New(rdb RDBMS, opts ...Option) (*RDBController, error) {
-	rdbc := &RDBController{
-		client: rdb,
-	}
-
-	for _, opt := range opts {
-		opt(rdbc)
-	}
-
-	return rdbc, nil
-}
-
 // Split by line
 func splitLine(data []byte, atEOF bool) (int, []byte, error) {
 	if atEOF && len(data) == 0 {
@@ -142,4 +165,24 @@ func splitLine(data []byte, atEOF bool) (int, []byte, error) {
 		return len(data), data, nil
 	}
 	return 0, nil, nil
+}
+
+func (rdb *RDBController) DeleteDB(dbName ...string) error {
+	for _, db := range dbName {
+		if err := rdb.client.DeleteDB(db); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (rdbc *RDBController) logWrite(logLevel, msg string, err error) {
+	if rdbc.logger != nil {
+		switch logLevel {
+		case "Info":
+			rdbc.logger.Info(msg)
+		case "Error":
+			rdbc.logger.Errorf("%s : %v", msg, err)
+		}
+	}
 }
