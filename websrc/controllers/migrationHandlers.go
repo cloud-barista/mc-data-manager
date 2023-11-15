@@ -428,23 +428,14 @@ func MigrationMySQLPostHandler() gin.HandlerFunc {
 		logger, logstrings := pageLogInit("migmysql", "Import mysql to mysql", start)
 
 		formdata := MigrationMySQLForm{}
-		params := GetMigrationParamsFormFormData(formdata)
-
-		if err := ctx.ShouldBind(&params); err != nil {
+		if !getDataWithBind(logger, start, ctx, &formdata) {
 			ctx.JSONP(http.StatusOK, gin.H{
-				"Result": "failed to send Form data",
-				"Error":  err,
+				"Result": logstrings.String(),
+				"Error":  nil,
 			})
 			return
 		}
-
-		// if !getDataWithBind(logger, start, ctx, &params) {
-		// 	ctx.JSONP(http.StatusOK, gin.H{
-		// 		"Result": logstrings.String(),
-		// 		"Error":  nil,
-		// 	})
-		// 	return
-		// }
+		params := GetMigrationParamsFormFormData(formdata)
 
 		srdbc := getMysqlRDBC(logger, start, "smig", params)
 		if srdbc == nil {
