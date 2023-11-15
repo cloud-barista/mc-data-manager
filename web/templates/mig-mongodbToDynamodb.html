@@ -1,0 +1,93 @@
+<h1 class="mt-4">마이그레이션 MongoDB</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">마이그레이션</li>
+    <li class="breadcrumb-item active">NCP MongoDB to AWS DynamoDB</li>
+</ol>
+
+<div class="card mb-4 col-auto">
+    <div class="card-header">
+        NCP MongoDB to AWS DynamoDB
+    </div>
+    <div class="card-body">
+        <!-- <form action="/migration/mongoDB/dynamodb" method="POST"> -->
+        <form id="migForm">
+            <input type="hidden" id="migSource" value="mongodb">
+            <input type="hidden" id="migDest" value="dynamodb">
+            
+            <label for="mig-mongodb-host" class="form-label">MongoDB</label>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-house"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-mongodb-host" name="host" placeholder="호스트명 / IP" required>
+                    <label for="mig-mongodb-host">호스트명 / IP</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-flag"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-mongodb-port" name="port" placeholder="포트" required>
+                    <label for="mig-mongodb-port">포트</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-mongodb-username" name="username" placeholder="사용자" required>
+                    <label for="mig-mongodb-username">사용자</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="mig-mongodb-password" name="password" placeholder="패스워드" required>
+                    <label for="mig-mongodb-password">패스워드</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-database"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-mongodb-databaseName" name="databaseName" placeholder="DB 이름" required>
+                    <label for="mig-mongodb-databaseName">데이터베이스 이름</label>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="mig-aws-region" class="form-label">AWS DynamoDB</label>
+
+                <div class="form-floating">
+                    <select class="form-select form-select-sm w-50" id="mig-aws-region" name="awsRegion">
+                    <!-- <option selected>Region</option> -->
+                    {{ range $index, $value := .Regions }}
+                    <option value="{{ $value }}">{{ $value }}</option>
+                    {{ end }}
+                    </select>
+                    <label for="mig-aws-region">리전 선택</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-aws-accessKey" name="awsAccessKey" placeholder="Access Key" required>
+                    <label for="mig-aws-accessKey">Access Key</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="mig-aws-secretKey" name="awsSecretKey" placeholder="Secret Key" required>
+                    <label for="mig-aws-secretKey">Secret Key</label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="submitBtn">실행</button>
+
+        </form>
+    </div>
+</div>

@@ -1,0 +1,163 @@
+<div id="layoutSidenav_content">
+    <main class="w-75">
+        <div class="container-fluid px-4">
+            {{ if eq .Content "main" }}
+                {{ template "main.html" }}
+            {{ end }}
+
+            <!-- 데이터 생성 템플릿 -->
+
+            {{ if eq .Content "Generate-Linux" }}
+                {{ template "gen-linux.html" . }}
+            {{ end }}
+            
+            {{ if eq .Content "Generate-Windows" }}
+                {{ template "gen-windows.html" . }}
+            {{ end }}
+
+            {{ if eq .Content "Generate-S3" }}
+                {{ template "gen-s3.html" . }}
+            {{ end }}
+
+            {{ if eq .Content "Generate-GCS" }}
+                {{ template "gen-gcs.html" . }}
+            {{ end }}
+        
+            {{ if eq .Content "Generate-NCS" }}
+                {{ template "gen-ncs.html" . }}
+            {{ end }}
+        
+            {{ if eq .Content "Generate-MySQL" }}
+                {{ template "gen-mysql.html" . }}
+            {{ end }}
+            
+            {{ if eq .Content "Generate-DynamoDB" }}
+                {{ template "gen-dynamodb.html" . }}
+            {{ end }}
+            
+            {{ if eq .Content "Generate-Firestore" }}
+                {{ template "gen-firestore.html" . }}
+            {{ end }}
+        
+            {{ if eq .Content "Generate-MongoDB" }}
+                {{ template "gen-mongodb.html" . }}
+            {{ end }}
+
+
+            <!-- 마이그레이션 템플릿 -->
+
+            {{ if eq .Content "Migration-Linux-S3" }}
+                {{ template "mig-linuxToS3.html" . }}
+            {{ end }}
+
+            {{ if eq .Content "Migration-Linux-GCS" }}
+                {{ template "mig-linuxToGcs.html" . }}
+            {{ end }}
+
+            {{ if eq .Content "Migration-Linux-NCS" }}
+                {{ template "mig-linuxToNcs.html" . }}
+            {{ end }}
+
+            {{ if eq .Content "Migration-Windows-S3" }}
+                {{ template "mig-windowsToS3.html" . }}
+            {{ end }}
+
+            {{ if eq .Content "Migration-Windows-GCS" }}
+                {{ template "mig-windowsToGcs.html" . }}
+            {{ end }}
+
+            {{ if eq .Content "Migration-Windows-NCS" }}
+                {{ template "mig-windowsToNcs.html" . }}
+            {{ end }}
+
+            {{ if eq .Content "Migration-MySQL" }}
+                {{ template "mig-mysql.html" . }}
+            {{ end }}
+
+
+            <!-- 마이그레이션 오브젝트 스토리지 템플릿 -->
+            <!-- FROM AWS S3 -->
+            {{ if eq .Content "Migration-S3-Linux" }}
+                {{ template "mig-s3ToLinux.html" . }}
+            {{ end }}
+
+            {{ if eq .Content "Migration-S3-Windows" }}
+                {{ template "mig-s3ToWindows.html" . }}
+            {{ end }}         
+            
+            {{ if eq .Content "Migration-S3-GCS" }}
+                {{ template "mig-s3ToGcs.html" . }}
+            {{ end }}
+
+            {{ if eq .Content "Migration-S3-NCS" }}
+                {{ template "mig-s3ToNcs.html" . }}
+            {{ end }}
+
+            <!-- FROM Google Cloud Storage -->
+            {{ if eq .Content "Migration-GCS-Linux" }}
+                {{ template "mig-gcsToLinux.html" . }}
+            {{ end }}
+
+            {{ if eq .Content "Migration-GCS-Windows" }}
+                {{ template "mig-gcsToWindows.html" . }}
+            {{ end }}
+
+            {{ if eq .Content "Migration-GCS-S3" }}
+                {{ template "mig-gcsToS3.html" . }}
+            {{ end }}
+
+            {{ if eq .Content "Migration-GCS-NCS" }}
+                {{ template "mig-gcsToNcs.html" . }}
+            {{ end }}
+
+            <!-- FROM Naver Object Storage -->
+            {{ if eq .Content "Migration-NCS-Linux" }}
+                {{ template "mig-ncsToLinux.html" . }}
+            {{ end }}
+
+            {{ if eq .Content "Migration-NCS-Windows" }}
+                {{ template "mig-ncsToWindows.html" . }}
+            {{ end }}
+
+            {{ if eq .Content "Migration-NCS-S3" }}
+                {{ template "mig-ncsToS3.html" . }}
+            {{ end }}
+
+            {{ if eq .Content "Migration-NCS-GCS" }}
+                {{ template "mig-ncsToGcs.html" . }}
+            {{ end }}
+
+
+            <!-- No-SQL 마이그레이션 템플릿 -->
+
+            {{ if eq .Content "Migration-DynamoDB-Firestore" }}
+                {{ template "mig-dynamodbToFirestore.html" . }}
+            {{ end }}
+
+            {{ if eq .Content "Migration-DynamoDB-MongoDB" }}
+                {{ template "mig-dynamodbToMongodb.html" . }}
+            {{ end }}
+
+            {{ if eq .Content "Migration-Firestore-DynamoDB" }}
+                {{ template "mig-firestoreToDynamodb.html" . }}
+            {{ end }}
+
+            {{ if eq .Content "Migration-Firestore-MongoDB" }}
+                {{ template "mig-firestoreToMongodb.html" . }}
+            {{ end }}
+
+            {{ if eq .Content "Migration-MongoDB-DynamoDB" }}
+                {{ template "mig-mongodbToDynamodb.html" . }}
+            {{ end }}
+
+            {{ if eq .Content "Migration-MongoDB-Firestore" }}
+                {{ template "mig-mongodbToFirestore.html" . }}
+            {{ end }}
+            
+            {{ if ne .Content "main" }}
+                {{ template "result.html" . }}
+            {{ end }}
+        </div>
+
+    </main>
+<!-- </div> -->
