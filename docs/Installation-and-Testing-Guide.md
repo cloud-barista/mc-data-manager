@@ -18,7 +18,7 @@
 - CSP별 인증 정보
   - [aws](https://docs.aws.amazon.com/ko_kr/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey), [rds mysql](https://luminitworld.tistory.com/94)
   - [gcp](https://developers.google.com/workspace/guides/create-credentials?hl=ko), [sql mysql](https://m.blog.naver.com/playhoos/221515020826)
-  - [ncp](https://medium.com/naver-cloud-platform/%EC%9D%B4%EB%A0%87%EA%B2%8C-%EC%82%AC%EC%9A%A9%ED%95%98%EC%84%B8%EC%9A%94-%EB%84%A4%EC%9D%B4%EB%B2%84-%ED%81%B4%EB%9D%BC%EC%9A%B0%EB%93%9C-%ED%94%8C%EB%9E%AB%ED%8F%BC-%EC%9C%A0%EC%A0%80-api-%ED%99%9C%EC%9A%A9-%EB%B0%A9%EB%B2%95-1%ED%8E%B8-494f7d8dbcc3), [ncp mysql](https://guide.ncloud-docs.com/docs/clouddbformysql-start)
+  - [ncp](https://medium.com/naver-cloud-platform/%EC%9D%B4%EB%A0%87%EA%B2%8C-%EC%82%AC%EC%9A%A9%ED%95%98%EC%84%B8%EC%9A%94-%EB%84%A4%EC%9D%B4%EB%B2%84-%ED%81%B4%EB%9D%BC%EC%9A%B0%EB%93%9C-%ED%94%8C%EB%9E%AB%ED%8F%BC-%EC%9C%A0%EC%A0%80-api-%ED%99%9C%EC%9A%A9-%EB%B0%A9%EB%B2%95-1%ED%8E%B8-494f7d8dbcc3), [ncp mysql](https://guide.ncloud-docs.com/docs/clouddbformysql-start), [ncp mongoDB](https://www.ncloud.com/guideCenter/guide/79)
 
 ## Linux에서 설치 및 실행
 
