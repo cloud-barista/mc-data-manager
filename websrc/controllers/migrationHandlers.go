@@ -72,12 +72,12 @@ func MigrationLinuxToS3PostHandler() gin.HandlerFunc {
 	}
 }
 
-func MigrationLinuxToGCSGetHandler() gin.HandlerFunc {
+func MigrationLinuxToGCPGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		logger := getLogger("miglingcs")
-		logger.Info("miglingcs get page accessed")
+		logger := getLogger("miglingcp")
+		logger.Info("miglingcp get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content": "Migration-Linux-GCS",
+			"Content": "Migration-Linux-GCP",
 			"Regions": GetGCPRegions(),
 			"os":      runtime.GOOS,
 			"error":   nil,
@@ -85,11 +85,11 @@ func MigrationLinuxToGCSGetHandler() gin.HandlerFunc {
 	}
 }
 
-func MigrationLinuxToGCSPostHandler() gin.HandlerFunc {
+func MigrationLinuxToGCPPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		start := time.Now()
 
-		logger, logstrings := pageLogInit("miglingcs", "Import linux data to gcs", start)
+		logger, logstrings := pageLogInit("miglingcp", "Import linux data to gcp", start)
 
 		if !osCheck(logger, start, "linux") {
 			ctx.JSONP(http.StatusBadRequest, gin.H{
@@ -118,8 +118,8 @@ func MigrationLinuxToGCSPostHandler() gin.HandlerFunc {
 		}
 		defer os.RemoveAll(credTmpDir)
 
-		gcsOSC := getGCSCOSC(logger, start, "mig", params, credFileName)
-		if gcsOSC == nil {
+		gcpOSC := getGCPCOSC(logger, start, "mig", params, credFileName)
+		if gcpOSC == nil {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -127,7 +127,7 @@ func MigrationLinuxToGCSPostHandler() gin.HandlerFunc {
 			return
 		}
 
-		if !oscImport(logger, start, "gcs", gcsOSC, params.Path) {
+		if !oscImport(logger, start, "gcp", gcpOSC, params.Path) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -136,7 +136,7 @@ func MigrationLinuxToGCSPostHandler() gin.HandlerFunc {
 		}
 
 		// migration success. Send result to client
-		jobEnd(logger, "Successfully migrated data from Linux to gcs", start)
+		jobEnd(logger, "Successfully migrated data from Linux to gcp", start)
 		ctx.JSONP(http.StatusOK, gin.H{
 			"Result": logstrings.String(),
 			"Error":  nil,
@@ -144,12 +144,12 @@ func MigrationLinuxToGCSPostHandler() gin.HandlerFunc {
 	}
 }
 
-func MigrationLinuxToNCSGetHandler() gin.HandlerFunc {
+func MigrationLinuxToNCPGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		logger := getLogger("miglinncp")
 		logger.Info("miglinncp get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content": "Migration-Linux-NCS",
+			"Content": "Migration-Linux-NCP",
 			"Regions": GetNCPRegions(),
 			"os":      runtime.GOOS,
 			"error":   nil,
@@ -157,7 +157,7 @@ func MigrationLinuxToNCSGetHandler() gin.HandlerFunc {
 	}
 }
 
-func MigrationLinuxToNCSPostHandler() gin.HandlerFunc {
+func MigrationLinuxToNCPPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		start := time.Now()
 
@@ -270,13 +270,13 @@ func MigrationWindowsToS3PostHandler() gin.HandlerFunc {
 	}
 }
 
-func MigrationWindowsToGCSGetHandler() gin.HandlerFunc {
+func MigrationWindowsToGCPGetHandler() gin.HandlerFunc {
 	tmpPath := filepath.Join(os.TempDir(), "dummy")
 	return func(ctx *gin.Context) {
-		logger := getLogger("migwingcs")
-		logger.Info("migwingcs get page accessed")
+		logger := getLogger("migwingcp")
+		logger.Info("migwingcp get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content": "Migration-Windows-GCS",
+			"Content": "Migration-Windows-GCP",
 			"Regions": GetGCPRegions(),
 			"os":      runtime.GOOS,
 			"tmpPath": tmpPath,
@@ -285,11 +285,11 @@ func MigrationWindowsToGCSGetHandler() gin.HandlerFunc {
 	}
 }
 
-func MigrationWindowsToGCSPostHandler() gin.HandlerFunc {
+func MigrationWindowsToGCPPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		start := time.Now()
 
-		logger, logstrings := pageLogInit("migwingcs", "Import windows data to gcs", start)
+		logger, logstrings := pageLogInit("migwingcp", "Import windows data to gcp", start)
 
 		if !osCheck(logger, start, "windows") {
 			ctx.JSONP(http.StatusBadRequest, gin.H{
@@ -318,8 +318,8 @@ func MigrationWindowsToGCSPostHandler() gin.HandlerFunc {
 		}
 		defer os.RemoveAll(credTmpDir)
 
-		gcsOSC := getGCSCOSC(logger, start, "mig", params, credFileName)
-		if gcsOSC == nil {
+		gcpOSC := getGCPCOSC(logger, start, "mig", params, credFileName)
+		if gcpOSC == nil {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -327,7 +327,7 @@ func MigrationWindowsToGCSPostHandler() gin.HandlerFunc {
 			return
 		}
 
-		if !oscImport(logger, start, "gcs", gcsOSC, params.Path) {
+		if !oscImport(logger, start, "gcp", gcpOSC, params.Path) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -336,7 +336,7 @@ func MigrationWindowsToGCSPostHandler() gin.HandlerFunc {
 		}
 
 		// migration success. Send result to client
-		jobEnd(logger, "Successfully migrated data from Windows to gcs", start)
+		jobEnd(logger, "Successfully migrated data from Windows to gcp", start)
 		ctx.JSONP(http.StatusOK, gin.H{
 			"Result": logstrings.String(),
 			"Error":  nil,
@@ -344,13 +344,13 @@ func MigrationWindowsToGCSPostHandler() gin.HandlerFunc {
 	}
 }
 
-func MigrationWindowsToNCSGetHandler() gin.HandlerFunc {
+func MigrationWindowsToNCPGetHandler() gin.HandlerFunc {
 	tmpPath := filepath.Join(os.TempDir(), "dummy")
 	return func(ctx *gin.Context) {
 		logger := getLogger("migwinncp")
 		logger.Info("migwinncp get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content": "Migration-Windows-NCS",
+			"Content": "Migration-Windows-NCP",
 			"Regions": GetNCPRegions(),
 			"os":      runtime.GOOS,
 			"tmpPath": tmpPath,
@@ -359,7 +359,7 @@ func MigrationWindowsToNCSGetHandler() gin.HandlerFunc {
 	}
 }
 
-func MigrationWindowsToNCSPostHandler() gin.HandlerFunc {
+func MigrationWindowsToNCPPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		start := time.Now()
 

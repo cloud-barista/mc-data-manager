@@ -1,0 +1,58 @@
+{{ define "gen-gcp.html" }}
+
+<h1 class="mt-4">데이터 생성 GCP</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">데이터 생성</li>
+    <li class="breadcrumb-item active">GCP</li>
+</ol>
+
+<div class="card mb-4 col-auto">
+    <div class="card-header">
+        <i class="fab fa-google"></i>
+        Google Cloud Storage
+    </div>
+    <div class="card-body">
+        <!-- <form action="/generate/gcp" method="POST" enctype="multipart/form-data"> -->
+        <form id="genForm">
+            <div class="mb-3">
+                <div class="form-floating">
+                    <select class="form-select form-select-sm w-50" id="gen-gcp-region" name="region">
+                    <!-- <option selected>Region</option> -->
+                    {{ range $index, $value := .Regions }}
+                    <option value="{{ $value }}">{{ $value }}</option>
+                    {{ end }}
+                    </select>
+                    <label for="gen-gcp-region">리전 선택</label>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="gen-gcp-credential" class="form-label">Credentials 파일</label>
+                <input class="form-control" type="file" id="mig-gcp-credential" name="gcpCredential" required>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-id-card"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gen-s3-projectid" name="projectid" placeholder="ProjectID" required>
+                    <label for="gen-s3-bucket">ProjectID</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gen-s3-bucket" name="bucket" placeholder="Bucket" required>
+                    <label for="gen-s3-bucket">Bucket</label>
+                </div>
+            </div>
+
+            {{ template "gen-data.html" . }}
+
+            <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
+            <input type="hidden" id="genTarget" value="gcp">
+        </form>
+    </div>
+</div>
+
+{{ end }}

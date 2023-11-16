@@ -4,9 +4,9 @@ import (
 	"mime/multipart"
 	"strconv"
 
-	"github.com/cloud-barista/cm-data-mold/pkg/dummy/semistructed"
-	"github.com/cloud-barista/cm-data-mold/pkg/dummy/structed"
-	"github.com/cloud-barista/cm-data-mold/pkg/dummy/unstructed"
+	"github.com/cloud-barista/cm-data-mold/pkg/dummy/semistructured"
+	"github.com/cloud-barista/cm-data-mold/pkg/dummy/structured"
+	"github.com/cloud-barista/cm-data-mold/pkg/dummy/unstructured"
 	"github.com/sirupsen/logrus"
 )
 
@@ -47,7 +47,7 @@ type GenDataParams struct {
 	DBPassword   string `json:"password"`
 	DatabaseName string `json:"databaseName"`
 
-	GCSCredential *multipart.FileHeader `form:"gcpCredential"`
+	GCPCredential *multipart.FileHeader `form:"gcpCredential"`
 	ProjectID     string                `form:"projectid"`
 }
 
@@ -55,7 +55,7 @@ func genData(params GenDataParams, logger *logrus.Logger) error {
 	if params.CheckSQL == "on" {
 		logger.Info("Start creating sql dummy")
 		sql, _ := strconv.Atoi(params.SizeSQL)
-		if err := structed.GenerateRandomSQL(params.DummyPath, sql); err != nil {
+		if err := structured.GenerateRandomSQL(params.DummyPath, sql); err != nil {
 			logger.Info("Failed to create sql dummy")
 			return err
 		}
@@ -65,7 +65,7 @@ func genData(params GenDataParams, logger *logrus.Logger) error {
 	if params.CheckCSV == "on" {
 		logger.Info("Start creating csv dummy")
 		csv, _ := strconv.Atoi(params.SizeCSV)
-		if err := structed.GenerateRandomCSV(params.DummyPath, csv); err != nil {
+		if err := structured.GenerateRandomCSV(params.DummyPath, csv); err != nil {
 			logger.Info("Failed to create csv dummy")
 			return err
 		}
@@ -75,7 +75,7 @@ func genData(params GenDataParams, logger *logrus.Logger) error {
 	if params.CheckTXT == "on" {
 		logger.Info("Start creating txt dummy")
 		txt, _ := strconv.Atoi(params.SizeTXT)
-		if err := unstructed.GenerateRandomTXT(params.DummyPath, txt); err != nil {
+		if err := unstructured.GenerateRandomTXT(params.DummyPath, txt); err != nil {
 			logger.Info("Failed to create txt dummy")
 			return err
 		}
@@ -85,7 +85,7 @@ func genData(params GenDataParams, logger *logrus.Logger) error {
 	if params.CheckPNG == "on" {
 		logger.Info("Start creating png dummy")
 		png, _ := strconv.Atoi(params.SizePNG)
-		if err := unstructed.GenerateRandomPNGImage(params.DummyPath, png); err != nil {
+		if err := unstructured.GenerateRandomPNGImage(params.DummyPath, png); err != nil {
 			logger.Info("Failed to create png dummy")
 			return err
 		}
@@ -95,7 +95,7 @@ func genData(params GenDataParams, logger *logrus.Logger) error {
 	if params.CheckGIF == "on" {
 		logger.Info("Start creating gif dummy")
 		gif, _ := strconv.Atoi(params.SizeGIF)
-		if err := unstructed.GenerateRandomGIF(params.DummyPath, gif); err != nil {
+		if err := unstructured.GenerateRandomGIF(params.DummyPath, gif); err != nil {
 			logger.Info("Failed to create gif dummy")
 			return err
 		}
@@ -105,7 +105,7 @@ func genData(params GenDataParams, logger *logrus.Logger) error {
 	if params.CheckZIP == "on" {
 		logger.Info("Start creating a pile of zip files that compressed txt")
 		zip, _ := strconv.Atoi(params.SizeZIP)
-		if err := unstructed.GenerateRandomZIP(params.DummyPath, zip); err != nil {
+		if err := unstructured.GenerateRandomZIP(params.DummyPath, zip); err != nil {
 			logger.Info("Failed to create zip file dummy compressed txt")
 			return err
 		}
@@ -115,7 +115,7 @@ func genData(params GenDataParams, logger *logrus.Logger) error {
 	if params.CheckJSON == "on" {
 		logger.Info("Start creating json dummy")
 		json, _ := strconv.Atoi(params.SizeJSON)
-		if err := semistructed.GenerateRandomJSON(params.DummyPath, json); err != nil {
+		if err := semistructured.GenerateRandomJSON(params.DummyPath, json); err != nil {
 			logger.Info("Failed to create json dummy")
 			return err
 		}
@@ -125,7 +125,7 @@ func genData(params GenDataParams, logger *logrus.Logger) error {
 	if params.CheckXML == "on" {
 		logger.Info("Start creating xml dummy")
 		xml, _ := strconv.Atoi(params.SizeXML)
-		if err := semistructed.GenerateRandomXML(params.DummyPath, xml); err != nil {
+		if err := semistructured.GenerateRandomXML(params.DummyPath, xml); err != nil {
 			logger.Info("Failed to create xml dummy")
 			return err
 		}
@@ -135,7 +135,7 @@ func genData(params GenDataParams, logger *logrus.Logger) error {
 	if params.CheckServerJSON == "on" {
 		logger.Info("Start creating json dummy")
 		json, _ := strconv.Atoi(params.SizeServerJSON)
-		if err := semistructed.GenerateRandomJSONWithServer(params.DummyPath, json); err != nil {
+		if err := semistructured.GenerateRandomJSONWithServer(params.DummyPath, json); err != nil {
 			logger.Info("Failed to create json dummy")
 			return err
 		}
@@ -145,7 +145,7 @@ func genData(params GenDataParams, logger *logrus.Logger) error {
 	if params.CheckServerSQL == "on" {
 		logger.Info("Start creating sql dummy")
 		sql, _ := strconv.Atoi(params.SizeServerSQL)
-		if err := structed.GenerateRandomSQLWithServer(params.DummyPath, sql); err != nil {
+		if err := structured.GenerateRandomSQLWithServer(params.DummyPath, sql); err != nil {
 			logger.Info("Failed to create sql dummy")
 			return err
 		}

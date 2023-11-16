@@ -1,0 +1,69 @@
+{{ define "gen-ncp.html" }}
+
+<h1 class="mt-4">데이터 생성 NCP</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">데이터 생성</li>
+    <li class="breadcrumb-item active">NCP</li>
+</ol>
+
+<div class="card mb-4 col-auto">
+    <div class="card-header">
+        <i class="fa-solid fa-n"></i>
+        Naver Object Storage
+    </div>
+    <div class="card-body">
+        <!-- <form action="/generate/ncp" method="POST"> -->
+        <form id="genForm">
+            
+            <div class="mb-3">
+                <div class="form-floating">
+                    <select class="form-select form-select-sm w-50" id="gen-ncp-region" name="region">
+                    <!-- <option selected>Region</option> -->
+                    {{ range $index, $value := .Regions }}
+                    <option value="{{ $value }}">{{ $value }}</option>
+                    {{ end }}
+                    </select>
+                    <label for="gen-ncp-region">리전 선택</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gen-ncp-accessKey" name="accessKey" placeholder="Access Key" required>
+                    <label for="gen-ncp-accessKey">Access Key</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="gen-ncp-secretKey" name="secretKey" placeholder="Secret Key" required>
+                    <label for="gen-ncp-secretKey">Secret Key</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-location-dot"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gen-ncp-endpoint" name="endpoint" placeholder="Endpoint" required>
+                    <label for="gen-ncp-endpoint">Endpoint</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gen-ncp-bucket" name="bucket" placeholder="Bucket" required>
+                    <label for="gen-ncp-bucket">Bucket</label>
+                </div>
+            </div>
+
+            {{ template "gen-data.html" . }}
+
+            <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
+            <input type="hidden" id="genTarget" value="ncp">
+        </form>
+    </div>
+</div>
+{{ end }}

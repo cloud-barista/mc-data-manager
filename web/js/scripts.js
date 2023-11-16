@@ -51,7 +51,7 @@ function generateFormSubmit() {
         console.log(url);
 
         let req;
-        if (target == "gcs" || target == "firestore") {
+        if (target == "gcp" || target == "firestore") {
             req = { method: 'POST', body: payload };
         } else {
             req = { method: 'POST', body: jsonData };

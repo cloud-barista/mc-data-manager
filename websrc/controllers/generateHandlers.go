@@ -165,12 +165,12 @@ func GenerateS3PostHandler() gin.HandlerFunc {
 	}
 }
 
-func GenerateGCSGetHandler() gin.HandlerFunc {
+func GenerateGCPGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		logger := getLogger("genGCS")
-		logger.Info("genGCS get page accessed")
+		logger := getLogger("genGCP")
+		logger.Info("genGCP get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content": "Generate-GCS",
+			"Content": "Generate-GCP",
 			"os":      runtime.GOOS,
 			"Regions": GetGCPRegions(),
 			"error":   nil,
@@ -178,11 +178,11 @@ func GenerateGCSGetHandler() gin.HandlerFunc {
 	}
 }
 
-func GenerateGCSPostHandler() gin.HandlerFunc {
+func GenerateGCPPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		start := time.Now()
 
-		logger, logstrings := pageLogInit("genGCS", "Create dummy data and import to gcs", start)
+		logger, logstrings := pageLogInit("genGCP", "Create dummy data and import to gcp", start)
 
 		params := GenDataParams{}
 		if !getDataWithBind(logger, start, ctx, &params) {
@@ -222,8 +222,8 @@ func GenerateGCSPostHandler() gin.HandlerFunc {
 			return
 		}
 
-		gcsOSC := getGCSCOSC(logger, start, "gen", params, credFileName)
-		if gcsOSC == nil {
+		gcpOSC := getGCPCOSC(logger, start, "gen", params, credFileName)
+		if gcpOSC == nil {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -231,7 +231,7 @@ func GenerateGCSPostHandler() gin.HandlerFunc {
 			return
 		}
 
-		if !oscImport(logger, start, "gcs", gcsOSC, params.DummyPath) {
+		if !oscImport(logger, start, "gcp", gcpOSC, params.DummyPath) {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -239,7 +239,7 @@ func GenerateGCSPostHandler() gin.HandlerFunc {
 			return
 		}
 
-		jobEnd(logger, "Dummy creation and import successful with gcs", start)
+		jobEnd(logger, "Dummy creation and import successful with gcp", start)
 		ctx.JSONP(http.StatusOK, gin.H{
 			"Result": logstrings.String(),
 			"Error":  nil,
@@ -247,12 +247,12 @@ func GenerateGCSPostHandler() gin.HandlerFunc {
 	}
 }
 
-func GenerateNCSGetHandler() gin.HandlerFunc {
+func GenerateNCPGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		logger := getLogger("genNCS")
-		logger.Info("genNCS get page accessed")
+		logger := getLogger("genNCP")
+		logger.Info("genNCP get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content": "Generate-NCS",
+			"Content": "Generate-NCP",
 			"os":      runtime.GOOS,
 			"Regions": GetNCPRegions(),
 			"error":   nil,
@@ -260,11 +260,11 @@ func GenerateNCSGetHandler() gin.HandlerFunc {
 	}
 }
 
-func GenerateNCSPostHandler() gin.HandlerFunc {
+func GenerateNCPPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		start := time.Now()
 
-		logger, logstrings := pageLogInit("genNCS", "Create dummy data and import to ncp objectstorage", start)
+		logger, logstrings := pageLogInit("genNCP", "Create dummy data and import to ncp objectstorage", start)
 
 		params := getData("gen", ctx).(GenDataParams)
 

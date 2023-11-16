@@ -14,8 +14,8 @@ func MigrationRoutes(g *gin.RouterGroup) {
 
 	// Migration From Object Storage to Other Object Storage
 	MigrationFromS3Routes(g)
-	MigrationFromGCSRoutes(g)
-	MigrationFromNCSRoutes(g)
+	MigrationFromGCPRoutes(g)
+	MigrationFromNCPRoutes(g)
 
 	// Migration No-SQL to the other No-SQL
 	MigrationNoSQLRoutes(g)
@@ -25,20 +25,20 @@ func MigrationFromOnpremiseToObjectStorage(g *gin.RouterGroup) {
 	g.GET("/linux/s3", controllers.MigrationLinuxToS3GetHandler())
 	g.POST("/linux/s3", controllers.MigrationLinuxToS3PostHandler())
 
-	g.GET("/linux/gcs", controllers.MigrationLinuxToGCSGetHandler())
-	g.POST("/linux/gcs", controllers.MigrationLinuxToGCSPostHandler())
+	g.GET("/linux/gcp", controllers.MigrationLinuxToGCPGetHandler())
+	g.POST("/linux/gcp", controllers.MigrationLinuxToGCPPostHandler())
 
-	g.GET("/linux/ncs", controllers.MigrationLinuxToNCSGetHandler())
-	g.POST("/linux/ncs", controllers.MigrationLinuxToNCSPostHandler())
+	g.GET("/linux/ncp", controllers.MigrationLinuxToNCPGetHandler())
+	g.POST("/linux/ncp", controllers.MigrationLinuxToNCPPostHandler())
 
 	g.GET("/windows/s3", controllers.MigrationWindowsToS3GetHandler())
 	g.POST("/windows/s3", controllers.MigrationWindowsToS3PostHandler())
 
-	g.GET("/windows/gcs", controllers.MigrationWindowsToGCSGetHandler())
-	g.POST("/windows/gcs", controllers.MigrationWindowsToGCSPostHandler())
+	g.GET("/windows/gcp", controllers.MigrationWindowsToGCPGetHandler())
+	g.POST("/windows/gcp", controllers.MigrationWindowsToGCPPostHandler())
 
-	g.GET("/windows/ncs", controllers.MigrationWindowsToNCSGetHandler())
-	g.POST("/windows/ncs", controllers.MigrationWindowsToNCSPostHandler())
+	g.GET("/windows/ncp", controllers.MigrationWindowsToNCPGetHandler())
+	g.POST("/windows/ncp", controllers.MigrationWindowsToNCPPostHandler())
 }
 
 func MigrationMySQL(g *gin.RouterGroup) {
@@ -53,39 +53,39 @@ func MigrationFromS3Routes(g *gin.RouterGroup) {
 	g.GET("/s3/windows", controllers.MigrationS3ToWindowsGetHandler())
 	g.POST("/s3/windows", controllers.MigrationS3ToWindowsPostHandler())
 
-	g.GET("/s3/gcs", controllers.MigrationS3ToGCSGetHandler())
-	g.POST("/s3/gcs", controllers.MigrationS3ToGCSPostHandler())
+	g.GET("/s3/gcp", controllers.MigrationS3ToGCPGetHandler())
+	g.POST("/s3/gcp", controllers.MigrationS3ToGCPPostHandler())
 
-	g.GET("/s3/ncs", controllers.MigrationS3ToNCSGetHandler())
-	g.POST("/s3/ncs", controllers.MigrationS3ToNCSPostHandler())
+	g.GET("/s3/ncp", controllers.MigrationS3ToNCPGetHandler())
+	g.POST("/s3/ncp", controllers.MigrationS3ToNCPPostHandler())
 }
 
-func MigrationFromGCSRoutes(g *gin.RouterGroup) {
-	g.GET("/gcs/linux", controllers.MigrationGCSToLinuxGetHandler())
-	g.POST("/gcs/linux", controllers.MigrationGCSToLinuxPostHandler())
+func MigrationFromGCPRoutes(g *gin.RouterGroup) {
+	g.GET("/gcp/linux", controllers.MigrationGCPToLinuxGetHandler())
+	g.POST("/gcp/linux", controllers.MigrationGCPToLinuxPostHandler())
 
-	g.GET("/gcs/windows", controllers.MigrationGCSToWindowsGetHandler())
-	g.POST("/gcs/windows", controllers.MigrationGCSToWindowsPostHandler())
+	g.GET("/gcp/windows", controllers.MigrationGCPToWindowsGetHandler())
+	g.POST("/gcp/windows", controllers.MigrationGCPToWindowsPostHandler())
 
-	g.GET("/gcs/s3", controllers.MigrationGCSToS3GetHandler())
-	g.POST("/gcs/s3", controllers.MigrationGCSToS3PostHandler())
+	g.GET("/gcp/s3", controllers.MigrationGCPToS3GetHandler())
+	g.POST("/gcp/s3", controllers.MigrationGCPToS3PostHandler())
 
-	g.GET("/gcs/ncs", controllers.MigrationGCSToNCSGetHandler())
-	g.POST("/gcs/ncs", controllers.MigrationGCSToNCSPostHandler())
+	g.GET("/gcp/ncp", controllers.MigrationGCPToNCPGetHandler())
+	g.POST("/gcp/ncp", controllers.MigrationGCPToNCPPostHandler())
 }
 
-func MigrationFromNCSRoutes(g *gin.RouterGroup) {
-	g.GET("/ncs/linux", controllers.MigrationNCSToLinuxGetHandler())
-	g.POST("/ncs/linux", controllers.MigrationNCSToLinuxPostHandler())
+func MigrationFromNCPRoutes(g *gin.RouterGroup) {
+	g.GET("/ncp/linux", controllers.MigrationNCPToLinuxGetHandler())
+	g.POST("/ncp/linux", controllers.MigrationNCPToLinuxPostHandler())
 
-	g.GET("/ncs/windows", controllers.MigrationNCSToWindowsGetHandler())
-	g.POST("/ncs/windows", controllers.MigrationNCSToWindowsPostHandler())
+	g.GET("/ncp/windows", controllers.MigrationNCPToWindowsGetHandler())
+	g.POST("/ncp/windows", controllers.MigrationNCPToWindowsPostHandler())
 
-	g.GET("/ncs/s3", controllers.MigrationNCSToS3GetHandler())
-	g.POST("/ncs/s3", controllers.MigrationNCSToS3PostHandler())
+	g.GET("/ncp/s3", controllers.MigrationNCPToS3GetHandler())
+	g.POST("/ncp/s3", controllers.MigrationNCPToS3PostHandler())
 
-	g.GET("/ncs/gcs", controllers.MigrationNCSToGCSGetHandler())
-	g.POST("/ncs/gcs", controllers.MigrationNCSToGCSPostHandler())
+	g.GET("/ncp/gcp", controllers.MigrationNCPToGCPGetHandler())
+	g.POST("/ncp/gcp", controllers.MigrationNCPToGCPPostHandler())
 }
 
 func MigrationNoSQLRoutes(g *gin.RouterGroup) {
