@@ -18,7 +18,7 @@ package cmd
 import (
 	"os"
 
-	"github.com/cloud-barista/cm-data-mold/internal/logformatter"
+	"github.com/cloud-barista/cm-data-mold/internal/log"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -34,16 +34,16 @@ which are CSP or local dummy data`,
 var deleteDummyCmd = &cobra.Command{
 	Use: "dummy",
 
-	RunE: func(cmd *cobra.Command, args []string) error {
-		logrus.SetFormatter(&logformatter.CustomTextFormatter{CmdName: "delete"})
+	Run: func(cmd *cobra.Command, args []string) {
+		logrus.SetFormatter(&log.CustomTextFormatter{CmdName: "delete"})
 		logrus.WithFields(logrus.Fields{"jobName": "dummy delete"}).Info("start deleting dummy")
-		err := os.RemoveAll(dstPath)
-		if err != nil {
+
+		if err := os.RemoveAll(datamoldParams.DstPath); err != nil {
 			logrus.WithFields(logrus.Fields{"jobName": "dummy delete"}).Errorf("failed to delete dummy : %v", err)
-			return err
+			return
 		}
-		logrus.Infof("successfully deleted : %s\n", dstPath)
-		return nil
+		logrus.Infof("successfully deleted : %s\n", datamoldParams.DstPath)
+		return
 	},
 }
 
@@ -51,7 +51,7 @@ func init() {
 	rootCmd.AddCommand(deleteCmd)
 	deleteCmd.AddCommand(deleteDummyCmd)
 
-	deleteCmd.PersistentFlags().BoolVarP(&taskTarget, "task", "T", false, "Select a destination(src, dst) to work with in the credential-path")
-	deleteDummyCmd.Flags().StringVarP(&dstPath, "dst-path", "d", "", "Delete data in directory paths")
+	deleteCmd.PersistentFlags().BoolVarP(&datamoldParams.TaskTarget, "task", "T", false, "Select a destination(src, dst) to work with in the credential-path")
+	deleteDummyCmd.Flags().StringVarP(&datamoldParams.DstPath, "dst-path", "d", "", "Delete data in directory paths")
 	deleteDummyCmd.MarkFlagRequired("dst-path")
 }

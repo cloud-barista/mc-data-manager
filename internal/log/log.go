@@ -1,11 +1,24 @@
-package logformatter
+package log
 
 import (
 	"fmt"
+	"io"
+	"os"
 	"strings"
 
 	"github.com/sirupsen/logrus"
 )
+
+func LogFile() {
+	logFile, err := os.OpenFile("./datamold.log", os.O_CREATE|os.O_APPEND|os.O_RDWR, os.FileMode(0644))
+	if err != nil {
+		logrus.WithError(err).Fatal("Failed to create log file")
+	}
+
+	logrus.SetLevel(logrus.DebugLevel)
+	logrus.SetFormatter(&CustomTextFormatter{})
+	logrus.SetOutput(io.MultiWriter(os.Stdout, logFile))
+}
 
 type CustomTextFormatter struct {
 	CmdName string

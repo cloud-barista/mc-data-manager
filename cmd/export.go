@@ -29,8 +29,8 @@ var exportCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(exportCmd)
 
-	exportCmd.PersistentFlags().StringVarP(&credentialPath, "credential-path", "C", "", "Json file path containing the user's credentials")
-	exportCmd.PersistentFlags().StringVarP(&dstPath, "dst-path", "d", "", "Directory path to export data")
-	exportCmd.PersistentFlags().BoolVarP(&taskTarget, "task", "T", false, "Select a destination(src, dst) to work with in the credential-path")
+	exportCmd.PersistentFlags().StringVarP(&datamoldParams.CredentialPath, "credential-path", "C", "", "Json file path containing the user's credentials")
+	exportCmd.PersistentFlags().StringVarP(&datamoldParams.DstPath, "dst-path", "d", "", "Directory path to export data")
+	exportCmd.PersistentFlags().BoolVarP(&datamoldParams.TaskTarget, "task", "T", false, "Select a destination(src, dst) to work with in the credential-path")
 	exportCmd.MarkFlagsRequiredTogether("credential-path", "dst-path")
 }
