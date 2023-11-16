@@ -13,7 +13,7 @@ import (
 	"github.com/cloud-barista/cm-data-mold/pkg/nrdbms/awsdnmdb"
 	"github.com/cloud-barista/cm-data-mold/pkg/nrdbms/gcpfsdb"
 	"github.com/cloud-barista/cm-data-mold/pkg/nrdbms/ncpmgdb"
-	"github.com/cloud-barista/cm-data-mold/pkg/objectstorage/gcsfs"
+	"github.com/cloud-barista/cm-data-mold/pkg/objectstorage/gcpfs"
 	"github.com/cloud-barista/cm-data-mold/pkg/objectstorage/s3fs"
 	"github.com/cloud-barista/cm-data-mold/pkg/rdbms/mysql"
 	"github.com/cloud-barista/cm-data-mold/pkg/utils"
@@ -57,12 +57,12 @@ func GetSrcOS(datamoldParams *DatamoldParams) (*osc.OSController, error) {
 		logrus.Infof("ProjectID : %s", datamoldParams.SrcProjectID)
 		logrus.Infof("Region : %s", datamoldParams.SrcRegion)
 		logrus.Infof("BucketName : %s", datamoldParams.SrcBucketName)
-		gc, err := config.NewGCSClient(datamoldParams.SrcGcpCredPath)
+		gc, err := config.NewGCPClient(datamoldParams.SrcGcpCredPath)
 		if err != nil {
-			return nil, fmt.Errorf("NewGCSClient error : %v", err)
+			return nil, fmt.Errorf("NewGCPClient error : %v", err)
 		}
 
-		OSC, err = osc.New(gcsfs.New(gc, datamoldParams.SrcProjectID, datamoldParams.SrcBucketName, datamoldParams.SrcRegion), osc.WithLogger(logrus.StandardLogger()))
+		OSC, err = osc.New(gcpfs.New(gc, datamoldParams.SrcProjectID, datamoldParams.SrcBucketName, datamoldParams.SrcRegion), osc.WithLogger(logrus.StandardLogger()))
 		if err != nil {
 			return nil, fmt.Errorf("osc error : %v", err)
 		}
@@ -107,12 +107,12 @@ func GetDstOS(datamoldParams *DatamoldParams) (*osc.OSController, error) {
 		logrus.Infof("ProjectID : %s", datamoldParams.DstProjectID)
 		logrus.Infof("Region : %s", datamoldParams.DstRegion)
 		logrus.Infof("BucketName : %s", datamoldParams.DstBucketName)
-		gc, err := config.NewGCSClient(datamoldParams.DstGcpCredPath)
+		gc, err := config.NewGCPClient(datamoldParams.DstGcpCredPath)
 		if err != nil {
-			return nil, fmt.Errorf("NewGCSClient error : %v", err)
+			return nil, fmt.Errorf("NewGCPClient error : %v", err)
 		}
 
-		OSC, err = osc.New(gcsfs.New(gc, datamoldParams.DstProjectID, datamoldParams.DstBucketName, datamoldParams.DstRegion), osc.WithLogger(logrus.StandardLogger()))
+		OSC, err = osc.New(gcpfs.New(gc, datamoldParams.DstProjectID, datamoldParams.DstBucketName, datamoldParams.DstRegion), osc.WithLogger(logrus.StandardLogger()))
 		if err != nil {
 			return nil, fmt.Errorf("osc error : %v", err)
 		}

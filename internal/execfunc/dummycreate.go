@@ -2,9 +2,9 @@ package execfunc
 
 import (
 	"github.com/cloud-barista/cm-data-mold/internal/auth"
-	"github.com/cloud-barista/cm-data-mold/pkg/dummy/semistructed"
-	"github.com/cloud-barista/cm-data-mold/pkg/dummy/structed"
-	"github.com/cloud-barista/cm-data-mold/pkg/dummy/unstructed"
+	"github.com/cloud-barista/cm-data-mold/pkg/dummy/semistructured"
+	"github.com/cloud-barista/cm-data-mold/pkg/dummy/structured"
+	"github.com/cloud-barista/cm-data-mold/pkg/dummy/unstructured"
 	"github.com/sirupsen/logrus"
 )
 
@@ -12,7 +12,7 @@ func DummyCreate(datamoldParams auth.DatamoldParams) error {
 	logrus.Info("check directory paths")
 	if datamoldParams.SqlSize != 0 {
 		logrus.Info("start sql generation")
-		if err := structed.GenerateRandomSQL(datamoldParams.DstPath, datamoldParams.SqlSize); err != nil {
+		if err := structured.GenerateRandomSQL(datamoldParams.DstPath, datamoldParams.SqlSize); err != nil {
 			logrus.Error("failed to generate sql")
 			return err
 		}
@@ -21,7 +21,7 @@ func DummyCreate(datamoldParams auth.DatamoldParams) error {
 
 	if datamoldParams.CsvSize != 0 {
 		logrus.Info("start csv generation")
-		if err := structed.GenerateRandomCSV(datamoldParams.DstPath, datamoldParams.CsvSize); err != nil {
+		if err := structured.GenerateRandomCSV(datamoldParams.DstPath, datamoldParams.CsvSize); err != nil {
 			logrus.Error("failed to generate csv")
 			return err
 		}
@@ -30,7 +30,7 @@ func DummyCreate(datamoldParams auth.DatamoldParams) error {
 
 	if datamoldParams.JsonSize != 0 {
 		logrus.Info("start json generation")
-		if err := semistructed.GenerateRandomJSON(datamoldParams.DstPath, datamoldParams.JsonSize); err != nil {
+		if err := semistructured.GenerateRandomJSON(datamoldParams.DstPath, datamoldParams.JsonSize); err != nil {
 			logrus.Error("failed to generate json")
 			return err
 		}
@@ -39,7 +39,7 @@ func DummyCreate(datamoldParams auth.DatamoldParams) error {
 
 	if datamoldParams.XmlSize != 0 {
 		logrus.Info("start xml generation")
-		if err := semistructed.GenerateRandomXML(datamoldParams.DstPath, datamoldParams.XmlSize); err != nil {
+		if err := semistructured.GenerateRandomXML(datamoldParams.DstPath, datamoldParams.XmlSize); err != nil {
 			logrus.Error("failed to generate xml")
 			return err
 		}
@@ -48,7 +48,7 @@ func DummyCreate(datamoldParams auth.DatamoldParams) error {
 
 	if datamoldParams.TxtSize != 0 {
 		logrus.Info("start txt generation")
-		if err := unstructed.GenerateRandomTXT(datamoldParams.DstPath, datamoldParams.TxtSize); err != nil {
+		if err := unstructured.GenerateRandomTXT(datamoldParams.DstPath, datamoldParams.TxtSize); err != nil {
 			logrus.Error("failed to generate txt")
 			return err
 		}
@@ -57,7 +57,7 @@ func DummyCreate(datamoldParams auth.DatamoldParams) error {
 
 	if datamoldParams.PngSize != 0 {
 		logrus.Info("start png generation")
-		if err := unstructed.GenerateRandomPNGImage(datamoldParams.DstPath, datamoldParams.PngSize); err != nil {
+		if err := unstructured.GenerateRandomPNGImage(datamoldParams.DstPath, datamoldParams.PngSize); err != nil {
 			logrus.Error("failed to generate png")
 			return err
 		}
@@ -66,7 +66,7 @@ func DummyCreate(datamoldParams auth.DatamoldParams) error {
 
 	if datamoldParams.GifSize != 0 {
 		logrus.Info("start gif generation")
-		if err := unstructed.GenerateRandomGIF(datamoldParams.DstPath, datamoldParams.GifSize); err != nil {
+		if err := unstructured.GenerateRandomGIF(datamoldParams.DstPath, datamoldParams.GifSize); err != nil {
 			logrus.Error("failed to generate gif")
 			return err
 		}
@@ -75,7 +75,7 @@ func DummyCreate(datamoldParams auth.DatamoldParams) error {
 
 	if datamoldParams.ZipSize != 0 {
 		logrus.Info("start zip generation")
-		if err := unstructed.GenerateRandomZIP(datamoldParams.DstPath, datamoldParams.ZipSize); err != nil {
+		if err := unstructured.GenerateRandomZIP(datamoldParams.DstPath, datamoldParams.ZipSize); err != nil {
 			logrus.Error("failed to generate zip")
 			return err
 		}

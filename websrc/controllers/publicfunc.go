@@ -22,7 +22,7 @@ import (
 	"github.com/cloud-barista/cm-data-mold/pkg/nrdbms/awsdnmdb"
 	"github.com/cloud-barista/cm-data-mold/pkg/nrdbms/gcpfsdb"
 	"github.com/cloud-barista/cm-data-mold/pkg/nrdbms/ncpmgdb"
-	"github.com/cloud-barista/cm-data-mold/pkg/objectstorage/gcsfs"
+	"github.com/cloud-barista/cm-data-mold/pkg/objectstorage/gcpfs"
 	"github.com/cloud-barista/cm-data-mold/pkg/objectstorage/s3fs"
 	"github.com/cloud-barista/cm-data-mold/pkg/rdbms/mysql"
 	"github.com/cloud-barista/cm-data-mold/pkg/utils"
@@ -178,18 +178,18 @@ func getS3COSC(logger *logrus.Logger, startTime time.Time, jobType string, param
 	return OSC
 }
 
-func getGCSCOSC(logger *logrus.Logger, startTime time.Time, jobType string, params interface{}, credFileName string) *osc.OSController {
+func getGCPCOSC(logger *logrus.Logger, startTime time.Time, jobType string, params interface{}, credFileName string) *osc.OSController {
 	gparam, _ := params.(GenDataParams)
 	mparam, _ := params.(MigrationForm)
 
 	var err error
-	var gcsOSC *osc.OSController
+	var gcpOSC *osc.OSController
 
-	logger.Info("Get GCS Client")
-	gc, err := config.NewGCSClient(credFileName)
+	logger.Info("Get GCP Client")
+	gc, err := config.NewGCPClient(credFileName)
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("gcs client creation failed : %v", err)
+		logger.Errorf("gcp client creation failed : %v", err)
 		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
 		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
 		return nil
@@ -197,9 +197,9 @@ func getGCSCOSC(logger *logrus.Logger, startTime time.Time, jobType string, para
 
 	logger.Info("Set up the client as an OSController")
 	if jobType == "gen" {
-		gcsOSC, err = osc.New(gcsfs.New(gc, gparam.ProjectID, gparam.Bucket, gparam.Region), osc.WithLogger(logger))
+		gcpOSC, err = osc.New(gcpfs.New(gc, gparam.ProjectID, gparam.Bucket, gparam.Region), osc.WithLogger(logger))
 	} else {
-		gcsOSC, err = osc.New(gcsfs.New(gc, mparam.ProjectID, mparam.GCPBucket, mparam.GCPRegion), osc.WithLogger(logger))
+		gcpOSC, err = osc.New(gcpfs.New(gc, mparam.ProjectID, mparam.GCPBucket, mparam.GCPRegion), osc.WithLogger(logger))
 	}
 	if err != nil {
 		end := time.Now()
@@ -209,7 +209,7 @@ func getGCSCOSC(logger *logrus.Logger, startTime time.Time, jobType string, para
 		return nil
 	}
 
-	return gcsOSC
+	return gcpOSC
 }
 
 func getMysqlRDBC(logger *logrus.Logger, startTime time.Time, jobType string, params interface{}) *rdbc.RDBController {
@@ -525,7 +525,7 @@ func getDataWithBind(logger *logrus.Logger, startTime time.Time, ctx *gin.Contex
 
 func gcpCreateCredFile(logger *logrus.Logger, startTime time.Time, ctx *gin.Context) (string, string, bool) {
 	logger.Info("Create a temporary directory where credential files will be stored")
-	gcsCredentialFile, gcsCredentialHeader, err := ctx.Request.FormFile("gcpCredential")
+	gcpCredentialFile, gcpCredentialHeader, err := ctx.Request.FormFile("gcpCredential")
 	if err != nil {
 		end := time.Now()
 		logger.Errorf("Get CredentialFile error : %v", err)
@@ -533,9 +533,9 @@ func gcpCreateCredFile(logger *logrus.Logger, startTime time.Time, ctx *gin.Cont
 		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
 		return "", "", false
 	}
-	defer gcsCredentialFile.Close()
+	defer gcpCredentialFile.Close()
 
-	credTmpDir, err := os.MkdirTemp("", "datamold-gcs-cred-")
+	credTmpDir, err := os.MkdirTemp("", "datamold-gcp-cred-")
 	if err != nil {
 		end := time.Now()
 		logger.Errorf("Get CredentialFile error : %v", err)
@@ -544,8 +544,8 @@ func gcpCreateCredFile(logger *logrus.Logger, startTime time.Time, ctx *gin.Cont
 		return "", "", false
 	}
 
-	credFileName := filepath.Join(credTmpDir, gcsCredentialHeader.Filename)
-	err = ctx.SaveUploadedFile(gcsCredentialHeader, credFileName)
+	credFileName := filepath.Join(credTmpDir, gcpCredentialHeader.Filename)
+	err = ctx.SaveUploadedFile(gcpCredentialHeader, credFileName)
 	if err != nil {
 		end := time.Now()
 		logger.Errorf("Get CredentialFile error : %v", err)

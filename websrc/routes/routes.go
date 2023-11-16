@@ -19,11 +19,11 @@ func GenerateRoutes(g *gin.RouterGroup) {
 	g.GET("/s3", controllers.GenerateS3GetHandler())
 	g.POST("/s3", controllers.GenerateS3PostHandler())
 
-	g.GET("/gcs", controllers.GenerateGCSGetHandler())
-	g.POST("/gcs", controllers.GenerateGCSPostHandler())
+	g.GET("/gcp", controllers.GenerateGCPGetHandler())
+	g.POST("/gcp", controllers.GenerateGCPPostHandler())
 
-	g.GET("/ncs", controllers.GenerateNCSGetHandler())
-	g.POST("/ncs", controllers.GenerateNCSPostHandler())
+	g.GET("/ncp", controllers.GenerateNCPGetHandler())
+	g.POST("/ncp", controllers.GenerateNCPPostHandler())
 
 	g.GET("/mysql", controllers.GenerateMySQLGetHandler())
 	g.POST("/mysql", controllers.GenerateMySQLPostHandler())

@@ -124,7 +124,7 @@ func NewDynamoDBClientWithEndpoint(accesskey, secretkey, region string, endpoint
 	return dynamodb.NewFromConfig(*cfg), nil
 }
 
-func NewGCSClient(credentialsFile string) (*storage.Client, error) {
+func NewGCPClient(credentialsFile string) (*storage.Client, error) {
 	client, err := storage.NewClient(
 		context.TODO(),
 		option.WithCredentialsFile(credentialsFile),
