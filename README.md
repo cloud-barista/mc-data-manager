@@ -8,12 +8,12 @@ Data Mold는 데이터 마이그레이션 기술의 검증을 위한 환경을 �
 
 
 ## Environments:
-* OS; Ubuntu 20.04 LTS, Windows 10 Pro
+* OS: Ubuntu 22.04 LTS, Windows 10 Pro
 * Go: 1.21.3
 
 
 ## Installation and Testing Guide
 
-해당 가이드는 Ubuntu 20.04 대상으로 설치 및 명령어 사용방법을 작성한 가이드입니다.
+해당 가이드는 Ubuntu 22.04 대상으로 설치 및 명령어 사용방법을 작성한 가이드입니다.
 
 * Data Mold [설치 및 시험가이드](docs/Installation-and-Testing-Guide.md)
