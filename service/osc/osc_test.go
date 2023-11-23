@@ -9,7 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/cloud-barista/cm-data-mold/pkg/objectstorage/gcsfs"
+	"github.com/cloud-barista/cm-data-mold/pkg/objectstorage/gcpfs"
 	"github.com/cloud-barista/cm-data-mold/pkg/objectstorage/s3fs"
 	"github.com/cloud-barista/cm-data-mold/pkg/utils"
 	"github.com/cloud-barista/cm-data-mold/service/osc"
@@ -38,7 +38,7 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 
-	// s3 to gcs
+	// s3 to gcp
 	if err := awsosc.Copy(gcposc); err != nil {
 		panic(err)
 	}
@@ -99,5 +99,5 @@ func GCPInfo(projectID, credentialsFile, region, bucketName string) (*osc.OSCont
 		return nil, err
 	}
 
-	return osc.New(gcsfs.New(client, projectID, bucketName, region))
+	return osc.New(gcpfs.New(client, projectID, bucketName, region))
 }

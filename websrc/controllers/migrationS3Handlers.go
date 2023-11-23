@@ -139,12 +139,12 @@ func MigrationS3ToWindowsPostHandler() gin.HandlerFunc {
 	}
 }
 
-func MigrationS3ToGCSGetHandler() gin.HandlerFunc {
+func MigrationS3ToGCPGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		logger := getLogger("migs3gcs")
-		logger.Info("migs3gcs get page accessed")
+		logger := getLogger("migs3gcp")
+		logger.Info("migs3gcp get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content":    "Migration-S3-GCS",
+			"Content":    "Migration-S3-GCP",
 			"AWSRegions": GetAWSRegions(),
 			"GCPRegions": GetGCPRegions(),
 			"os":         runtime.GOOS,
@@ -153,11 +153,11 @@ func MigrationS3ToGCSGetHandler() gin.HandlerFunc {
 	}
 }
 
-func MigrationS3ToGCSPostHandler() gin.HandlerFunc {
+func MigrationS3ToGCPPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		start := time.Now()
 
-		logger, logstrings := pageLogInit("migs3gcs", "Export s3 data to gcs", start)
+		logger, logstrings := pageLogInit("migs3gcp", "Export s3 data to gcp", start)
 
 		params := MigrationForm{}
 		if !getDataWithBind(logger, start, ctx, &params) {
@@ -187,8 +187,8 @@ func MigrationS3ToGCSPostHandler() gin.HandlerFunc {
 			return
 		}
 
-		gcsOSC := getGCSCOSC(logger, start, "mig", params, credFileName)
-		if gcsOSC == nil {
+		gcpOSC := getGCPCOSC(logger, start, "mig", params, credFileName)
+		if gcpOSC == nil {
 			ctx.JSONP(http.StatusInternalServerError, gin.H{
 				"Result": logstrings.String(),
 				"Error":  nil,
@@ -196,7 +196,7 @@ func MigrationS3ToGCSPostHandler() gin.HandlerFunc {
 			return
 		}
 
-		if err := awsOSC.Copy(gcsOSC); err != nil {
+		if err := awsOSC.Copy(gcpOSC); err != nil {
 			end := time.Now()
 			logger.Errorf("OSController copy failed : %v", err)
 			logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
@@ -209,7 +209,7 @@ func MigrationS3ToGCSPostHandler() gin.HandlerFunc {
 		}
 
 		// migration success. Send result to client
-		jobEnd(logger, "Successfully migrated data from s3 to gcs", start)
+		jobEnd(logger, "Successfully migrated data from s3 to gcp", start)
 		ctx.JSONP(http.StatusOK, gin.H{
 			"Result": logstrings.String(),
 			"Error":  nil,
@@ -217,12 +217,12 @@ func MigrationS3ToGCSPostHandler() gin.HandlerFunc {
 	}
 }
 
-func MigrationS3ToNCSGetHandler() gin.HandlerFunc {
+func MigrationS3ToNCPGetHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		logger := getLogger("migs3ncp")
 		logger.Info("migs3ncp get page accessed")
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content":    "Migration-S3-NCS",
+			"Content":    "Migration-S3-NCP",
 			"AWSRegions": GetAWSRegions(),
 			"NCPRegions": GetNCPRegions(),
 			"os":         runtime.GOOS,
@@ -231,7 +231,7 @@ func MigrationS3ToNCSGetHandler() gin.HandlerFunc {
 	}
 }
 
-func MigrationS3ToNCSPostHandler() gin.HandlerFunc {
+func MigrationS3ToNCPPostHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		start := time.Now()
 

@@ -19,12 +19,12 @@
                 {{ template "gen-s3.html" . }}
             {{ end }}
 
-            {{ if eq .Content "Generate-GCS" }}
-                {{ template "gen-gcs.html" . }}
+            {{ if eq .Content "Generate-GCP" }}
+                {{ template "gen-gcp.html" . }}
             {{ end }}
         
-            {{ if eq .Content "Generate-NCS" }}
-                {{ template "gen-ncs.html" . }}
+            {{ if eq .Content "Generate-NCP" }}
+                {{ template "gen-ncp.html" . }}
             {{ end }}
         
             {{ if eq .Content "Generate-MySQL" }}
@@ -50,24 +50,24 @@
                 {{ template "mig-linuxToS3.html" . }}
             {{ end }}
 
-            {{ if eq .Content "Migration-Linux-GCS" }}
-                {{ template "mig-linuxToGcs.html" . }}
+            {{ if eq .Content "Migration-Linux-GCP" }}
+                {{ template "mig-linuxToGcp.html" . }}
             {{ end }}
 
-            {{ if eq .Content "Migration-Linux-NCS" }}
-                {{ template "mig-linuxToNcs.html" . }}
+            {{ if eq .Content "Migration-Linux-NCP" }}
+                {{ template "mig-linuxToNcp.html" . }}
             {{ end }}
 
             {{ if eq .Content "Migration-Windows-S3" }}
                 {{ template "mig-windowsToS3.html" . }}
             {{ end }}
 
-            {{ if eq .Content "Migration-Windows-GCS" }}
-                {{ template "mig-windowsToGcs.html" . }}
+            {{ if eq .Content "Migration-Windows-GCP" }}
+                {{ template "mig-windowsToGcp.html" . }}
             {{ end }}
 
-            {{ if eq .Content "Migration-Windows-NCS" }}
-                {{ template "mig-windowsToNcs.html" . }}
+            {{ if eq .Content "Migration-Windows-NCP" }}
+                {{ template "mig-windowsToNcp.html" . }}
             {{ end }}
 
             {{ if eq .Content "Migration-MySQL" }}
@@ -85,46 +85,46 @@
                 {{ template "mig-s3ToWindows.html" . }}
             {{ end }}         
             
-            {{ if eq .Content "Migration-S3-GCS" }}
-                {{ template "mig-s3ToGcs.html" . }}
+            {{ if eq .Content "Migration-S3-GCP" }}
+                {{ template "mig-s3ToGcp.html" . }}
             {{ end }}
 
-            {{ if eq .Content "Migration-S3-NCS" }}
-                {{ template "mig-s3ToNcs.html" . }}
+            {{ if eq .Content "Migration-S3-NCP" }}
+                {{ template "mig-s3ToNcp.html" . }}
             {{ end }}
 
             <!-- FROM Google Cloud Storage -->
-            {{ if eq .Content "Migration-GCS-Linux" }}
-                {{ template "mig-gcsToLinux.html" . }}
+            {{ if eq .Content "Migration-GCP-Linux" }}
+                {{ template "mig-gcpToLinux.html" . }}
             {{ end }}
 
-            {{ if eq .Content "Migration-GCS-Windows" }}
-                {{ template "mig-gcsToWindows.html" . }}
+            {{ if eq .Content "Migration-GCP-Windows" }}
+                {{ template "mig-gcpToWindows.html" . }}
             {{ end }}
 
-            {{ if eq .Content "Migration-GCS-S3" }}
-                {{ template "mig-gcsToS3.html" . }}
+            {{ if eq .Content "Migration-GCP-S3" }}
+                {{ template "mig-gcpToS3.html" . }}
             {{ end }}
 
-            {{ if eq .Content "Migration-GCS-NCS" }}
-                {{ template "mig-gcsToNcs.html" . }}
+            {{ if eq .Content "Migration-GCP-NCP" }}
+                {{ template "mig-gcpToNcp.html" . }}
             {{ end }}
 
             <!-- FROM Naver Object Storage -->
-            {{ if eq .Content "Migration-NCS-Linux" }}
-                {{ template "mig-ncsToLinux.html" . }}
+            {{ if eq .Content "Migration-NCP-Linux" }}
+                {{ template "mig-ncpToLinux.html" . }}
             {{ end }}
 
-            {{ if eq .Content "Migration-NCS-Windows" }}
-                {{ template "mig-ncsToWindows.html" . }}
+            {{ if eq .Content "Migration-NCP-Windows" }}
+                {{ template "mig-ncpToWindows.html" . }}
             {{ end }}
 
-            {{ if eq .Content "Migration-NCS-S3" }}
-                {{ template "mig-ncsToS3.html" . }}
+            {{ if eq .Content "Migration-NCP-S3" }}
+                {{ template "mig-ncpToS3.html" . }}
             {{ end }}
 
-            {{ if eq .Content "Migration-NCS-GCS" }}
-                {{ template "mig-ncsToGcs.html" . }}
+            {{ if eq .Content "Migration-NCP-GCP" }}
+                {{ template "mig-ncpToGcp.html" . }}
             {{ end }}
 
 
