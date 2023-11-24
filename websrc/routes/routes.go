@@ -5,10 +5,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func MainRoutes(g *echo.Group) {
-	g.GET("/", controllers.MainGetHandler)
-}
-
 func GenerateRoutes(g *echo.Group) {
 	g.GET("/linux", controllers.GenerateLinuxGetHandler)
 	g.POST("/linux", controllers.GenerateLinuxPostHandler)

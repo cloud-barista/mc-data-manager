@@ -102,7 +102,7 @@ func getDownloadList(fileList, objList []*utils.Object, dirPath string) ([]*util
 		for _, file := range fileList {
 			fileName, _ := filepath.Rel(dirPath, file.Key)
 			objName, _ := filepath.Rel(filepath.Base(dirPath), obj.Key)
-			if objName == fileName {
+			if strings.Contains(objName, fileName) {
 				chk = true
 				if obj.Size != file.Size {
 					downloadList = append(downloadList, obj)

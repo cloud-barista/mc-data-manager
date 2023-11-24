@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/cloud-barista/cm-data-mold/websrc/controllers"
 	"github.com/cloud-barista/cm-data-mold/websrc/routes"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -48,22 +49,13 @@ func TrustedProxiesMiddleware(trustedProxies []string) echo.MiddlewareFunc {
 }
 
 func InitServer() *echo.Echo {
-	// router = gin.New()
-	// router.Use(gin.Logger())
-
 	e := echo.New()
 
 	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+	e.Use(TrustedProxiesMiddleware([]string{"127.0.0.1", "::1"}))
 
-	// router.ForwardedByClientIP = true
-	// router.SetTrustedProxies([]string{"127.0.0.1"})
-	e.Use(TrustedProxiesMiddleware([]string{"127.0.0.1"}))
-
-	// router.Static("/res", "./web")
-	// router.LoadHTMLGlob("./web/templates/*")
-	// router.StaticFile("/favicon.ico", "./web/assets/favicon.ico")
 	e.Static("/res", "./web")
 	e.File("/favicon.ico", "./web/assets/favicon.ico")
 	renderer := &TemplateRenderer{
@@ -71,27 +63,18 @@ func InitServer() *echo.Echo {
 	}
 	e.Renderer = renderer
 
-	// mainGroup := router.Group("/")
-	// routes.MainRoutes(mainGroup)
-	mainGroup := e.Group("/")
-	routes.MainRoutes(mainGroup)
+	e.GET("/", controllers.MainGetHandler)
 
-	// generateGroup := router.Group("/generate")
-	// routes.GenerateRoutes(generateGroup)
 	generateGroup := e.Group("/generate")
 	routes.GenerateRoutes(generateGroup)
 
-	// migrationGroup := router.Group("/migration")
-	// routes.MigrationRoutes(migrationGroup)
 	migrationGroup := e.Group("/migration")
 	routes.MigrationRoutes(migrationGroup)
 
-	// return router
 	return e
 }
 
 func Run(rt *echo.Echo, port string) {
-	// rt.Run(":" + port)
 	port = fmt.Sprintf(":%s", port)
 	if err := rt.Start(port); err != nil && err != http.ErrServerClosed {
 		rt.Logger.Error(err)

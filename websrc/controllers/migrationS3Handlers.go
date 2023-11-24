@@ -179,9 +179,10 @@ func MigrationS3ToGCPPostHandler(ctx echo.Context) error {
 		})
 	}
 
+	logger.Infof("Start migration of AWS S3 to GCP Cloud Storage")
 	if err := awsOSC.Copy(gcpOSC); err != nil {
 		end := time.Now()
-		logger.Errorf("OSController copy failed : %v", err)
+		logger.Errorf("OSController migration failed : %v", err)
 		logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
 		logger.Infof("Elapsed time : %s", end.Sub(start).String())
 		return ctx.JSON(http.StatusOK, map[string]interface{}{
@@ -240,6 +241,7 @@ func MigrationS3ToNCPPostHandler(ctx echo.Context) error {
 		})
 	}
 
+	logger.Info("Start migration of AWS S3 to NCP Objest Storage")
 	if err := awsOSC.Copy(ncpOSC); err != nil {
 		end := time.Now()
 		logger.Errorf("OSController copy failed : %v", err)
