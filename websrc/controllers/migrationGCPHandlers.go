@@ -99,7 +99,7 @@ func MigrationGCPToWindowsPostHandler(ctx echo.Context) error {
 
 	logger, logstrings := pageLogInit("miggcpwin", "Export gcp data to windows", start)
 
-	if !osCheck(logger, start, "linux") {
+	if !osCheck(logger, start, "windows") {
 		return ctx.JSON(http.StatusBadRequest, gin.H{
 			"Result": logstrings.String(),
 			"Error":  nil,
@@ -196,9 +196,10 @@ func MigrationGCPToS3PostHandler(ctx echo.Context) error {
 		})
 	}
 
+	logger.Infof("Start migration of GCP Cloud Storage to AWS S3")
 	if err := gcpOSC.Copy(awsOSC); err != nil {
 		end := time.Now()
-		logger.Errorf("OSController copy failed : %v", err)
+		logger.Errorf("OSController migration failed : %v", err)
 		logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
 		logger.Infof("Elapsed time : %s", end.Sub(start).String())
 		return ctx.JSON(http.StatusOK, gin.H{
@@ -267,9 +268,10 @@ func MigrationGCPToNCPPostHandler(ctx echo.Context) error {
 		})
 	}
 
+	logger.Infof("Start migration of GCP Cloud Storage to NCP Object Storage")
 	if err := gcpOSC.Copy(ncpOSC); err != nil {
 		end := time.Now()
-		logger.Errorf("OSController copy failed : %v", err)
+		logger.Errorf("OSController migration failed : %v", err)
 		logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
 		logger.Infof("Elapsed time : %s", end.Sub(start).String())
 		return ctx.JSON(http.StatusOK, gin.H{

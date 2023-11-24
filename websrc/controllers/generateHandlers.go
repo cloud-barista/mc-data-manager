@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -9,18 +10,6 @@ import (
 
 	"github.com/labstack/echo/v4"
 )
-
-// func GenerateLinuxGetHandler() gin.HandlerFunc {
-// 	return func(ctx *gin.Context) {
-// 		logger := getLogger("genlinux")
-// 		logger.Info("genlinux get page accessed")
-// 		ctx.HTML(http.StatusOK, "index.html", map[string]interface{}{
-// 			"Content": "Generate-Linux",
-// 			"os":      runtime.GOOS,
-// 			"error":   nil,
-// 		})
-// 	}
-// }
 
 func GenerateLinuxGetHandler(ctx echo.Context) error {
 
@@ -33,38 +22,6 @@ func GenerateLinuxGetHandler(ctx echo.Context) error {
 		"error":   nil,
 	})
 }
-
-// func GenerateLinuxPostHandler() gin.HandlerFunc {
-// 	return func(ctx *gin.Context) {
-// 		start := time.Now()
-
-// 		logger, logstrings := pageLogInit("genlinux", "Create dummy data in linux", start)
-
-// 		if !osCheck(logger, start, "linux") {
-// 			ctx.JSONP(http.StatusBadRequest, map[string]interface{}{
-// 				"Result": logstrings.String(),
-// 				"Error":  nil,
-// 			})
-// 			return
-// 		}
-
-// 		params := getData("gen", ctx).(GenDataParams)
-
-// 		if !dummyCreate(logger, start, params) {
-// 			ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
-// 				"Result": logstrings.String(),
-// 				"Error":  nil,
-// 			})
-// 			return
-// 		}
-
-// 		jobEnd(logger, "Successfully creating a dummy with Linux", start)
-// 		ctx.JSONP(http.StatusOK, map[string]interface{}{
-// 			"Result": logstrings.String(),
-// 			"Error":  nil,
-// 		})
-// 	}
-// }
 
 func GenerateLinuxPostHandler(ctx echo.Context) error {
 
@@ -79,7 +36,6 @@ func GenerateLinuxPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	// params := getData("gen", ctx).(GenDataParams)
 	params := GenDataParams{}
 	if err := ctx.Bind(params); err != nil {
 		return err
@@ -99,20 +55,6 @@ func GenerateLinuxPostHandler(ctx echo.Context) error {
 	})
 }
 
-// func GenerateWindowsGetHandler() gin.HandlerFunc {
-// 	tmpPath := filepath.Join(os.TempDir(), "dummy")
-// 	return func(ctx *gin.Context) {
-// 		logger := getLogger("genwindows")
-// 		logger.Info("genwindows get page accessed")
-// 		ctx.HTML(http.StatusOK, "index.html", map[string]interface{}{
-// 			"Content": "Generate-Windows",
-// 			"os":      runtime.GOOS,
-// 			"tmpPath": tmpPath,
-// 			"error":   nil,
-// 		})
-// 	}
-// }
-
 func GenerateWindowsGetHandler(ctx echo.Context) error {
 
 	tmpPath := filepath.Join(os.TempDir(), "dummy")
@@ -127,38 +69,6 @@ func GenerateWindowsGetHandler(ctx echo.Context) error {
 	})
 }
 
-// func GenerateWindowsPostHandler() gin.HandlerFunc {
-// 	return func(ctx *gin.Context) {
-// 		start := time.Now()
-
-// 		logger, logstrings := pageLogInit("genwindows", "Create dummy data in windows", start)
-
-// 		if !osCheck(logger, start, "windows") {
-// 			ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
-// 				"Result": logstrings.String(),
-// 				"Error":  nil,
-// 			})
-// 			return
-// 		}
-
-// 		params := getData("gen", ctx).(GenDataParams)
-
-// 		if !dummyCreate(logger, start, params) {
-// 			ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
-// 				"Result": logstrings.String(),
-// 				"Error":  nil,
-// 			})
-// 			return
-// 		}
-
-// 		jobEnd(logger, "Successfully creating a dummy with Windows", start)
-// 		ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
-// 			"Result": logstrings.String(),
-// 			"Error":  nil,
-// 		})
-// 	}
-// }
-
 func GenerateWindowsPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -166,6 +76,7 @@ func GenerateWindowsPostHandler(ctx echo.Context) error {
 	logger, logstrings := pageLogInit("genwindows", "Create dummy data in windows", start)
 
 	if !osCheck(logger, start, "windows") {
+		fmt.Println("test")
 		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
@@ -173,11 +84,7 @@ func GenerateWindowsPostHandler(ctx echo.Context) error {
 
 	}
 
-	// params := getData("gen", ctx).(GenDataParams)
-	params := GenDataParams{}
-	if err := ctx.Bind(params); err != nil {
-		return err
-	}
+	params := getData("gen", ctx).(GenDataParams)
 
 	if !dummyCreate(logger, start, params) {
 		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
@@ -188,24 +95,11 @@ func GenerateWindowsPostHandler(ctx echo.Context) error {
 	}
 
 	jobEnd(logger, "Successfully creating a dummy with Windows", start)
-	return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+	return ctx.JSON(http.StatusOK, map[string]interface{}{
 		"Result": logstrings.String(),
 		"Error":  nil,
 	})
 }
-
-// func GenerateS3GetHandler() gin.HandlerFunc {
-// 	return func(ctx *gin.Context) {
-// 		logger := getLogger("genS3")
-// 		logger.Info("genS3 get page accessed")
-// 		ctx.HTML(http.StatusOK, "index.html", map[string]interface{}{
-// 			"Content": "Generate-S3",
-// 			"os":      runtime.GOOS,
-// 			"Regions": GetAWSRegions(),
-// 			"Error":   nil,
-// 		})
-// 	}
-// }
 
 func GenerateS3GetHandler(ctx echo.Context) error {
 
@@ -219,68 +113,12 @@ func GenerateS3GetHandler(ctx echo.Context) error {
 	})
 }
 
-// func GenerateS3PostHandler() gin.HandlerFunc {
-// 	return func(ctx *gin.Context) {
-// 		start := time.Now()
-
-// 		logger, logstrings := pageLogInit("genS3", "Create dummy data and import to s3", start)
-
-// 		params := getData("gen", ctx).(GenDataParams)
-
-// 		tmpDir, ok := createDummyTemp(logger, start)
-// 		if !ok {
-// 			ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
-// 				"Result": logstrings.String(),
-// 				"Error":  nil,
-// 			})
-// 			return
-// 		}
-// 		defer os.RemoveAll(tmpDir)
-// 		params.DummyPath = tmpDir
-
-// 		if !dummyCreate(logger, start, params) {
-// 			ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
-// 				"Result": logstrings.String(),
-// 				"Error":  nil,
-// 			})
-// 			return
-// 		}
-
-// 		awsOSC := getS3OSC(logger, start, "gen", params)
-// 		if awsOSC == nil {
-// 			ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
-// 				"Result": logstrings.String(),
-// 				"Error":  nil,
-// 			})
-// 			return
-// 		}
-
-// 		if !oscImport(logger, start, "s3", awsOSC, params.DummyPath) {
-// 			ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
-// 				"Result": logstrings.String(),
-// 				"Error":  nil,
-// 			})
-// 			return
-// 		}
-
-// 		jobEnd(logger, "Dummy creation and import successful with s3", start)
-// 		ctx.JSONP(http.StatusOK, map[string]interface{}{
-// 			"Result": logstrings.String(),
-// 			"Error":  nil,
-// 		})
-// 	}
-// }
-
 func GenerateS3PostHandler(ctx echo.Context) error {
 	start := time.Now()
 
 	logger, logstrings := pageLogInit("genS3", "Create dummy data and import to s3", start)
 
-	// params := getData("gen", ctx).(GenDataParams)
-	params := GenDataParams{}
-	if err := ctx.Bind(params); err != nil {
-		return err
-	}
+	params := getData("gen", ctx).(GenDataParams)
 
 	tmpDir, ok := createDummyTemp(logger, start)
 	if !ok {
@@ -325,19 +163,6 @@ func GenerateS3PostHandler(ctx echo.Context) error {
 	})
 }
 
-// func GenerateGCPGetHandler() gin.HandlerFunc {
-// 	return func(ctx *gin.Context) {
-// 		logger := getLogger("genGCP")
-// 		logger.Info("genGCP get page accessed")
-// 		ctx.HTML(http.StatusOK, "index.html", map[string]interface{}{
-// 			"Content": "Generate-GCP",
-// 			"os":      runtime.GOOS,
-// 			"Regions": GetGCPRegions(),
-// 			"error":   nil,
-// 		})
-// 	}
-// }
-
 func GenerateGCPGetHandler(ctx echo.Context) error {
 	logger := getLogger("genGCP")
 	logger.Info("genGCP get page accessed")
@@ -349,85 +174,12 @@ func GenerateGCPGetHandler(ctx echo.Context) error {
 	})
 }
 
-// func GenerateGCPPostHandler() gin.HandlerFunc {
-// 	return func(ctx *gin.Context) {
-// 		start := time.Now()
-
-// 		logger, logstrings := pageLogInit("genGCP", "Create dummy data and import to gcp", start)
-
-// 		params := GenDataParams{}
-// 		if !getDataWithBind(logger, start, ctx, &params) {
-// 			ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
-// 				"Result": logstrings.String(),
-// 				"Error":  nil,
-// 			})
-// 			return
-// 		}
-
-// 		credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
-// 		if !ok {
-// 			ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
-// 				"Result": logstrings.String(),
-// 				"Error":  nil,
-// 			})
-// 			return
-// 		}
-// 		defer os.RemoveAll(credTmpDir)
-
-// 		tmpDir, ok := createDummyTemp(logger, start)
-// 		if !ok {
-// 			ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
-// 				"Result": logstrings.String(),
-// 				"Error":  nil,
-// 			})
-// 			return
-// 		}
-// 		defer os.RemoveAll(tmpDir)
-// 		params.DummyPath = tmpDir
-
-// 		if !dummyCreate(logger, start, params) {
-// 			ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
-// 				"Result": logstrings.String(),
-// 				"Error":  nil,
-// 			})
-// 			return
-// 		}
-
-// 		gcpOSC := getGCPCOSC(logger, start, "gen", params, credFileName)
-// 		if gcpOSC == nil {
-// 			ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
-// 				"Result": logstrings.String(),
-// 				"Error":  nil,
-// 			})
-// 			return
-// 		}
-
-// 		if !oscImport(logger, start, "gcp", gcpOSC, params.DummyPath) {
-// 			ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
-// 				"Result": logstrings.String(),
-// 				"Error":  nil,
-// 			})
-// 			return
-// 		}
-
-// 		jobEnd(logger, "Dummy creation and import successful with gcp", start)
-// 		ctx.JSONP(http.StatusOK, map[string]interface{}{
-// 			"Result": logstrings.String(),
-// 			"Error":  nil,
-// 		})
-// 	}
-// }
-
 func GenerateGCPPostHandler(ctx echo.Context) error {
 	start := time.Now()
 
 	logger, logstrings := pageLogInit("genGCP", "Create dummy data and import to gcp", start)
 
-	// params := getData("gen", ctx).(GenDataParams)
-	params := GenDataParams{}
-	if err := ctx.Bind(params); err != nil {
-		return err
-	}
+	params := getData("gen", ctx).(GenDataParams)
 
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{

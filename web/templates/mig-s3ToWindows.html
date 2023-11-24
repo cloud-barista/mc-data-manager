@@ -18,7 +18,7 @@
                 <label for="mig-aws-region" class="form-label">AWS S3</label>
 
                 <div class="form-floating">
-                    <select class="form-select form-select-sm w-50" id="mig-aws-region" name="region">
+                    <select class="form-select form-select-sm w-50" id="mig-aws-region" name="awsRegion">
                     <!-- <option selected>Region</option> -->
                     {{ range $index, $value := .Regions }}
                     <option value="{{ $value }}">{{ $value }}</option>
