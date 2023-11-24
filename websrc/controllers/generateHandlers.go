@@ -7,652 +7,857 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo/v4"
 )
 
-func GenerateLinuxGetHandler() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		logger := getLogger("genlinux")
-		logger.Info("genlinux get page accessed")
-		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content": "Generate-Linux",
-			"os":      runtime.GOOS,
-			"error":   nil,
-		})
-	}
+// func GenerateLinuxGetHandler() gin.HandlerFunc {
+// 	return func(ctx *gin.Context) {
+// 		logger := getLogger("genlinux")
+// 		logger.Info("genlinux get page accessed")
+// 		ctx.HTML(http.StatusOK, "index.html", map[string]interface{}{
+// 			"Content": "Generate-Linux",
+// 			"os":      runtime.GOOS,
+// 			"error":   nil,
+// 		})
+// 	}
+// }
+
+func GenerateLinuxGetHandler(ctx echo.Context) error {
+
+	logger := getLogger("genlinux")
+	logger.Info("genlinux get page accessed")
+
+	return ctx.Render(http.StatusOK, "index.html", map[string]interface{}{
+		"Content": "Generate-Linux",
+		"os":      runtime.GOOS,
+		"error":   nil,
+	})
 }
 
-func GenerateLinuxPostHandler() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		start := time.Now()
+// func GenerateLinuxPostHandler() gin.HandlerFunc {
+// 	return func(ctx *gin.Context) {
+// 		start := time.Now()
 
-		logger, logstrings := pageLogInit("genlinux", "Create dummy data in linux", start)
+// 		logger, logstrings := pageLogInit("genlinux", "Create dummy data in linux", start)
 
-		if !osCheck(logger, start, "linux") {
-			ctx.JSONP(http.StatusBadRequest, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
+// 		if !osCheck(logger, start, "linux") {
+// 			ctx.JSONP(http.StatusBadRequest, map[string]interface{}{
+// 				"Result": logstrings.String(),
+// 				"Error":  nil,
+// 			})
+// 			return
+// 		}
 
-		params := getData("gen", ctx).(GenDataParams)
+// 		params := getData("gen", ctx).(GenDataParams)
 
-		if !dummyCreate(logger, start, params) {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
+// 		if !dummyCreate(logger, start, params) {
+// 			ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
+// 				"Result": logstrings.String(),
+// 				"Error":  nil,
+// 			})
+// 			return
+// 		}
 
-		jobEnd(logger, "Successfully creating a dummy with Linux", start)
-		ctx.JSONP(http.StatusOK, gin.H{
+// 		jobEnd(logger, "Successfully creating a dummy with Linux", start)
+// 		ctx.JSONP(http.StatusOK, map[string]interface{}{
+// 			"Result": logstrings.String(),
+// 			"Error":  nil,
+// 		})
+// 	}
+// }
+
+func GenerateLinuxPostHandler(ctx echo.Context) error {
+
+	start := time.Now()
+
+	logger, logstrings := pageLogInit("genlinux", "Create dummy data in linux", start)
+
+	if !osCheck(logger, start, "linux") {
+		return ctx.JSON(http.StatusBadRequest, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
 	}
+
+	// params := getData("gen", ctx).(GenDataParams)
+	params := GenDataParams{}
+	if err := ctx.Bind(params); err != nil {
+		return err
+	}
+
+	if !dummyCreate(logger, start, params) {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
+	}
+
+	jobEnd(logger, "Successfully creating a dummy with Linux", start)
+	return ctx.JSON(http.StatusOK, map[string]interface{}{
+		"Result": logstrings.String(),
+		"Error":  nil,
+	})
 }
 
-func GenerateWindowsGetHandler() gin.HandlerFunc {
+// func GenerateWindowsGetHandler() gin.HandlerFunc {
+// 	tmpPath := filepath.Join(os.TempDir(), "dummy")
+// 	return func(ctx *gin.Context) {
+// 		logger := getLogger("genwindows")
+// 		logger.Info("genwindows get page accessed")
+// 		ctx.HTML(http.StatusOK, "index.html", map[string]interface{}{
+// 			"Content": "Generate-Windows",
+// 			"os":      runtime.GOOS,
+// 			"tmpPath": tmpPath,
+// 			"error":   nil,
+// 		})
+// 	}
+// }
+
+func GenerateWindowsGetHandler(ctx echo.Context) error {
+
 	tmpPath := filepath.Join(os.TempDir(), "dummy")
-	return func(ctx *gin.Context) {
-		logger := getLogger("genwindows")
-		logger.Info("genwindows get page accessed")
-		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content": "Generate-Windows",
-			"os":      runtime.GOOS,
-			"tmpPath": tmpPath,
-			"error":   nil,
-		})
-	}
+
+	logger := getLogger("genwindows")
+	logger.Info("genwindows get page accessed")
+	return ctx.Render(http.StatusOK, "index.html", map[string]interface{}{
+		"Content": "Generate-Windows",
+		"os":      runtime.GOOS,
+		"tmpPath": tmpPath,
+		"error":   nil,
+	})
 }
 
-func GenerateWindowsPostHandler() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		start := time.Now()
+// func GenerateWindowsPostHandler() gin.HandlerFunc {
+// 	return func(ctx *gin.Context) {
+// 		start := time.Now()
 
-		logger, logstrings := pageLogInit("genwindows", "Create dummy data in windows", start)
+// 		logger, logstrings := pageLogInit("genwindows", "Create dummy data in windows", start)
 
-		if !osCheck(logger, start, "windows") {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
+// 		if !osCheck(logger, start, "windows") {
+// 			ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
+// 				"Result": logstrings.String(),
+// 				"Error":  nil,
+// 			})
+// 			return
+// 		}
 
-		params := getData("gen", ctx).(GenDataParams)
+// 		params := getData("gen", ctx).(GenDataParams)
 
-		if !dummyCreate(logger, start, params) {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
+// 		if !dummyCreate(logger, start, params) {
+// 			ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
+// 				"Result": logstrings.String(),
+// 				"Error":  nil,
+// 			})
+// 			return
+// 		}
 
-		jobEnd(logger, "Successfully creating a dummy with Windows", start)
-		ctx.JSONP(http.StatusInternalServerError, gin.H{
+// 		jobEnd(logger, "Successfully creating a dummy with Windows", start)
+// 		ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
+// 			"Result": logstrings.String(),
+// 			"Error":  nil,
+// 		})
+// 	}
+// }
+
+func GenerateWindowsPostHandler(ctx echo.Context) error {
+
+	start := time.Now()
+
+	logger, logstrings := pageLogInit("genwindows", "Create dummy data in windows", start)
+
+	if !osCheck(logger, start, "windows") {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
+
+	}
+
+	// params := getData("gen", ctx).(GenDataParams)
+	params := GenDataParams{}
+	if err := ctx.Bind(params); err != nil {
+		return err
+	}
+
+	if !dummyCreate(logger, start, params) {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
+
+	}
+
+	jobEnd(logger, "Successfully creating a dummy with Windows", start)
+	return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+		"Result": logstrings.String(),
+		"Error":  nil,
+	})
+}
+
+// func GenerateS3GetHandler() gin.HandlerFunc {
+// 	return func(ctx *gin.Context) {
+// 		logger := getLogger("genS3")
+// 		logger.Info("genS3 get page accessed")
+// 		ctx.HTML(http.StatusOK, "index.html", map[string]interface{}{
+// 			"Content": "Generate-S3",
+// 			"os":      runtime.GOOS,
+// 			"Regions": GetAWSRegions(),
+// 			"Error":   nil,
+// 		})
+// 	}
+// }
+
+func GenerateS3GetHandler(ctx echo.Context) error {
+
+	logger := getLogger("genS3")
+	logger.Info("genS3 get page accessed")
+	return ctx.Render(http.StatusOK, "index.html", map[string]interface{}{
+		"Content": "Generate-S3",
+		"os":      runtime.GOOS,
+		"Regions": GetAWSRegions(),
+		"Error":   nil,
+	})
+}
+
+// func GenerateS3PostHandler() gin.HandlerFunc {
+// 	return func(ctx *gin.Context) {
+// 		start := time.Now()
+
+// 		logger, logstrings := pageLogInit("genS3", "Create dummy data and import to s3", start)
+
+// 		params := getData("gen", ctx).(GenDataParams)
+
+// 		tmpDir, ok := createDummyTemp(logger, start)
+// 		if !ok {
+// 			ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
+// 				"Result": logstrings.String(),
+// 				"Error":  nil,
+// 			})
+// 			return
+// 		}
+// 		defer os.RemoveAll(tmpDir)
+// 		params.DummyPath = tmpDir
+
+// 		if !dummyCreate(logger, start, params) {
+// 			ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
+// 				"Result": logstrings.String(),
+// 				"Error":  nil,
+// 			})
+// 			return
+// 		}
+
+// 		awsOSC := getS3OSC(logger, start, "gen", params)
+// 		if awsOSC == nil {
+// 			ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
+// 				"Result": logstrings.String(),
+// 				"Error":  nil,
+// 			})
+// 			return
+// 		}
+
+// 		if !oscImport(logger, start, "s3", awsOSC, params.DummyPath) {
+// 			ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
+// 				"Result": logstrings.String(),
+// 				"Error":  nil,
+// 			})
+// 			return
+// 		}
+
+// 		jobEnd(logger, "Dummy creation and import successful with s3", start)
+// 		ctx.JSONP(http.StatusOK, map[string]interface{}{
+// 			"Result": logstrings.String(),
+// 			"Error":  nil,
+// 		})
+// 	}
+// }
+
+func GenerateS3PostHandler(ctx echo.Context) error {
+	start := time.Now()
+
+	logger, logstrings := pageLogInit("genS3", "Create dummy data and import to s3", start)
+
+	// params := getData("gen", ctx).(GenDataParams)
+	params := GenDataParams{}
+	if err := ctx.Bind(params); err != nil {
+		return err
+	}
+
+	tmpDir, ok := createDummyTemp(logger, start)
+	if !ok {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
+
+	}
+	defer os.RemoveAll(tmpDir)
+	params.DummyPath = tmpDir
+
+	if !dummyCreate(logger, start, params) {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
+
+	}
+
+	awsOSC := getS3OSC(logger, start, "gen", params)
+	if awsOSC == nil {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
+
+	}
+
+	if !oscImport(logger, start, "s3", awsOSC, params.DummyPath) {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
+
+	}
+
+	jobEnd(logger, "Dummy creation and import successful with s3", start)
+	return ctx.JSON(http.StatusOK, map[string]interface{}{
+		"Result": logstrings.String(),
+		"Error":  nil,
+	})
+}
+
+// func GenerateGCPGetHandler() gin.HandlerFunc {
+// 	return func(ctx *gin.Context) {
+// 		logger := getLogger("genGCP")
+// 		logger.Info("genGCP get page accessed")
+// 		ctx.HTML(http.StatusOK, "index.html", map[string]interface{}{
+// 			"Content": "Generate-GCP",
+// 			"os":      runtime.GOOS,
+// 			"Regions": GetGCPRegions(),
+// 			"error":   nil,
+// 		})
+// 	}
+// }
+
+func GenerateGCPGetHandler(ctx echo.Context) error {
+	logger := getLogger("genGCP")
+	logger.Info("genGCP get page accessed")
+	return ctx.Render(http.StatusOK, "index.html", map[string]interface{}{
+		"Content": "Generate-GCP",
+		"os":      runtime.GOOS,
+		"Regions": GetGCPRegions(),
+		"error":   nil,
+	})
+}
+
+// func GenerateGCPPostHandler() gin.HandlerFunc {
+// 	return func(ctx *gin.Context) {
+// 		start := time.Now()
+
+// 		logger, logstrings := pageLogInit("genGCP", "Create dummy data and import to gcp", start)
+
+// 		params := GenDataParams{}
+// 		if !getDataWithBind(logger, start, ctx, &params) {
+// 			ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
+// 				"Result": logstrings.String(),
+// 				"Error":  nil,
+// 			})
+// 			return
+// 		}
+
+// 		credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
+// 		if !ok {
+// 			ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
+// 				"Result": logstrings.String(),
+// 				"Error":  nil,
+// 			})
+// 			return
+// 		}
+// 		defer os.RemoveAll(credTmpDir)
+
+// 		tmpDir, ok := createDummyTemp(logger, start)
+// 		if !ok {
+// 			ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
+// 				"Result": logstrings.String(),
+// 				"Error":  nil,
+// 			})
+// 			return
+// 		}
+// 		defer os.RemoveAll(tmpDir)
+// 		params.DummyPath = tmpDir
+
+// 		if !dummyCreate(logger, start, params) {
+// 			ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
+// 				"Result": logstrings.String(),
+// 				"Error":  nil,
+// 			})
+// 			return
+// 		}
+
+// 		gcpOSC := getGCPCOSC(logger, start, "gen", params, credFileName)
+// 		if gcpOSC == nil {
+// 			ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
+// 				"Result": logstrings.String(),
+// 				"Error":  nil,
+// 			})
+// 			return
+// 		}
+
+// 		if !oscImport(logger, start, "gcp", gcpOSC, params.DummyPath) {
+// 			ctx.JSONP(http.StatusInternalServerError, map[string]interface{}{
+// 				"Result": logstrings.String(),
+// 				"Error":  nil,
+// 			})
+// 			return
+// 		}
+
+// 		jobEnd(logger, "Dummy creation and import successful with gcp", start)
+// 		ctx.JSONP(http.StatusOK, map[string]interface{}{
+// 			"Result": logstrings.String(),
+// 			"Error":  nil,
+// 		})
+// 	}
+// }
+
+func GenerateGCPPostHandler(ctx echo.Context) error {
+	start := time.Now()
+
+	logger, logstrings := pageLogInit("genGCP", "Create dummy data and import to gcp", start)
+
+	// params := getData("gen", ctx).(GenDataParams)
+	params := GenDataParams{}
+	if err := ctx.Bind(params); err != nil {
+		return err
+	}
+
+	if !getDataWithBind(logger, start, ctx, &params) {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
+
+	}
+
+	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
+	if !ok {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
 	}
-}
+	defer os.RemoveAll(credTmpDir)
 
-func GenerateS3GetHandler() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		logger := getLogger("genS3")
-		logger.Info("genS3 get page accessed")
-		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content": "Generate-S3",
-			"os":      runtime.GOOS,
-			"Regions": GetAWSRegions(),
-			"Error":   nil,
+	tmpDir, ok := createDummyTemp(logger, start)
+	if !ok {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
 		})
+
 	}
-}
+	defer os.RemoveAll(tmpDir)
+	params.DummyPath = tmpDir
 
-func GenerateS3PostHandler() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		start := time.Now()
+	if !dummyCreate(logger, start, params) {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
 
-		logger, logstrings := pageLogInit("genS3", "Create dummy data and import to s3", start)
+	}
 
-		params := getData("gen", ctx).(GenDataParams)
+	gcpOSC := getGCPCOSC(logger, start, "gen", params, credFileName)
+	if gcpOSC == nil {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
 
-		tmpDir, ok := createDummyTemp(logger, start)
-		if !ok {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-		defer os.RemoveAll(tmpDir)
-		params.DummyPath = tmpDir
+	}
 
-		if !dummyCreate(logger, start, params) {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		awsOSC := getS3OSC(logger, start, "gen", params)
-		if awsOSC == nil {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		if !oscImport(logger, start, "s3", awsOSC, params.DummyPath) {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		jobEnd(logger, "Dummy creation and import successful with s3", start)
-		ctx.JSONP(http.StatusOK, gin.H{
+	if !oscImport(logger, start, "gcp", gcpOSC, params.DummyPath) {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
 	}
+
+	jobEnd(logger, "Dummy creation and import successful with gcp", start)
+	return ctx.JSON(http.StatusOK, map[string]interface{}{
+		"Result": logstrings.String(),
+		"Error":  nil,
+	})
 }
 
-func GenerateGCPGetHandler() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		logger := getLogger("genGCP")
-		logger.Info("genGCP get page accessed")
-		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content": "Generate-GCP",
-			"os":      runtime.GOOS,
-			"Regions": GetGCPRegions(),
-			"error":   nil,
+func GenerateNCPGetHandler(ctx echo.Context) error {
+
+	logger := getLogger("genNCP")
+	logger.Info("genNCP get page accessed")
+	return ctx.Render(http.StatusOK, "index.html", map[string]interface{}{
+		"Content": "Generate-NCP",
+		"os":      runtime.GOOS,
+		"Regions": GetNCPRegions(),
+		"error":   nil,
+	})
+}
+
+func GenerateNCPPostHandler(ctx echo.Context) error {
+	start := time.Now()
+
+	logger, logstrings := pageLogInit("genNCP", "Create dummy data and import to ncp objectstorage", start)
+
+	params := getData("gen", ctx).(GenDataParams)
+
+	tmpDir, ok := createDummyTemp(logger, start)
+	if !ok {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
 		})
+
 	}
-}
+	defer os.RemoveAll(tmpDir)
 
-func GenerateGCPPostHandler() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		start := time.Now()
+	params.DummyPath = tmpDir
 
-		logger, logstrings := pageLogInit("genGCP", "Create dummy data and import to gcp", start)
+	if !dummyCreate(logger, start, params) {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
 
-		params := GenDataParams{}
-		if !getDataWithBind(logger, start, ctx, &params) {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
+	}
 
-		credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
-		if !ok {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-		defer os.RemoveAll(credTmpDir)
+	ncpOSC := getS3COSC(logger, start, "gen", params)
+	if ncpOSC == nil {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
 
-		tmpDir, ok := createDummyTemp(logger, start)
-		if !ok {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-		defer os.RemoveAll(tmpDir)
-		params.DummyPath = tmpDir
+	}
 
-		if !dummyCreate(logger, start, params) {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		gcpOSC := getGCPCOSC(logger, start, "gen", params, credFileName)
-		if gcpOSC == nil {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		if !oscImport(logger, start, "gcp", gcpOSC, params.DummyPath) {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		jobEnd(logger, "Dummy creation and import successful with gcp", start)
-		ctx.JSONP(http.StatusOK, gin.H{
+	if !oscImport(logger, start, "ncp", ncpOSC, params.DummyPath) {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
 	}
+
+	jobEnd(logger, "Create dummy data and import to ncp objectstorage", start)
+	return ctx.JSON(http.StatusOK, map[string]interface{}{
+		"Result": logstrings.String(),
+		"Error":  nil,
+	})
 }
 
-func GenerateNCPGetHandler() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		logger := getLogger("genNCP")
-		logger.Info("genNCP get page accessed")
-		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content": "Generate-NCP",
-			"os":      runtime.GOOS,
-			"Regions": GetNCPRegions(),
-			"error":   nil,
-		})
-	}
+func GenerateMySQLGetHandler(ctx echo.Context) error {
+
+	logger := getLogger("genmysql")
+	logger.Info("genmysql get page accessed")
+	return ctx.Render(http.StatusOK, "index.html", map[string]interface{}{
+		"Content": "Generate-MySQL",
+		"os":      runtime.GOOS,
+		"error":   nil,
+	})
 }
 
-func GenerateNCPPostHandler() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		start := time.Now()
+func GenerateMySQLPostHandler(ctx echo.Context) error {
+	start := time.Now()
 
-		logger, logstrings := pageLogInit("genNCP", "Create dummy data and import to ncp objectstorage", start)
+	logger, logstrings := pageLogInit("genmysql", "Create dummy data and import to mysql", start)
 
-		params := getData("gen", ctx).(GenDataParams)
+	params := getData("gen", ctx).(GenDataParams)
 
-		tmpDir, ok := createDummyTemp(logger, start)
-		if !ok {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-		defer os.RemoveAll(tmpDir)
-
-		params.DummyPath = tmpDir
-
-		if !dummyCreate(logger, start, params) {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		ncpOSC := getS3COSC(logger, start, "gen", params)
-		if ncpOSC == nil {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		if !oscImport(logger, start, "ncp", ncpOSC, params.DummyPath) {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		jobEnd(logger, "Create dummy data and import to ncp objectstorage", start)
-		ctx.JSONP(http.StatusOK, gin.H{
+	tmpDir, ok := createDummyTemp(logger, start)
+	if !ok {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
 	}
-}
+	defer os.RemoveAll(tmpDir)
 
-func GenerateMySQLGetHandler() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		logger := getLogger("genmysql")
-		logger.Info("genmysql get page accessed")
-		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content": "Generate-MySQL",
-			"os":      runtime.GOOS,
-			"error":   nil,
+	params.DummyPath = tmpDir
+	params.CheckServerSQL = "on"
+	params.SizeServerSQL = "5"
+
+	if !dummyCreate(logger, start, params) {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
 		})
+
 	}
-}
 
-func GenerateMySQLPostHandler() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		start := time.Now()
+	rdbc := getMysqlRDBC(logger, start, "gen", params)
+	if rdbc == nil {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
 
-		logger, logstrings := pageLogInit("genmysql", "Create dummy data and import to mysql", start)
+	}
 
-		params := getData("gen", ctx).(GenDataParams)
-
-		tmpDir, ok := createDummyTemp(logger, start)
-		if !ok {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-		defer os.RemoveAll(tmpDir)
-
-		params.DummyPath = tmpDir
-		params.CheckServerSQL = "on"
-		params.SizeServerSQL = "5"
-
-		if !dummyCreate(logger, start, params) {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		rdbc := getMysqlRDBC(logger, start, "gen", params)
-		if rdbc == nil {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		sqlList := []string{}
-		if !walk(logger, start, &sqlList, params.DummyPath, ".sql") {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		logger.Info("Start Import with mysql")
-		for _, sql := range sqlList {
-			logger.Infof("Read sql file : %s", sql)
-			data, err := os.ReadFile(sql)
-			if err != nil {
-				end := time.Now()
-				logger.Errorf("os ReadFile failed : %v", err)
-				logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-				logger.Infof("Elapsed time : %s", end.Sub(start).String())
-				ctx.JSONP(http.StatusInternalServerError, gin.H{
-					"Result": logstrings.String(),
-					"Error":  nil,
-				})
-				return
-			}
-
-			logger.Infof("Put start : %s", filepath.Base(sql))
-			if err := rdbc.Put(string(data)); err != nil {
-				end := time.Now()
-				logger.Errorf("RDBController import failed : %v", err)
-				logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-				logger.Infof("Elapsed time : %s", end.Sub(start).String())
-				ctx.JSONP(http.StatusInternalServerError, gin.H{
-					"Result": logstrings.String(),
-					"Error":  nil,
-				})
-				return
-			}
-			logger.Infof("sql put success : %s", filepath.Base(sql))
-		}
-
-		jobEnd(logger, "Dummy creation and import successful with mysql", start)
-		ctx.JSONP(http.StatusOK, gin.H{
+	sqlList := []string{}
+	if !walk(logger, start, &sqlList, params.DummyPath, ".sql") {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
 	}
-}
 
-func GenerateDynamoDBGetHandler() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		logger := getLogger("gendynamodb")
-		logger.Info("gendynamodb get page accessed")
-		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content": "Generate-DynamoDB",
-			"os":      runtime.GOOS,
-			"Regions": GetAWSRegions(),
-			"error":   nil,
-		})
+	logger.Info("Start Import with mysql")
+	for _, sql := range sqlList {
+		logger.Infof("Read sql file : %s", sql)
+		data, err := os.ReadFile(sql)
+		if err != nil {
+			end := time.Now()
+			logger.Errorf("os ReadFile failed : %v", err)
+			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+			logger.Infof("Elapsed time : %s", end.Sub(start).String())
+			return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+				"Result": logstrings.String(),
+				"Error":  nil,
+			})
+
+		}
+
+		logger.Infof("Put start : %s", filepath.Base(sql))
+		if err := rdbc.Put(string(data)); err != nil {
+			end := time.Now()
+			logger.Errorf("RDBController import failed : %v", err)
+			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+			logger.Infof("Elapsed time : %s", end.Sub(start).String())
+			return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+				"Result": logstrings.String(),
+				"Error":  nil,
+			})
+		}
+		logger.Infof("sql put success : %s", filepath.Base(sql))
 	}
+
+	jobEnd(logger, "Dummy creation and import successful with mysql", start)
+	return ctx.JSON(http.StatusOK, map[string]interface{}{
+		"Result": logstrings.String(),
+		"Error":  nil,
+	})
 }
 
-func GenerateDynamoDBPostHandler() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		start := time.Now()
+func GenerateDynamoDBGetHandler(ctx echo.Context) error {
+	logger := getLogger("gendynamodb")
+	logger.Info("gendynamodb get page accessed")
+	return ctx.Render(http.StatusOK, "index.html", map[string]interface{}{
+		"Content": "Generate-DynamoDB",
+		"os":      runtime.GOOS,
+		"Regions": GetAWSRegions(),
+		"error":   nil,
+	})
+}
 
-		logger, logstrings := pageLogInit("gendynamodb", "Create dummy data and import to dynamoDB", start)
+func GenerateDynamoDBPostHandler(ctx echo.Context) error {
+	start := time.Now()
 
-		params := getData("gen", ctx).(GenDataParams)
+	logger, logstrings := pageLogInit("gendynamodb", "Create dummy data and import to dynamoDB", start)
 
-		tmpDir, ok := createDummyTemp(logger, start)
-		if !ok {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-		defer os.RemoveAll(tmpDir)
+	params := getData("gen", ctx).(GenDataParams)
 
-		params.DummyPath = tmpDir
-		params.CheckServerJSON = "on"
-		params.SizeServerJSON = "1"
-
-		if !dummyCreate(logger, start, params) {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		jsonList := []string{}
-		if !walk(logger, start, &jsonList, params.DummyPath, ".json") {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		awsNRDB := getDynamoNRDBC(logger, start, "gen", params)
-		if awsNRDB == nil {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		if !nrdbPutWorker(logger, start, "DynamoDB", awsNRDB, jsonList) {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-		}
-
-		jobEnd(logger, "Dummy creation and import successful with dynamoDB", start)
-		ctx.JSONP(http.StatusOK, gin.H{
+	tmpDir, ok := createDummyTemp(logger, start)
+	if !ok {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
 	}
-}
+	defer os.RemoveAll(tmpDir)
 
-func GenerateFirestoreGetHandler() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		logger := getLogger("genfirestore")
-		logger.Info("genfirestore get page accessed")
-		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content": "Generate-Firestore",
-			"os":      runtime.GOOS,
-			"Regions": GetGCPRegions(),
-			"error":   nil,
-		})
-	}
-}
+	params.DummyPath = tmpDir
+	params.CheckServerJSON = "on"
+	params.SizeServerJSON = "1"
 
-func GenerateFirestorePostHandler() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		start := time.Now()
-
-		logger, logstrings := pageLogInit("genfirestore", "Create dummy data and import to firestoreDB", start)
-
-		params := GenDataParams{}
-		if !getDataWithBind(logger, start, ctx, &params) {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
-		if !ok {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-		defer os.RemoveAll(credTmpDir)
-
-		tmpDir, ok := createDummyTemp(logger, start)
-		if !ok {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-		defer os.RemoveAll(tmpDir)
-
-		params.DummyPath = tmpDir
-		params.CheckServerJSON = "on"
-		params.SizeServerJSON = "1"
-
-		if !dummyCreate(logger, start, params) {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		jsonList := []string{}
-		if !walk(logger, start, &jsonList, params.DummyPath, ".json") {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		gcpNRDB := getFirestoreNRDBC(logger, start, "gen", params, credFileName)
-		if gcpNRDB == nil {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		if !nrdbPutWorker(logger, start, "FirestoreDB", gcpNRDB, jsonList) {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-		}
-
-		jobEnd(logger, "Dummy creation and import successful with firestoreDB", start)
-		ctx.JSONP(http.StatusOK, gin.H{
+	if !dummyCreate(logger, start, params) {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
 	}
-}
 
-func GenerateMongoDBGetHandler() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		logger := getLogger("genfirestore")
-		logger.Info("genmongodb get page accessed")
-		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"Content": "Generate-MongoDB",
-			"os":      runtime.GOOS,
-			"error":   nil,
-		})
-	}
-}
-
-func GenerateMongoDBPostHandler() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		start := time.Now()
-
-		logger, logstrings := pageLogInit("genmongodb", "Create dummy data and import to mongoDB", start)
-
-		params := getData("gen", ctx).(GenDataParams)
-
-		tmpDir, ok := createDummyTemp(logger, start)
-		if !ok {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-		defer os.RemoveAll(tmpDir)
-
-		params.DummyPath = tmpDir
-		params.CheckServerJSON = "on"
-		params.SizeServerJSON = "1"
-
-		if !dummyCreate(logger, start, params) {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		jsonList := []string{}
-		if !walk(logger, start, &jsonList, params.DummyPath, ".json") {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		ncpNRDB := getMongoNRDBC(logger, start, "gen", params)
-		if ncpNRDB == nil {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		if !nrdbPutWorker(logger, start, "MongoDB", ncpNRDB, jsonList) {
-			ctx.JSONP(http.StatusInternalServerError, gin.H{
-				"Result": logstrings.String(),
-				"Error":  nil,
-			})
-			return
-		}
-
-		jobEnd(logger, "Dummy creation and import successful with mongoDB", start)
-		ctx.JSONP(http.StatusOK, gin.H{
+	jsonList := []string{}
+	if !walk(logger, start, &jsonList, params.DummyPath, ".json") {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
 	}
+
+	awsNRDB := getDynamoNRDBC(logger, start, "gen", params)
+	if awsNRDB == nil {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
+	}
+
+	if !nrdbPutWorker(logger, start, "DynamoDB", awsNRDB, jsonList) {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
+	}
+
+	jobEnd(logger, "Dummy creation and import successful with dynamoDB", start)
+	return ctx.JSON(http.StatusOK, map[string]interface{}{
+		"Result": logstrings.String(),
+		"Error":  nil,
+	})
+}
+
+func GenerateFirestoreGetHandler(ctx echo.Context) error {
+	logger := getLogger("genfirestore")
+	logger.Info("genfirestore get page accessed")
+	return ctx.Render(http.StatusOK, "index.html", map[string]interface{}{
+		"Content": "Generate-Firestore",
+		"os":      runtime.GOOS,
+		"Regions": GetGCPRegions(),
+		"error":   nil,
+	})
+}
+
+func GenerateFirestorePostHandler(ctx echo.Context) error {
+	start := time.Now()
+
+	logger, logstrings := pageLogInit("genfirestore", "Create dummy data and import to firestoreDB", start)
+
+	params := GenDataParams{}
+	if !getDataWithBind(logger, start, ctx, &params) {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
+	}
+
+	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
+	if !ok {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
+	}
+	defer os.RemoveAll(credTmpDir)
+
+	tmpDir, ok := createDummyTemp(logger, start)
+	if !ok {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
+	}
+	defer os.RemoveAll(tmpDir)
+
+	params.DummyPath = tmpDir
+	params.CheckServerJSON = "on"
+	params.SizeServerJSON = "1"
+
+	if !dummyCreate(logger, start, params) {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
+	}
+
+	jsonList := []string{}
+	if !walk(logger, start, &jsonList, params.DummyPath, ".json") {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
+	}
+
+	gcpNRDB := getFirestoreNRDBC(logger, start, "gen", params, credFileName)
+	if gcpNRDB == nil {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
+	}
+
+	if !nrdbPutWorker(logger, start, "FirestoreDB", gcpNRDB, jsonList) {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
+	}
+
+	jobEnd(logger, "Dummy creation and import successful with firestoreDB", start)
+	return ctx.JSON(http.StatusOK, map[string]interface{}{
+		"Result": logstrings.String(),
+		"Error":  nil,
+	})
+}
+
+func GenerateMongoDBGetHandler(ctx echo.Context) error {
+	logger := getLogger("genfirestore")
+	logger.Info("genmongodb get page accessed")
+	return ctx.Render(http.StatusOK, "index.html", map[string]interface{}{
+		"Content": "Generate-MongoDB",
+		"os":      runtime.GOOS,
+		"error":   nil,
+	})
+}
+
+func GenerateMongoDBPostHandler(ctx echo.Context) error {
+	start := time.Now()
+
+	logger, logstrings := pageLogInit("genmongodb", "Create dummy data and import to mongoDB", start)
+
+	params := getData("gen", ctx).(GenDataParams)
+
+	tmpDir, ok := createDummyTemp(logger, start)
+	if !ok {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
+	}
+	defer os.RemoveAll(tmpDir)
+
+	params.DummyPath = tmpDir
+	params.CheckServerJSON = "on"
+	params.SizeServerJSON = "1"
+
+	if !dummyCreate(logger, start, params) {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
+	}
+
+	jsonList := []string{}
+	if !walk(logger, start, &jsonList, params.DummyPath, ".json") {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
+
+	}
+
+	ncpNRDB := getMongoNRDBC(logger, start, "gen", params)
+	if ncpNRDB == nil {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
+	}
+
+	if !nrdbPutWorker(logger, start, "MongoDB", ncpNRDB, jsonList) {
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"Result": logstrings.String(),
+			"Error":  nil,
+		})
+	}
+
+	jobEnd(logger, "Dummy creation and import successful with mongoDB", start)
+	return ctx.JSON(http.StatusOK, map[string]interface{}{
+		"Result": logstrings.String(),
+		"Error":  nil,
+	})
 }

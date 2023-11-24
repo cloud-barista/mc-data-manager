@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"bytes"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -29,7 +30,7 @@ import (
 	"github.com/cloud-barista/cm-data-mold/service/nrdbc"
 	"github.com/cloud-barista/cm-data-mold/service/osc"
 	"github.com/cloud-barista/cm-data-mold/service/rdbc"
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -500,9 +501,31 @@ func oscExport(logger *logrus.Logger, startTime time.Time, osType string, osc *o
 	return true
 }
 
-func getData(jobtype string, ctx *gin.Context) interface{} {
+// func getData(jobtype string, ctx *gin.Context) interface{} {
+// 	if jobtype == "gen" {
+// 		data, _ := ctx.GetRawData()
+// 		params := GenDataParams{}
+// 		json.Unmarshal(data, &params)
+// 		return params
+// 	} else {
+
+// 		return nil
+// 	}
+// }
+
+func getData(jobtype string, ctx echo.Context) interface{} {
 	if jobtype == "gen" {
-		data, _ := ctx.GetRawData()
+		// data, _ := ctx.GetRawData() <- gin
+
+		// Read the request body
+		data, err := io.ReadAll(ctx.Request().Body)
+		if err != nil {
+			return err
+		}
+
+		// Reset the request body using io.NopCloser
+		ctx.Request().Body = io.NopCloser(bytes.NewBuffer(data))
+
 		params := GenDataParams{}
 		json.Unmarshal(data, &params)
 		return params
@@ -512,8 +535,8 @@ func getData(jobtype string, ctx *gin.Context) interface{} {
 	}
 }
 
-func getDataWithBind(logger *logrus.Logger, startTime time.Time, ctx *gin.Context, params interface{}) bool {
-	if err := ctx.ShouldBind(params); err != nil {
+func getDataWithBind(logger *logrus.Logger, startTime time.Time, ctx echo.Context, params interface{}) bool {
+	if err := ctx.Bind(params); err != nil {
 		end := time.Now()
 		logger.Error("Failed to bind form data")
 		logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
@@ -523,9 +546,44 @@ func getDataWithBind(logger *logrus.Logger, startTime time.Time, ctx *gin.Contex
 	return true
 }
 
-func gcpCreateCredFile(logger *logrus.Logger, startTime time.Time, ctx *gin.Context) (string, string, bool) {
+// func gcpCreateCredFile(logger *logrus.Logger, startTime time.Time, ctx *gin.Context) (string, string, bool) {
+// 	// gcpCredentialFile, gcpCredentialHeader, err := ctx.Request.FormFile("gcpCredential")
+// 	gcpCredentialFile, gcpCredentialHeader, err := ctx.Request.FormFile("gcpCredential")
+// 	if err != nil {
+// 		end := time.Now()
+// 		logger.Errorf("Get CredentialFile error : %v", err)
+// 		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+// 		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+// 		return "", "", false
+// 	}
+// 	defer gcpCredentialFile.Close()
+
+// 	credTmpDir, err := os.MkdirTemp("", "datamold-gcp-cred-")
+// 	if err != nil {
+// 		end := time.Now()
+// 		logger.Errorf("Get CredentialFile error : %v", err)
+// 		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+// 		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+// 		return "", "", false
+// 	}
+
+// 	credFileName := filepath.Join(credTmpDir, gcpCredentialHeader.Filename)
+// 	err = ctx.SaveUploadedFile(gcpCredentialHeader, credFileName)
+// 	if err != nil {
+// 		end := time.Now()
+// 		logger.Errorf("Get CredentialFile error : %v", err)
+// 		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+// 		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+// 		return "", "", false
+// 	}
+// 	return credTmpDir, credFileName, true
+// }
+
+func gcpCreateCredFile(logger *logrus.Logger, startTime time.Time, ctx echo.Context) (string, string, bool) {
 	logger.Info("Create a temporary directory where credential files will be stored")
-	gcpCredentialFile, gcpCredentialHeader, err := ctx.Request.FormFile("gcpCredential")
+	// func (*http.Request).FormFile(key string) (multipart.File, *multipart.FileHeader, error)
+	// gcpCredentialFile, gcpCredentialHeader, err := ctx.Request.FormFile("gcpCredential")
+	gcpCredentialHeader, err := ctx.FormFile("gcpCredential")
 	if err != nil {
 		end := time.Now()
 		logger.Errorf("Get CredentialFile error : %v", err)
@@ -533,7 +591,6 @@ func gcpCreateCredFile(logger *logrus.Logger, startTime time.Time, ctx *gin.Cont
 		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
 		return "", "", false
 	}
-	defer gcpCredentialFile.Close()
 
 	credTmpDir, err := os.MkdirTemp("", "datamold-gcp-cred-")
 	if err != nil {
@@ -545,7 +602,8 @@ func gcpCreateCredFile(logger *logrus.Logger, startTime time.Time, ctx *gin.Cont
 	}
 
 	credFileName := filepath.Join(credTmpDir, gcpCredentialHeader.Filename)
-	err = ctx.SaveUploadedFile(gcpCredentialHeader, credFileName)
+	gcpCredentialFile, err := gcpCredentialHeader.Open()
+	// err = ctx.SaveUploadedFile(gcpCredentialHeader, credFileName)
 	if err != nil {
 		end := time.Now()
 		logger.Errorf("Get CredentialFile error : %v", err)
@@ -553,5 +611,25 @@ func gcpCreateCredFile(logger *logrus.Logger, startTime time.Time, ctx *gin.Cont
 		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
 		return "", "", false
 	}
+	defer gcpCredentialFile.Close()
+
+	dst, err := os.Create(credFileName)
+	if err != nil {
+		end := time.Now()
+		logger.Errorf("File create error : %v", err)
+		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		return "", "", false
+	}
+	defer dst.Close()
+
+	if _, err = io.Copy(dst, gcpCredentialFile); err != nil {
+		end := time.Now()
+		logger.Errorf("File copy error : %v", err)
+		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		return "", "", false
+	}
+
 	return credTmpDir, credFileName, true
 }
