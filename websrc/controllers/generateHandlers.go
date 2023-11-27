@@ -36,10 +36,7 @@ func GenerateLinuxPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	params := GenDataParams{}
-	if err := ctx.Bind(params); err != nil {
-		return err
-	}
+	params := getData("gen", ctx).(GenDataParams)
 
 	if !dummyCreate(logger, start, params) {
 		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
