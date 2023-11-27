@@ -48,13 +48,16 @@ func TrustedProxiesMiddleware(trustedProxies []string) echo.MiddlewareFunc {
 	}
 }
 
-func InitServer() *echo.Echo {
+func InitServer(addIP ...string) *echo.Echo {
 	e := echo.New()
 
 	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
-	e.Use(TrustedProxiesMiddleware([]string{"127.0.0.1", "::1"}))
+
+	allowIP := []string{"127.0.0.1", "::1"}
+	allowIP = append(allowIP, addIP...)
+	e.Use(TrustedProxiesMiddleware(allowIP))
 
 	e.Static("/res", "./web")
 	e.File("/favicon.ico", "./web/assets/favicon.ico")
