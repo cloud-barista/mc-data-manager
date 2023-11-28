@@ -35,12 +35,12 @@ func GenerateRandomGIF(dummyDir string, capacitySize int) error {
 	}
 	defer os.RemoveAll(tempPath)
 
-	logrus.Info("start gif generation")
+	logrus.Info("start png generation")
 	if err := GenerateRandomPNGImage(tempPath, 1); err != nil {
-		logrus.Error("failed to generate gif")
+		logrus.Error("failed to generate png")
 		return err
 	}
-	logrus.Info("successfully generated gif")
+	logrus.Info("successfully generated png")
 
 	var files []string
 	size := capacitySize * 34 * 10
