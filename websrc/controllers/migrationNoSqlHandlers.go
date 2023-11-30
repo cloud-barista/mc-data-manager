@@ -68,7 +68,7 @@ func MigrationDynamoDBToFirestorePostHandler(ctx echo.Context) error {
 		logger.Errorf("NRDBController copy failed : %v", err)
 		logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
 		logger.Infof("Elapsed time : %s", end.Sub(start).String())
-		return ctx.JSON(http.StatusOK, map[string]interface{}{
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
@@ -128,7 +128,7 @@ func MigrationDynamoDBToMongoDBPostHandler(ctx echo.Context) error {
 		logger.Errorf("NRDBController copy failed : %v", err)
 		logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
 		logger.Infof("Elapsed time : %s", end.Sub(start).String())
-		return ctx.JSON(http.StatusOK, map[string]interface{}{
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
@@ -201,7 +201,7 @@ func MigrationFirestoreToDynamoDBPostHandler(ctx echo.Context) error {
 		logger.Errorf("NRDBController copy failed : %v", err)
 		logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
 		logger.Infof("Elapsed time : %s", end.Sub(start).String())
-		return ctx.JSON(http.StatusOK, map[string]interface{}{
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
@@ -271,7 +271,7 @@ func MigrationFirestoreToMongoDBPostHandler(ctx echo.Context) error {
 		logger.Errorf("NRDBController copy failed : %v", err)
 		logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
 		logger.Infof("Elapsed time : %s", end.Sub(start).String())
-		return ctx.JSON(http.StatusOK, map[string]interface{}{
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
@@ -334,7 +334,7 @@ func MigrationMongoDBToDynamoDBPostHandler(ctx echo.Context) error {
 		logger.Errorf("NRDBController copy failed : %v", err)
 		logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
 		logger.Infof("Elapsed time : %s", end.Sub(start).String())
-		return ctx.JSON(http.StatusOK, map[string]interface{}{
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
@@ -404,7 +404,7 @@ func MigrationMongoDBToFirestorePostHandler(ctx echo.Context) error {
 		logger.Errorf("NRDBController copy failed : %v", err)
 		logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
 		logger.Infof("Elapsed time : %s", end.Sub(start).String())
-		return ctx.JSON(http.StatusOK, map[string]interface{}{
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
