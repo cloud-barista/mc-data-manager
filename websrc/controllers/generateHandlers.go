@@ -74,7 +74,7 @@ func GenerateWindowsPostHandler(ctx echo.Context) error {
 
 	if !osCheck(logger, start, "windows") {
 		fmt.Println("test")
-		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+		return ctx.JSON(http.StatusBadRequest, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
