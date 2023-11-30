@@ -23,6 +23,28 @@ func GenerateLinuxGetHandler(ctx echo.Context) error {
 	})
 }
 
+// SimpleMsg is struct for JSON Simple message
+type BasicResponse struct {
+	Result string `json:"Result"`
+	Error  string `json:"Error"`
+}
+
+type GenerateLinuxPostHandlerResponseBody struct {
+	BasicResponse
+}
+
+// GenerateLinuxPostHandler godoc
+// @Summary Generate test data on on-premise Linux
+// @Description Generate test data on on-premise Linux.
+// @Tags [On-premise] Test Data Generation
+// @Accept  json
+// @Produce  json
+// @Param RequestBody body GenDataParams true "Parameters required to generate test data"
+// @Param CredentialGCP formData file true "Parameters required to generate test data"
+// @Success 200 {object} GenerateLinuxPostHandlerResponseBody "Successfully generated test data"
+// @Failure 400 {object} GenerateLinuxPostHandlerResponseBody "Invalid Request"
+// @Failure 500 {object} GenerateLinuxPostHandlerResponseBody "Internal Server Error"
+// @Router /generate/linux [post]
 func GenerateLinuxPostHandler(ctx echo.Context) error {
 
 	start := time.Now()

@@ -9,8 +9,22 @@ import (
 
 	"github.com/cloud-barista/cm-data-mold/websrc/controllers"
 	"github.com/cloud-barista/cm-data-mold/websrc/routes"
+
+	// REST API (echo)
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+
+	// echo-swagger middleware
+	_ "github.com/cloud-barista/cm-data-mold/websrc/docs"
+	echoSwagger "github.com/swaggo/echo-swagger"
+)
+
+const (
+	infoColor    = "\033[1;34m%s\033[0m"
+	noticeColor  = "\033[1;36m%s\033[0m"
+	warningColor = "\033[1;33m%s\033[0m"
+	errorColor   = "\033[1;31m%s\033[0m"
+	debugColor   = "\033[0;36m%s\033[0m"
 )
 
 // TemplateRenderer is a custom html/template renderer for Echo framework
@@ -48,12 +62,28 @@ func TrustedProxiesMiddleware(trustedProxies []string) echo.MiddlewareFunc {
 	}
 }
 
+// RunServer func start Rest API server
+
+// @title CM-DataMold REST API
+// @version latest
+// @description CM-DataMold REST API
+
+// @contact.name API Support
+// @contact.url http://cloud-barista.github.io
+// @contact.email contact-to-cloud-barista@googlegroups.com
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @BasePath /
 func InitServer(addIP ...string) *echo.Echo {
 	e := echo.New()
 
 	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+
+	e.HideBanner = true
 
 	allowIP := []string{"127.0.0.1", "::1"}
 	allowIP = append(allowIP, addIP...)
@@ -66,6 +96,9 @@ func InitServer(addIP ...string) *echo.Echo {
 	}
 	e.Renderer = renderer
 
+	// Route for system management
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
+
 	e.GET("/", controllers.MainGetHandler)
 
 	generateGroup := e.Group("/generate")
@@ -73,6 +106,13 @@ func InitServer(addIP ...string) *echo.Echo {
 
 	migrationGroup := e.Group("/migration")
 	routes.MigrationRoutes(migrationGroup)
+
+	// selfEndpoint := os.Getenv("SELF_ENDPOINT")
+	selfEndpoint := "localhost"
+	apidashboard := " http://" + selfEndpoint + "/swagger/index.html"
+
+	fmt.Printf(noticeColor, apidashboard)
+	fmt.Println("\n ")
 
 	return e
 }

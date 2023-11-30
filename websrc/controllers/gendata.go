@@ -12,11 +12,11 @@ import (
 
 type GenDataParams struct {
 	Region    string `json:"region" form:"region"`
-	AccessKey string `json:"accessKey"`
-	SecretKey string `json:"secretKey"`
+	AccessKey string `json:"accessKey" form:"accessKey"`
+	SecretKey string `json:"secretKey" form:"secretKey"`
 	Bucket    string `json:"bucket" form:"bucket"`
-	Endpoint  string `json:"endpoint"`
-	DummyPath string `json:"path"`
+	Endpoint  string `json:"endpoint" form:"endpoint"`
+	DummyPath string `json:"path" form:"path"`
 
 	CheckSQL        string `json:"checkSQL" form:"checkSQL"`
 	CheckCSV        string `json:"checkCSV" form:"checkCSV"`
@@ -37,18 +37,18 @@ type GenDataParams struct {
 	SizeZIP        string `json:"sizeZIP" form:"sizeZIP"`
 	SizeJSON       string `json:"sizeJSON" form:"sizeJSON"`
 	SizeXML        string `json:"sizeXML" form:"sizeXML"`
-	SizeServerJSON string
-	SizeServerSQL  string
+	SizeServerJSON string `json:"sizeServerJSON" form:"sizeServerJSON"`
+	SizeServerSQL  string `json:"sizeServerSQL" form:"sizeServerSQL"`
 
-	DBProvider   string `json:"provider"`
-	DBHost       string `json:"host"`
-	DBPort       string `json:"port"`
-	DBUser       string `json:"username"`
-	DBPassword   string `json:"password"`
-	DatabaseName string `json:"databaseName"`
+	DBProvider   string `json:"provider" form:"provider"`
+	DBHost       string `json:"host" form:"host"`
+	DBPort       string `json:"port" form:"port"`
+	DBUser       string `json:"username" form:"username"`
+	DBPassword   string `json:"password" form:"password"`
+	DatabaseName string `json:"databaseName" form:"databaseName"`
 
-	GCPCredential *multipart.FileHeader `form:"gcpCredential"`
-	ProjectID     string                `form:"projectid"`
+	GCPCredential *multipart.FileHeader `form:"gcpCredential" swaggerignore:"true"`
+	ProjectID     string                `json:"projectId" form:"projectid"`
 }
 
 func genData(params GenDataParams, logger *logrus.Logger) error {
