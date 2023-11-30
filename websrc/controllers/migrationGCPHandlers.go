@@ -202,7 +202,7 @@ func MigrationGCPToS3PostHandler(ctx echo.Context) error {
 		logger.Errorf("OSController migration failed : %v", err)
 		logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
 		logger.Infof("Elapsed time : %s", end.Sub(start).String())
-		return ctx.JSON(http.StatusOK, gin.H{
+		return ctx.JSON(http.StatusInternalServerError, gin.H{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
@@ -274,7 +274,7 @@ func MigrationGCPToNCPPostHandler(ctx echo.Context) error {
 		logger.Errorf("OSController migration failed : %v", err)
 		logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
 		logger.Infof("Elapsed time : %s", end.Sub(start).String())
-		return ctx.JSON(http.StatusOK, gin.H{
+		return ctx.JSON(http.StatusInternalServerError, gin.H{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
