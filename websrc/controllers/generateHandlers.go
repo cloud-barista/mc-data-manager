@@ -5,23 +5,10 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"runtime"
 	"time"
 
 	"github.com/labstack/echo/v4"
 )
-
-func GenerateLinuxGetHandler(ctx echo.Context) error {
-
-	logger := getLogger("genlinux")
-	logger.Info("genlinux get page accessed")
-
-	return ctx.Render(http.StatusOK, "index.html", map[string]interface{}{
-		"Content": "Generate-Linux",
-		"os":      runtime.GOOS,
-		"error":   nil,
-	})
-}
 
 // SimpleMsg is struct for JSON Simple message
 type BasicResponse struct {
@@ -74,20 +61,6 @@ func GenerateLinuxPostHandler(ctx echo.Context) error {
 	})
 }
 
-func GenerateWindowsGetHandler(ctx echo.Context) error {
-
-	tmpPath := filepath.Join(os.TempDir(), "dummy")
-
-	logger := getLogger("genwindows")
-	logger.Info("genwindows get page accessed")
-	return ctx.Render(http.StatusOK, "index.html", map[string]interface{}{
-		"Content": "Generate-Windows",
-		"os":      runtime.GOOS,
-		"tmpPath": tmpPath,
-		"error":   nil,
-	})
-}
-
 func GenerateWindowsPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -117,18 +90,6 @@ func GenerateWindowsPostHandler(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, map[string]interface{}{
 		"Result": logstrings.String(),
 		"Error":  nil,
-	})
-}
-
-func GenerateS3GetHandler(ctx echo.Context) error {
-
-	logger := getLogger("genS3")
-	logger.Info("genS3 get page accessed")
-	return ctx.Render(http.StatusOK, "index.html", map[string]interface{}{
-		"Content": "Generate-S3",
-		"os":      runtime.GOOS,
-		"Regions": GetAWSRegions(),
-		"Error":   nil,
 	})
 }
 
@@ -179,17 +140,6 @@ func GenerateS3PostHandler(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, map[string]interface{}{
 		"Result": logstrings.String(),
 		"Error":  nil,
-	})
-}
-
-func GenerateGCPGetHandler(ctx echo.Context) error {
-	logger := getLogger("genGCP")
-	logger.Info("genGCP get page accessed")
-	return ctx.Render(http.StatusOK, "index.html", map[string]interface{}{
-		"Content": "Generate-GCP",
-		"os":      runtime.GOOS,
-		"Regions": GetGCPRegions(),
-		"error":   nil,
 	})
 }
 
@@ -259,18 +209,6 @@ func GenerateGCPPostHandler(ctx echo.Context) error {
 	})
 }
 
-func GenerateNCPGetHandler(ctx echo.Context) error {
-
-	logger := getLogger("genNCP")
-	logger.Info("genNCP get page accessed")
-	return ctx.Render(http.StatusOK, "index.html", map[string]interface{}{
-		"Content": "Generate-NCP",
-		"os":      runtime.GOOS,
-		"Regions": GetNCPRegions(),
-		"error":   nil,
-	})
-}
-
 func GenerateNCPPostHandler(ctx echo.Context) error {
 	start := time.Now()
 
@@ -318,17 +256,6 @@ func GenerateNCPPostHandler(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, map[string]interface{}{
 		"Result": logstrings.String(),
 		"Error":  nil,
-	})
-}
-
-func GenerateMySQLGetHandler(ctx echo.Context) error {
-
-	logger := getLogger("genmysql")
-	logger.Info("genmysql get page accessed")
-	return ctx.Render(http.StatusOK, "index.html", map[string]interface{}{
-		"Content": "Generate-MySQL",
-		"os":      runtime.GOOS,
-		"error":   nil,
 	})
 }
 
@@ -414,17 +341,6 @@ func GenerateMySQLPostHandler(ctx echo.Context) error {
 	})
 }
 
-func GenerateDynamoDBGetHandler(ctx echo.Context) error {
-	logger := getLogger("gendynamodb")
-	logger.Info("gendynamodb get page accessed")
-	return ctx.Render(http.StatusOK, "index.html", map[string]interface{}{
-		"Content": "Generate-DynamoDB",
-		"os":      runtime.GOOS,
-		"Regions": GetAWSRegions(),
-		"error":   nil,
-	})
-}
-
 func GenerateDynamoDBPostHandler(ctx echo.Context) error {
 	start := time.Now()
 
@@ -479,17 +395,6 @@ func GenerateDynamoDBPostHandler(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, map[string]interface{}{
 		"Result": logstrings.String(),
 		"Error":  nil,
-	})
-}
-
-func GenerateFirestoreGetHandler(ctx echo.Context) error {
-	logger := getLogger("genfirestore")
-	logger.Info("genfirestore get page accessed")
-	return ctx.Render(http.StatusOK, "index.html", map[string]interface{}{
-		"Content": "Generate-Firestore",
-		"os":      runtime.GOOS,
-		"Regions": GetGCPRegions(),
-		"error":   nil,
 	})
 }
 
@@ -562,16 +467,6 @@ func GenerateFirestorePostHandler(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, map[string]interface{}{
 		"Result": logstrings.String(),
 		"Error":  nil,
-	})
-}
-
-func GenerateMongoDBGetHandler(ctx echo.Context) error {
-	logger := getLogger("genfirestore")
-	logger.Info("genmongodb get page accessed")
-	return ctx.Render(http.StatusOK, "index.html", map[string]interface{}{
-		"Content": "Generate-MongoDB",
-		"os":      runtime.GOOS,
-		"error":   nil,
 	})
 }
 

@@ -109,8 +109,14 @@ func InitServer(addIP ...string) *echo.Echo {
 
 	// selfEndpoint := os.Getenv("SELF_ENDPOINT")
 	selfEndpoint := "localhost"
+	website := " http://" + selfEndpoint
 	apidashboard := " http://" + selfEndpoint + "/swagger/index.html"
 
+	fmt.Println("Data Mold Web UI is available at")
+	fmt.Printf(noticeColor, website)
+	fmt.Println("\n ")
+
+	fmt.Println("Swagger UI (REST API Document) is available at")
 	fmt.Printf(noticeColor, apidashboard)
 	fmt.Println("\n ")
 

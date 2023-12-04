@@ -26,8 +26,8 @@ type GenDataParams struct {
 	CheckZIP        string `json:"checkZIP" form:"checkZIP"`
 	CheckJSON       string `json:"checkJSON" form:"checkJSON"`
 	CheckXML        string `json:"checkXML" form:"checkXML"`
-	CheckServerJSON string
-	CheckServerSQL  string
+	CheckServerJSON string `json:"checkServerJSON" form:"checkServerJSON"`
+	CheckServerSQL  string `json:"checkServerSQL" form:"checkServerSQL"`
 
 	SizeSQL        string `json:"sizeSQL" form:"sizeSQL"`
 	SizeCSV        string `json:"sizeCSV" form:"sizeCSV"`
