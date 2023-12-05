@@ -1,0 +1,126 @@
+basePath: /
+definitions:
+  controllers.GenDataParams:
+    properties:
+      accessKey:
+        type: string
+      bucket:
+        type: string
+      checkCSV:
+        type: string
+      checkGIF:
+        type: string
+      checkJSON:
+        type: string
+      checkPNG:
+        type: string
+      checkSQL:
+        type: string
+      checkServerJSON:
+        type: string
+      checkServerSQL:
+        type: string
+      checkTXT:
+        type: string
+      checkXML:
+        type: string
+      checkZIP:
+        type: string
+      databaseName:
+        type: string
+      endpoint:
+        type: string
+      host:
+        type: string
+      password:
+        type: string
+      path:
+        type: string
+      port:
+        type: string
+      projectId:
+        type: string
+      provider:
+        type: string
+      region:
+        type: string
+      secretKey:
+        type: string
+      sizeCSV:
+        type: string
+      sizeGIF:
+        type: string
+      sizeJSON:
+        type: string
+      sizePNG:
+        type: string
+      sizeSQL:
+        type: string
+      sizeServerJSON:
+        type: string
+      sizeServerSQL:
+        type: string
+      sizeTXT:
+        type: string
+      sizeXML:
+        type: string
+      sizeZIP:
+        type: string
+      username:
+        type: string
+    type: object
+  controllers.GenerateLinuxPostHandlerResponseBody:
+    properties:
+      Error:
+        type: string
+      Result:
+        type: string
+    type: object
+info:
+  contact:
+    email: contact-to-cloud-barista@googlegroups.com
+    name: API Support
+    url: http://cloud-barista.github.io
+  description: CM-DataMold REST API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: CM-DataMold REST API
+  version: latest
+paths:
+  /generate/linux:
+    post:
+      consumes:
+      - application/json
+      description: Generate test data on on-premise Linux.
+      parameters:
+      - description: Parameters required to generate test data
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.GenDataParams'
+      - description: Parameters required to generate test data
+        in: formData
+        name: CredentialGCP
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully generated test data
+          schema:
+            $ref: '#/definitions/controllers.GenerateLinuxPostHandlerResponseBody'
+        "400":
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/controllers.GenerateLinuxPostHandlerResponseBody'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.GenerateLinuxPostHandlerResponseBody'
+      summary: Generate test data on on-premise Linux
+      tags:
+      - '[On-premise] Test Data Generation'
+swagger: "2.0"
