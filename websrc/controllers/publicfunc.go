@@ -501,21 +501,8 @@ func oscExport(logger *logrus.Logger, startTime time.Time, osType string, osc *o
 	return true
 }
 
-// func getData(jobtype string, ctx *gin.Context) interface{} {
-// 	if jobtype == "gen" {
-// 		data, _ := ctx.GetRawData()
-// 		params := GenDataParams{}
-// 		json.Unmarshal(data, &params)
-// 		return params
-// 	} else {
-
-// 		return nil
-// 	}
-// }
-
 func getData(jobtype string, ctx echo.Context) interface{} {
 	if jobtype == "gen" {
-		// data, _ := ctx.GetRawData() <- gin
 
 		// Read the request body
 		data, err := io.ReadAll(ctx.Request().Body)
@@ -545,39 +532,6 @@ func getDataWithBind(logger *logrus.Logger, startTime time.Time, ctx echo.Contex
 	}
 	return true
 }
-
-// func gcpCreateCredFile(logger *logrus.Logger, startTime time.Time, ctx *gin.Context) (string, string, bool) {
-// 	// gcpCredentialFile, gcpCredentialHeader, err := ctx.Request.FormFile("gcpCredential")
-// 	gcpCredentialFile, gcpCredentialHeader, err := ctx.Request.FormFile("gcpCredential")
-// 	if err != nil {
-// 		end := time.Now()
-// 		logger.Errorf("Get CredentialFile error : %v", err)
-// 		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-// 		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
-// 		return "", "", false
-// 	}
-// 	defer gcpCredentialFile.Close()
-
-// 	credTmpDir, err := os.MkdirTemp("", "datamold-gcp-cred-")
-// 	if err != nil {
-// 		end := time.Now()
-// 		logger.Errorf("Get CredentialFile error : %v", err)
-// 		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-// 		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
-// 		return "", "", false
-// 	}
-
-// 	credFileName := filepath.Join(credTmpDir, gcpCredentialHeader.Filename)
-// 	err = ctx.SaveUploadedFile(gcpCredentialHeader, credFileName)
-// 	if err != nil {
-// 		end := time.Now()
-// 		logger.Errorf("Get CredentialFile error : %v", err)
-// 		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-// 		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
-// 		return "", "", false
-// 	}
-// 	return credTmpDir, credFileName, true
-// }
 
 func gcpCreateCredFile(logger *logrus.Logger, startTime time.Time, ctx echo.Context) (string, string, bool) {
 	logger.Info("Create a temporary directory where credential files will be stored")

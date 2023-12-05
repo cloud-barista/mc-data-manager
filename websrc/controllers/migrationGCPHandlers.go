@@ -7,7 +7,6 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/labstack/echo/v4"
 )
 
@@ -33,7 +32,7 @@ func MigrationGCPToLinuxPostHandler(ctx echo.Context) error {
 	logger, logstrings := pageLogInit("miggcplin", "Export gcp data to windows", start)
 
 	if !osCheck(logger, start, "linux") {
-		return ctx.JSON(http.StatusBadRequest, gin.H{
+		return ctx.JSON(http.StatusBadRequest, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
@@ -41,7 +40,7 @@ func MigrationGCPToLinuxPostHandler(ctx echo.Context) error {
 
 	params := MigrationForm{}
 	if !getDataWithBind(logger, start, ctx, &params) {
-		return ctx.JSON(http.StatusInternalServerError, gin.H{
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
@@ -49,7 +48,7 @@ func MigrationGCPToLinuxPostHandler(ctx echo.Context) error {
 
 	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
 	if !ok {
-		return ctx.JSON(http.StatusInternalServerError, gin.H{
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
@@ -58,14 +57,14 @@ func MigrationGCPToLinuxPostHandler(ctx echo.Context) error {
 
 	gcpOSC := getGCPCOSC(logger, start, "mig", params, credFileName)
 	if gcpOSC == nil {
-		return ctx.JSON(http.StatusInternalServerError, gin.H{
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
 	}
 
 	if !oscExport(logger, start, "gcp", gcpOSC, params.Path) {
-		return ctx.JSON(http.StatusInternalServerError, gin.H{
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
@@ -73,7 +72,7 @@ func MigrationGCPToLinuxPostHandler(ctx echo.Context) error {
 
 	// migration success. Send result to client
 	jobEnd(logger, "Successfully migrated data from gcp to linux", start)
-	return ctx.JSON(http.StatusOK, gin.H{
+	return ctx.JSON(http.StatusOK, map[string]interface{}{
 		"Result": logstrings.String(),
 		"Error":  nil,
 	})
@@ -84,7 +83,7 @@ func MigrationGCPToWindowsGetHandler(ctx echo.Context) error {
 
 	logger := getLogger("miggcpwin")
 	logger.Info("miggcpwin get page accessed")
-	return ctx.Render(http.StatusOK, "index.html", gin.H{
+	return ctx.Render(http.StatusOK, "index.html", map[string]interface{}{
 		"Content": "Migration-GCP-Windows",
 		"os":      runtime.GOOS,
 		"Regions": GetGCPRegions(),
@@ -100,7 +99,7 @@ func MigrationGCPToWindowsPostHandler(ctx echo.Context) error {
 	logger, logstrings := pageLogInit("miggcpwin", "Export gcp data to windows", start)
 
 	if !osCheck(logger, start, "windows") {
-		return ctx.JSON(http.StatusBadRequest, gin.H{
+		return ctx.JSON(http.StatusBadRequest, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
@@ -108,7 +107,7 @@ func MigrationGCPToWindowsPostHandler(ctx echo.Context) error {
 
 	params := MigrationForm{}
 	if !getDataWithBind(logger, start, ctx, &params) {
-		return ctx.JSON(http.StatusInternalServerError, gin.H{
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
@@ -116,7 +115,7 @@ func MigrationGCPToWindowsPostHandler(ctx echo.Context) error {
 
 	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
 	if !ok {
-		return ctx.JSON(http.StatusInternalServerError, gin.H{
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
@@ -125,14 +124,14 @@ func MigrationGCPToWindowsPostHandler(ctx echo.Context) error {
 
 	gcpOSC := getGCPCOSC(logger, start, "mig", params, credFileName)
 	if gcpOSC == nil {
-		return ctx.JSON(http.StatusInternalServerError, gin.H{
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
 	}
 
 	if !oscExport(logger, start, "gcp", gcpOSC, params.Path) {
-		return ctx.JSON(http.StatusInternalServerError, gin.H{
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
@@ -140,7 +139,7 @@ func MigrationGCPToWindowsPostHandler(ctx echo.Context) error {
 
 	// migration success. Send result to client
 	jobEnd(logger, "Successfully migrated data from gcp to windows", start)
-	return ctx.JSON(http.StatusOK, gin.H{
+	return ctx.JSON(http.StatusOK, map[string]interface{}{
 		"Result": logstrings.String(),
 		"Error":  nil,
 	})
@@ -148,7 +147,7 @@ func MigrationGCPToWindowsPostHandler(ctx echo.Context) error {
 
 func MigrationGCPToS3GetHandler(ctx echo.Context) error {
 
-	return ctx.Render(http.StatusOK, "index.html", gin.H{
+	return ctx.Render(http.StatusOK, "index.html", map[string]interface{}{
 		"Content":    "Migration-GCP-S3",
 		"os":         runtime.GOOS,
 		"GCPRegions": GetGCPRegions(),
@@ -165,7 +164,7 @@ func MigrationGCPToS3PostHandler(ctx echo.Context) error {
 
 	params := MigrationForm{}
 	if !getDataWithBind(logger, start, ctx, &params) {
-		return ctx.JSON(http.StatusInternalServerError, gin.H{
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
@@ -173,7 +172,7 @@ func MigrationGCPToS3PostHandler(ctx echo.Context) error {
 
 	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
 	if !ok {
-		return ctx.JSON(http.StatusInternalServerError, gin.H{
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
@@ -182,7 +181,7 @@ func MigrationGCPToS3PostHandler(ctx echo.Context) error {
 
 	gcpOSC := getGCPCOSC(logger, start, "mig", params, credFileName)
 	if gcpOSC == nil {
-		return ctx.JSON(http.StatusInternalServerError, gin.H{
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
@@ -190,7 +189,7 @@ func MigrationGCPToS3PostHandler(ctx echo.Context) error {
 
 	awsOSC := getS3OSC(logger, start, "mig", params)
 	if awsOSC == nil {
-		return ctx.JSON(http.StatusInternalServerError, gin.H{
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
@@ -202,7 +201,7 @@ func MigrationGCPToS3PostHandler(ctx echo.Context) error {
 		logger.Errorf("OSController migration failed : %v", err)
 		logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
 		logger.Infof("Elapsed time : %s", end.Sub(start).String())
-		return ctx.JSON(http.StatusInternalServerError, gin.H{
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
@@ -210,7 +209,7 @@ func MigrationGCPToS3PostHandler(ctx echo.Context) error {
 
 	// migration success. Send result to client
 	jobEnd(logger, "Successfully migrated data from gcp to s3", start)
-	return ctx.JSON(http.StatusOK, gin.H{
+	return ctx.JSON(http.StatusOK, map[string]interface{}{
 		"Result": logstrings.String(),
 		"Error":  nil,
 	})
@@ -220,7 +219,7 @@ func MigrationGCPToNCPGetHandler(ctx echo.Context) error {
 
 	logger := getLogger("miggcpncp")
 	logger.Info("miggcpncp get page accessed")
-	return ctx.Render(http.StatusOK, "index.html", gin.H{
+	return ctx.Render(http.StatusOK, "index.html", map[string]interface{}{
 		"Content":    "Migration-GCP-NCP",
 		"os":         runtime.GOOS,
 		"GCPRegions": GetGCPRegions(),
@@ -237,7 +236,7 @@ func MigrationGCPToNCPPostHandler(ctx echo.Context) error {
 
 	params := MigrationForm{}
 	if !getDataWithBind(logger, start, ctx, &params) {
-		return ctx.JSON(http.StatusInternalServerError, gin.H{
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
@@ -245,7 +244,7 @@ func MigrationGCPToNCPPostHandler(ctx echo.Context) error {
 
 	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
 	if !ok {
-		return ctx.JSON(http.StatusInternalServerError, gin.H{
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
@@ -254,7 +253,7 @@ func MigrationGCPToNCPPostHandler(ctx echo.Context) error {
 
 	gcpOSC := getGCPCOSC(logger, start, "mig", params, credFileName)
 	if gcpOSC == nil {
-		return ctx.JSON(http.StatusInternalServerError, gin.H{
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
@@ -262,7 +261,7 @@ func MigrationGCPToNCPPostHandler(ctx echo.Context) error {
 
 	ncpOSC := getS3COSC(logger, start, "mig", params)
 	if ncpOSC == nil {
-		return ctx.JSON(http.StatusInternalServerError, gin.H{
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
@@ -274,14 +273,14 @@ func MigrationGCPToNCPPostHandler(ctx echo.Context) error {
 		logger.Errorf("OSController migration failed : %v", err)
 		logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
 		logger.Infof("Elapsed time : %s", end.Sub(start).String())
-		return ctx.JSON(http.StatusInternalServerError, gin.H{
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"Result": logstrings.String(),
 			"Error":  nil,
 		})
 	}
 
 	jobEnd(logger, "Successfully migrated data from gcp to ncp", start)
-	return ctx.JSON(http.StatusOK, gin.H{
+	return ctx.JSON(http.StatusOK, map[string]interface{}{
 		"Result": logstrings.String(),
 		"Error":  nil,
 	})
