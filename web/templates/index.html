@@ -24,7 +24,7 @@
                             </a>
                             <div class="collapse" id="collapseOnpremiseGenerate" data-bs-parent="#collapseOnpremiseGenerate">
                                 <nav class="sb-sidenav-menu-nested nav">
-                                    {{if eq .os "linux"}}
+                                    {{if eq .OS "linux"}}
                                         <a class="nav-link" href="/generate/linux">Linux</a>
                                     {{else}}
                                         <a class="nav-link" href="/generate/windows">Windows</a>
@@ -80,7 +80,7 @@
                             </a>
                             <div class="collapse" id="collapseOnpremiseMigration" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionOnpremiseMigration">
-                                    {{if eq .os "linux"}}
+                                    {{if eq .OS "linux"}}
                                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#migrationCollapseLinux" aria-expanded="false" aria-controls="migrationCollapseLinux">
                                             Linux to
                                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -123,7 +123,7 @@
                                     </a>
                                     <div class="collapse" id="migrationCollapseS3" data-bs-parent="#sidenavAccordionObjectStorageMigration">
                                         <nav class="sb-sidenav-menu-nested nav">
-                                            {{if eq .os "linux"}}
+                                            {{if eq .OS "linux"}}
                                                 <a class="nav-link" href="/migration/s3/linux">Linux</a>
                                             {{else}}
                                                 <a class="nav-link" href="/migration/s3/windows">Windows</a>
@@ -139,7 +139,7 @@
                                     </a>
                                     <div class="collapse" id="migrationCollapseGCP" data-bs-parent="#sidenavAccordionObjectStorageMigration">
                                         <nav class="sb-sidenav-menu-nested nav">
-                                            {{if eq .os "linux"}}
+                                            {{if eq .OS "linux"}}
                                                 <a class="nav-link" href="/migration/gcp/linux">Linux</a>
                                             {{else}}
                                                 <a class="nav-link" href="/migration/gcp/windows">Windows</a>
@@ -155,7 +155,7 @@
                                     </a>
                                     <div class="collapse" id="migrationCollapseNCP" data-bs-parent="#sidenavAccordionObjectStorageMigration">
                                         <nav class="sb-sidenav-menu-nested nav">
-                                            {{if eq .os "linux"}}
+                                            {{if eq .OS "linux"}}
                                                 <a class="nav-link" href="/migration/ncp/linux">Linux</a>
                                             {{else}}
                                                 <a class="nav-link" href="/migration/ncp/windows">Windows</a>
