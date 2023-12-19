@@ -38,12 +38,6 @@
                         "schema": {
                             "$ref": "#/definitions/controllers.GenDataParams"
                         }
-                    },
-                    {
-                        "type": "file",
-                        "description": "Parameters required to generate test data",
-                        "name": "CredentialGCP",
-                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -178,12 +172,6 @@
                         "schema": {
                             "$ref": "#/definitions/controllers.GenDataParams"
                         }
-                    },
-                    {
-                        "type": "file",
-                        "description": "Parameters required to generate test data",
-                        "name": "CredentialGCP",
-                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -230,12 +218,6 @@
                         "schema": {
                             "$ref": "#/definitions/controllers.GenDataParams"
                         }
-                    },
-                    {
-                        "type": "file",
-                        "description": "Parameters required to generate test data",
-                        "name": "CredentialGCP",
-                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -276,12 +258,6 @@
                         "schema": {
                             "$ref": "#/definitions/controllers.GenDataParams"
                         }
-                    },
-                    {
-                        "type": "file",
-                        "description": "Parameters required to generate test data",
-                        "name": "CredentialGCP",
-                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -322,12 +298,6 @@
                         "schema": {
                             "$ref": "#/definitions/controllers.GenDataParams"
                         }
-                    },
-                    {
-                        "type": "file",
-                        "description": "Parameters required to generate test data",
-                        "name": "CredentialGCP",
-                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -368,12 +338,6 @@
                         "schema": {
                             "$ref": "#/definitions/controllers.GenDataParams"
                         }
-                    },
-                    {
-                        "type": "file",
-                        "description": "Parameters required to generate test data",
-                        "name": "CredentialGCP",
-                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -414,12 +378,6 @@
                         "schema": {
                             "$ref": "#/definitions/controllers.GenDataParams"
                         }
-                    },
-                    {
-                        "type": "file",
-                        "description": "Parameters required to generate test data",
-                        "name": "CredentialGCP",
-                        "in": "formData"
                     }
                 ],
                 "responses": {
