@@ -50,8 +50,7 @@ const docTemplate = `{
                         "type": "file",
                         "description": "Parameters required to generate test data",
                         "name": "CredentialGCP",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -191,8 +190,7 @@ const docTemplate = `{
                         "type": "file",
                         "description": "Parameters required to generate test data",
                         "name": "CredentialGCP",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -244,8 +242,7 @@ const docTemplate = `{
                         "type": "file",
                         "description": "Parameters required to generate test data",
                         "name": "CredentialGCP",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -291,8 +288,7 @@ const docTemplate = `{
                         "type": "file",
                         "description": "Parameters required to generate test data",
                         "name": "CredentialGCP",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -338,8 +334,7 @@ const docTemplate = `{
                         "type": "file",
                         "description": "Parameters required to generate test data",
                         "name": "CredentialGCP",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -385,8 +380,7 @@ const docTemplate = `{
                         "type": "file",
                         "description": "Parameters required to generate test data",
                         "name": "CredentialGCP",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -432,8 +426,7 @@ const docTemplate = `{
                         "type": "file",
                         "description": "Parameters required to generate test data",
                         "name": "CredentialGCP",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {

@@ -103,7 +103,6 @@ paths:
       - description: Parameters required to generate test data
         in: formData
         name: CredentialGCP
-        required: true
         type: file
       produces:
       - application/json
@@ -196,7 +195,6 @@ paths:
       - description: Parameters required to generate test data
         in: formData
         name: CredentialGCP
-        required: true
         type: file
       produces:
       - application/json
@@ -231,7 +229,6 @@ paths:
       - description: Parameters required to generate test data
         in: formData
         name: CredentialGCP
-        required: true
         type: file
       produces:
       - application/json
@@ -262,7 +259,6 @@ paths:
       - description: Parameters required to generate test data
         in: formData
         name: CredentialGCP
-        required: true
         type: file
       produces:
       - application/json
@@ -293,7 +289,6 @@ paths:
       - description: Parameters required to generate test data
         in: formData
         name: CredentialGCP
-        required: true
         type: file
       produces:
       - application/json
@@ -324,7 +319,6 @@ paths:
       - description: Parameters required to generate test data
         in: formData
         name: CredentialGCP
-        required: true
         type: file
       produces:
       - application/json
@@ -355,7 +349,6 @@ paths:
       - description: Parameters required to generate test data
         in: formData
         name: CredentialGCP
-        required: true
         type: file
       produces:
       - application/json
