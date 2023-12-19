@@ -45,12 +45,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/controllers.GenDataParams"
                         }
-                    },
-                    {
-                        "type": "file",
-                        "description": "Parameters required to generate test data",
-                        "name": "CredentialGCP",
-                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -185,12 +179,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/controllers.GenDataParams"
                         }
-                    },
-                    {
-                        "type": "file",
-                        "description": "Parameters required to generate test data",
-                        "name": "CredentialGCP",
-                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -237,12 +225,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/controllers.GenDataParams"
                         }
-                    },
-                    {
-                        "type": "file",
-                        "description": "Parameters required to generate test data",
-                        "name": "CredentialGCP",
-                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -283,12 +265,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/controllers.GenDataParams"
                         }
-                    },
-                    {
-                        "type": "file",
-                        "description": "Parameters required to generate test data",
-                        "name": "CredentialGCP",
-                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -329,12 +305,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/controllers.GenDataParams"
                         }
-                    },
-                    {
-                        "type": "file",
-                        "description": "Parameters required to generate test data",
-                        "name": "CredentialGCP",
-                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -375,12 +345,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/controllers.GenDataParams"
                         }
-                    },
-                    {
-                        "type": "file",
-                        "description": "Parameters required to generate test data",
-                        "name": "CredentialGCP",
-                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -421,12 +385,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/controllers.GenDataParams"
                         }
-                    },
-                    {
-                        "type": "file",
-                        "description": "Parameters required to generate test data",
-                        "name": "CredentialGCP",
-                        "in": "formData"
                     }
                 ],
                 "responses": {

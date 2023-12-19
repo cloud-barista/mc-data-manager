@@ -18,7 +18,6 @@ import (
 // @Accept  json
 // @Produce  json
 // @Param RequestBody body GenDataParams true "Parameters required to generate test data"
-// @Param CredentialGCP formData file false "Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully generated test data"
 // @Failure 400 {object} models.BasicResponse "Invalid Request"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
@@ -59,7 +58,6 @@ func GenerateLinuxPostHandler(ctx echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Param RequestBody body GenDataParams true "Parameters required to generate test data"
-// @Param CredentialGCP formData file false "Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully generated test data"
 // @Failure 400 {object} models.BasicResponse "Invalid Request"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
@@ -107,7 +105,6 @@ type GenerateS3PostHandlerResponseBody struct {
 // @Accept  json
 // @Produce  json
 // @Param RequestBody body GenDataParams true "Parameters required to generate test data"
-// @Param CredentialGCP formData file false "Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully generated test data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /generate/s3 [post]
@@ -245,7 +242,6 @@ func GenerateGCPPostHandler(ctx echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Param RequestBody body GenDataParams true "Parameters required to generate test data"
-// @Param CredentialGCP formData file false "Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully generated test data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /generate/ncp [post]
@@ -306,7 +302,6 @@ func GenerateNCPPostHandler(ctx echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Param RequestBody body GenDataParams true "Parameters required to generate test data"
-// @Param CredentialGCP formData file false "Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully generated test data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /generate/mysql [post]
@@ -399,7 +394,6 @@ func GenerateMySQLPostHandler(ctx echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Param RequestBody body GenDataParams true "Parameters required to generate test data"
-// @Param CredentialGCP formData file false "Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully generated test data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /generate/dynamodb [post]
@@ -550,7 +544,6 @@ func GenerateFirestorePostHandler(ctx echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Param RequestBody body GenDataParams true "Parameters required to generate test data"
-// @Param CredentialGCP formData file false "Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully generated test data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /generate/mongodb [post]
