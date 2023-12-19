@@ -69,7 +69,7 @@ definitions:
       username:
         type: string
     type: object
-  controllers.GenerateLinuxPostHandlerResponseBody:
+  models.BasicResponse:
     properties:
       Error:
         type: string
@@ -88,6 +88,99 @@ info:
   title: CM-DataMold REST API
   version: latest
 paths:
+  /generate/dynamodb:
+    post:
+      consumes:
+      - application/json
+      description: Generate test data on AWS DynamoDB.
+      parameters:
+      - description: Parameters required to generate test data
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.GenDataParams'
+      - description: Parameters required to generate test data
+        in: formData
+        name: CredentialGCP
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully generated test data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Generate test data on AWS DynamoDB
+      tags:
+      - '[Test Data Generation] AWS DynamoDB'
+  /generate/firestore:
+    post:
+      consumes:
+      - application/json
+      description: Generate test data on GCP Firestore.
+      parameters:
+      - description: Parameters required to generate test data
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.GenDataParams'
+      - description: Parameters required to generate test data
+        in: formData
+        name: CredentialGCP
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully generated test data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Generate test data on GCP Firestore
+      tags:
+      - '[Test Data Generation] GCP Firestore'
+  /generate/gcp:
+    post:
+      consumes:
+      - application/json
+      description: Generate test data on GCP Cloud Storage.
+      parameters:
+      - description: Parameters required to generate test data
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.GenDataParams'
+      - description: Parameters required to generate test data
+        in: formData
+        name: CredentialGCP
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully generated test data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Generate test data on GCP Cloud Storage
+      tags:
+      - '[Test Data Generation] GCP Cloud Storage'
   /generate/linux:
     post:
       consumes:
@@ -111,16 +204,175 @@ paths:
         "200":
           description: Successfully generated test data
           schema:
-            $ref: '#/definitions/controllers.GenerateLinuxPostHandlerResponseBody'
+            $ref: '#/definitions/models.BasicResponse'
         "400":
           description: Invalid Request
           schema:
-            $ref: '#/definitions/controllers.GenerateLinuxPostHandlerResponseBody'
+            $ref: '#/definitions/models.BasicResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/controllers.GenerateLinuxPostHandlerResponseBody'
+            $ref: '#/definitions/models.BasicResponse'
       summary: Generate test data on on-premise Linux
       tags:
-      - '[On-premise] Test Data Generation'
+      - '[Test Data Generation] On-premise Linux'
+  /generate/mongodb:
+    post:
+      consumes:
+      - application/json
+      description: Generate test data on NCP MongoDB.
+      parameters:
+      - description: Parameters required to generate test data
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.GenDataParams'
+      - description: Parameters required to generate test data
+        in: formData
+        name: CredentialGCP
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully generated test data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Generate test data on NCP MongoDB
+      tags:
+      - '[Test Data Generation] NCP MongoDB'
+  /generate/mysql:
+    post:
+      consumes:
+      - application/json
+      description: Generate test data on MySQL.
+      parameters:
+      - description: Parameters required to generate test data
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.GenDataParams'
+      - description: Parameters required to generate test data
+        in: formData
+        name: CredentialGCP
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully generated test data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Generate test data on MySQL
+      tags:
+      - '[Test Data Generation] MySQL'
+  /generate/ncp:
+    post:
+      consumes:
+      - application/json
+      description: Generate test data on NCP Object Storage.
+      parameters:
+      - description: Parameters required to generate test data
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.GenDataParams'
+      - description: Parameters required to generate test data
+        in: formData
+        name: CredentialGCP
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully generated test data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Generate test data on NCP Object Storage
+      tags:
+      - '[Test Data Generation] NCP Object Storage'
+  /generate/s3:
+    post:
+      consumes:
+      - application/json
+      description: Generate test data on AWS S3.
+      parameters:
+      - description: Parameters required to generate test data
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.GenDataParams'
+      - description: Parameters required to generate test data
+        in: formData
+        name: CredentialGCP
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully generated test data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Generate test data on AWS S3
+      tags:
+      - '[Test Data Generation] AWS S3'
+  /generate/windows:
+    post:
+      consumes:
+      - application/json
+      description: Generate test data on on-premise Windows.
+      parameters:
+      - description: Parameters required to generate test data
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.GenDataParams'
+      - description: Parameters required to generate test data
+        in: formData
+        name: CredentialGCP
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully generated test data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "400":
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Generate test data on on-premise Windows
+      tags:
+      - '[Test Data Generation] On-premise Windows'
 swagger: "2.0"

@@ -23,6 +23,147 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/generate/dynamodb": {
+            "post": {
+                "description": "Generate test data on AWS DynamoDB.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Test Data Generation] AWS DynamoDB"
+                ],
+                "summary": "Generate test data on AWS DynamoDB",
+                "parameters": [
+                    {
+                        "description": "Parameters required to generate test data",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.GenDataParams"
+                        }
+                    },
+                    {
+                        "type": "file",
+                        "description": "Parameters required to generate test data",
+                        "name": "CredentialGCP",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully generated test data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/generate/firestore": {
+            "post": {
+                "description": "Generate test data on GCP Firestore.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Test Data Generation] GCP Firestore"
+                ],
+                "summary": "Generate test data on GCP Firestore",
+                "parameters": [
+                    {
+                        "description": "Parameters required to generate test data",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.GenDataParams"
+                        }
+                    },
+                    {
+                        "type": "file",
+                        "description": "Parameters required to generate test data",
+                        "name": "CredentialGCP",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully generated test data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/generate/gcp": {
+            "post": {
+                "description": "Generate test data on GCP Cloud Storage.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Test Data Generation] GCP Cloud Storage"
+                ],
+                "summary": "Generate test data on GCP Cloud Storage",
+                "parameters": [
+                    {
+                        "description": "Parameters required to generate test data",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.GenDataParams"
+                        }
+                    },
+                    {
+                        "type": "file",
+                        "description": "Parameters required to generate test data",
+                        "name": "CredentialGCP",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully generated test data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/generate/linux": {
             "post": {
                 "description": "Generate test data on on-premise Linux.",
@@ -33,7 +174,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[On-premise] Test Data Generation"
+                    "[Test Data Generation] On-premise Linux"
                 ],
                 "summary": "Generate test data on on-premise Linux",
                 "parameters": [
@@ -58,19 +199,260 @@ const docTemplate = `{
                     "200": {
                         "description": "Successfully generated test data",
                         "schema": {
-                            "$ref": "#/definitions/controllers.GenerateLinuxPostHandlerResponseBody"
+                            "$ref": "#/definitions/models.BasicResponse"
                         }
                     },
                     "400": {
                         "description": "Invalid Request",
                         "schema": {
-                            "$ref": "#/definitions/controllers.GenerateLinuxPostHandlerResponseBody"
+                            "$ref": "#/definitions/models.BasicResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/controllers.GenerateLinuxPostHandlerResponseBody"
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/generate/mongodb": {
+            "post": {
+                "description": "Generate test data on NCP MongoDB.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Test Data Generation] NCP MongoDB"
+                ],
+                "summary": "Generate test data on NCP MongoDB",
+                "parameters": [
+                    {
+                        "description": "Parameters required to generate test data",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.GenDataParams"
+                        }
+                    },
+                    {
+                        "type": "file",
+                        "description": "Parameters required to generate test data",
+                        "name": "CredentialGCP",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully generated test data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/generate/mysql": {
+            "post": {
+                "description": "Generate test data on MySQL.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Test Data Generation] MySQL"
+                ],
+                "summary": "Generate test data on MySQL",
+                "parameters": [
+                    {
+                        "description": "Parameters required to generate test data",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.GenDataParams"
+                        }
+                    },
+                    {
+                        "type": "file",
+                        "description": "Parameters required to generate test data",
+                        "name": "CredentialGCP",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully generated test data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/generate/ncp": {
+            "post": {
+                "description": "Generate test data on NCP Object Storage.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Test Data Generation] NCP Object Storage"
+                ],
+                "summary": "Generate test data on NCP Object Storage",
+                "parameters": [
+                    {
+                        "description": "Parameters required to generate test data",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.GenDataParams"
+                        }
+                    },
+                    {
+                        "type": "file",
+                        "description": "Parameters required to generate test data",
+                        "name": "CredentialGCP",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully generated test data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/generate/s3": {
+            "post": {
+                "description": "Generate test data on AWS S3.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Test Data Generation] AWS S3"
+                ],
+                "summary": "Generate test data on AWS S3",
+                "parameters": [
+                    {
+                        "description": "Parameters required to generate test data",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.GenDataParams"
+                        }
+                    },
+                    {
+                        "type": "file",
+                        "description": "Parameters required to generate test data",
+                        "name": "CredentialGCP",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully generated test data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/generate/windows": {
+            "post": {
+                "description": "Generate test data on on-premise Windows.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Test Data Generation] On-premise Windows"
+                ],
+                "summary": "Generate test data on on-premise Windows",
+                "parameters": [
+                    {
+                        "description": "Parameters required to generate test data",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.GenDataParams"
+                        }
+                    },
+                    {
+                        "type": "file",
+                        "description": "Parameters required to generate test data",
+                        "name": "CredentialGCP",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully generated test data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
                         }
                     }
                 }
@@ -182,7 +564,7 @@ const docTemplate = `{
                 }
             }
         },
-        "controllers.GenerateLinuxPostHandlerResponseBody": {
+        "models.BasicResponse": {
             "type": "object",
             "properties": {
                 "Error": {
