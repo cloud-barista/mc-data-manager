@@ -16,4 +16,5 @@ Data Mold는 데이터 마이그레이션 기술의 검증을 위한 환경을 �
 
 해당 가이드는 Ubuntu 22.04 대상으로 설치 및 명령어 사용방법을 작성한 가이드입니다.
 
-* Data Mold [설치 및 시험가이드](docs/Installation-and-Testing-Guide.md)
+* [Data Mold 기능명세서](docs/Datamold-Function-Specification.md)
+* [Data Mold 사용가이드](docs/Datamold-Usage-Guide.md)
