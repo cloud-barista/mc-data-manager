@@ -34,11 +34,16 @@
 ## 1. 정형데이터 생성 및 마이그레이션
 ### 온프레미스(리눅스서버)에서 AWS S3
 1. data-mold server 접속 후 좌측 메뉴에서 데이터 생성 -> Object Storage -> AWS S3 순으로 클릭
-    ![main](/docs/image/web/main.png)
+
+<p align="center"><img src="/docs/image/web/main.png" ></p>
+
 2. 사용자의 AWS 인증정보와 사용하고자 하는 리전 선택, 버킷 명을 입력한 다음 생성 할 데이터를 선택 및 용량 입력 후 생성 버튼 클릭
-    ![main](/docs/image/web/creates3.png)
+
+<p align="center"><img src="/docs/image/web/creates3.png" ></p>
+
 3. 성공 및 실패는 아래 로그에서 확인이 가능합니다.
-    ![main](/docs/image/web/s3sql.png)
+
+<p align="center"><img src="/docs/image/web/s3sql.png" ></p>
 
 ## 2. 비정형데이터 생성 및 마이그레이션
 ### 온프레미스(리눅스서버)에서 GCP Cloud Storage
