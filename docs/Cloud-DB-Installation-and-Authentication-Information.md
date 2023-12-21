@@ -87,21 +87,37 @@ RDS(MySQL) 연결을 위해 보안그룹을 클릭합니다.
 ## NCP Cloud DB for MySQL 생성 및 인증정보
 1.	NCP 콘솔에 로그인합니다.
 2.	메뉴->Cloud DB for MySQL에 선택한 후 “DB Server 생성”을 클릭합니다.
-    ![mysql0](/docs/image/pre-check/mysql0.png)
+
+<p align="center"><img src="/docs/image/pre-check/mysql0.png" ></p>
+
 3.	DB Server 생성에 필요한 정보를 입력합니다.
-    ![mysql1](/docs/image/pre-check/mysql1.png)
+
+<p align="center"><img src="/docs/image/pre-check/mysql1.png" ></p>
+
 4.	접속ID, 암호, 포트, 접속 허용할 Host IP 와 기본 DB 명을 입력합니다.
-    ![mysql2](/docs/image/pre-check/mysql2.png)
+
+<p align="center"><img src="/docs/image/pre-check/mysql2.png" ></p>
+
 5.	생성 된 DB Server를 클릭한 후 Public 도메인 관리를 선택합니다.
-    ![mysql3](/docs/image/pre-check/mysql3.png)
+
+<p align="center"><img src="/docs/image/pre-check/mysql3.png" ></p>
+
 6.	Public 도메인 신청에서 “예”를 클릭하여 도메인은 신청합니다.
-    ![mysql4](/docs/image/pre-check/mysql4.png)
+
+<p align="center"><img src="/docs/image/pre-check/mysql4.png" ></p>
+
 7.	접근 보안을 위해 Client(PC)의 IP를 확인한 후 ACG 설정으로 들어갑니다.
-    ![mysql5](/docs/image/pre-check/mysql5.png)
+
+<p align="center"><img src="/docs/image/pre-check/mysql5.png" ></p>
+
 8.	DB서버의 ACG에 접근 소스와 허용포트 ”3306” 값을 추가한 후 적용을 합니다.
-    ![mysql6](/docs/image/pre-check/mysql6.png)
+
+<p align="center"><img src="/docs/image/pre-check/mysql6.png" ></p>
+
 9.	DB에 접근이 되는지 확인합니다.
-    ![mysql7](/docs/image/pre-check/mysql7.png)
+
+<p align="center"><img src="/docs/image/pre-check/mysql7.png" ></p>
+
 ## NCP Cloud DB for MongoDB 생성 및 인증정보
 1.	NCP 콘솔에 로그인합니다.
 2.	메뉴->Cloud DB for MySQL에 선택한 후 “DB Server 생성”을 클릭합니다.
