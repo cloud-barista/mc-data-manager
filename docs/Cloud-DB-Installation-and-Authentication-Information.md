@@ -53,21 +53,37 @@ RDS(MySQL) 연결을 위해 보안그룹을 클릭합니다.
 ## GCP SQL MySQL 생성 및 인증정보
 1.	GCP 콘솔에 로그인합니다.
 2.	메뉴->SQL으로 들어가서 "인스턴스 만들기"를 클릭합니다.
-    ![sql0](/docs/image/pre-check/sql0.png)
+
+<p align="center"><img src="/docs/image/pre-check/sql0.png" ></p>
+
 3.	MYSQL 인스턴스 만들기에서 인스턴스 이름과 root 계정의 비밀번호를 입력합니다.
-    ![sql1](/docs/image/pre-check/sql1.png)
+
+<p align="center"><img src="/docs/image/pre-check/sql1.png" ></p>
+
 4.	Cloud SQL 버전은 특성에 따라 선택합니다.
-    ![sql2](/docs/image/pre-check/sql2.png)
+
+<p align="center"><img src="/docs/image/pre-check/sql2.png" ></p>
+
 5.	리전은 "asia-northeast3 (서울)"을 선택합니다.
-    ![sql3](/docs/image/pre-check/sql3.png)
+
+<p align="center"><img src="/docs/image/pre-check/sql3.png" ></p>
+
 6.	접근을 위해 "공개 IP" 체크와 "네트워크 추가"를 클릭해서 접속할 Client(PC)의 IP를 입력합니다.
-    ![sql4](/docs/image/pre-check/sql4.png)
+
+<p align="center"><img src="/docs/image/pre-check/sql4.png" ></p>
+
 7.	설정이 마치면 Cloud SQL서비스를 생성합니다.
-    ![sql5](/docs/image/pre-check/sql5.png)
+
+<p align="center"><img src="/docs/image/pre-check/sql5.png" ></p>
+
 8.	생성이 완료되면 왼쪽 메뉴의 연결 클릭 시 접속할 수 있는 공개IP를 확인할 수 있습니다.
-    ![sql6](/docs/image/pre-check/sql6.png)
+
+<p align="center"><img src="/docs/image/pre-check/sql6.png" ></p>
+
 9.	공개IP를 이용하여 SQL에 접속합니다.
-    ![sql7](/docs/image/pre-check/sql7.png)
+
+<p align="center"><img src="/docs/image/pre-check/sql7.png" ></p>
+
 ## NCP Cloud DB for MySQL 생성 및 인증정보
 1.	NCP 콘솔에 로그인합니다.
 2.	메뉴->Cloud DB for MySQL에 선택한 후 “DB Server 생성”을 클릭합니다.
