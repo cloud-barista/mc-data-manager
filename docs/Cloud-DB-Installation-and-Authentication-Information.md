@@ -3,33 +3,53 @@
 ## AWS RDS MySQL 생성 및 인증정보
 1. AWS 콘솔에 로그인합니다.
 2. RDS 서비스 선택 -> 대시보드 -> "데이터베이스 생성" 메뉴를 선택합니다.
-    ![rds0](/docs/image/pre-check/rds0.png)
+
+<p align="center"><img src="/docs/image/pre-check/rds0.png" ></p>
+
 3. 데이터베이스 생성방식 선택은 "표준 생성"을 선택하고, 엔진 옵션은 "MySQL"을 선택합니다.
-    ![rds1](/docs/image/pre-check/rds1.png)
+
+<p align="center"><img src="/docs/image/pre-check/rds1.png" ></p>
+
 4. 템플릿은 비용에 맞게 적절히 선택이 필요합니다. (현 가이드에선 "프리 티어" 선택)
 DB인스턴스 식별자는 RDS 접속을 위해 자동으로 생성할 인스턴스 이름을 입력합니다.
 자격증명은 DB 접속을 위한 계정/패스워드를 입력합니다.
-    ![rds2](/docs/image/pre-check/rds2.png)
+
+<p align="center"><img src="/docs/image/pre-check/rds2.png" ></p>
+
 5. DB인스턴스 생성을 위한 스펙을 선택합니다.
-    ![rds3](/docs/image/pre-check/rds3.png)
+
+<p align="center"><img src="/docs/image/pre-check/rds3.png" ></p>
+
 6. 네트워크 설정 후 퍼블릭 엑세스는 "예"로 선택합니다.
-    ![rds4](/docs/image/pre-check/rds4.png)
+
+<p align="center"><img src="/docs/image/pre-check/rds4.png" ></p>
+
 7. 세부사항은 필요시 추가한 후 "데이터베이스 생성" 버튼을 클릭합니다.
-    ![rds5](/docs/image/pre-check/rds5.png)
+
+<p align="center"><img src="/docs/image/pre-check/rds5.png" ></p>
+
 8. 데이터베이스 생성화면입니다.
-    ![rds6](/docs/image/pre-check/rds6.png)
+
+<p align="center"><img src="/docs/image/pre-check/rds6.png" ></p>
+
 9.  정상적으로 생성 후 엔드포인트 및 포트정보를 확인할 수 있습니다.
 RDS(MySQL) 연결을 위해 보안그룹을 클릭합니다.
-    ![rds7](/docs/image/pre-check/rds7.png)
+
+<p align="center"><img src="/docs/image/pre-check/rds7.png" ></p>
+
 10.	인바운드 규칙을 수정해서 MySQL 접속하는 Client(PC)의 IP와 포트 규칙을 추가합니다.
     ```
     프로토콜 : TCP
     포트 범위 : 3306
     소스 : xxx.xxx.xxx.xxx/32
     ```
-    ![rds8](/docs/image/pre-check/rds8.png)
+
+<p align="center"><img src="/docs/image/pre-check/rds8.png" ></p>
+
 11.	Client(PC)에서 MySQL를 통해 정상적으로 접속되는지 확인합니다.
-    ![rds9](/docs/image/pre-check/rds9.png)
+
+<p align="center"><img src="/docs/image/pre-check/rds9.png" ></p>
+
 ## GCP SQL MySQL 생성 및 인증정보
 1.	GCP 콘솔에 로그인합니다.
 2.	메뉴->SQL으로 들어가서 "인스턴스 만들기"를 클릭합니다.
