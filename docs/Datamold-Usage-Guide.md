@@ -7,10 +7,12 @@
     * 예시
 
         **GCP**
-        ![gcp_pre_auth](/docs/image/pre-check/gcp_pre_auth.png)
+        
+        <p align="center"><img src="/docs/image/pre-check/gcp_pre_auth.png" ></p>
+        
         **NCP**
         
-<p align="center"><img src="/docs/image/pre-check/ncp_pre_auth.png" ></p>
+        <p align="center"><img src="/docs/image/pre-check/ncp_pre_auth.png" ></p>
 
 * GCP와 NCP는 사전에 인증정보에 권한을 부여해야합니다.
   
