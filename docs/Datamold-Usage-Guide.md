@@ -91,8 +91,14 @@
 ## 5. 클라우드 비관계형데이터베이스 생성 및 마이그레이션
 ### AWS DynamoDB에서 NCP Cloud DB for MongoDB
 1. data-mold server 접속 후 좌측 메뉴에서 Migration -> NoSQL -> AWS DynamoDB to -> MongoDB 순으로 클릭
-    ![main](/docs/image/web/main.png)
+
+<p align="center"><img src="/docs/image/web/main.png" ></p>
+
 2. 사용자의 AWS RDS 접속정보를 소스 MySQL, 사용자의 GCP SQL 접속정보를 목표 MySQL에 입력 후 생성 버튼 클릭
-    ![main](/docs/image/web/migmysql.png)
+
+<p align="center"><img src="/docs/image/web/migmysql.png" ></p>
+
 3. 성공 및 실패는 아래 로그에서 확인이 가능합니다.
-    ![main](/docs/image/web/rdstosql.png)
+
+<p align="center"><img src="/docs/image/web/rdstosql.png" ></p>
+
