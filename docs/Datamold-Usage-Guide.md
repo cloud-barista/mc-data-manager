@@ -9,7 +9,9 @@
         **GCP**
         ![gcp_pre_auth](/docs/image/pre-check/gcp_pre_auth.png)
         **NCP**
-        ![ncp_pre_auth](/docs/image/pre-check/ncp_pre_auth.png)
+        
+<p align="center"><img src="/docs/image/pre-check/ncp_pre_auth.png" ></p>
+
 * GCP와 NCP는 사전에 인증정보에 권한을 부여해야합니다.
   
     사용하고자 하는 서비스계정에 Storage Admin 권한 추가
