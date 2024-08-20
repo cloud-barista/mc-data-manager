@@ -24,6 +24,18 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// MigrationLinuxToS3PostHandler godoc
+//
+//	@Summary		Migrate data from Linux to AWS S3
+//	@Description	Migrate data stored in a Linux-based system to AWS S3.
+//	@Tags			[Data Migration]
+//	@Accept			json
+//	@Produce		json
+//	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
+//	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
+//	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
+//	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
+//	@Router			/linux/s3 [post]
 func MigrationLinuxToS3PostHandler(ctx echo.Context) error {
 	start := time.Now()
 
@@ -67,6 +79,18 @@ func MigrationLinuxToS3PostHandler(ctx echo.Context) error {
 	})
 }
 
+// MigrationLinuxToGCPPostHandler godoc
+//
+//	@Summary		Migrate data from Linux to GCP Cloud Storage
+//	@Description	Migrate data stored in a Linux-based system to GCP Cloud Storage.
+//	@Tags			[Data Migration]
+//	@Accept			json
+//	@Produce		json
+//	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
+//	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
+//	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
+//	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
+//	@Router			/linux/gcp [post]
 func MigrationLinuxToGCPPostHandler(ctx echo.Context) error {
 	start := time.Now()
 
@@ -124,6 +148,18 @@ func MigrationLinuxToGCPPostHandler(ctx echo.Context) error {
 	})
 }
 
+// MigrationLinuxToNCPPostHandler godoc
+//
+//	@Summary		Migrate data from Linux to NCP Object Storage
+//	@Description	Migrate data stored in a Linux-based system to NCP Object Storage.
+//	@Tags			[Data Migration]
+//	@Accept			json
+//	@Produce		json
+//	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
+//	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
+//	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
+//	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
+//	@Router			/linux/ncp [post]
 func MigrationLinuxToNCPPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -169,6 +205,18 @@ func MigrationLinuxToNCPPostHandler(ctx echo.Context) error {
 	})
 }
 
+// MigrationWindowsToS3PostHandler godoc
+//
+//	@Summary		Migrate data from Windows to AWS S3
+//	@Description	Migrate data stored in a Windows-based system to AWS S3.
+//	@Tags			[Data Migration]
+//	@Accept			json
+//	@Produce		json
+//	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
+//	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
+//	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
+//	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
+//	@Router			/windows/s3 [post]
 func MigrationWindowsToS3PostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -217,6 +265,18 @@ func MigrationWindowsToS3PostHandler(ctx echo.Context) error {
 	})
 }
 
+// MigrationWindowsToGCPPostHandler godoc
+//
+//	@Summary		Migrate data from Windows to GCP Cloud Storage
+//	@Description	Migrate data stored in a Windows-based system to GCP Cloud Storage.
+//	@Tags			[Data Migration]
+//	@Accept			json
+//	@Produce		json
+//	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
+//	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
+//	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
+//	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
+//	@Router			/windows/gcp [post]
 func MigrationWindowsToGCPPostHandler(ctx echo.Context) error {
 	start := time.Now()
 
@@ -269,6 +329,18 @@ func MigrationWindowsToGCPPostHandler(ctx echo.Context) error {
 	})
 }
 
+// MigrationWindowsToNCPPostHandler godoc
+//
+//	@Summary		Migrate data from Windows to NCP Object Storage
+//	@Description	Migrate data stored in a Windows-based system to NCP Object Storage.
+//	@Tags			[Data Migration]
+//	@Accept			json
+//	@Produce		json
+//	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
+//	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
+//	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
+//	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
+//	@Router			/windows/ncp [post]
 func MigrationWindowsToNCPPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -313,8 +385,17 @@ func MigrationWindowsToNCPPostHandler(ctx echo.Context) error {
 	})
 }
 
-// SQL Database
-
+// MigrationMySQLPostHandler godoc
+//
+//	@Summary		Migrate data from MySQL to MySQL
+//	@Description	Migrate data from one MySQL database to another MySQL database.
+//	@Tags			[Data Migration]
+//	@Accept			json
+//	@Produce		json
+//	@Param			RequestBody	body		MigrationMySQLForm		true	"Parameters required for MySQL migration"
+//	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
+//	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
+//	@Router			/mysql [post]
 func MigrationMySQLPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
