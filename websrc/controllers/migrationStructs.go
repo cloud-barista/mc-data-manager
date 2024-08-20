@@ -17,6 +17,8 @@ package controllers
 
 import "mime/multipart"
 
+// MigrationForm represents the form data required for migration processes.
+// @Description MigrationForm contains all the necessary fields for migrating data between different services.
 type MigrationForm struct {
 	Path string `form:"path"`
 
@@ -25,10 +27,7 @@ type MigrationForm struct {
 	AWSSecretKey string `form:"awsSecretKey"`
 	AWSBucket    string `form:"awsBucket"`
 
-	ProjectID     string                `form:"projectid"`
-	GCPRegion     string                `form:"gcpRegion"`
-	GCPBucket     string                `form:"gcpBucket"`
-	GCPCredential *multipart.FileHeader `form:"gcpCredential"`
+	GCPParams GCPMigrationParams `json:"gcpParams"`
 
 	NCPRegion    string `form:"ncpRegion"`
 	NCPAccessKey string `form:"ncpAccessKey"`
@@ -41,6 +40,12 @@ type MigrationForm struct {
 	MongoUsername string `form:"username"`
 	MongoPassword string `form:"password"`
 	MongoDBName   string `form:"databaseName"`
+}
+type GCPMigrationParams struct {
+	ProjectID     string                `form:"projectid" json:"projectid"`
+	GCPRegion     string                `form:"gcpRegion" json:"gcpRegion"`
+	GCPBucket     string                `form:"gcpBucket" json:"gcpBucket"`
+	GCPCredential *multipart.FileHeader `form:"gcpCredential" json:"-" swaggerignore:"true"`
 }
 
 type MigrationMySQLParams struct {

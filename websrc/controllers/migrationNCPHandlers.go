@@ -24,10 +24,18 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// Object Storage
-
-// FROM Naver Object Storage
-
+// MigrationNCPToLinuxPostHandler godoc
+//
+//	@Summary		Migrate data from NCP to Linux
+//	@Description	Migrate data stored in NCP Object Storage to a Linux-based system.
+//	@Tags			[Data Migration]
+//	@Accept			json
+//	@Produce		json
+//	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
+//	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
+//	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
+//	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
+//	@Router			/ncp/linux [post]
 func MigrationNCPToLinuxPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -71,6 +79,18 @@ func MigrationNCPToLinuxPostHandler(ctx echo.Context) error {
 	})
 }
 
+// MigrationNCPToWindowsPostHandler godoc
+//
+//	@Summary		Migrate data from NCP to Windows
+//	@Description	Migrate data stored in NCP Object Storage to a Windows-based system.
+//	@Tags			[Data Migration]
+//	@Accept			json
+//	@Produce		json
+//	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
+//	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
+//	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
+//	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
+//	@Router			/ncp/windows [post]
 func MigrationNCPToWindowsPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -115,6 +135,17 @@ func MigrationNCPToWindowsPostHandler(ctx echo.Context) error {
 	})
 }
 
+// MigrationNCPToS3PostHandler godoc
+//
+//	@Summary		Migrate data from NCP to AWS S3
+//	@Description	Migrate data stored in NCP Object Storage to AWS S3.
+//	@Tags			[Data Migration]
+//	@Accept			json
+//	@Produce		json
+//	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
+//	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
+//	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
+//	@Router			/ncp/s3 [post]
 func MigrationNCPToS3PostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -165,6 +196,17 @@ func MigrationNCPToS3PostHandler(ctx echo.Context) error {
 	})
 }
 
+// MigrationNCPToGCPPostHandler godoc
+//
+//	@Summary		Migrate data from NCP to GCP Cloud Storage
+//	@Description	Migrate data stored in NCP Object Storage to GCP Cloud Storage.
+//	@Tags			[Data Migration]
+//	@Accept			json
+//	@Produce		json
+//	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
+//	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
+//	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
+//	@Router			/ncp/gcp [post]
 func MigrationNCPToGCPPostHandler(ctx echo.Context) error {
 
 	start := time.Now()

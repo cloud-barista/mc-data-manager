@@ -9,20 +9,344 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "contact": {
-            "name": "API Support",
-            "url": "http://cloud-barista.github.io",
-            "email": "contact-to-cloud-barista@googlegroups.com"
-        },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-        },
+        "contact": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/dynamodb/firestore": {
+            "post": {
+                "description": "Migrate data stored in AWS DynamoDB to Google Cloud Firestore.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from DynamoDB to Firestore",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MigrationForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/dynamodb/mongodb": {
+            "post": {
+                "description": "Migrate data stored in AWS DynamoDB to Naver Cloud MongoDB.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from DynamoDB to MongoDB",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MigrationForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/firestore/dynamodb": {
+            "post": {
+                "description": "Migrate data stored in Google Cloud Firestore to AWS DynamoDB.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from Firestore to DynamoDB",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MigrationForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/firestore/mongodb": {
+            "post": {
+                "description": "Migrate data stored in Google Cloud Firestore to Naver Cloud MongoDB.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from Firestore to MongoDB",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MigrationForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/gcp/linux": {
+            "post": {
+                "description": "Migrate data stored in GCP Cloud Storage to a Linux-based system.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from GCP to Linux",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MigrationForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/gcp/ncp": {
+            "post": {
+                "description": "Migrate data stored in GCP Cloud Storage to NCP Object Storage.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from GCP to NCP Object Storage",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MigrationForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/gcp/s3": {
+            "post": {
+                "description": "Migrate data stored in GCP Cloud Storage to AWS S3.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from GCP to AWS S3",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MigrationForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/gcp/windows": {
+            "post": {
+                "description": "Migrate data stored in GCP Cloud Storage to a Windows-based system.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from GCP to Windows",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MigrationForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/generate/dynamodb": {
             "post": {
                 "description": "Generate test data on AWS DynamoDB.",
@@ -33,7 +357,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation] AWS DynamoDB"
+                    "[Test Data Generation]"
                 ],
                 "summary": "Generate test data on AWS DynamoDB",
                 "parameters": [
@@ -73,7 +397,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation] GCP Firestore"
+                    "[Test Data Generation]"
                 ],
                 "summary": "Generate test data on GCP Firestore",
                 "parameters": [
@@ -120,7 +444,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation] GCP Cloud Storage"
+                    "[Test Data Generation]"
                 ],
                 "summary": "Generate test data on GCP Cloud Storage",
                 "parameters": [
@@ -167,7 +491,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation] On-premise Linux"
+                    "[Test Data Generation]"
                 ],
                 "summary": "Generate test data on on-premise Linux",
                 "parameters": [
@@ -213,7 +537,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation] NCP MongoDB"
+                    "[Test Data Generation]"
                 ],
                 "summary": "Generate test data on NCP MongoDB",
                 "parameters": [
@@ -253,7 +577,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation] MySQL"
+                    "[Test Data Generation]"
                 ],
                 "summary": "Generate test data on MySQL",
                 "parameters": [
@@ -293,7 +617,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation] NCP Object Storage"
+                    "[Test Data Generation]"
                 ],
                 "summary": "Generate test data on NCP Object Storage",
                 "parameters": [
@@ -333,7 +657,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation] AWS S3"
+                    "[Test Data Generation]"
                 ],
                 "summary": "Generate test data on AWS S3",
                 "parameters": [
@@ -373,7 +697,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation] On-premise Windows"
+                    "[Test Data Generation]"
                 ],
                 "summary": "Generate test data on on-premise Windows",
                 "parameters": [
@@ -408,9 +732,763 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/linux/gcp": {
+            "post": {
+                "description": "Migrate data stored in a Linux-based system to GCP Cloud Storage.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from Linux to GCP Cloud Storage",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MigrationForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/linux/ncp": {
+            "post": {
+                "description": "Migrate data stored in a Linux-based system to NCP Object Storage.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from Linux to NCP Object Storage",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MigrationForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/linux/s3": {
+            "post": {
+                "description": "Migrate data stored in a Linux-based system to AWS S3.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from Linux to AWS S3",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MigrationForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/mongodb/dynamodb": {
+            "post": {
+                "description": "Migrate data stored in Naver Cloud MongoDB to AWS DynamoDB.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from MongoDB to DynamoDB",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MigrationForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/mongodb/firestore": {
+            "post": {
+                "description": "Migrate data stored in Naver Cloud MongoDB to Google Cloud Firestore.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from MongoDB to Firestore",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MigrationForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/mysql": {
+            "post": {
+                "description": "Migrate data from one MySQL database to another MySQL database.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from MySQL to MySQL",
+                "parameters": [
+                    {
+                        "description": "Parameters required for MySQL migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MigrationMySQLForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/ncp/gcp": {
+            "post": {
+                "description": "Migrate data stored in NCP Object Storage to GCP Cloud Storage.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from NCP to GCP Cloud Storage",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MigrationForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/ncp/linux": {
+            "post": {
+                "description": "Migrate data stored in NCP Object Storage to a Linux-based system.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from NCP to Linux",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MigrationForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/ncp/s3": {
+            "post": {
+                "description": "Migrate data stored in NCP Object Storage to AWS S3.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from NCP to AWS S3",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MigrationForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/ncp/windows": {
+            "post": {
+                "description": "Migrate data stored in NCP Object Storage to a Windows-based system.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from NCP to Windows",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MigrationForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/s3/gcp": {
+            "post": {
+                "description": "Migrate data stored in AWS S3 to Google Cloud Storage.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from AWS S3 to GCP",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MigrationForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/s3/linux": {
+            "post": {
+                "description": "Migrate data stored in AWS S3 to a Linux-based system.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from AWS S3 to Linux",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MigrationForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/s3/ncp": {
+            "post": {
+                "description": "Migrate data stored in AWS S3 to Naver Cloud Object Storage.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from AWS S3 to NCP",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MigrationForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/s3/windows": {
+            "post": {
+                "description": "Migrate data stored in AWS S3 to a Windows-based system.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from AWS S3 to Windows",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MigrationForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/windows/gcp": {
+            "post": {
+                "description": "Migrate data stored in a Windows-based system to GCP Cloud Storage.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from Windows to GCP Cloud Storage",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MigrationForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/windows/ncp": {
+            "post": {
+                "description": "Migrate data stored in a Windows-based system to NCP Object Storage.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from Windows to NCP Object Storage",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MigrationForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/windows/s3": {
+            "post": {
+                "description": "Migrate data stored in a Windows-based system to AWS S3.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from Windows to AWS S3",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MigrationForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "controllers.GCPMigrationParams": {
+            "type": "object",
+            "properties": {
+                "gcpBucket": {
+                    "type": "string"
+                },
+                "gcpRegion": {
+                    "type": "string"
+                },
+                "projectid": {
+                    "type": "string"
+                }
+            }
+        },
         "controllers.GenDataParams": {
             "type": "object",
             "properties": {
@@ -515,6 +1593,101 @@ const docTemplate = `{
                 }
             }
         },
+        "controllers.MigrationForm": {
+            "description": "MigrationForm contains all the necessary fields for migrating data between different services.",
+            "type": "object",
+            "properties": {
+                "awsAccessKey": {
+                    "type": "string"
+                },
+                "awsBucket": {
+                    "type": "string"
+                },
+                "awsRegion": {
+                    "type": "string"
+                },
+                "awsSecretKey": {
+                    "type": "string"
+                },
+                "databaseName": {
+                    "type": "string"
+                },
+                "gcpParams": {
+                    "$ref": "#/definitions/controllers.GCPMigrationParams"
+                },
+                "host": {
+                    "type": "string"
+                },
+                "ncpAccessKey": {
+                    "type": "string"
+                },
+                "ncpBucket": {
+                    "type": "string"
+                },
+                "ncpEndpoint": {
+                    "type": "string"
+                },
+                "ncpRegion": {
+                    "type": "string"
+                },
+                "ncpSecretKey": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "controllers.MigrationMySQLForm": {
+            "type": "object",
+            "properties": {
+                "destDatabaseName": {
+                    "type": "string"
+                },
+                "destHost": {
+                    "type": "string"
+                },
+                "destPassword": {
+                    "type": "string"
+                },
+                "destPort": {
+                    "type": "string"
+                },
+                "destProvider": {
+                    "type": "string"
+                },
+                "destUsername": {
+                    "type": "string"
+                },
+                "srcDatabaseName": {
+                    "type": "string"
+                },
+                "srcHost": {
+                    "type": "string"
+                },
+                "srcPassword": {
+                    "type": "string"
+                },
+                "srcPort": {
+                    "type": "string"
+                },
+                "srcProvider": {
+                    "type": "string"
+                },
+                "srcUsername": {
+                    "type": "string"
+                }
+            }
+        },
         "models.BasicResponse": {
             "type": "object",
             "properties": {
@@ -531,12 +1704,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "latest",
+	Version:          "",
 	Host:             "",
-	BasePath:         "/",
+	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "CM-DataMold REST API",
-	Description:      "CM-DataMold REST API",
+	Title:            "",
+	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

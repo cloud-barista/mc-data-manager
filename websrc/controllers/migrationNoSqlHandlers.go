@@ -24,8 +24,16 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// AWS DynamoDB to others
-
+// MigrationDynamoDBToFirestorePostHandler godoc
+// @Summary Migrate data from DynamoDB to Firestore
+// @Description Migrate data stored in AWS DynamoDB to Google Cloud Firestore.
+// @Tags [Data Migration]
+// @Accept json
+// @Produce json
+// @Param RequestBody body MigrationForm true "Parameters required for migration"
+// @Success 200 {object} models.BasicResponse "Successfully migrated data"
+// @Failure 500 {object} models.BasicResponse "Internal Server Error"
+// @Router /dynamodb/firestore [post]
 func MigrationDynamoDBToFirestorePostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -84,6 +92,16 @@ func MigrationDynamoDBToFirestorePostHandler(ctx echo.Context) error {
 	})
 }
 
+// MigrationDynamoDBToMongoDBPostHandler godoc
+// @Summary Migrate data from DynamoDB to MongoDB
+// @Description Migrate data stored in AWS DynamoDB to Naver Cloud MongoDB.
+// @Tags [Data Migration]
+// @Accept json
+// @Produce json
+// @Param RequestBody body MigrationForm true "Parameters required for migration"
+// @Success 200 {object} models.BasicResponse "Successfully migrated data"
+// @Failure 500 {object} models.BasicResponse "Internal Server Error"
+// @Router /dynamodb/mongodb [post]
 func MigrationDynamoDBToMongoDBPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -132,8 +150,16 @@ func MigrationDynamoDBToMongoDBPostHandler(ctx echo.Context) error {
 	})
 }
 
-// Google Cloud Firestore to others
-
+// MigrationFirestoreToDynamoDBPostHandler godoc
+// @Summary Migrate data from Firestore to DynamoDB
+// @Description Migrate data stored in Google Cloud Firestore to AWS DynamoDB.
+// @Tags [Data Migration]
+// @Accept json
+// @Produce json
+// @Param RequestBody body MigrationForm true "Parameters required for migration"
+// @Success 200 {object} models.BasicResponse "Successfully migrated data"
+// @Failure 500 {object} models.BasicResponse "Internal Server Error"
+// @Router /firestore/dynamodb [post]
 func MigrationFirestoreToDynamoDBPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -192,6 +218,16 @@ func MigrationFirestoreToDynamoDBPostHandler(ctx echo.Context) error {
 	})
 }
 
+// MigrationFirestoreToMongoDBPostHandler godoc
+// @Summary Migrate data from Firestore to MongoDB
+// @Description Migrate data stored in Google Cloud Firestore to Naver Cloud MongoDB.
+// @Tags [Data Migration]
+// @Accept json
+// @Produce json
+// @Param RequestBody body MigrationForm true "Parameters required for migration"
+// @Success 200 {object} models.BasicResponse "Successfully migrated data"
+// @Failure 500 {object} models.BasicResponse "Internal Server Error"
+// @Router /firestore/mongodb [post]
 func MigrationFirestoreToMongoDBPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -250,8 +286,16 @@ func MigrationFirestoreToMongoDBPostHandler(ctx echo.Context) error {
 	})
 }
 
-// Naver Cloud MongoDB to others
-
+// MigrationMongoDBToDynamoDBPostHandler godoc
+// @Summary Migrate data from MongoDB to DynamoDB
+// @Description Migrate data stored in Naver Cloud MongoDB to AWS DynamoDB.
+// @Tags [Data Migration]
+// @Accept json
+// @Produce json
+// @Param RequestBody body MigrationForm true "Parameters required for migration"
+// @Success 200 {object} models.BasicResponse "Successfully migrated data"
+// @Failure 500 {object} models.BasicResponse "Internal Server Error"
+// @Router /mongodb/dynamodb [post]
 func MigrationMongoDBToDynamoDBPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -301,6 +345,16 @@ func MigrationMongoDBToDynamoDBPostHandler(ctx echo.Context) error {
 	})
 }
 
+// MigrationMongoDBToFirestorePostHandler godoc
+// @Summary Migrate data from MongoDB to Firestore
+// @Description Migrate data stored in Naver Cloud MongoDB to Google Cloud Firestore.
+// @Tags [Data Migration]
+// @Accept json
+// @Produce json
+// @Param RequestBody body MigrationForm true "Parameters required for migration"
+// @Success 200 {object} models.BasicResponse "Successfully migrated data"
+// @Failure 500 {object} models.BasicResponse "Internal Server Error"
+// @Router /mongodb/firestore [post]
 func MigrationMongoDBToFirestorePostHandler(ctx echo.Context) error {
 
 	start := time.Now()

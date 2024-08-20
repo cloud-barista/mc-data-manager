@@ -24,10 +24,17 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// Object Storage
-
-// FROM AWS S3
-
+// MigrationS3ToLinuxPostHandler godoc
+// @Summary Migrate data from AWS S3 to Linux
+// @Description Migrate data stored in AWS S3 to a Linux-based system.
+// @Tags [Data Migration]
+// @Accept json
+// @Produce json
+// @Param RequestBody body MigrationForm true "Parameters required for migration"
+// @Success 200 {object} models.BasicResponse "Successfully migrated data"
+// @Failure 400 {object} models.BasicResponse "Invalid Request"
+// @Failure 500 {object} models.BasicResponse "Internal Server Error"
+// @Router /s3/linux [post]
 func MigrationS3ToLinuxPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -72,6 +79,17 @@ func MigrationS3ToLinuxPostHandler(ctx echo.Context) error {
 	})
 }
 
+// MigrationS3ToWindowsPostHandler godoc
+// @Summary Migrate data from AWS S3 to Windows
+// @Description Migrate data stored in AWS S3 to a Windows-based system.
+// @Tags [Data Migration]
+// @Accept json
+// @Produce json
+// @Param RequestBody body MigrationForm true "Parameters required for migration"
+// @Success 200 {object} models.BasicResponse "Successfully migrated data"
+// @Failure 400 {object} models.BasicResponse "Invalid Request"
+// @Failure 500 {object} models.BasicResponse "Internal Server Error"
+// @Router /s3/windows [post]
 func MigrationS3ToWindowsPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -116,6 +134,16 @@ func MigrationS3ToWindowsPostHandler(ctx echo.Context) error {
 	})
 }
 
+// MigrationS3ToGCPPostHandler godoc
+// @Summary Migrate data from AWS S3 to GCP
+// @Description Migrate data stored in AWS S3 to Google Cloud Storage.
+// @Tags [Data Migration]
+// @Accept json
+// @Produce json
+// @Param RequestBody body MigrationForm true "Parameters required for migration"
+// @Success 200 {object} models.BasicResponse "Successfully migrated data"
+// @Failure 500 {object} models.BasicResponse "Internal Server Error"
+// @Router /s3/gcp [post]
 func MigrationS3ToGCPPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -175,6 +203,16 @@ func MigrationS3ToGCPPostHandler(ctx echo.Context) error {
 	})
 }
 
+// MigrationS3ToNCPPostHandler godoc
+// @Summary Migrate data from AWS S3 to NCP
+// @Description Migrate data stored in AWS S3 to Naver Cloud Object Storage.
+// @Tags [Data Migration]
+// @Accept json
+// @Produce json
+// @Param RequestBody body MigrationForm true "Parameters required for migration"
+// @Success 200 {object} models.BasicResponse "Successfully migrated data"
+// @Failure 500 {object} models.BasicResponse "Internal Server Error"
+// @Router /s3/ncp [post]
 func MigrationS3ToNCPPostHandler(ctx echo.Context) error {
 
 	start := time.Now()

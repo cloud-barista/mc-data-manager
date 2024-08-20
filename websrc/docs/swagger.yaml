@@ -1,5 +1,13 @@
-basePath: /
 definitions:
+  controllers.GCPMigrationParams:
+    properties:
+      gcpBucket:
+        type: string
+      gcpRegion:
+        type: string
+      projectid:
+        type: string
+    type: object
   controllers.GenDataParams:
     properties:
       accessKey:
@@ -69,6 +77,70 @@ definitions:
       username:
         type: string
     type: object
+  controllers.MigrationForm:
+    description: MigrationForm contains all the necessary fields for migrating data
+      between different services.
+    properties:
+      awsAccessKey:
+        type: string
+      awsBucket:
+        type: string
+      awsRegion:
+        type: string
+      awsSecretKey:
+        type: string
+      databaseName:
+        type: string
+      gcpParams:
+        $ref: '#/definitions/controllers.GCPMigrationParams'
+      host:
+        type: string
+      ncpAccessKey:
+        type: string
+      ncpBucket:
+        type: string
+      ncpEndpoint:
+        type: string
+      ncpRegion:
+        type: string
+      ncpSecretKey:
+        type: string
+      password:
+        type: string
+      path:
+        type: string
+      port:
+        type: string
+      username:
+        type: string
+    type: object
+  controllers.MigrationMySQLForm:
+    properties:
+      destDatabaseName:
+        type: string
+      destHost:
+        type: string
+      destPassword:
+        type: string
+      destPort:
+        type: string
+      destProvider:
+        type: string
+      destUsername:
+        type: string
+      srcDatabaseName:
+        type: string
+      srcHost:
+        type: string
+      srcPassword:
+        type: string
+      srcPort:
+        type: string
+      srcProvider:
+        type: string
+      srcUsername:
+        type: string
+    type: object
   models.BasicResponse:
     properties:
       Error:
@@ -77,17 +149,224 @@ definitions:
         type: string
     type: object
 info:
-  contact:
-    email: contact-to-cloud-barista@googlegroups.com
-    name: API Support
-    url: http://cloud-barista.github.io
-  description: CM-DataMold REST API
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  title: CM-DataMold REST API
-  version: latest
+  contact: {}
 paths:
+  /dynamodb/firestore:
+    post:
+      consumes:
+      - application/json
+      description: Migrate data stored in AWS DynamoDB to Google Cloud Firestore.
+      parameters:
+      - description: Parameters required for migration
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MigrationForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from DynamoDB to Firestore
+      tags:
+      - '[Data Migration]'
+  /dynamodb/mongodb:
+    post:
+      consumes:
+      - application/json
+      description: Migrate data stored in AWS DynamoDB to Naver Cloud MongoDB.
+      parameters:
+      - description: Parameters required for migration
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MigrationForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from DynamoDB to MongoDB
+      tags:
+      - '[Data Migration]'
+  /firestore/dynamodb:
+    post:
+      consumes:
+      - application/json
+      description: Migrate data stored in Google Cloud Firestore to AWS DynamoDB.
+      parameters:
+      - description: Parameters required for migration
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MigrationForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from Firestore to DynamoDB
+      tags:
+      - '[Data Migration]'
+  /firestore/mongodb:
+    post:
+      consumes:
+      - application/json
+      description: Migrate data stored in Google Cloud Firestore to Naver Cloud MongoDB.
+      parameters:
+      - description: Parameters required for migration
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MigrationForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from Firestore to MongoDB
+      tags:
+      - '[Data Migration]'
+  /gcp/linux:
+    post:
+      consumes:
+      - application/json
+      description: Migrate data stored in GCP Cloud Storage to a Linux-based system.
+      parameters:
+      - description: Parameters required for migration
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MigrationForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "400":
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from GCP to Linux
+      tags:
+      - '[Data Migration]'
+  /gcp/ncp:
+    post:
+      consumes:
+      - application/json
+      description: Migrate data stored in GCP Cloud Storage to NCP Object Storage.
+      parameters:
+      - description: Parameters required for migration
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MigrationForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from GCP to NCP Object Storage
+      tags:
+      - '[Data Migration]'
+  /gcp/s3:
+    post:
+      consumes:
+      - application/json
+      description: Migrate data stored in GCP Cloud Storage to AWS S3.
+      parameters:
+      - description: Parameters required for migration
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MigrationForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from GCP to AWS S3
+      tags:
+      - '[Data Migration]'
+  /gcp/windows:
+    post:
+      consumes:
+      - application/json
+      description: Migrate data stored in GCP Cloud Storage to a Windows-based system.
+      parameters:
+      - description: Parameters required for migration
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MigrationForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "400":
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from GCP to Windows
+      tags:
+      - '[Data Migration]'
   /generate/dynamodb:
     post:
       consumes:
@@ -113,7 +392,7 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Generate test data on AWS DynamoDB
       tags:
-      - '[Test Data Generation] AWS DynamoDB'
+      - '[Test Data Generation]'
   /generate/firestore:
     post:
       consumes:
@@ -144,7 +423,7 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Generate test data on GCP Firestore
       tags:
-      - '[Test Data Generation] GCP Firestore'
+      - '[Test Data Generation]'
   /generate/gcp:
     post:
       consumes:
@@ -175,7 +454,7 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Generate test data on GCP Cloud Storage
       tags:
-      - '[Test Data Generation] GCP Cloud Storage'
+      - '[Test Data Generation]'
   /generate/linux:
     post:
       consumes:
@@ -205,7 +484,7 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Generate test data on on-premise Linux
       tags:
-      - '[Test Data Generation] On-premise Linux'
+      - '[Test Data Generation]'
   /generate/mongodb:
     post:
       consumes:
@@ -231,7 +510,7 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Generate test data on NCP MongoDB
       tags:
-      - '[Test Data Generation] NCP MongoDB'
+      - '[Test Data Generation]'
   /generate/mysql:
     post:
       consumes:
@@ -257,7 +536,7 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Generate test data on MySQL
       tags:
-      - '[Test Data Generation] MySQL'
+      - '[Test Data Generation]'
   /generate/ncp:
     post:
       consumes:
@@ -283,7 +562,7 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Generate test data on NCP Object Storage
       tags:
-      - '[Test Data Generation] NCP Object Storage'
+      - '[Test Data Generation]'
   /generate/s3:
     post:
       consumes:
@@ -309,7 +588,7 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Generate test data on AWS S3
       tags:
-      - '[Test Data Generation] AWS S3'
+      - '[Test Data Generation]'
   /generate/windows:
     post:
       consumes:
@@ -339,5 +618,487 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Generate test data on on-premise Windows
       tags:
-      - '[Test Data Generation] On-premise Windows'
+      - '[Test Data Generation]'
+  /linux/gcp:
+    post:
+      consumes:
+      - application/json
+      description: Migrate data stored in a Linux-based system to GCP Cloud Storage.
+      parameters:
+      - description: Parameters required for migration
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MigrationForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "400":
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from Linux to GCP Cloud Storage
+      tags:
+      - '[Data Migration]'
+  /linux/ncp:
+    post:
+      consumes:
+      - application/json
+      description: Migrate data stored in a Linux-based system to NCP Object Storage.
+      parameters:
+      - description: Parameters required for migration
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MigrationForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "400":
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from Linux to NCP Object Storage
+      tags:
+      - '[Data Migration]'
+  /linux/s3:
+    post:
+      consumes:
+      - application/json
+      description: Migrate data stored in a Linux-based system to AWS S3.
+      parameters:
+      - description: Parameters required for migration
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MigrationForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "400":
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from Linux to AWS S3
+      tags:
+      - '[Data Migration]'
+  /mongodb/dynamodb:
+    post:
+      consumes:
+      - application/json
+      description: Migrate data stored in Naver Cloud MongoDB to AWS DynamoDB.
+      parameters:
+      - description: Parameters required for migration
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MigrationForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from MongoDB to DynamoDB
+      tags:
+      - '[Data Migration]'
+  /mongodb/firestore:
+    post:
+      consumes:
+      - application/json
+      description: Migrate data stored in Naver Cloud MongoDB to Google Cloud Firestore.
+      parameters:
+      - description: Parameters required for migration
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MigrationForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from MongoDB to Firestore
+      tags:
+      - '[Data Migration]'
+  /mysql:
+    post:
+      consumes:
+      - application/json
+      description: Migrate data from one MySQL database to another MySQL database.
+      parameters:
+      - description: Parameters required for MySQL migration
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MigrationMySQLForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from MySQL to MySQL
+      tags:
+      - '[Data Migration]'
+  /ncp/gcp:
+    post:
+      consumes:
+      - application/json
+      description: Migrate data stored in NCP Object Storage to GCP Cloud Storage.
+      parameters:
+      - description: Parameters required for migration
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MigrationForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from NCP to GCP Cloud Storage
+      tags:
+      - '[Data Migration]'
+  /ncp/linux:
+    post:
+      consumes:
+      - application/json
+      description: Migrate data stored in NCP Object Storage to a Linux-based system.
+      parameters:
+      - description: Parameters required for migration
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MigrationForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "400":
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from NCP to Linux
+      tags:
+      - '[Data Migration]'
+  /ncp/s3:
+    post:
+      consumes:
+      - application/json
+      description: Migrate data stored in NCP Object Storage to AWS S3.
+      parameters:
+      - description: Parameters required for migration
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MigrationForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from NCP to AWS S3
+      tags:
+      - '[Data Migration]'
+  /ncp/windows:
+    post:
+      consumes:
+      - application/json
+      description: Migrate data stored in NCP Object Storage to a Windows-based system.
+      parameters:
+      - description: Parameters required for migration
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MigrationForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "400":
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from NCP to Windows
+      tags:
+      - '[Data Migration]'
+  /s3/gcp:
+    post:
+      consumes:
+      - application/json
+      description: Migrate data stored in AWS S3 to Google Cloud Storage.
+      parameters:
+      - description: Parameters required for migration
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MigrationForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from AWS S3 to GCP
+      tags:
+      - '[Data Migration]'
+  /s3/linux:
+    post:
+      consumes:
+      - application/json
+      description: Migrate data stored in AWS S3 to a Linux-based system.
+      parameters:
+      - description: Parameters required for migration
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MigrationForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "400":
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from AWS S3 to Linux
+      tags:
+      - '[Data Migration]'
+  /s3/ncp:
+    post:
+      consumes:
+      - application/json
+      description: Migrate data stored in AWS S3 to Naver Cloud Object Storage.
+      parameters:
+      - description: Parameters required for migration
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MigrationForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from AWS S3 to NCP
+      tags:
+      - '[Data Migration]'
+  /s3/windows:
+    post:
+      consumes:
+      - application/json
+      description: Migrate data stored in AWS S3 to a Windows-based system.
+      parameters:
+      - description: Parameters required for migration
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MigrationForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "400":
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from AWS S3 to Windows
+      tags:
+      - '[Data Migration]'
+  /windows/gcp:
+    post:
+      consumes:
+      - application/json
+      description: Migrate data stored in a Windows-based system to GCP Cloud Storage.
+      parameters:
+      - description: Parameters required for migration
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MigrationForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "400":
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from Windows to GCP Cloud Storage
+      tags:
+      - '[Data Migration]'
+  /windows/ncp:
+    post:
+      consumes:
+      - application/json
+      description: Migrate data stored in a Windows-based system to NCP Object Storage.
+      parameters:
+      - description: Parameters required for migration
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MigrationForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "400":
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from Windows to NCP Object Storage
+      tags:
+      - '[Data Migration]'
+  /windows/s3:
+    post:
+      consumes:
+      - application/json
+      description: Migrate data stored in a Windows-based system to AWS S3.
+      parameters:
+      - description: Parameters required for migration
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MigrationForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "400":
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from Windows to AWS S3
+      tags:
+      - '[Data Migration]'
 swagger: "2.0"
