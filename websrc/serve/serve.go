@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"net"
 	"net/http"
 	"strings"
 
@@ -62,10 +63,22 @@ func (t *TemplateRenderer) Render(w io.Writer, name string, data interface{}, c 
 func TrustedProxiesMiddleware(trustedProxies []string) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			clientIP := c.RealIP() // Echo gets the real IP of the client
+			clientIP := net.ParseIP(c.RealIP()) // Parse the real IP of the client
+
+			if clientIP == nil {
+				return echo.NewHTTPError(http.StatusForbidden, "Invalid IP address")
+			}
 
 			for _, proxy := range trustedProxies {
-				if strings.HasPrefix(clientIP, proxy) {
+				// Append /32 if no subnet mask is specified
+				if !strings.Contains(proxy, "/") {
+					proxy += "/32"
+				}
+				_, cidr, err := net.ParseCIDR(proxy)
+				if err != nil {
+					continue
+				}
+				if cidr.Contains(clientIP) {
 					// Request is from a trusted proxy
 					return next(c)
 				}
