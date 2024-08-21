@@ -1,0 +1,41 @@
+services:
+  app:
+    image: m-cmp/data-manager:latest
+    container_name: mcmp-dm-web
+    build:
+      context: .
+      dockerfile: Dockerfile  
+      args:
+        UID: ${UID:-0}
+        GID: ${GID:-0}
+        USER: ${USER_NAME:-root}
+        GROUP: ${GROUP_NAME:-root}
+        WEB_DIR : ${WEB_DIR:-/web}
+        APP_HOME: /app
+    tty: true
+    ports:
+      - "3300:3300"
+    restart : always
+    volumes:
+      - ./log:/app/log/
+    env_file:
+      - .env
+##################
+##   OPTIONAL   ##
+##################
+    ## OPTIONAL LOGGING SETTINGS
+    # logging:
+    #   driver: "json-file"
+    #   options:
+    #     max-size: "5m"      # 로그 파일 최대 사이즈 
+    #     max-file: "10"      # 로그 파일 최대 수
+
+    ## OPTIONAL RESOURCE LIMITS
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: "0.50"      # 최대 CPU 사용량: 0.5 (50% of a single CPU core)
+    #       memory: "512M"    # 최대 메모리 사용량: 512MB
+    #     reservations:
+    #       cpus: "0.25"      # 예약된 최소 CPU 사용량: 0.25 (25% of a single CPU core)
+    #       memory: "256M"    # 예약된 최소 메모리 사용량: 256MB
