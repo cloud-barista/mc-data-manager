@@ -1,7 +1,18 @@
 services:
+# chown vomlume bind mode 
+  init-chown-volumes:
+    image: busybox
+    command: ["sh", "-c", "chown -R ${UID:-0}:${GID:-0} /app/log"]
+    volumes:
+      - ./log:/app/log/
+    user: root
+    env_file:
+      - .env
+    init: true
+# service app
   app:
-    image: m-cmp/data-manager:latest
-    container_name: mcmp-dm-web
+    depends_on:
+      - init-chown-volumes
     build:
       context: .
       dockerfile: Dockerfile  
@@ -20,6 +31,7 @@ services:
       - ./log:/app/log/
     env_file:
       - .env
+
 ##################
 ##   OPTIONAL   ##
 ##################
