@@ -27,15 +27,15 @@ services:
     # logging:
     #   driver: "json-file"
     #   options:
-    #     max-size: "5m"      # 로그 파일 최대 사이즈 
-    #     max-file: "10"      # 로그 파일 최대 수
+    #     max-size: "5m"      # max-size each log file
+    #     max-file: "10"      # max-index, log files
 
     ## OPTIONAL RESOURCE LIMITS
     # deploy:
     #   resources:
     #     limits:
-    #       cpus: "0.50"      # 최대 CPU 사용량: 0.5 (50% of a single CPU core)
-    #       memory: "512M"    # 최대 메모리 사용량: 512MB
+    #       cpus: "0.50"      # Capacity CPU : 0.5 (50% of a single CPU core)
+    #       memory: "512M"    # Capacity Mem : 512MB
     #     reservations:
-    #       cpus: "0.25"      # 예약된 최소 CPU 사용량: 0.25 (25% of a single CPU core)
-    #       memory: "256M"    # 예약된 최소 메모리 사용량: 256MB
+    #       cpus: "0.25"      # allocated CPU: 0.25 (25% of a single CPU core)
+    #       memory: "256M"    # allocated Mem: 256MB
