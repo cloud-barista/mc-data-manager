@@ -1,3 +1,4 @@
+basePath: /
 definitions:
   controllers.GCPMigrationParams:
     properties:
@@ -149,7 +150,16 @@ definitions:
         type: string
     type: object
 info:
-  contact: {}
+  contact:
+    email: contact-to-cloud-barista@googlegroups.com
+    name: API Support
+    url: http://cloud-barista.github.io
+  description: MC-Data-Manager REST API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: MC-Data-Manager REST API
+  version: latest
 paths:
   /dynamodb/firestore:
     post:
