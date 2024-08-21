@@ -32,21 +32,21 @@ func LogFile() {
 		logrus.WithError(err).Fatal("Failed to get executable path")
 	}
 
-	// 바이너리 파일의 디렉토리 경로 가져오기
+	// Get the directory path of the binary file
 	execDir := filepath.Dir(execPath)
 
-	// 로그 디렉토리 경로 설정
+	// Set the log directory path
 	logDir := filepath.Join(execDir, "log")
 
-	// 로그 디렉토리 생성
+	// Create the log directory
 	if err := os.MkdirAll(logDir, os.ModePerm); err != nil {
 		logrus.WithError(err).Fatal("Failed to create log directory")
 	}
 
-	// 로그 파일 경로 설정
+	// Set the log file path
 	logFilePath := filepath.Join(logDir, "data-manager.log")
 
-	// 로그 파일 열기 또는 생성
+	// Open or create the log file
 	logFile, err := os.OpenFile(logFilePath, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.FileMode(0644))
 	if err != nil {
 		logrus.WithError(err).Fatal("Failed to create log file")
