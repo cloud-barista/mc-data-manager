@@ -92,9 +92,9 @@ func TrustedProxiesMiddleware(trustedProxies []string) echo.MiddlewareFunc {
 
 // RunServer func start Rest API server
 
-// @title CM-DataMold REST API
+// @title MC-Data-Manager REST API
 // @version latest
-// @description CM-DataMold REST API
+// @description MC-Data-Manager REST API
 
 // @contact.name API Support
 // @contact.url http://cloud-barista.github.io
