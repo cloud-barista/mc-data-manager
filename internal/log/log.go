@@ -19,17 +19,38 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/sirupsen/logrus"
 )
 
 func LogFile() {
-	logFile, err := os.OpenFile("./datamold.log", os.O_CREATE|os.O_APPEND|os.O_RDWR, os.FileMode(0644))
+	execPath, err := os.Executable()
+	fmt.Println(execPath)
+	if err != nil {
+		logrus.WithError(err).Fatal("Failed to get executable path")
+	}
+
+	// 바이너리 파일의 디렉토리 경로 가져오기
+	execDir := filepath.Dir(execPath)
+
+	// 로그 디렉토리 경로 설정
+	logDir := filepath.Join(execDir, "log")
+
+	// 로그 디렉토리 생성
+	if err := os.MkdirAll(logDir, os.ModePerm); err != nil {
+		logrus.WithError(err).Fatal("Failed to create log directory")
+	}
+
+	// 로그 파일 경로 설정
+	logFilePath := filepath.Join(logDir, "data-manager.log")
+
+	// 로그 파일 열기 또는 생성
+	logFile, err := os.OpenFile(logFilePath, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.FileMode(0644))
 	if err != nil {
 		logrus.WithError(err).Fatal("Failed to create log file")
 	}
-
 	logrus.SetLevel(logrus.DebugLevel)
 	logrus.SetFormatter(&CustomTextFormatter{})
 	logrus.SetOutput(io.MultiWriter(os.Stdout, logFile))
