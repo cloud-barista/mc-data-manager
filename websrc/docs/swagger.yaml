@@ -162,6 +162,19 @@ definitions:
       srcUsername:
         type: string
     type: object
+  controllers.MongoMigrationParams:
+    properties:
+      databaseName:
+        type: string
+      host:
+        type: string
+      password:
+        type: string
+      port:
+        type: string
+      username:
+        type: string
+    type: object
   controllers.NCPMigrationParams:
     properties:
       ncpAccessKey:
@@ -683,10 +696,10 @@ paths:
           $ref: '#/definitions/controllers.AWSMigrationParams'
       - description: Parameters required for NCP migration
         in: body
-        name: NCPMigrationParams
+        name: MongoMigrationParams
         required: true
         schema:
-          $ref: '#/definitions/controllers.NCPMigrationParams'
+          $ref: '#/definitions/controllers.MongoMigrationParams'
       produces:
       - application/json
       responses:
@@ -752,10 +765,10 @@ paths:
           $ref: '#/definitions/controllers.GCPMigrationParams'
       - description: Parameters required for NCP migration
         in: body
-        name: NCPMigrationParams
+        name: MongoMigrationParams
         required: true
         schema:
-          $ref: '#/definitions/controllers.NCPMigrationParams'
+          $ref: '#/definitions/controllers.MongoMigrationParams'
       - description: Parameters required to generate test data
         in: formData
         name: gcpCredential
@@ -1755,10 +1768,10 @@ paths:
       parameters:
       - description: Parameters required for NCP migration
         in: body
-        name: NCPMigrationParams
+        name: MongoMigrationParams
         required: true
         schema:
-          $ref: '#/definitions/controllers.NCPMigrationParams'
+          $ref: '#/definitions/controllers.MongoMigrationParams'
       - description: Parameters required for AWS migration
         in: body
         name: AWSMigrationParams
@@ -1787,10 +1800,10 @@ paths:
       parameters:
       - description: Parameters required for NCP migration
         in: body
-        name: NCPMigrationParams
+        name: MongoMigrationParams
         required: true
         schema:
-          $ref: '#/definitions/controllers.NCPMigrationParams'
+          $ref: '#/definitions/controllers.MongoMigrationParams'
       - description: Parameters required for GCP migration
         in: body
         name: GCPMigrationParams

@@ -802,11 +802,11 @@ const docTemplate = `{
                     },
                     {
                         "description": "Parameters required for NCP migration",
-                        "name": "NCPMigrationParams",
+                        "name": "MongoMigrationParams",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.NCPMigrationParams"
+                            "$ref": "#/definitions/controllers.MongoMigrationParams"
                         }
                     }
                 ],
@@ -907,11 +907,11 @@ const docTemplate = `{
                     },
                     {
                         "description": "Parameters required for NCP migration",
-                        "name": "NCPMigrationParams",
+                        "name": "MongoMigrationParams",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.NCPMigrationParams"
+                            "$ref": "#/definitions/controllers.MongoMigrationParams"
                         }
                     },
                     {
@@ -2499,11 +2499,11 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "Parameters required for NCP migration",
-                        "name": "NCPMigrationParams",
+                        "name": "MongoMigrationParams",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.NCPMigrationParams"
+                            "$ref": "#/definitions/controllers.MongoMigrationParams"
                         }
                     },
                     {
@@ -2548,11 +2548,11 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "Parameters required for NCP migration",
-                        "name": "NCPMigrationParams",
+                        "name": "MongoMigrationParams",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.NCPMigrationParams"
+                            "$ref": "#/definitions/controllers.MongoMigrationParams"
                         }
                     },
                     {
@@ -2830,6 +2830,26 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "srcUsername": {
+                    "type": "string"
+                }
+            }
+        },
+        "controllers.MongoMigrationParams": {
+            "type": "object",
+            "properties": {
+                "databaseName": {
+                    "type": "string"
+                },
+                "host": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "string"
+                },
+                "username": {
                     "type": "string"
                 }
             }
