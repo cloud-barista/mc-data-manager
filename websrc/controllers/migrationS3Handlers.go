@@ -138,7 +138,7 @@ func MigrationS3ToWindowsPostHandler(ctx echo.Context) error {
 // @Summary Migrate data from AWS S3 to GCP
 // @Description Migrate data stored in AWS S3 to Google Cloud Storage.
 // @Tags [Data Migration]
-// @Accept json
+// @Accept multipart/form-data
 // @Produce json
 // @Param RequestBody body MigrationForm true "Parameters required for migration"
 // @Param gcpCredential	formData file true "Parameters required to generate test data"

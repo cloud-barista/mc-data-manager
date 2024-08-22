@@ -84,7 +84,7 @@ func MigrationLinuxToS3PostHandler(ctx echo.Context) error {
 //	@Summary		Migrate data from Linux to GCP Cloud Storage
 //	@Description	Migrate data stored in a Linux-based system to GCP Cloud Storage.
 //	@Tags			[Data Migration]
-//	@Accept			json
+//	@Accept			multipart/form-data
 //	@Produce		json
 //	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
 //	@Param			gcpCredential	formData	file					true	"Parameters required to generate test data"
@@ -271,7 +271,7 @@ func MigrationWindowsToS3PostHandler(ctx echo.Context) error {
 //	@Summary		Migrate data from Windows to GCP Cloud Storage
 //	@Description	Migrate data stored in a Windows-based system to GCP Cloud Storage.
 //	@Tags			[Data Migration]
-//	@Accept			json
+//	@Accept			multipart/form-data
 //	@Produce		json
 //	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
 //	@Param			gcpCredential	formData	file					true	"Parameters required to generate test data"
