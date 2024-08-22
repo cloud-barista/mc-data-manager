@@ -736,94 +736,22 @@ const docTemplate = `{
                 "summary": "Migrate data from DynamoDB to Firestore",
                 "parameters": [
                     {
-                        "type": "string",
-                        "name": "awsAccessKey",
-                        "in": "formData"
+                        "description": "Parameters required for Linux migration",
+                        "name": "AWSMigrationParams",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.AWSMigrationParams"
+                        }
                     },
                     {
-                        "type": "string",
-                        "name": "awsBucket",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "awsRegion",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "awsSecretKey",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "databaseName",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "gcpBucket",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "gcpRegion",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "host",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "ncpAccessKey",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "ncpBucket",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "ncpEndpoint",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "ncpRegion",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "ncpSecretKey",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "password",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "path",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "port",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "projectid",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "username",
-                        "in": "formData"
+                        "description": "Parameters required for GCP migration",
+                        "name": "GCPMigrationParams",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.GCPMigrationParams"
+                        }
                     },
                     {
                         "type": "file",
@@ -864,20 +792,22 @@ const docTemplate = `{
                 "summary": "Migrate data from DynamoDB to MongoDB",
                 "parameters": [
                     {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
+                        "description": "Parameters required for AWS migration",
+                        "name": "AWSMigrationParams",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.MigrationForm"
+                            "$ref": "#/definitions/controllers.AWSMigrationParams"
                         }
                     },
                     {
-                        "type": "file",
-                        "description": "Parameters required to generate test data",
-                        "name": "gcpCredential",
-                        "in": "formData",
-                        "required": true
+                        "description": "Parameters required for NCP migration",
+                        "name": "NCPMigrationParams",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.NCPMigrationParams"
+                        }
                     }
                 ],
                 "responses": {
@@ -911,94 +841,22 @@ const docTemplate = `{
                 "summary": "Migrate data from Firestore to DynamoDB",
                 "parameters": [
                     {
-                        "type": "string",
-                        "name": "awsAccessKey",
-                        "in": "formData"
+                        "description": "Parameters required for GCP migration",
+                        "name": "GCPMigrationParams",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.GCPMigrationParams"
+                        }
                     },
                     {
-                        "type": "string",
-                        "name": "awsBucket",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "awsRegion",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "awsSecretKey",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "databaseName",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "gcpBucket",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "gcpRegion",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "host",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "ncpAccessKey",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "ncpBucket",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "ncpEndpoint",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "ncpRegion",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "ncpSecretKey",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "password",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "path",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "port",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "projectid",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "username",
-                        "in": "formData"
+                        "description": "Parameters required for AWS migration",
+                        "name": "AWSMigrationParams",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.AWSMigrationParams"
+                        }
                     },
                     {
                         "type": "file",
@@ -1039,94 +897,22 @@ const docTemplate = `{
                 "summary": "Migrate data from Firestore to MongoDB",
                 "parameters": [
                     {
-                        "type": "string",
-                        "name": "awsAccessKey",
-                        "in": "formData"
+                        "description": "Parameters required for GCP migration",
+                        "name": "GCPMigrationParams",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.GCPMigrationParams"
+                        }
                     },
                     {
-                        "type": "string",
-                        "name": "awsBucket",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "awsRegion",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "awsSecretKey",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "databaseName",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "gcpBucket",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "gcpRegion",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "host",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "ncpAccessKey",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "ncpBucket",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "ncpEndpoint",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "ncpRegion",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "ncpSecretKey",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "password",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "path",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "port",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "projectid",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "username",
-                        "in": "formData"
+                        "description": "Parameters required for NCP migration",
+                        "name": "NCPMigrationParams",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.NCPMigrationParams"
+                        }
                     },
                     {
                         "type": "file",
@@ -2085,12 +1871,21 @@ const docTemplate = `{
                 "summary": "Migrate data from NCP to Linux",
                 "parameters": [
                     {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
+                        "description": "Parameters required for Linux migration",
+                        "name": "LinuxMigrationParams",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.MigrationForm"
+                            "$ref": "#/definitions/controllers.LinuxMigrationParams"
+                        }
+                    },
+                    {
+                        "description": "Parameters required for NCP migration",
+                        "name": "NCPMigrationParams",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.NCPMigrationParams"
                         }
                     }
                 ],
@@ -2703,12 +2498,21 @@ const docTemplate = `{
                 "summary": "Migrate data from MongoDB to DynamoDB",
                 "parameters": [
                     {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
+                        "description": "Parameters required for NCP migration",
+                        "name": "NCPMigrationParams",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.MigrationForm"
+                            "$ref": "#/definitions/controllers.NCPMigrationParams"
+                        }
+                    },
+                    {
+                        "description": "Parameters required for AWS migration",
+                        "name": "AWSMigrationParams",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.AWSMigrationParams"
                         }
                     }
                 ],
@@ -2743,94 +2547,22 @@ const docTemplate = `{
                 "summary": "Migrate data from MongoDB to Firestore",
                 "parameters": [
                     {
-                        "type": "string",
-                        "name": "awsAccessKey",
-                        "in": "formData"
+                        "description": "Parameters required for NCP migration",
+                        "name": "NCPMigrationParams",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.NCPMigrationParams"
+                        }
                     },
                     {
-                        "type": "string",
-                        "name": "awsBucket",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "awsRegion",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "awsSecretKey",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "databaseName",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "gcpBucket",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "gcpRegion",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "host",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "ncpAccessKey",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "ncpBucket",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "ncpEndpoint",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "ncpRegion",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "ncpSecretKey",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "password",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "path",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "port",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "projectid",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "username",
-                        "in": "formData"
+                        "description": "Parameters required for GCP migration",
+                        "name": "GCPMigrationParams",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.GCPMigrationParams"
+                        }
                     },
                     {
                         "type": "file",
@@ -2858,6 +2590,37 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "controllers.AWSMigrationParams": {
+            "type": "object",
+            "properties": {
+                "awsAccessKey": {
+                    "type": "string"
+                },
+                "awsBucket": {
+                    "type": "string"
+                },
+                "awsRegion": {
+                    "type": "string"
+                },
+                "awsSecretKey": {
+                    "type": "string"
+                }
+            }
+        },
+        "controllers.GCPMigrationParams": {
+            "type": "object",
+            "properties": {
+                "gcpBucket": {
+                    "type": "string"
+                },
+                "gcpRegion": {
+                    "type": "string"
+                },
+                "projectid": {
+                    "type": "string"
+                }
+            }
+        },
         "controllers.GenDataParams": {
             "type": "object",
             "properties": {
@@ -2915,7 +2678,7 @@ const docTemplate = `{
                 "port": {
                     "type": "string"
                 },
-                "projectId": {
+                "projectid": {
                     "type": "string"
                 },
                 "provider": {
@@ -2958,6 +2721,14 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "controllers.LinuxMigrationParams": {
+            "type": "object",
+            "properties": {
+                "path": {
                     "type": "string"
                 }
             }
@@ -3059,6 +2830,26 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "srcUsername": {
+                    "type": "string"
+                }
+            }
+        },
+        "controllers.NCPMigrationParams": {
+            "type": "object",
+            "properties": {
+                "ncpAccessKey": {
+                    "type": "string"
+                },
+                "ncpBucket": {
+                    "type": "string"
+                },
+                "ncpEndpoint": {
+                    "type": "string"
+                },
+                "ncpRegion": {
+                    "type": "string"
+                },
+                "ncpSecretKey": {
                     "type": "string"
                 }
             }

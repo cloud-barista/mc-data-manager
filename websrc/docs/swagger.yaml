@@ -1,5 +1,25 @@
 basePath: /
 definitions:
+  controllers.AWSMigrationParams:
+    properties:
+      awsAccessKey:
+        type: string
+      awsBucket:
+        type: string
+      awsRegion:
+        type: string
+      awsSecretKey:
+        type: string
+    type: object
+  controllers.GCPMigrationParams:
+    properties:
+      gcpBucket:
+        type: string
+      gcpRegion:
+        type: string
+      projectid:
+        type: string
+    type: object
   controllers.GenDataParams:
     properties:
       accessKey:
@@ -38,7 +58,7 @@ definitions:
         type: string
       port:
         type: string
-      projectId:
+      projectid:
         type: string
       provider:
         type: string
@@ -67,6 +87,11 @@ definitions:
       sizeZIP:
         type: string
       username:
+        type: string
+    type: object
+  controllers.LinuxMigrationParams:
+    properties:
+      path:
         type: string
     type: object
   controllers.MigrationForm:
@@ -135,6 +160,19 @@ definitions:
       srcProvider:
         type: string
       srcUsername:
+        type: string
+    type: object
+  controllers.NCPMigrationParams:
+    properties:
+      ncpAccessKey:
+        type: string
+      ncpBucket:
+        type: string
+      ncpEndpoint:
+        type: string
+      ncpRegion:
+        type: string
+      ncpSecretKey:
         type: string
     type: object
   models.BasicResponse:
@@ -600,60 +638,18 @@ paths:
       - multipart/form-data
       description: Migrate data stored in AWS DynamoDB to Google Cloud Firestore.
       parameters:
-      - in: formData
-        name: awsAccessKey
-        type: string
-      - in: formData
-        name: awsBucket
-        type: string
-      - in: formData
-        name: awsRegion
-        type: string
-      - in: formData
-        name: awsSecretKey
-        type: string
-      - in: formData
-        name: databaseName
-        type: string
-      - in: formData
-        name: gcpBucket
-        type: string
-      - in: formData
-        name: gcpRegion
-        type: string
-      - in: formData
-        name: host
-        type: string
-      - in: formData
-        name: ncpAccessKey
-        type: string
-      - in: formData
-        name: ncpBucket
-        type: string
-      - in: formData
-        name: ncpEndpoint
-        type: string
-      - in: formData
-        name: ncpRegion
-        type: string
-      - in: formData
-        name: ncpSecretKey
-        type: string
-      - in: formData
-        name: password
-        type: string
-      - in: formData
-        name: path
-        type: string
-      - in: formData
-        name: port
-        type: string
-      - in: formData
-        name: projectid
-        type: string
-      - in: formData
-        name: username
-        type: string
+      - description: Parameters required for Linux migration
+        in: body
+        name: AWSMigrationParams
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.AWSMigrationParams'
+      - description: Parameters required for GCP migration
+        in: body
+        name: GCPMigrationParams
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.GCPMigrationParams'
       - description: Parameters required to generate test data
         in: formData
         name: gcpCredential
@@ -679,17 +675,18 @@ paths:
       - application/json
       description: Migrate data stored in AWS DynamoDB to Naver Cloud MongoDB.
       parameters:
-      - description: Parameters required for migration
+      - description: Parameters required for AWS migration
         in: body
-        name: RequestBody
+        name: AWSMigrationParams
         required: true
         schema:
-          $ref: '#/definitions/controllers.MigrationForm'
-      - description: Parameters required to generate test data
-        in: formData
-        name: gcpCredential
+          $ref: '#/definitions/controllers.AWSMigrationParams'
+      - description: Parameters required for NCP migration
+        in: body
+        name: NCPMigrationParams
         required: true
-        type: file
+        schema:
+          $ref: '#/definitions/controllers.NCPMigrationParams'
       produces:
       - application/json
       responses:
@@ -710,60 +707,18 @@ paths:
       - multipart/form-data
       description: Migrate data stored in Google Cloud Firestore to AWS DynamoDB.
       parameters:
-      - in: formData
-        name: awsAccessKey
-        type: string
-      - in: formData
-        name: awsBucket
-        type: string
-      - in: formData
-        name: awsRegion
-        type: string
-      - in: formData
-        name: awsSecretKey
-        type: string
-      - in: formData
-        name: databaseName
-        type: string
-      - in: formData
-        name: gcpBucket
-        type: string
-      - in: formData
-        name: gcpRegion
-        type: string
-      - in: formData
-        name: host
-        type: string
-      - in: formData
-        name: ncpAccessKey
-        type: string
-      - in: formData
-        name: ncpBucket
-        type: string
-      - in: formData
-        name: ncpEndpoint
-        type: string
-      - in: formData
-        name: ncpRegion
-        type: string
-      - in: formData
-        name: ncpSecretKey
-        type: string
-      - in: formData
-        name: password
-        type: string
-      - in: formData
-        name: path
-        type: string
-      - in: formData
-        name: port
-        type: string
-      - in: formData
-        name: projectid
-        type: string
-      - in: formData
-        name: username
-        type: string
+      - description: Parameters required for GCP migration
+        in: body
+        name: GCPMigrationParams
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.GCPMigrationParams'
+      - description: Parameters required for AWS migration
+        in: body
+        name: AWSMigrationParams
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.AWSMigrationParams'
       - description: Parameters required to generate test data
         in: formData
         name: gcpCredential
@@ -789,60 +744,18 @@ paths:
       - multipart/form-data
       description: Migrate data stored in Google Cloud Firestore to Naver Cloud MongoDB.
       parameters:
-      - in: formData
-        name: awsAccessKey
-        type: string
-      - in: formData
-        name: awsBucket
-        type: string
-      - in: formData
-        name: awsRegion
-        type: string
-      - in: formData
-        name: awsSecretKey
-        type: string
-      - in: formData
-        name: databaseName
-        type: string
-      - in: formData
-        name: gcpBucket
-        type: string
-      - in: formData
-        name: gcpRegion
-        type: string
-      - in: formData
-        name: host
-        type: string
-      - in: formData
-        name: ncpAccessKey
-        type: string
-      - in: formData
-        name: ncpBucket
-        type: string
-      - in: formData
-        name: ncpEndpoint
-        type: string
-      - in: formData
-        name: ncpRegion
-        type: string
-      - in: formData
-        name: ncpSecretKey
-        type: string
-      - in: formData
-        name: password
-        type: string
-      - in: formData
-        name: path
-        type: string
-      - in: formData
-        name: port
-        type: string
-      - in: formData
-        name: projectid
-        type: string
-      - in: formData
-        name: username
-        type: string
+      - description: Parameters required for GCP migration
+        in: body
+        name: GCPMigrationParams
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.GCPMigrationParams'
+      - description: Parameters required for NCP migration
+        in: body
+        name: NCPMigrationParams
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.NCPMigrationParams'
       - description: Parameters required to generate test data
         in: formData
         name: gcpCredential
@@ -1440,12 +1353,18 @@ paths:
       - application/json
       description: Migrate data stored in NCP Object Storage to a Linux-based system.
       parameters:
-      - description: Parameters required for migration
+      - description: Parameters required for Linux migration
         in: body
-        name: RequestBody
+        name: LinuxMigrationParams
         required: true
         schema:
-          $ref: '#/definitions/controllers.MigrationForm'
+          $ref: '#/definitions/controllers.LinuxMigrationParams'
+      - description: Parameters required for NCP migration
+        in: body
+        name: NCPMigrationParams
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.NCPMigrationParams'
       produces:
       - application/json
       responses:
@@ -1834,12 +1753,18 @@ paths:
       - application/json
       description: Migrate data stored in Naver Cloud MongoDB to AWS DynamoDB.
       parameters:
-      - description: Parameters required for migration
+      - description: Parameters required for NCP migration
         in: body
-        name: RequestBody
+        name: NCPMigrationParams
         required: true
         schema:
-          $ref: '#/definitions/controllers.MigrationForm'
+          $ref: '#/definitions/controllers.NCPMigrationParams'
+      - description: Parameters required for AWS migration
+        in: body
+        name: AWSMigrationParams
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.AWSMigrationParams'
       produces:
       - application/json
       responses:
@@ -1860,60 +1785,18 @@ paths:
       - multipart/form-data
       description: Migrate data stored in Naver Cloud MongoDB to Google Cloud Firestore.
       parameters:
-      - in: formData
-        name: awsAccessKey
-        type: string
-      - in: formData
-        name: awsBucket
-        type: string
-      - in: formData
-        name: awsRegion
-        type: string
-      - in: formData
-        name: awsSecretKey
-        type: string
-      - in: formData
-        name: databaseName
-        type: string
-      - in: formData
-        name: gcpBucket
-        type: string
-      - in: formData
-        name: gcpRegion
-        type: string
-      - in: formData
-        name: host
-        type: string
-      - in: formData
-        name: ncpAccessKey
-        type: string
-      - in: formData
-        name: ncpBucket
-        type: string
-      - in: formData
-        name: ncpEndpoint
-        type: string
-      - in: formData
-        name: ncpRegion
-        type: string
-      - in: formData
-        name: ncpSecretKey
-        type: string
-      - in: formData
-        name: password
-        type: string
-      - in: formData
-        name: path
-        type: string
-      - in: formData
-        name: port
-        type: string
-      - in: formData
-        name: projectid
-        type: string
-      - in: formData
-        name: username
-        type: string
+      - description: Parameters required for NCP migration
+        in: body
+        name: NCPMigrationParams
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.NCPMigrationParams'
+      - description: Parameters required for GCP migration
+        in: body
+        name: GCPMigrationParams
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.GCPMigrationParams'
       - description: Parameters required to generate test data
         in: formData
         name: gcpCredential

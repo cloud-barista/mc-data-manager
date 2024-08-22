@@ -31,7 +31,8 @@ import (
 //	@Tags			[Data Migration]
 //	@Accept			json
 //	@Produce		json
-//	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
+//	@Param LinuxMigrationParams body LinuxMigrationParams true "Parameters required for Linux migration"
+//	@Param NCPMigrationParams body NCPMigrationParams true "Parameters required for NCP migration"
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
