@@ -18,7 +18,7 @@ package ncpmgdb
 import (
 	"context"
 
-	"github.com/cloud-barista/cm-data-mold/pkg/utils"
+	"github.com/cloud-barista/mc-data-manager/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"

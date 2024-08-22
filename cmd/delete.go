@@ -18,7 +18,7 @@ package cmd
 import (
 	"os"
 
-	"github.com/cloud-barista/cm-data-mold/internal/log"
+	"github.com/cloud-barista/mc-data-manager/internal/log"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )

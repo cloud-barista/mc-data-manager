@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/cloud-barista/cm-data-mold/pkg/dummy/unstructured"
+	"github.com/cloud-barista/mc-data-manager/pkg/dummy/unstructured"
 )
 
 func TestIMG(t *testing.T) {

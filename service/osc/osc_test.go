@@ -24,10 +24,10 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/cloud-barista/cm-data-mold/pkg/objectstorage/gcpfs"
-	"github.com/cloud-barista/cm-data-mold/pkg/objectstorage/s3fs"
-	"github.com/cloud-barista/cm-data-mold/pkg/utils"
-	"github.com/cloud-barista/cm-data-mold/service/osc"
+	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/gcpfs"
+	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/s3fs"
+	"github.com/cloud-barista/mc-data-manager/pkg/utils"
+	"github.com/cloud-barista/mc-data-manager/service/osc"
 	"google.golang.org/api/option"
 )
 

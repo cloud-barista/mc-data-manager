@@ -16,10 +16,10 @@ limitations under the License.
 package execfunc
 
 import (
-	"github.com/cloud-barista/cm-data-mold/internal/auth"
-	"github.com/cloud-barista/cm-data-mold/pkg/dummy/semistructured"
-	"github.com/cloud-barista/cm-data-mold/pkg/dummy/structured"
-	"github.com/cloud-barista/cm-data-mold/pkg/dummy/unstructured"
+	"github.com/cloud-barista/mc-data-manager/internal/auth"
+	"github.com/cloud-barista/mc-data-manager/pkg/dummy/semistructured"
+	"github.com/cloud-barista/mc-data-manager/pkg/dummy/structured"
+	"github.com/cloud-barista/mc-data-manager/pkg/dummy/unstructured"
 	"github.com/sirupsen/logrus"
 )
 

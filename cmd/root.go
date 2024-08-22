@@ -18,8 +18,8 @@ package cmd
 import (
 	"os"
 
-	"github.com/cloud-barista/cm-data-mold/internal/auth"
-	"github.com/cloud-barista/cm-data-mold/internal/log"
+	"github.com/cloud-barista/mc-data-manager/internal/auth"
+	"github.com/cloud-barista/mc-data-manager/internal/log"
 	"github.com/spf13/cobra"
 )
 
@@ -27,7 +27,7 @@ var datamoldParams auth.DatamoldParams
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "cm-data-mold",
+	Use:   "mc-data-manager",
 	Short: "Data migration validation environment deployment and test data generation tools",
 	Long: `It is a tool that builds an environment for verification of data migration technology and 
 generates test data necessary for data migration.`,

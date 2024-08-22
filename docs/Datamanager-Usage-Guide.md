@@ -1,4 +1,4 @@
-# Data Mold 사용 가이드
+# Data Manager 사용 가이드
 
 ## 사전 준비 사항
 ### 스토리지/DB 관련 서비스 신청 및 권한 부여
@@ -35,7 +35,7 @@
 
 ## 1. 정형데이터 생성 및 마이그레이션
 ### 온프레미스(리눅스서버)에서 AWS S3
-1. data-mold server 접속 후 좌측 메뉴에서 데이터 생성 -> Object Storage -> AWS S3 순으로 클릭
+1. data-manager server 접속 후 좌측 메뉴에서 데이터 생성 -> Object Storage -> AWS S3 순으로 클릭
 
 <p align="center"><img src="/docs/image/web/main.png" ></p>
 
@@ -49,7 +49,7 @@
 
 ## 2. 비정형데이터 생성 및 마이그레이션
 ### 온프레미스(리눅스서버)에서 GCP Cloud Storage
-1. data-mold server 접속 후 좌측 메뉴에서 데이터 생성 -> Object Storage -> Google Cloud Storage 순으로 클릭
+1. data-manager server 접속 후 좌측 메뉴에서 데이터 생성 -> Object Storage -> Google Cloud Storage 순으로 클릭
 
 <p align="center"><img src="/docs/image/web/main.png" ></p>
 
@@ -63,7 +63,7 @@
 
 ## 3. 반정형데이터 생성 및 마이그레이션
 ### 온프레미스(리눅스서버)에서 NCP Object Storage
-1. data-mold server 접속 후 좌측 메뉴에서 데이터 생성 -> Object Storage -> Google Cloud Storage 순으로 클릭
+1. data-manager server 접속 후 좌측 메뉴에서 데이터 생성 -> Object Storage -> Google Cloud Storage 순으로 클릭
 
 <p align="center"><img src="/docs/image/web/main.png" ></p>
 
@@ -78,7 +78,7 @@
 
 ## 4. 클라우드 관계형데이터베이스 생성 및 마이그레이션
 ### AWS RDS(MySQL)에서 GCP Cloud SQL(MySQL) 환경 시연
-1. data-mold server 접속 후 좌측 메뉴에서 Migration -> SQL Database -> MySQl 순으로 클릭
+1. data-manager server 접속 후 좌측 메뉴에서 Migration -> SQL Database -> MySQl 순으로 클릭
 
 <p align="center"><img src="/docs/image/web/main.png" ></p>
 
@@ -92,7 +92,7 @@
 
 ## 5. 클라우드 비관계형데이터베이스 생성 및 마이그레이션
 ### AWS DynamoDB에서 NCP Cloud DB for MongoDB
-1. data-mold server 접속 후 좌측 메뉴에서 Migration -> NoSQL -> AWS DynamoDB to -> MongoDB 순으로 클릭
+1. data-manager server 접속 후 좌측 메뉴에서 Migration -> NoSQL -> AWS DynamoDB to -> MongoDB 순으로 클릭
 
 <p align="center"><img src="/docs/image/web/main.png" ></p>
 

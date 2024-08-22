@@ -28,7 +28,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/cloud-barista/cm-data-mold/pkg/utils"
+	"github.com/cloud-barista/mc-data-manager/pkg/utils"
 	"github.com/sirupsen/logrus"
 )
 

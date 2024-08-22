@@ -16,7 +16,7 @@ limitations under the License.
 package auth
 
 import (
-	"github.com/cloud-barista/cm-data-mold/service/osc"
+	"github.com/cloud-barista/mc-data-manager/service/osc"
 	"github.com/sirupsen/logrus"
 )
 

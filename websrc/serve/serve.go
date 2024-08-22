@@ -23,15 +23,15 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/cloud-barista/cm-data-mold/websrc/controllers"
-	"github.com/cloud-barista/cm-data-mold/websrc/routes"
+	"github.com/cloud-barista/mc-data-manager/websrc/controllers"
+	"github.com/cloud-barista/mc-data-manager/websrc/routes"
 
 	// REST API (echo)
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
 	// echo-swagger middleware
-	_ "github.com/cloud-barista/cm-data-mold/websrc/docs"
+	_ "github.com/cloud-barista/mc-data-manager/websrc/docs"
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
@@ -140,7 +140,7 @@ func InitServer(addIP ...string) *echo.Echo {
 	website := " http://" + selfEndpoint
 	apidashboard := " http://" + selfEndpoint + "/swagger/index.html"
 
-	fmt.Println("Data Mold Web UI is available at")
+	fmt.Println("Data Manager Web UI is available at")
 	fmt.Printf(noticeColor, website)
 	fmt.Println("\n ")
 

@@ -23,7 +23,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/cloud-barista/cm-data-mold/pkg/utils"
+	"github.com/cloud-barista/mc-data-manager/pkg/utils"
 	_ "github.com/go-sql-driver/mysql"
 )
 

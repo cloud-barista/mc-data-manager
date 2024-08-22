@@ -5,7 +5,7 @@ import (
 
 	"fmt"
 
-	"github.com/cloud-barista/cm-data-mold/pkg/dummy/semistructured"
+	"github.com/cloud-barista/mc-data-manager/pkg/dummy/semistructured"
 )
 
 func TestJSON(t *testing.T) {

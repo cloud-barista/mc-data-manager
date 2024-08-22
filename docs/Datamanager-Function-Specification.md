@@ -1,4 +1,4 @@
-# Data Mold 기능 명세서
+# Data Manager 기능 명세서
 
 ## 목차
 
@@ -26,7 +26,7 @@
   - [ncp mongoDB](https://www.ncloud.com/guideCenter/guide/79)
 ## Linux에서 설치 및 실행
 
-1. git을 이용한 datamold 설치
+1. git을 이용한 datamanager 설치
     
     ```bash
     # git 설치
@@ -36,23 +36,23 @@
     git config --global user.name "자신의 계정"
     git config --global user.email "자신의 이메일"
     
-    # git clone으로 datamold 가져오기
-    git clone https://<자신의계정>@github.com/jjang-go/cm-data-mold.git
-    # ex : git clone https://jjang-go@github.com/jjang-go/cm-data-mold.git
+    # git clone으로 datamanager 가져오기
+    git clone https://<자신의계정>@github.com/jjang-go/mc-data-manager.git
+    # ex : git clone https://jjang-go@github.com/jjang-go/mc-data-manager.git
     
-    # cm-data-mold로 이동
-    cd ./cm-data-mold
+    # mc-data-manager로 이동
+    cd ./mc-data-manager
     
-    # datamold build
+    # datamanager build
     go build .
     
     # 실행 확인
-    ./cm-data-mold -h
+    ./mc-data-manager -h
     It is a tool that builds an environment for verification of data migration technology and 
     generates test data necessary for data migration.
     
     Usage:
-      cm-data-mold [command]
+      mc-data-manager [command]
     
     Available Commands:
       create      Creating dummy data of structured/unstructured/semi-structured
@@ -63,9 +63,9 @@
       server      Start Web Server
     
     Flags:
-      -h, --help   help for cm-data-mold
+      -h, --help   help for mc-data-manager
     
-    Use "cm-data-mold [command] --help" for more information about a command.
+    Use "mc-data-manager [command] --help" for more information about a command.
     ```
     
 
@@ -195,10 +195,10 @@ src : aws, dst : ncp로 구성된 인증정보 예시
     ```bash
     # example
     # /tmp/dummy 디렉토리에 sql 10GB, json 15GB, txt 100GB
-    ./cm-data-mold create -s 10 -j 15 -t 100 -d /tmp/dummy
+    ./mc-data-manager create -s 10 -j 15 -t 100 -d /tmp/dummy
     
     # /tmp/dummyTemp 디렉토리에 csv 2GB, xml 4GB, zip 100GB
-    ./cm-data-mold create -c 2 -x 4 -z 100 -d /tmp/dummyTemp
+    ./mc-data-manager create -c 2 -x 4 -z 100 -d /tmp/dummyTemp
     ```
     
 
@@ -219,10 +219,10 @@ src : aws, dst : ncp로 구성된 인증정보 예시
         ```bash
         # example
         # 사용자 정보가 기재된 auth.json(src : aws, dst: gcp)을 활용하여 /tmp/dummy 디렉토리를 S3로 임포트
-        ./cm-data-mold import objectstorage -C ./auth.json -d /tmp/dummy
+        ./mc-data-manager import objectstorage -C ./auth.json -d /tmp/dummy
         
         # 사용자 정보가 기재된 auth.json(src : aws, dst: gcp)을 활용하여 /tmp/dummy 디렉토리를 GCP로 임포트
-        ./cm-data-mold import objectstorage -C ./auth.json -d /tmp/dummy -T
+        ./mc-data-manager import objectstorage -C ./auth.json -d /tmp/dummy -T
         ```
         
     2. rdbms
@@ -234,10 +234,10 @@ src : aws, dst : ncp로 구성된 인증정보 예시
         ```bash
         # example
         # 사용자 정보가 기재된 auth.json(src : aws, dst: gcp)을 활용하여 /tmp/dummy 디렉토리의 sql파일을 RDS msyql로 임포트
-        ./cm-data-mold import rdbms -C ./auth.json -d /tmp/dummy
+        ./mc-data-manager import rdbms -C ./auth.json -d /tmp/dummy
         
         # 사용자 정보가 기재된 auth.json(src : aws, dst: gcp)을 활용하여 /tmp/dummy 디렉토리의 sql파일을 SQL mysql로 임포트
-        ./cm-data-mold import rdbms -C ./auth.json -d /tmp/dummy -T
+        ./mc-data-manager import rdbms -C ./auth.json -d /tmp/dummy -T
         ```
         
     3. nrdbms
@@ -249,10 +249,10 @@ src : aws, dst : ncp로 구성된 인증정보 예시
         ```bash
         # example
         # 사용자 정보가 기재된 auth.json(src : aws, dst: gcp)을 활용하여 /tmp/dummy 디렉토리의 json파일을 AWS dynamoDB로 임포트
-        ./cm-data-mold import nrdbms -C ./auth.json -d /tmp/dummy
+        ./mc-data-manager import nrdbms -C ./auth.json -d /tmp/dummy
         
         # 사용자 정보가 기재된 auth.son(src : aws, dst: gcp)을 활용하여 /tmp/dummy 디렉토리의 json파일을 GCP FirestoreDB로 임포트
-        ./cm-data-mold import nrdbms -C ./auth.json -d /tmp/dummy -T
+        ./mc-data-manager import nrdbms -C ./auth.json -d /tmp/dummy -T
         ```
         
 2. export : 더미데이터 export 명령어
@@ -268,10 +268,10 @@ src : aws, dst : ncp로 구성된 인증정보 예시
         ```bash
         # example
         # 사용자 정보가 기재된 auth.json(src : aws, dst: gcp)을 활용하여 S3에서 /tmp/dummy 디렉토리로 익스포트
-        ./cm-data-mold export objectstorage -C ./auth.json -d /tmp/dummy
+        ./mc-data-manager export objectstorage -C ./auth.json -d /tmp/dummy
         
         # 사용자 정보가 기재된 auth.json(src : aws, dst: gcp)을 활용하여 GCP에서 /tmp/dummy 디렉토리로 익스포트
-        ./cm-data-mold export objectstorage -C ./auth.json -d /tmp/dummy -T
+        ./mc-data-manager export objectstorage -C ./auth.json -d /tmp/dummy -T
         ```
         
     2. rdbms
@@ -283,10 +283,10 @@ src : aws, dst : ncp로 구성된 인증정보 예시
         ```bash
         # example
         # 사용자 정보가 기재된 auth.json(src : aws, dst: gcp)을 활용하여 /tmp/dummy에 RDS msyql의 DB들을 익스포트
-        ./cm-data-mold export rdbms -C ./auth.json -d /tmp/dummy
+        ./mc-data-manager export rdbms -C ./auth.json -d /tmp/dummy
         
         # 사용자 정보가 기재된 auth.json(src : aws, dst: gcp)을 활용하여 /tmp/dummy에 SQL msyql의 DB들을 익스포트
-        ./cm-data-mold export rdbms -C ./auth.json -d /tmp/dummy -T
+        ./mc-data-manager export rdbms -C ./auth.json -d /tmp/dummy -T
         ```
         
     3. nrdbms
@@ -298,10 +298,10 @@ src : aws, dst : ncp로 구성된 인증정보 예시
         ```bash
         # example
         # 사용자 정보가 기재된 auth.json(src : aws, dst: gcp)을 활용하여 /tmp/dummy에 AWS dynamoDB의 테이블들을 json으로 익스포트
-        ./cm-data-mold export nrdbms -C ./auth.json -d /tmp/dummy
+        ./mc-data-manager export nrdbms -C ./auth.json -d /tmp/dummy
         
         # 사용자 정보가 기재된 auth.son(src : aws, dst: gcp)을 활용하여 /tmp/dummy에 GCP FirestoreDB의 테이블들을 json으로 익스포트
-        ./cm-data-mold export nrdbms -C ./auth.json -d /tmp/dummy -T
+        ./mc-data-manager export nrdbms -C ./auth.json -d /tmp/dummy -T
         ```
         
 3. migration
@@ -317,10 +317,10 @@ src : aws, dst : ncp로 구성된 인증정보 예시
         ```bash
         # example
         # 사용자 정보가 기재된 auth.json(src : aws, dst: gcp)을 활용하여 S3에서 GCP로 마이그레이션
-        ./cm-data-mold migration objectstorage -C ./auth.json
+        ./mc-data-manager migration objectstorage -C ./auth.json
         
         # 사용자 정보가 기재된 auth.json(src : aws, dst: gcp)을 활용하여 GCP에서 S3로 마이그레이션
-        ./cm-data-mold migration objectstorage -C ./auth.json -T
+        ./mc-data-manager migration objectstorage -C ./auth.json -T
         ```
         
     2. rdbms
@@ -332,10 +332,10 @@ src : aws, dst : ncp로 구성된 인증정보 예시
         ```bash
         # example
         # 사용자 정보가 기재된 auth.json(src : aws, dst: gcp)을 활용하여 RDS Mysql에서 SQL Mysql로 마이그레이션
-        ./cm-data-mold migration rdbms -C ./auth.json
+        ./mc-data-manager migration rdbms -C ./auth.json
         
         # 사용자 정보가 기재된 auth.json(src : aws, dst: gcp)을 활용하여 SQL Mysql에서 RDS Mysql로 마이그레이션
-        ./cm-data-mold migration rdbms -C ./auth.json -T
+        ./mc-data-manager migration rdbms -C ./auth.json -T
         ```
         
     3. nrdbms
@@ -347,10 +347,10 @@ src : aws, dst : ncp로 구성된 인증정보 예시
         ```bash
         # example
         # 사용자 정보가 기재된 auth.json(src : aws, dst: gcp)을 활용하여 AWS dynamoDB에서 GCP FirestoreDB로 마이그레이션
-        ./cm-data-mold migration nrdbms -C ./auth.json
+        ./mc-data-manager migration nrdbms -C ./auth.json
         
         # 사용자 정보가 기재된 auth.son(src : aws, dst: gcp)을 활용하여 GCP FirestoreDB에서 AWS dynamoDB로 마이그레이션
-        ./cm-data-mold migration nrdbms -C ./auth.json -T
+        ./mc-data-manager migration nrdbms -C ./auth.json -T
         ```
         
 4. delete
@@ -366,7 +366,7 @@ src : aws, dst : ncp로 구성된 인증정보 예시
         ```bash
         # example
         # 삭제하고자 하는 더미 폴더가 /tmp/dummy
-        ./cm-data-mold delete dummy -d /tmp/dummy
+        ./mc-data-manager delete dummy -d /tmp/dummy
         ```
         
     2. objectstorage
@@ -378,10 +378,10 @@ src : aws, dst : ncp로 구성된 인증정보 예시
         ```bash
         # example
         # 사용자 정보가 기재된 auth.json(src : aws, dst: gcp)을 활용하여 S3 버킷 삭제
-        ./cm-data-mold delete objectstorage -C ./auth.json
+        ./mc-data-manager delete objectstorage -C ./auth.json
         
         # 사용자 정보가 기재된 auth.json(src : aws, dst: gcp)을 활용하여 GCP 버킷 삭제
-        ./cm-data-mold delete objectstorage -C ./auth.json -T
+        ./mc-data-manager delete objectstorage -C ./auth.json -T
         ```
         
     3. rdbms
@@ -393,10 +393,10 @@ src : aws, dst : ncp로 구성된 인증정보 예시
         ```bash
         # example
         # 사용자 정보가 기재된 auth.json(src : aws, dst: gcp)을 활용하여 RDS Mysql의 adc,def DB 삭제
-        ./cm-data-mold delete rdbms -C ./auth.json -D abc -D def
+        ./mc-data-manager delete rdbms -C ./auth.json -D abc -D def
         
         # 사용자 정보가 기재된 auth.json(src : aws, dst: gcp)을 활용하여 SQL Mysql의 adc,def DB 삭제
-        ./cm-data-mold delete rdbms -C ./auth.json -D abc -D def -T
+        ./mc-data-manager delete rdbms -C ./auth.json -D abc -D def -T
         ```
         
     4. nrdbms
@@ -408,10 +408,10 @@ src : aws, dst : ncp로 구성된 인증정보 예시
         ```bash
         # example
         # 사용자 정보가 기재된 auth.json(src : aws, dst: gcp)을 활용하여 AWS DynamoDB의 adc,def 테이블 삭제
-        ./cm-data-mold delete nrdbms -C ./auth.json -D abc -D def
+        ./mc-data-manager delete nrdbms -C ./auth.json -D abc -D def
         
         # 사용자 정보가 기재된 auth.json(src : aws, dst: gcp)을 활용하여 GCP FirestoreDB의 adc,def 콜렉션 삭제
-        ./cm-data-mold delete nrdbms -C ./auth.json -D abc -D def -T
+        ./mc-data-manager delete nrdbms -C ./auth.json -D abc -D def -T
         ```
         
 5. server
@@ -422,17 +422,17 @@ src : aws, dst : ncp로 구성된 인증정보 예시
     
     ```bash
     # example
-    # datamold의 기능을 web으로도 사용할 수 있도록 하는 명령어입니다. (기본 포트 : 80)
-    ./cm-data-mold server
+    # datamanager 기능을 web으로도 사용할 수 있도록 하는 명령어입니다. (기본 포트 : 80)
+    ./mc-data-manager server
     
     # 포트 변경도 가능합니다.
-    ./cm-data-mold server -P 8080
+    ./mc-data-manager server -P 8080
     ```
     
 
 ## Web Server 사용법
 
-./cm-data-mold server 명령어를 이용하여 서버를 이용할 수 있습니다.
+./mc-data-manager server 명령어를 이용하여 서버를 이용할 수 있습니다.
 
 메인화면
 

@@ -16,8 +16,8 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/cloud-barista/cm-data-mold/internal/log"
-	dmsv "github.com/cloud-barista/cm-data-mold/websrc/serve"
+	"github.com/cloud-barista/mc-data-manager/internal/log"
+	dmsv "github.com/cloud-barista/mc-data-manager/websrc/serve"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )

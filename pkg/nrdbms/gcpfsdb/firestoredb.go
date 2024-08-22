@@ -19,7 +19,7 @@ import (
 	"context"
 
 	"cloud.google.com/go/firestore"
-	"github.com/cloud-barista/cm-data-mold/pkg/utils"
+	"github.com/cloud-barista/mc-data-manager/pkg/utils"
 	"google.golang.org/api/iterator"
 )
 

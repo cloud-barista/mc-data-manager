@@ -21,7 +21,7 @@ import (
 
 	"fmt"
 
-	"github.com/cloud-barista/cm-data-mold/pkg/dummy/structured"
+	"github.com/cloud-barista/mc-data-manager/pkg/dummy/structured"
 )
 
 func TestCSV(t *testing.T) {

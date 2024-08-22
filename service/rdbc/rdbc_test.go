@@ -20,9 +20,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/cloud-barista/cm-data-mold/pkg/rdbms/mysql"
-	"github.com/cloud-barista/cm-data-mold/pkg/utils"
-	"github.com/cloud-barista/cm-data-mold/service/rdbc"
+	"github.com/cloud-barista/mc-data-manager/pkg/rdbms/mysql"
+	"github.com/cloud-barista/mc-data-manager/pkg/utils"
+	"github.com/cloud-barista/mc-data-manager/service/rdbc"
 )
 
 func TestMain(m *testing.M) {
