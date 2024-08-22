@@ -34,7 +34,7 @@ import (
 // @Param gcpCredential	formData file true "Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
-// @Router /dynamodb/firestore [post]
+// @Router /migration/dynamodb/firestore [post]
 func MigrationDynamoDBToFirestorePostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -103,7 +103,7 @@ func MigrationDynamoDBToFirestorePostHandler(ctx echo.Context) error {
 // @Param	gcpCredential	formData	file true	"Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
-// @Router /dynamodb/mongodb [post]
+// @Router /migration/dynamodb/mongodb [post]
 func MigrationDynamoDBToMongoDBPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -162,7 +162,7 @@ func MigrationDynamoDBToMongoDBPostHandler(ctx echo.Context) error {
 // @Param gcpCredential	formData file true "Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
-// @Router /firestore/dynamodb [post]
+// @Router /migration/firestore/dynamodb [post]
 func MigrationFirestoreToDynamoDBPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -231,7 +231,7 @@ func MigrationFirestoreToDynamoDBPostHandler(ctx echo.Context) error {
 // @Param gcpCredential	formData file true "Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
-// @Router /firestore/mongodb [post]
+// @Router /migration/firestore/mongodb [post]
 func MigrationFirestoreToMongoDBPostHandler(ctx echo.Context) error {
 
 	start := time.Now()

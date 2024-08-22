@@ -22,27 +22,27 @@ import "mime/multipart"
 type MigrationForm struct {
 	Path string `form:"path"`
 
-	AWSRegion    string `form:"awsRegion"`
-	AWSAccessKey string `form:"awsAccessKey"`
-	AWSSecretKey string `form:"awsSecretKey"`
-	AWSBucket    string `form:"awsBucket"`
+	AWSRegion    string `form:"awsRegion" json:"awsRegion"`
+	AWSAccessKey string `form:"awsAccessKey" json:"awsAccessKey"`
+	AWSSecretKey string `form:"awsSecretKey" json:"awsSecretKey"`
+	AWSBucket    string `form:"awsBucket" json:"awsBucket"`
 
 	ProjectID     string                `form:"projectid" json:"projectid"`
 	GCPRegion     string                `form:"gcpRegion" json:"gcpRegion"`
 	GCPBucket     string                `form:"gcpBucket" json:"gcpBucket"`
 	GCPCredential *multipart.FileHeader `form:"gcpCredential" json:"-" swaggerignore:"true"`
 
-	NCPRegion    string `form:"ncpRegion"`
-	NCPAccessKey string `form:"ncpAccessKey"`
-	NCPSecretKey string `form:"ncpSecretKey"`
-	NCPEndPoint  string `form:"ncpEndpoint"`
-	NCPBucket    string `form:"ncpBucket"`
+	NCPRegion    string `form:"ncpRegion" json:"ncpRegion"`
+	NCPAccessKey string `form:"ncpAccessKey" json:"ncpAccessKey"`
+	NCPSecretKey string `form:"ncpSecretKey" json:"ncpSecretKey"`
+	NCPEndPoint  string `form:"ncpEndpoint" json:"ncpEndpoint"`
+	NCPBucket    string `form:"ncpBucket" json:"ncpBucket"`
 
-	MongoHost     string `form:"host"`
-	MongoPort     string `form:"port"`
-	MongoUsername string `form:"username"`
-	MongoPassword string `form:"password"`
-	MongoDBName   string `form:"databaseName"`
+	MongoHost     string `form:"host" json:"host"`
+	MongoPort     string `form:"port" json:"port"`
+	MongoUsername string `form:"username" json:"username"`
+	MongoPassword string `form:"password" json:"password"`
+	MongoDBName   string `form:"databaseName" json:"databaseName"`
 }
 type GCPMigrationParams struct {
 	ProjectID     string                `form:"projectid" json:"projectid"`

@@ -36,7 +36,7 @@ import (
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/gcp/linux [post]
+//	@Router			/migration/gcp/linux [post]
 func MigrationGCPToLinuxPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -102,7 +102,7 @@ func MigrationGCPToLinuxPostHandler(ctx echo.Context) error {
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/gcp/windows [post]
+//	@Router			/migration/gcp/windows [post]
 func MigrationGCPToWindowsPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -167,7 +167,7 @@ func MigrationGCPToWindowsPostHandler(ctx echo.Context) error {
 //	@Param			gcpCredential	formData	file					true	"Parameters required to generate test data"
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/gcp/s3 [post]
+//	@Router			/migration/gcp/s3 [post]
 func MigrationGCPToS3PostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -238,7 +238,7 @@ func MigrationGCPToS3PostHandler(ctx echo.Context) error {
 //	@Param			gcpCredential	formData	file					true	"Parameters required to generate test data"
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/gcp/ncp [post]
+//	@Router			/migration/gcp/ncp [post]
 func MigrationGCPToNCPPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
