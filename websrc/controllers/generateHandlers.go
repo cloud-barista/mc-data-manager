@@ -322,7 +322,7 @@ func GenerateNCPPostHandler(ctx echo.Context) error {
 //	@Tags			[Test Data Generation]
 //	@Accept			json
 //	@Produce		json
-//	@Param			RequestBody	body		GenDataParams			true	"Parameters required to generate test data"
+//	@Param			RequestBody	body		GenMySQLParams			true	"Parameters required to generate test data"
 //	@Success		200			{object}	models.BasicResponse	"Successfully generated test data"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
 //	@Router			/generate/mysql [post]
