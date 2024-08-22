@@ -35,7 +35,7 @@ import (
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/linux/s3 [post]
+//	@Router			/migration/linux/s3 [post]
 func MigrationLinuxToS3PostHandler(ctx echo.Context) error {
 	start := time.Now()
 
@@ -91,7 +91,7 @@ func MigrationLinuxToS3PostHandler(ctx echo.Context) error {
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/linux/gcp [post]
+//	@Router			/migration/linux/gcp [post]
 func MigrationLinuxToGCPPostHandler(ctx echo.Context) error {
 	start := time.Now()
 
@@ -160,7 +160,7 @@ func MigrationLinuxToGCPPostHandler(ctx echo.Context) error {
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/linux/ncp [post]
+//	@Router			/migration/linux/ncp [post]
 func MigrationLinuxToNCPPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -217,7 +217,7 @@ func MigrationLinuxToNCPPostHandler(ctx echo.Context) error {
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/windows/s3 [post]
+//	@Router			/migration/windows/s3 [post]
 func MigrationWindowsToS3PostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -278,7 +278,7 @@ func MigrationWindowsToS3PostHandler(ctx echo.Context) error {
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/windows/gcp [post]
+//	@Router			/migration/windows/gcp [post]
 func MigrationWindowsToGCPPostHandler(ctx echo.Context) error {
 	start := time.Now()
 
@@ -342,7 +342,7 @@ func MigrationWindowsToGCPPostHandler(ctx echo.Context) error {
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/windows/ncp [post]
+//	@Router			/migration/windows/ncp [post]
 func MigrationWindowsToNCPPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -397,7 +397,7 @@ func MigrationWindowsToNCPPostHandler(ctx echo.Context) error {
 //	@Param			RequestBody	body		MigrationMySQLForm		true	"Parameters required for MySQL migration"
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/mysql [post]
+//	@Router			/migration/mysql [post]
 func MigrationMySQLPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
