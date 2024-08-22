@@ -201,7 +201,7 @@ func MigrationNCPToS3PostHandler(ctx echo.Context) error {
 //	@Summary		Migrate data from NCP to GCP Cloud Storage
 //	@Description	Migrate data stored in NCP Object Storage to GCP Cloud Storage.
 //	@Tags			[Data Migration]
-//	@Accept			json
+//	@Accept			multipart/form-data
 //	@Produce		json
 //	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
 //	@Param gcpCredential	formData file true "Parameters required to generate test data"

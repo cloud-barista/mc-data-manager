@@ -29,7 +29,7 @@ import (
 //	@Summary		Migrate data from GCP to Linux
 //	@Description	Migrate data stored in GCP Cloud Storage to a Linux-based system.
 //	@Tags			[Data Migration]
-//	@Accept			json
+//	@Accept			multipart/form-data
 //	@Produce		json
 //	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
 //	@Param			gcpCredential	formData	file					true	"Parameters required to generate test data"
@@ -95,7 +95,7 @@ func MigrationGCPToLinuxPostHandler(ctx echo.Context) error {
 //	@Summary		Migrate data from GCP to Windows
 //	@Description	Migrate data stored in GCP Cloud Storage to a Windows-based system.
 //	@Tags			[Data Migration]
-//	@Accept			json
+//	@Accept			multipart/form-data
 //	@Produce		json
 //	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
 //	@Param			gcpCredential	formData	file					true	"Parameters required to generate test data"
@@ -161,7 +161,7 @@ func MigrationGCPToWindowsPostHandler(ctx echo.Context) error {
 //	@Summary		Migrate data from GCP to AWS S3
 //	@Description	Migrate data stored in GCP Cloud Storage to AWS S3.
 //	@Tags			[Data Migration]
-//	@Accept			json
+//	@Accept			multipart/form-data
 //	@Produce		json
 //	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
 //	@Param			gcpCredential	formData	file					true	"Parameters required to generate test data"
@@ -232,7 +232,7 @@ func MigrationGCPToS3PostHandler(ctx echo.Context) error {
 //	@Summary		Migrate data from GCP to NCP Object Storage
 //	@Description	Migrate data stored in GCP Cloud Storage to NCP Object Storage.
 //	@Tags			[Data Migration]
-//	@Accept			json
+//	@Accept			multipart/form-data
 //	@Produce		json
 //	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
 //	@Param			gcpCredential	formData	file					true	"Parameters required to generate test data"

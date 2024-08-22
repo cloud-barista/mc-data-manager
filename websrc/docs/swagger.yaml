@@ -164,7 +164,7 @@ paths:
   /dynamodb/firestore:
     post:
       consumes:
-      - application/json
+      - multipart/form-data
       description: Migrate data stored in AWS DynamoDB to Google Cloud Firestore.
       parameters:
       - description: Parameters required for migration
@@ -173,6 +173,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/controllers.MigrationForm'
+      - description: Parameters required to generate test data
+        in: formData
+        name: gcpCredential
+        required: true
+        type: file
       produces:
       - application/json
       responses:
@@ -199,6 +204,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/controllers.MigrationForm'
+      - description: Parameters required to generate test data
+        in: formData
+        name: gcpCredential
+        required: true
+        type: file
       produces:
       - application/json
       responses:
@@ -225,6 +235,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/controllers.MigrationForm'
+      - description: Parameters required to generate test data
+        in: formData
+        name: gcpCredential
+        required: true
+        type: file
       produces:
       - application/json
       responses:
@@ -251,6 +266,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/controllers.MigrationForm'
+      - description: Parameters required to generate test data
+        in: formData
+        name: gcpCredential
+        required: true
+        type: file
       produces:
       - application/json
       responses:
@@ -268,7 +288,7 @@ paths:
   /gcp/linux:
     post:
       consumes:
-      - application/json
+      - multipart/form-data
       description: Migrate data stored in GCP Cloud Storage to a Linux-based system.
       parameters:
       - description: Parameters required for migration
@@ -277,6 +297,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/controllers.MigrationForm'
+      - description: Parameters required to generate test data
+        in: formData
+        name: gcpCredential
+        required: true
+        type: file
       produces:
       - application/json
       responses:
@@ -298,7 +323,7 @@ paths:
   /gcp/ncp:
     post:
       consumes:
-      - application/json
+      - multipart/form-data
       description: Migrate data stored in GCP Cloud Storage to NCP Object Storage.
       parameters:
       - description: Parameters required for migration
@@ -307,6 +332,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/controllers.MigrationForm'
+      - description: Parameters required to generate test data
+        in: formData
+        name: gcpCredential
+        required: true
+        type: file
       produces:
       - application/json
       responses:
@@ -324,7 +354,7 @@ paths:
   /gcp/s3:
     post:
       consumes:
-      - application/json
+      - multipart/form-data
       description: Migrate data stored in GCP Cloud Storage to AWS S3.
       parameters:
       - description: Parameters required for migration
@@ -333,6 +363,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/controllers.MigrationForm'
+      - description: Parameters required to generate test data
+        in: formData
+        name: gcpCredential
+        required: true
+        type: file
       produces:
       - application/json
       responses:
@@ -350,7 +385,7 @@ paths:
   /gcp/windows:
     post:
       consumes:
-      - application/json
+      - multipart/form-data
       description: Migrate data stored in GCP Cloud Storage to a Windows-based system.
       parameters:
       - description: Parameters required for migration
@@ -359,6 +394,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/controllers.MigrationForm'
+      - description: Parameters required to generate test data
+        in: formData
+        name: gcpCredential
+        required: true
+        type: file
       produces:
       - application/json
       responses:
@@ -406,7 +446,7 @@ paths:
   /generate/firestore:
     post:
       consumes:
-      - application/json
+      - multipart/form-data
       description: Generate test data on GCP Firestore.
       parameters:
       - description: Parameters required to generate test data
@@ -417,7 +457,7 @@ paths:
           $ref: '#/definitions/controllers.GenDataParams'
       - description: Parameters required to generate test data
         in: formData
-        name: CredentialGCP
+        name: gcpCredential
         required: true
         type: file
       produces:
@@ -437,7 +477,7 @@ paths:
   /generate/gcp:
     post:
       consumes:
-      - application/json
+      - multipart/form-data
       description: Generate test data on GCP Cloud Storage.
       parameters:
       - description: Parameters required to generate test data
@@ -448,7 +488,7 @@ paths:
           $ref: '#/definitions/controllers.GenDataParams'
       - description: Parameters required to generate test data
         in: formData
-        name: CredentialGCP
+        name: gcpCredential
         required: true
         type: file
       produces:
@@ -632,7 +672,7 @@ paths:
   /linux/gcp:
     post:
       consumes:
-      - application/json
+      - multipart/form-data
       description: Migrate data stored in a Linux-based system to GCP Cloud Storage.
       parameters:
       - description: Parameters required for migration
@@ -641,6 +681,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/controllers.MigrationForm'
+      - description: Parameters required to generate test data
+        in: formData
+        name: gcpCredential
+        required: true
+        type: file
       produces:
       - application/json
       responses:
@@ -757,6 +802,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/controllers.MigrationForm'
+      - description: Parameters required to generate test data
+        in: formData
+        name: gcpCredential
+        required: true
+        type: file
       produces:
       - application/json
       responses:
@@ -800,7 +850,7 @@ paths:
   /ncp/gcp:
     post:
       consumes:
-      - application/json
+      - multipart/form-data
       description: Migrate data stored in NCP Object Storage to GCP Cloud Storage.
       parameters:
       - description: Parameters required for migration
@@ -809,6 +859,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/controllers.MigrationForm'
+      - description: Parameters required to generate test data
+        in: formData
+        name: gcpCredential
+        required: true
+        type: file
       produces:
       - application/json
       responses:
@@ -912,7 +967,7 @@ paths:
   /s3/gcp:
     post:
       consumes:
-      - application/json
+      - multipart/form-data
       description: Migrate data stored in AWS S3 to Google Cloud Storage.
       parameters:
       - description: Parameters required for migration
@@ -921,6 +976,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/controllers.MigrationForm'
+      - description: Parameters required to generate test data
+        in: formData
+        name: gcpCredential
+        required: true
+        type: file
       produces:
       - application/json
       responses:
@@ -1024,7 +1084,7 @@ paths:
   /windows/gcp:
     post:
       consumes:
-      - application/json
+      - multipart/form-data
       description: Migrate data stored in a Windows-based system to GCP Cloud Storage.
       parameters:
       - description: Parameters required for migration
@@ -1033,6 +1093,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/controllers.MigrationForm'
+      - description: Parameters required to generate test data
+        in: formData
+        name: gcpCredential
+        required: true
+        type: file
       produces:
       - application/json
       responses:

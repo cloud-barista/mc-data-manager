@@ -28,7 +28,7 @@ import (
 // @Summary Migrate data from DynamoDB to Firestore
 // @Description Migrate data stored in AWS DynamoDB to Google Cloud Firestore.
 // @Tags [Data Migration]
-// @Accept json
+// @Accept multipart/form-data
 // @Produce json
 // @Param RequestBody body MigrationForm true "Parameters required for migration"
 // @Param gcpCredential	formData file true "Parameters required to generate test data"

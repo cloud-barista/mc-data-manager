@@ -181,7 +181,7 @@ func GenerateS3PostHandler(ctx echo.Context) error {
 //	@Summary		Generate test data on GCP Cloud Storage
 //	@Description	Generate test data on GCP Cloud Storage.
 //	@Tags			[Test Data Generation]
-//	@Accept			json
+//	@Accept			multipart/form-data
 //	@Produce		json
 //	@Param			RequestBody		body		GenDataParams			true	"Parameters required to generate test data"
 //	@Param			gcpCredential	formData	file					true	"Parameters required to generate test data"
@@ -481,7 +481,7 @@ func GenerateDynamoDBPostHandler(ctx echo.Context) error {
 //	@Summary		Generate test data on GCP Firestore
 //	@Description	Generate test data on GCP Firestore.
 //	@Tags			[Test Data Generation]
-//	@Accept			json
+//	@Accept			multipart/form-data
 //	@Produce		json
 //	@Param			RequestBody		body		GenDataParams			true	"Parameters required to generate test data"
 //	@Param			gcpCredential	formData	file					true	"Parameters required to generate test data"

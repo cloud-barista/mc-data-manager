@@ -27,7 +27,7 @@ const docTemplate = `{
             "post": {
                 "description": "Migrate data stored in AWS DynamoDB to Google Cloud Firestore.",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -45,6 +45,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/controllers.MigrationForm"
                         }
+                    },
+                    {
+                        "type": "file",
+                        "description": "Parameters required to generate test data",
+                        "name": "gcpCredential",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -85,6 +92,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/controllers.MigrationForm"
                         }
+                    },
+                    {
+                        "type": "file",
+                        "description": "Parameters required to generate test data",
+                        "name": "gcpCredential",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -125,6 +139,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/controllers.MigrationForm"
                         }
+                    },
+                    {
+                        "type": "file",
+                        "description": "Parameters required to generate test data",
+                        "name": "gcpCredential",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -165,6 +186,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/controllers.MigrationForm"
                         }
+                    },
+                    {
+                        "type": "file",
+                        "description": "Parameters required to generate test data",
+                        "name": "gcpCredential",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -187,7 +215,7 @@ const docTemplate = `{
             "post": {
                 "description": "Migrate data stored in GCP Cloud Storage to a Linux-based system.",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -205,6 +233,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/controllers.MigrationForm"
                         }
+                    },
+                    {
+                        "type": "file",
+                        "description": "Parameters required to generate test data",
+                        "name": "gcpCredential",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -233,7 +268,7 @@ const docTemplate = `{
             "post": {
                 "description": "Migrate data stored in GCP Cloud Storage to NCP Object Storage.",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -251,6 +286,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/controllers.MigrationForm"
                         }
+                    },
+                    {
+                        "type": "file",
+                        "description": "Parameters required to generate test data",
+                        "name": "gcpCredential",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -273,7 +315,7 @@ const docTemplate = `{
             "post": {
                 "description": "Migrate data stored in GCP Cloud Storage to AWS S3.",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -291,6 +333,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/controllers.MigrationForm"
                         }
+                    },
+                    {
+                        "type": "file",
+                        "description": "Parameters required to generate test data",
+                        "name": "gcpCredential",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -313,7 +362,7 @@ const docTemplate = `{
             "post": {
                 "description": "Migrate data stored in GCP Cloud Storage to a Windows-based system.",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -331,6 +380,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/controllers.MigrationForm"
                         }
+                    },
+                    {
+                        "type": "file",
+                        "description": "Parameters required to generate test data",
+                        "name": "gcpCredential",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -399,7 +455,7 @@ const docTemplate = `{
             "post": {
                 "description": "Generate test data on GCP Firestore.",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -421,7 +477,7 @@ const docTemplate = `{
                     {
                         "type": "file",
                         "description": "Parameters required to generate test data",
-                        "name": "CredentialGCP",
+                        "name": "gcpCredential",
                         "in": "formData",
                         "required": true
                     }
@@ -446,7 +502,7 @@ const docTemplate = `{
             "post": {
                 "description": "Generate test data on GCP Cloud Storage.",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -468,7 +524,7 @@ const docTemplate = `{
                     {
                         "type": "file",
                         "description": "Parameters required to generate test data",
-                        "name": "CredentialGCP",
+                        "name": "gcpCredential",
                         "in": "formData",
                         "required": true
                     }
@@ -745,7 +801,7 @@ const docTemplate = `{
             "post": {
                 "description": "Migrate data stored in a Linux-based system to GCP Cloud Storage.",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -763,6 +819,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/controllers.MigrationForm"
                         }
+                    },
+                    {
+                        "type": "file",
+                        "description": "Parameters required to generate test data",
+                        "name": "gcpCredential",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -941,6 +1004,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/controllers.MigrationForm"
                         }
+                    },
+                    {
+                        "type": "file",
+                        "description": "Parameters required to generate test data",
+                        "name": "gcpCredential",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1003,7 +1073,7 @@ const docTemplate = `{
             "post": {
                 "description": "Migrate data stored in NCP Object Storage to GCP Cloud Storage.",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -1021,6 +1091,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/controllers.MigrationForm"
                         }
+                    },
+                    {
+                        "type": "file",
+                        "description": "Parameters required to generate test data",
+                        "name": "gcpCredential",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1175,7 +1252,7 @@ const docTemplate = `{
             "post": {
                 "description": "Migrate data stored in AWS S3 to Google Cloud Storage.",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -1193,6 +1270,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/controllers.MigrationForm"
                         }
+                    },
+                    {
+                        "type": "file",
+                        "description": "Parameters required to generate test data",
+                        "name": "gcpCredential",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1347,7 +1431,7 @@ const docTemplate = `{
             "post": {
                 "description": "Migrate data stored in a Windows-based system to GCP Cloud Storage.",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -1365,6 +1449,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/controllers.MigrationForm"
                         }
+                    },
+                    {
+                        "type": "file",
+                        "description": "Parameters required to generate test data",
+                        "name": "gcpCredential",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
