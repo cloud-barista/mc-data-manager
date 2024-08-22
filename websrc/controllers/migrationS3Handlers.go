@@ -140,7 +140,7 @@ func MigrationS3ToWindowsPostHandler(ctx echo.Context) error {
 // @Tags [Data Migration]
 // @Accept multipart/form-data
 // @Produce json
-// @Param RequestBody body MigrationForm true "Parameters required for migration"
+// @Param RequestBody formData MigrationForm true "Parameters required for migration"
 // @Param gcpCredential	formData file true "Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"

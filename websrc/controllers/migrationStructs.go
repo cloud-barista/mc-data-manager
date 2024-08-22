@@ -27,7 +27,10 @@ type MigrationForm struct {
 	AWSSecretKey string `form:"awsSecretKey"`
 	AWSBucket    string `form:"awsBucket"`
 
-	GCPParams GCPMigrationParams `json:"gcpParams"`
+	ProjectID     string                `form:"projectid" json:"projectid"`
+	GCPRegion     string                `form:"gcpRegion" json:"gcpRegion"`
+	GCPBucket     string                `form:"gcpBucket" json:"gcpBucket"`
+	GCPCredential *multipart.FileHeader `form:"gcpCredential" json:"-" swaggerignore:"true"`
 
 	NCPRegion    string `form:"ncpRegion"`
 	NCPAccessKey string `form:"ncpAccessKey"`

@@ -30,7 +30,7 @@ import (
 // @Tags [Data Migration]
 // @Accept multipart/form-data
 // @Produce json
-// @Param RequestBody body MigrationForm true "Parameters required for migration"
+// @Param RequestBody formData MigrationForm true "Parameters required for migration"
 // @Param gcpCredential	formData file true "Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
@@ -156,9 +156,9 @@ func MigrationDynamoDBToMongoDBPostHandler(ctx echo.Context) error {
 // @Summary Migrate data from Firestore to DynamoDB
 // @Description Migrate data stored in Google Cloud Firestore to AWS DynamoDB.
 // @Tags [Data Migration]
-// @Accept json
+// @Accept multipart/form-data
 // @Produce json
-// @Param RequestBody body MigrationForm true "Parameters required for migration"
+// @Param RequestBody formData MigrationForm true "Parameters required for migration"
 // @Param gcpCredential	formData file true "Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
@@ -225,9 +225,9 @@ func MigrationFirestoreToDynamoDBPostHandler(ctx echo.Context) error {
 // @Summary Migrate data from Firestore to MongoDB
 // @Description Migrate data stored in Google Cloud Firestore to Naver Cloud MongoDB.
 // @Tags [Data Migration]
-// @Accept json
+// @Accept multipart/form-data
 // @Produce json
-// @Param RequestBody body MigrationForm true "Parameters required for migration"
+// @Param RequestBody formData MigrationForm true "Parameters required for migration"
 // @Param gcpCredential	formData file true "Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
@@ -353,9 +353,9 @@ func MigrationMongoDBToDynamoDBPostHandler(ctx echo.Context) error {
 // @Summary Migrate data from MongoDB to Firestore
 // @Description Migrate data stored in Naver Cloud MongoDB to Google Cloud Firestore.
 // @Tags [Data Migration]
-// @Accept json
+// @Accept multipart/form-data
 // @Produce json
-// @Param RequestBody body MigrationForm true "Parameters required for migration"
+// @Param RequestBody formData MigrationForm true "Parameters required for migration"
 // @Param gcpCredential	formData file true "Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"

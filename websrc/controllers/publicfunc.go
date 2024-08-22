@@ -215,7 +215,7 @@ func getGCPCOSC(logger *logrus.Logger, startTime time.Time, jobType string, para
 	if jobType == "gen" {
 		gcpOSC, err = osc.New(gcpfs.New(gc, gparam.ProjectID, gparam.Bucket, gparam.Region), osc.WithLogger(logger))
 	} else {
-		gcpOSC, err = osc.New(gcpfs.New(gc, mparam.GCPParams.ProjectID, mparam.GCPParams.GCPBucket, mparam.GCPParams.GCPRegion), osc.WithLogger(logger))
+		gcpOSC, err = osc.New(gcpfs.New(gc, mparam.ProjectID, mparam.GCPBucket, mparam.GCPRegion), osc.WithLogger(logger))
 	}
 	if err != nil {
 		end := time.Now()
@@ -328,7 +328,7 @@ func getFirestoreNRDBC(logger *logrus.Logger, startTime time.Time, jobType strin
 	if jobType == "gen" {
 		fc, err = config.NewFireStoreClient(credFileName, gparam.ProjectID)
 	} else {
-		fc, err = config.NewFireStoreClient(credFileName, mparam.GCPParams.ProjectID)
+		fc, err = config.NewFireStoreClient(credFileName, mparam.ProjectID)
 	}
 	if err != nil {
 		end := time.Now()
@@ -342,7 +342,7 @@ func getFirestoreNRDBC(logger *logrus.Logger, startTime time.Time, jobType strin
 	if jobType == "gen" {
 		NRDBC, err = nrdbc.New(gcpfsdb.New(fc, gparam.Region), nrdbc.WithLogger(logger))
 	} else {
-		NRDBC, err = nrdbc.New(gcpfsdb.New(fc, mparam.GCPParams.GCPRegion), nrdbc.WithLogger(logger))
+		NRDBC, err = nrdbc.New(gcpfsdb.New(fc, mparam.GCPRegion), nrdbc.WithLogger(logger))
 	}
 	if err != nil {
 		end := time.Now()

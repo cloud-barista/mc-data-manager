@@ -31,7 +31,7 @@ import (
 //	@Tags			[Data Migration]
 //	@Accept			multipart/form-data
 //	@Produce		json
-//	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
+//	@Param			RequestBody	formData		MigrationForm			true	"Parameters required for migration"
 //	@Param			gcpCredential	formData	file					true	"Parameters required to generate test data"
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
@@ -97,7 +97,7 @@ func MigrationGCPToLinuxPostHandler(ctx echo.Context) error {
 //	@Tags			[Data Migration]
 //	@Accept			multipart/form-data
 //	@Produce		json
-//	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
+//	@Param			RequestBody	formData		MigrationForm			true	"Parameters required for migration"
 //	@Param			gcpCredential	formData	file					true	"Parameters required to generate test data"
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
@@ -163,7 +163,7 @@ func MigrationGCPToWindowsPostHandler(ctx echo.Context) error {
 //	@Tags			[Data Migration]
 //	@Accept			multipart/form-data
 //	@Produce		json
-//	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
+//	@Param			RequestBody	formData		MigrationForm			true	"Parameters required for migration"
 //	@Param			gcpCredential	formData	file					true	"Parameters required to generate test data"
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
@@ -234,7 +234,7 @@ func MigrationGCPToS3PostHandler(ctx echo.Context) error {
 //	@Tags			[Data Migration]
 //	@Accept			multipart/form-data
 //	@Produce		json
-//	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
+//	@Param			RequestBody	formData		MigrationForm			true	"Parameters required for migration"
 //	@Param			gcpCredential	formData	file					true	"Parameters required to generate test data"
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
