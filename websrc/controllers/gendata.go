@@ -65,6 +65,11 @@ type GenDataParams struct {
 	GCPCredential *multipart.FileHeader `form:"gcpCredential" swaggerignore:"true"`
 	ProjectID     string                `json:"projectid" form:"projectid"`
 }
+type GenFirestoreParams struct {
+	Region        string                `json:"region" form:"region"`
+	GCPCredential *multipart.FileHeader `form:"gcpCredential" swaggerignore:"true"`
+	ProjectID     string                `json:"projectid" form:"projectid"`
+}
 
 func genData(params GenDataParams, logger *logrus.Logger) error {
 	if params.CheckSQL == "on" {

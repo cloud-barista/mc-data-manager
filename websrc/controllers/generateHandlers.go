@@ -483,7 +483,7 @@ func GenerateDynamoDBPostHandler(ctx echo.Context) error {
 //	@Tags			[Test Data Generation]
 //	@Accept			multipart/form-data
 //	@Produce		json
-//	@Param			RequestBody		formData		GenDataParams			true	"Parameters required to generate test data"
+//	@Param			GenFirestoreParams		formData		GenFirestoreParams			true	"Parameters required to generate test data"
 //	@Param			gcpCredential	formData	file					true	"Parameters required to generate test data"
 //	@Success		200				{object}	models.BasicResponse	"Successfully generated test data"
 //	@Failure		500				{object}	models.BasicResponse	"Internal Server Error"
