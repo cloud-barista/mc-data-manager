@@ -27,7 +27,7 @@ import (
 
 func LogFile() {
 	execPath, err := os.Executable()
-	fmt.Println(execPath)
+	// fmt.Println(execPath)
 	if err != nil {
 		logrus.WithError(err).Fatal("Failed to get executable path")
 	}

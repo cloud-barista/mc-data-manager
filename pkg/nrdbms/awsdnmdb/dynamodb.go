@@ -24,7 +24,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
-	"github.com/cloud-barista/cm-data-mold/pkg/utils"
+	"github.com/cloud-barista/mc-data-manager/pkg/utils"
 )
 
 func init() {

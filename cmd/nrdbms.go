@@ -18,7 +18,7 @@ package cmd
 import (
 	"os"
 
-	"github.com/cloud-barista/cm-data-mold/internal/auth"
+	"github.com/cloud-barista/mc-data-manager/internal/auth"
 	"github.com/spf13/cobra"
 )
 

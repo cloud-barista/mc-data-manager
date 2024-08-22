@@ -20,7 +20,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/cloud-barista/cm-data-mold/websrc/models"
+	"github.com/cloud-barista/mc-data-manager/websrc/models"
 	"github.com/labstack/echo/v4"
 )
 

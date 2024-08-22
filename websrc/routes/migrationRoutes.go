@@ -16,7 +16,7 @@ limitations under the License.
 package routes
 
 import (
-	"github.com/cloud-barista/cm-data-mold/websrc/controllers"
+	"github.com/cloud-barista/mc-data-manager/websrc/controllers"
 	"github.com/labstack/echo/v4"
 )
 

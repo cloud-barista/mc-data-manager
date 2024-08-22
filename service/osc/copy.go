@@ -21,7 +21,7 @@ import (
 	"io"
 	"sync"
 
-	"github.com/cloud-barista/cm-data-mold/pkg/utils"
+	"github.com/cloud-barista/mc-data-manager/pkg/utils"
 )
 
 func (src *OSController) Copy(dst *OSController) error {

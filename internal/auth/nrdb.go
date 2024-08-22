@@ -22,7 +22,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/cloud-barista/cm-data-mold/service/nrdbc"
+	"github.com/cloud-barista/mc-data-manager/service/nrdbc"
 	"github.com/sirupsen/logrus"
 )
 

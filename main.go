@@ -15,7 +15,7 @@ limitations under the License.
 */
 package main
 
-import "github.com/cloud-barista/cm-data-mold/cmd"
+import "github.com/cloud-barista/mc-data-manager/cmd"
 
 func main() {
 	cmd.Execute()

@@ -21,7 +21,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/cloud-barista/cm-data-mold/service/rdbc"
+	"github.com/cloud-barista/mc-data-manager/service/rdbc"
 	"github.com/sirupsen/logrus"
 )
 

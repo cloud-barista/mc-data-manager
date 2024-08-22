@@ -20,7 +20,7 @@ import (
 	"io"
 
 	"cloud.google.com/go/storage"
-	"github.com/cloud-barista/cm-data-mold/pkg/utils"
+	"github.com/cloud-barista/mc-data-manager/pkg/utils"
 	"google.golang.org/api/iterator"
 )
 

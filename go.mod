@@ -1,4 +1,4 @@
-module github.com/cloud-barista/cm-data-mold
+module github.com/cloud-barista/mc-data-manager
 
 go 1.21.3
 
