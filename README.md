@@ -16,5 +16,5 @@ Data Manager 데이터 마이그레이션 기술의 검증을 위한 환경을 �
 
 해당 가이드는 Ubuntu 22.04 대상으로 설치 및 명령어 사용방법을 작성한 가이드입니다.
 
-* [Data Manager 기능명세서](docs/Data-manager-Function-Specification.md)
-* [Data Manager 사용가이드](docs/Data-manager-Usage-Guide.md)
+* [Data Manager 기능명세서](docs/Datamanager-Function-Specification.md)
+* [Data Manager 사용가이드](docs/Datamanager-Usage-Guide.md)
