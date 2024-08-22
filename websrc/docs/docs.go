@@ -736,22 +736,39 @@ const docTemplate = `{
                 "summary": "Migrate data from DynamoDB to Firestore",
                 "parameters": [
                     {
-                        "description": "Parameters required for Linux migration",
-                        "name": "AWSMigrationParams",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.AWSMigrationParams"
-                        }
+                        "type": "string",
+                        "name": "awsAccessKey",
+                        "in": "formData"
                     },
                     {
-                        "description": "Parameters required for GCP migration",
-                        "name": "GCPMigrationParams",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.GCPMigrationParams"
-                        }
+                        "type": "string",
+                        "name": "awsBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsSecretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "projectid",
+                        "in": "formData"
                     },
                     {
                         "type": "file",
@@ -792,22 +809,49 @@ const docTemplate = `{
                 "summary": "Migrate data from DynamoDB to MongoDB",
                 "parameters": [
                     {
-                        "description": "Parameters required for AWS migration",
-                        "name": "AWSMigrationParams",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.AWSMigrationParams"
-                        }
+                        "type": "string",
+                        "name": "awsAccessKey",
+                        "in": "formData"
                     },
                     {
-                        "description": "Parameters required for NCP migration",
-                        "name": "MongoMigrationParams",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MongoMigrationParams"
-                        }
+                        "type": "string",
+                        "name": "awsBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsSecretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "databaseName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "host",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "password",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "port",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "username",
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -841,22 +885,39 @@ const docTemplate = `{
                 "summary": "Migrate data from Firestore to DynamoDB",
                 "parameters": [
                     {
-                        "description": "Parameters required for GCP migration",
-                        "name": "GCPMigrationParams",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.GCPMigrationParams"
-                        }
+                        "type": "string",
+                        "name": "gcpBucket",
+                        "in": "formData"
                     },
                     {
-                        "description": "Parameters required for AWS migration",
-                        "name": "AWSMigrationParams",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.AWSMigrationParams"
-                        }
+                        "type": "string",
+                        "name": "gcpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "projectid",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsSecretKey",
+                        "in": "formData"
                     },
                     {
                         "type": "file",
@@ -897,22 +958,44 @@ const docTemplate = `{
                 "summary": "Migrate data from Firestore to MongoDB",
                 "parameters": [
                     {
-                        "description": "Parameters required for GCP migration",
-                        "name": "GCPMigrationParams",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.GCPMigrationParams"
-                        }
+                        "type": "string",
+                        "name": "gcpBucket",
+                        "in": "formData"
                     },
                     {
-                        "description": "Parameters required for NCP migration",
-                        "name": "MongoMigrationParams",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MongoMigrationParams"
-                        }
+                        "type": "string",
+                        "name": "gcpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "projectid",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "databaseName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "host",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "password",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "port",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "username",
+                        "in": "formData"
                     },
                     {
                         "type": "file",
@@ -2498,22 +2581,49 @@ const docTemplate = `{
                 "summary": "Migrate data from MongoDB to DynamoDB",
                 "parameters": [
                     {
-                        "description": "Parameters required for NCP migration",
-                        "name": "MongoMigrationParams",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MongoMigrationParams"
-                        }
+                        "type": "string",
+                        "name": "databaseName",
+                        "in": "formData"
                     },
                     {
-                        "description": "Parameters required for AWS migration",
-                        "name": "AWSMigrationParams",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.AWSMigrationParams"
-                        }
+                        "type": "string",
+                        "name": "host",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "password",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "port",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "username",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsSecretKey",
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -2547,22 +2657,44 @@ const docTemplate = `{
                 "summary": "Migrate data from MongoDB to Firestore",
                 "parameters": [
                     {
-                        "description": "Parameters required for NCP migration",
-                        "name": "MongoMigrationParams",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MongoMigrationParams"
-                        }
+                        "type": "string",
+                        "name": "databaseName",
+                        "in": "formData"
                     },
                     {
-                        "description": "Parameters required for GCP migration",
-                        "name": "GCPMigrationParams",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.GCPMigrationParams"
-                        }
+                        "type": "string",
+                        "name": "host",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "password",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "port",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "username",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "projectid",
+                        "in": "formData"
                     },
                     {
                         "type": "file",
@@ -2590,37 +2722,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "controllers.AWSMigrationParams": {
-            "type": "object",
-            "properties": {
-                "awsAccessKey": {
-                    "type": "string"
-                },
-                "awsBucket": {
-                    "type": "string"
-                },
-                "awsRegion": {
-                    "type": "string"
-                },
-                "awsSecretKey": {
-                    "type": "string"
-                }
-            }
-        },
-        "controllers.GCPMigrationParams": {
-            "type": "object",
-            "properties": {
-                "gcpBucket": {
-                    "type": "string"
-                },
-                "gcpRegion": {
-                    "type": "string"
-                },
-                "projectid": {
-                    "type": "string"
-                }
-            }
-        },
         "controllers.GenDataParams": {
             "type": "object",
             "properties": {
@@ -2830,26 +2931,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "srcUsername": {
-                    "type": "string"
-                }
-            }
-        },
-        "controllers.MongoMigrationParams": {
-            "type": "object",
-            "properties": {
-                "databaseName": {
-                    "type": "string"
-                },
-                "host": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "port": {
-                    "type": "string"
-                },
-                "username": {
                     "type": "string"
                 }
             }
