@@ -420,7 +420,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.GenDataParams"
+                            "$ref": "#/definitions/controllers.GenMySQLParams"
                         }
                     }
                 ],
@@ -2664,6 +2664,29 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "sizeZIP": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "controllers.GenMySQLParams": {
+            "type": "object",
+            "properties": {
+                "databaseName": {
+                    "type": "string"
+                },
+                "host": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "string"
+                },
+                "provider": {
                     "type": "string"
                 },
                 "username": {

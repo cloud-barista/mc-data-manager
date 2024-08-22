@@ -65,10 +65,20 @@ type GenDataParams struct {
 	GCPCredential *multipart.FileHeader `form:"gcpCredential" swaggerignore:"true"`
 	ProjectID     string                `json:"projectid" form:"projectid"`
 }
+
 type GenFirestoreParams struct {
 	Region        string                `json:"region" form:"region"`
 	GCPCredential *multipart.FileHeader `form:"gcpCredential" swaggerignore:"true"`
 	ProjectID     string                `json:"projectid" form:"projectid"`
+}
+
+type GenMySQLParams struct {
+	DBProvider   string `json:"provider" form:"provider"`
+	DBHost       string `json:"host" form:"host"`
+	DBPort       string `json:"port" form:"port"`
+	DBUser       string `json:"username" form:"username"`
+	DBPassword   string `json:"password" form:"password"`
+	DatabaseName string `json:"databaseName" form:"databaseName"`
 }
 
 func genData(params GenDataParams, logger *logrus.Logger) error {

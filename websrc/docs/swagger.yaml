@@ -69,6 +69,21 @@ definitions:
       username:
         type: string
     type: object
+  controllers.GenMySQLParams:
+    properties:
+      databaseName:
+        type: string
+      host:
+        type: string
+      password:
+        type: string
+      port:
+        type: string
+      provider:
+        type: string
+      username:
+        type: string
+    type: object
   controllers.LinuxMigrationParams:
     properties:
       path:
@@ -422,7 +437,7 @@ paths:
         name: RequestBody
         required: true
         schema:
-          $ref: '#/definitions/controllers.GenDataParams'
+          $ref: '#/definitions/controllers.GenMySQLParams'
       produces:
       - application/json
       responses:
