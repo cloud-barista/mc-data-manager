@@ -29,6 +29,7 @@ services:
     restart : always
     volumes:
       - ./log:/app/log/
+      - /etc/localtime:/etc/localtime:ro
     env_file:
       - .env
 
