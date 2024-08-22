@@ -63,7 +63,7 @@ type GenDataParams struct {
 	DatabaseName string `json:"databaseName" form:"databaseName"`
 
 	GCPCredential *multipart.FileHeader `form:"gcpCredential" swaggerignore:"true"`
-	ProjectID     string                `json:"projectId" form:"projectid"`
+	ProjectID     string                `json:"projectid" form:"projectid"`
 }
 
 func genData(params GenDataParams, logger *logrus.Logger) error {
