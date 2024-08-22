@@ -3,7 +3,7 @@ default:
 # cc:
 # 	cd cmd/cm-beetle && $(MAKE)
 run:
-	./mc-data-manager server
+	./mc-data-manager server -I 0.0.0.0/0 -P 80
 # runwithport:
 # 	cd cmd/cm-beetle && $(MAKE) runwithport --port=$(PORT)
 clean:

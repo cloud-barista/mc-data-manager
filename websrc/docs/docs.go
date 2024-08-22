@@ -38,13 +38,94 @@ const docTemplate = `{
                 "summary": "Migrate data from DynamoDB to Firestore",
                 "parameters": [
                     {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrationForm"
-                        }
+                        "type": "string",
+                        "name": "awsAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsSecretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "databaseName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "host",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpEndpoint",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpSecretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "password",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "path",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "port",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "projectid",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "username",
+                        "in": "formData"
                     },
                     {
                         "type": "file",
@@ -121,7 +202,7 @@ const docTemplate = `{
             "post": {
                 "description": "Migrate data stored in Google Cloud Firestore to AWS DynamoDB.",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -132,13 +213,94 @@ const docTemplate = `{
                 "summary": "Migrate data from Firestore to DynamoDB",
                 "parameters": [
                     {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrationForm"
-                        }
+                        "type": "string",
+                        "name": "awsAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsSecretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "databaseName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "host",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpEndpoint",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpSecretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "password",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "path",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "port",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "projectid",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "username",
+                        "in": "formData"
                     },
                     {
                         "type": "file",
@@ -168,7 +330,7 @@ const docTemplate = `{
             "post": {
                 "description": "Migrate data stored in Google Cloud Firestore to Naver Cloud MongoDB.",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -179,13 +341,94 @@ const docTemplate = `{
                 "summary": "Migrate data from Firestore to MongoDB",
                 "parameters": [
                     {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrationForm"
-                        }
+                        "type": "string",
+                        "name": "awsAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsSecretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "databaseName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "host",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpEndpoint",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpSecretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "password",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "path",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "port",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "projectid",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "username",
+                        "in": "formData"
                     },
                     {
                         "type": "file",
@@ -226,13 +469,94 @@ const docTemplate = `{
                 "summary": "Migrate data from GCP to Linux",
                 "parameters": [
                     {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrationForm"
-                        }
+                        "type": "string",
+                        "name": "awsAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsSecretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "databaseName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "host",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpEndpoint",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpSecretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "password",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "path",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "port",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "projectid",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "username",
+                        "in": "formData"
                     },
                     {
                         "type": "file",
@@ -279,13 +603,94 @@ const docTemplate = `{
                 "summary": "Migrate data from GCP to NCP Object Storage",
                 "parameters": [
                     {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrationForm"
-                        }
+                        "type": "string",
+                        "name": "awsAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsSecretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "databaseName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "host",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpEndpoint",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpSecretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "password",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "path",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "port",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "projectid",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "username",
+                        "in": "formData"
                     },
                     {
                         "type": "file",
@@ -326,13 +731,94 @@ const docTemplate = `{
                 "summary": "Migrate data from GCP to AWS S3",
                 "parameters": [
                     {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrationForm"
-                        }
+                        "type": "string",
+                        "name": "awsAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsSecretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "databaseName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "host",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpEndpoint",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpSecretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "password",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "path",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "port",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "projectid",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "username",
+                        "in": "formData"
                     },
                     {
                         "type": "file",
@@ -373,13 +859,94 @@ const docTemplate = `{
                 "summary": "Migrate data from GCP to Windows",
                 "parameters": [
                     {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrationForm"
-                        }
+                        "type": "string",
+                        "name": "awsAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsSecretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "databaseName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "host",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpEndpoint",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpSecretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "password",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "path",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "port",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "projectid",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "username",
+                        "in": "formData"
                     },
                     {
                         "type": "file",
@@ -466,13 +1033,169 @@ const docTemplate = `{
                 "summary": "Generate test data on GCP Firestore",
                 "parameters": [
                     {
-                        "description": "Parameters required to generate test data",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.GenDataParams"
-                        }
+                        "type": "string",
+                        "name": "accessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "bucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "checkCSV",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "checkGIF",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "checkJSON",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "checkPNG",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "checkSQL",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "checkServerJSON",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "checkServerSQL",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "checkTXT",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "checkXML",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "checkZIP",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "databaseName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "endpoint",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "host",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "password",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "path",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "port",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "projectid",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "provider",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "region",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "secretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sizeCSV",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sizeGIF",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sizeJSON",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sizePNG",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sizeSQL",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sizeServerJSON",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sizeServerSQL",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sizeTXT",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sizeXML",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sizeZIP",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "username",
+                        "in": "formData"
                     },
                     {
                         "type": "file",
@@ -513,13 +1236,169 @@ const docTemplate = `{
                 "summary": "Generate test data on GCP Cloud Storage",
                 "parameters": [
                     {
-                        "description": "Parameters required to generate test data",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.GenDataParams"
-                        }
+                        "type": "string",
+                        "name": "accessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "bucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "checkCSV",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "checkGIF",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "checkJSON",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "checkPNG",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "checkSQL",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "checkServerJSON",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "checkServerSQL",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "checkTXT",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "checkXML",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "checkZIP",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "databaseName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "endpoint",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "host",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "password",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "path",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "port",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "projectid",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "provider",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "region",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "secretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sizeCSV",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sizeGIF",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sizeJSON",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sizePNG",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sizeSQL",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sizeServerJSON",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sizeServerSQL",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sizeTXT",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sizeXML",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sizeZIP",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "username",
+                        "in": "formData"
                     },
                     {
                         "type": "file",
@@ -812,13 +1691,94 @@ const docTemplate = `{
                 "summary": "Migrate data from Linux to GCP Cloud Storage",
                 "parameters": [
                     {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrationForm"
-                        }
+                        "type": "string",
+                        "name": "awsAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsSecretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "databaseName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "host",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpEndpoint",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpSecretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "password",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "path",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "port",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "projectid",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "username",
+                        "in": "formData"
                     },
                     {
                         "type": "file",
@@ -986,7 +1946,7 @@ const docTemplate = `{
             "post": {
                 "description": "Migrate data stored in Naver Cloud MongoDB to Google Cloud Firestore.",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -997,13 +1957,94 @@ const docTemplate = `{
                 "summary": "Migrate data from MongoDB to Firestore",
                 "parameters": [
                     {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrationForm"
-                        }
+                        "type": "string",
+                        "name": "awsAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsSecretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "databaseName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "host",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpEndpoint",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpSecretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "password",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "path",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "port",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "projectid",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "username",
+                        "in": "formData"
                     },
                     {
                         "type": "file",
@@ -1084,13 +2125,94 @@ const docTemplate = `{
                 "summary": "Migrate data from NCP to GCP Cloud Storage",
                 "parameters": [
                     {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrationForm"
-                        }
+                        "type": "string",
+                        "name": "awsAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsSecretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "databaseName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "host",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpEndpoint",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpSecretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "password",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "path",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "port",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "projectid",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "username",
+                        "in": "formData"
                     },
                     {
                         "type": "file",
@@ -1263,13 +2385,94 @@ const docTemplate = `{
                 "summary": "Migrate data from AWS S3 to GCP",
                 "parameters": [
                     {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrationForm"
-                        }
+                        "type": "string",
+                        "name": "awsAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsSecretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "databaseName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "host",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpEndpoint",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpSecretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "password",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "path",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "port",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "projectid",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "username",
+                        "in": "formData"
                     },
                     {
                         "type": "file",
@@ -1442,13 +2645,94 @@ const docTemplate = `{
                 "summary": "Migrate data from Windows to GCP Cloud Storage",
                 "parameters": [
                     {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrationForm"
-                        }
+                        "type": "string",
+                        "name": "awsAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsSecretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "databaseName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "host",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpEndpoint",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ncpSecretKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "password",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "path",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "port",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "projectid",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "username",
+                        "in": "formData"
                     },
                     {
                         "type": "file",
@@ -1574,20 +2858,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "controllers.GCPMigrationParams": {
-            "type": "object",
-            "properties": {
-                "gcpBucket": {
-                    "type": "string"
-                },
-                "gcpRegion": {
-                    "type": "string"
-                },
-                "projectid": {
-                    "type": "string"
-                }
-            }
-        },
         "controllers.GenDataParams": {
             "type": "object",
             "properties": {
@@ -1711,8 +2981,11 @@ const docTemplate = `{
                 "databaseName": {
                     "type": "string"
                 },
-                "gcpParams": {
-                    "$ref": "#/definitions/controllers.GCPMigrationParams"
+                "gcpBucket": {
+                    "type": "string"
+                },
+                "gcpRegion": {
+                    "type": "string"
                 },
                 "host": {
                     "type": "string"
@@ -1739,6 +3012,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "port": {
+                    "type": "string"
+                },
+                "projectid": {
                     "type": "string"
                 },
                 "username": {
