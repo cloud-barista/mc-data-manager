@@ -184,7 +184,7 @@ func GenerateS3PostHandler(ctx echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody		body		GenDataParams			true	"Parameters required to generate test data"
-//	@Param			CredentialGCP	formData	file					true	"Parameters required to generate test data"
+//	@Param			gcpCredential	formData	file					true	"Parameters required to generate test data"
 //	@Success		200				{object}	models.BasicResponse	"Successfully generated test data"
 //	@Failure		500				{object}	models.BasicResponse	"Internal Server Error"
 //	@Router			/generate/gcp [post]
@@ -484,7 +484,7 @@ func GenerateDynamoDBPostHandler(ctx echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody		body		GenDataParams			true	"Parameters required to generate test data"
-//	@Param			CredentialGCP	formData	file					true	"Parameters required to generate test data"
+//	@Param			gcpCredential	formData	file					true	"Parameters required to generate test data"
 //	@Success		200				{object}	models.BasicResponse	"Successfully generated test data"
 //	@Failure		500				{object}	models.BasicResponse	"Internal Server Error"
 //	@Router			/generate/firestore [post]

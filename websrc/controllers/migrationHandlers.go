@@ -87,6 +87,7 @@ func MigrationLinuxToS3PostHandler(ctx echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
+//	@Param			gcpCredential	formData	file					true	"Parameters required to generate test data"
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
@@ -273,6 +274,7 @@ func MigrationWindowsToS3PostHandler(ctx echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
+//	@Param			gcpCredential	formData	file					true	"Parameters required to generate test data"
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"

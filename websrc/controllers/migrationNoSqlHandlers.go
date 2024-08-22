@@ -31,6 +31,7 @@ import (
 // @Accept json
 // @Produce json
 // @Param RequestBody body MigrationForm true "Parameters required for migration"
+// @Param gcpCredential	formData file true "Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /dynamodb/firestore [post]
@@ -99,6 +100,7 @@ func MigrationDynamoDBToFirestorePostHandler(ctx echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param RequestBody body MigrationForm true "Parameters required for migration"
+// @Param	gcpCredential	formData	file true	"Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /dynamodb/mongodb [post]
@@ -157,6 +159,7 @@ func MigrationDynamoDBToMongoDBPostHandler(ctx echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param RequestBody body MigrationForm true "Parameters required for migration"
+// @Param gcpCredential	formData file true "Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /firestore/dynamodb [post]
@@ -225,6 +228,7 @@ func MigrationFirestoreToDynamoDBPostHandler(ctx echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param RequestBody body MigrationForm true "Parameters required for migration"
+// @Param gcpCredential	formData file true "Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /firestore/mongodb [post]
@@ -352,6 +356,7 @@ func MigrationMongoDBToDynamoDBPostHandler(ctx echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param RequestBody body MigrationForm true "Parameters required for migration"
+// @Param gcpCredential	formData file true "Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /mongodb/firestore [post]
