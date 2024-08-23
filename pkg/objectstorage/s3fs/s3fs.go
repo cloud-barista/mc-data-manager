@@ -214,7 +214,7 @@ func (f *S3FS) ObjectList() ([]*utils.Object, error) {
 				ETag:         *obj.ETag,
 				Key:          *obj.Key,
 				LastModified: *obj.LastModified,
-				Size:         obj.Size,
+				Size:         *obj.Size,
 				StorageClass: string(obj.StorageClass),
 			})
 		}

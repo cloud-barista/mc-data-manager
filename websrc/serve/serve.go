@@ -104,7 +104,7 @@ func TrustedProxiesMiddleware(trustedProxies []string) echo.MiddlewareFunc {
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
 // @BasePath /
-func InitServer(addIP ...string) *echo.Echo {
+func InitServer(port string, addIP ...string) *echo.Echo {
 	e := echo.New()
 
 	// Middleware
@@ -136,7 +136,7 @@ func InitServer(addIP ...string) *echo.Echo {
 	routes.MigrationRoutes(migrationGroup)
 
 	// selfEndpoint := os.Getenv("SELF_ENDPOINT")
-	selfEndpoint := "localhost"
+	selfEndpoint := "localhost" + ":" + port
 	website := " http://" + selfEndpoint
 	apidashboard := " http://" + selfEndpoint + "/swagger/index.html"
 
