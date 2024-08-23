@@ -9,7 +9,7 @@ Data Manager 데이터 마이그레이션 기술의 검증을 위한 환경을 �
 
 ## Environments:
 * OS: Ubuntu 22.04 LTS, Windows 10 Pro
-* Go: 1.21.3
+* Go: 1.23
 
 
 ## Installation and Testing Guide

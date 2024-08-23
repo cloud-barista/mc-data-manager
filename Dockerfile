@@ -2,7 +2,7 @@
 ## Stage 1 - Go Build
 ##############################################################
 
-FROM golang:latest AS builder
+FROM golang:1.23 AS builder
 WORKDIR /opt
 COPY . .
 RUN go build -o app .
