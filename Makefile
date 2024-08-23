@@ -1,9 +1,9 @@
 default:
-	go build .
+	go build -a -ldflags '-s -w' -o mc-data-manager
 # cc:
 # 	cd cmd/cm-beetle && $(MAKE)
 run:
-	./mc-data-manager server -I 0.0.0.0/0 -P 80
+	./mc-data-manager server -I 0.0.0.0/0 -P 3300
 # runwithport:
 # 	cd cmd/cm-beetle && $(MAKE) runwithport --port=$(PORT)
 clean:
@@ -17,3 +17,6 @@ prod:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags '-s -w' -o mc-data-manager
 swag swagger:
 	swag init -g websrc/serve/serve.go -o ./websrc/docs
+
+# Define a target that runs all the above targets
+all: swag default run

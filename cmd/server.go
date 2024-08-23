@@ -33,7 +33,7 @@ var serverCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		logrus.SetFormatter(&log.CustomTextFormatter{CmdName: "server", JobName: "web server"})
 		logrus.Info("Start Web Server")
-		dmsv.Run(dmsv.InitServer(allowIP...), listenPort)
+		dmsv.Run(dmsv.InitServer(listenPort, allowIP...), listenPort)
 	},
 }
 
