@@ -42,7 +42,11 @@
             {{ if eq .Content "Generate-MongoDB" }}
                 {{ template "gen-mongodb.html" . }}
             {{ end }}
+            <!-- 백업 템플릿 -->
 
+            {{ if eq .Content "Backup" }}
+                {{ template "back-backup.html" . }}
+            {{ end }}
 
             <!-- 마이그레이션 템플릿 -->
 
@@ -152,6 +156,11 @@
 
             {{ if eq .Content "Migration-MongoDB-Firestore" }}
                 {{ template "mig-mongodbToFirestore.html" . }}
+            {{ end }}
+
+            <!-- 백업 템플릿 -->
+            {{ if eq .Content "BackUp" }}
+                {{ template "back-backup.html" . }}
             {{ end }}
             
             {{ if ne .Content "main" }}
