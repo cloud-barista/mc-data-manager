@@ -122,6 +122,8 @@ definitions:
         type: string
       gcpBucket:
         type: string
+      gcpCredentialJson:
+        type: string
       gcpRegion:
         type: string
       host:
@@ -648,6 +650,9 @@ paths:
         name: gcpBucket
         type: string
       - in: formData
+        name: gcpCredentialJson
+        type: string
+      - in: formData
         name: gcpRegion
         type: string
       - in: formData
@@ -656,7 +661,6 @@ paths:
       - description: Parameters required to generate test data
         in: formData
         name: gcpCredential
-        required: true
         type: file
       produces:
       - application/json
@@ -717,6 +721,9 @@ paths:
         name: gcpBucket
         type: string
       - in: formData
+        name: gcpCredentialJson
+        type: string
+      - in: formData
         name: gcpRegion
         type: string
       - in: formData
@@ -737,7 +744,6 @@ paths:
       - description: Parameters required to generate test data
         in: formData
         name: gcpCredential
-        required: true
         type: file
       produces:
       - application/json
@@ -766,6 +772,9 @@ paths:
         name: gcpBucket
         type: string
       - in: formData
+        name: gcpCredentialJson
+        type: string
+      - in: formData
         name: gcpRegion
         type: string
       - in: formData
@@ -789,7 +798,6 @@ paths:
       - description: Parameters required to generate test data
         in: formData
         name: gcpCredential
-        required: true
         type: file
       produces:
       - application/json
@@ -831,6 +839,9 @@ paths:
         type: string
       - in: formData
         name: gcpBucket
+        type: string
+      - in: formData
+        name: gcpCredentialJson
         type: string
       - in: formData
         name: gcpRegion
@@ -918,6 +929,9 @@ paths:
         name: gcpBucket
         type: string
       - in: formData
+        name: gcpCredentialJson
+        type: string
+      - in: formData
         name: gcpRegion
         type: string
       - in: formData
@@ -999,6 +1013,9 @@ paths:
         name: gcpBucket
         type: string
       - in: formData
+        name: gcpCredentialJson
+        type: string
+      - in: formData
         name: gcpRegion
         type: string
       - in: formData
@@ -1078,6 +1095,9 @@ paths:
         type: string
       - in: formData
         name: gcpBucket
+        type: string
+      - in: formData
+        name: gcpCredentialJson
         type: string
       - in: formData
         name: gcpRegion
@@ -1163,6 +1183,9 @@ paths:
         type: string
       - in: formData
         name: gcpBucket
+        type: string
+      - in: formData
+        name: gcpCredentialJson
         type: string
       - in: formData
         name: gcpRegion
@@ -1357,6 +1380,9 @@ paths:
         name: gcpBucket
         type: string
       - in: formData
+        name: gcpCredentialJson
+        type: string
+      - in: formData
         name: gcpRegion
         type: string
       - in: formData
@@ -1365,7 +1391,6 @@ paths:
       - description: Parameters required to generate test data
         in: formData
         name: gcpCredential
-        required: true
         type: file
       produces:
       - application/json
@@ -1435,6 +1460,9 @@ paths:
         name: gcpBucket
         type: string
       - in: formData
+        name: gcpCredentialJson
+        type: string
+      - in: formData
         name: gcpRegion
         type: string
       - in: formData
@@ -1473,7 +1501,6 @@ paths:
       - description: Parameters required to generate test data
         in: formData
         name: gcpCredential
-        required: true
         type: file
       produces:
       - application/json
@@ -1609,6 +1636,9 @@ paths:
         name: gcpBucket
         type: string
       - in: formData
+        name: gcpCredentialJson
+        type: string
+      - in: formData
         name: gcpRegion
         type: string
       - in: formData
@@ -1647,7 +1677,6 @@ paths:
       - description: Parameters required to generate test data
         in: formData
         name: gcpCredential
-        required: true
         type: file
       produces:
       - application/json
@@ -1775,6 +1804,9 @@ paths:
         type: string
       - in: formData
         name: gcpBucket
+        type: string
+      - in: formData
+        name: gcpCredentialJson
         type: string
       - in: formData
         name: gcpRegion
