@@ -40,6 +40,6 @@ var serverCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(serverCmd)
 
-	serverCmd.Flags().StringVarP(&listenPort, "port", "P", "80", "Listen port")
+	serverCmd.Flags().StringVarP(&listenPort, "port", "P", "3300", "Listen port")
 	serverCmd.Flags().StringArrayVarP(&allowIP, "allow-ip", "I", []string{}, "IP addresses and CIDR blocks to allow; example: 192.168.0.1 or 0.0.0.0/0, 10.0.0.0/8")
 }
