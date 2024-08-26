@@ -184,7 +184,7 @@ func GenerateS3PostHandler(ctx echo.Context) error {
 //	@Accept			multipart/form-data
 //	@Produce		json
 //	@Param			RequestBody		formData		GenDataParams			true	"Parameters required to generate test data"
-//	@Param			gcpCredential	formData	file					true	"Parameters required to generate test data"
+//	@Param			gcpCredential	formData	file					false	"Parameters required to generate test data"
 //	@Success		200				{object}	models.BasicResponse	"Successfully generated test data"
 //	@Failure		500				{object}	models.BasicResponse	"Internal Server Error"
 //	@Router			/generate/gcp [post]
@@ -204,7 +204,7 @@ func GenerateGCPPostHandler(ctx echo.Context) error {
 	}
 
 	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
-	if !ok {
+	if !ok && params.GCPCredentialJson == "" {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -484,7 +484,7 @@ func GenerateDynamoDBPostHandler(ctx echo.Context) error {
 //	@Accept			multipart/form-data
 //	@Produce		json
 //	@Param			GenFirestoreParams		formData		GenFirestoreParams			true	"Parameters required to generate test data"
-//	@Param			gcpCredential	formData	file					true	"Parameters required to generate test data"
+//	@Param			gcpCredential	formData	file					false	"Parameters required to generate test data"
 //	@Success		200				{object}	models.BasicResponse	"Successfully generated test data"
 //	@Failure		500				{object}	models.BasicResponse	"Internal Server Error"
 //	@Router			/generate/firestore [post]
@@ -500,9 +500,8 @@ func GenerateFirestorePostHandler(ctx echo.Context) error {
 			Error:  nil,
 		})
 	}
-
 	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
-	if !ok {
+	if !ok && params.GCPCredentialJson == "" {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,

@@ -326,9 +326,9 @@ func getFirestoreNRDBC(logger *logrus.Logger, startTime time.Time, jobType strin
 
 	logger.Info("Get FirestoreDB Client")
 	if jobType == "gen" {
-		fc, err = config.NewFireStoreClient(credFileName, gparam.ProjectID)
+		fc, err = config.NewFireStoreClient(credFileName, gparam.GCPCredentialJson, gparam.ProjectID, gparam.DatabaseID)
 	} else {
-		fc, err = config.NewFireStoreClient(credFileName, mparam.ProjectID)
+		fc, err = config.NewFireStoreClient(credFileName, mparam.GCPCredentialJson, mparam.ProjectID, mparam.DatabaseID)
 	}
 	if err != nil {
 		end := time.Now()

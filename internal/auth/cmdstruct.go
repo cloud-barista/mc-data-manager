@@ -28,7 +28,9 @@ type DatamoldParams struct {
 	SrcRegion      string
 	SrcBucketName  string
 	SrcGcpCredPath string
+	SrcGcpCredJson string
 	SrcProjectID   string
+	SrcDatabaseID  string
 	SrcEndpoint    string
 	SrcUsername    string
 	SrcPassword    string
@@ -43,7 +45,9 @@ type DatamoldParams struct {
 	DstRegion      string
 	DstBucketName  string
 	DstGcpCredPath string
+	DstGcpCredJson string
 	DstProjectID   string
+	DstDatabaseID  string
 	DstEndpoint    string
 	DstUsername    string
 	DstPassword    string

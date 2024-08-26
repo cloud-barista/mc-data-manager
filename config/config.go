@@ -151,12 +151,30 @@ func NewGCPClient(credentialsFile string) (*storage.Client, error) {
 	return client, nil
 }
 
-func NewFireStoreClient(credentialsFile, projectID string) (*firestore.Client, error) {
-	client, err := firestore.NewClient(
-		context.TODO(),
-		projectID,
-		option.WithCredentialsFile(credentialsFile),
-	)
+func NewFireStoreClient(credentialsFile, credentialsJson, projectID, databaseID string) (*firestore.Client, error) {
+	var client *firestore.Client
+	var err error
+
+	ctx := context.TODO()
+
+	switch {
+	case credentialsFile != "":
+		fmt.Println(" Filename : ", credentialsFile)
+		if databaseID != "" {
+			client, err = firestore.NewClientWithDatabase(ctx, projectID, databaseID, option.WithCredentialsFile(credentialsFile))
+		} else {
+			client, err = firestore.NewClient(ctx, projectID, option.WithCredentialsFile(credentialsFile))
+		}
+	case credentialsJson != "":
+		if databaseID != "" {
+			client, err = firestore.NewClientWithDatabase(ctx, projectID, databaseID, option.WithCredentialsJSON([]byte(credentialsJson)))
+		} else {
+			client, err = firestore.NewClient(ctx, projectID, option.WithCredentialsJSON([]byte(credentialsJson)))
+		}
+	default:
+		return nil, errors.New("either credentialsFile or credentialsJson must be provided")
+	}
+
 	if err != nil {
 		return nil, err
 	}

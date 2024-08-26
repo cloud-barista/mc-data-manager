@@ -27,10 +27,12 @@ type MigrationForm struct {
 	AWSSecretKey string `form:"awsSecretKey" json:"awsSecretKey"`
 	AWSBucket    string `form:"awsBucket" json:"awsBucket"`
 
-	ProjectID     string                `form:"projectid" json:"projectid"`
-	GCPRegion     string                `form:"gcpRegion" json:"gcpRegion"`
-	GCPBucket     string                `form:"gcpBucket" json:"gcpBucket"`
-	GCPCredential *multipart.FileHeader `form:"gcpCredential" json:"-" swaggerignore:"true"`
+	ProjectID         string                `json:"projectId" form:"projectId"`
+	DatabaseID        string                `json:"databaseId" form:"databaseId"`
+	GCPRegion         string                `form:"gcpRegion" json:"gcpRegion"`
+	GCPBucket         string                `form:"gcpBucket" json:"gcpBucket"`
+	GCPCredentialJson string                `form:"gcpCredentialJson" json:"gcpCredentialJson" swaggerignore:"true"`
+	GCPCredential     *multipart.FileHeader `form:"gcpCredential" json:"-" swaggerignore:"true"`
 
 	NCPRegion    string `form:"ncpRegion" json:"ncpRegion"`
 	NCPAccessKey string `form:"ncpAccessKey" json:"ncpAccessKey"`
@@ -57,10 +59,12 @@ type AWSMigrationParams struct {
 }
 
 type GCPMigrationParams struct {
-	ProjectID     string                `form:"projectid" json:"projectid"`
-	GCPRegion     string                `form:"gcpRegion" json:"gcpRegion"`
-	GCPBucket     string                `form:"gcpBucket" json:"gcpBucket"`
-	GCPCredential *multipart.FileHeader `form:"gcpCredential" json:"-" swaggerignore:"true"`
+	ProjectID         string                `json:"projectId" form:"projectId"`
+	DatabaseID        string                `json:"databaseId" form:"databaseId"`
+	GCPRegion         string                `form:"gcpRegion" json:"gcpRegion"`
+	GCPBucket         string                `form:"gcpBucket" json:"gcpBucket"`
+	GCPCredentialJson string                `form:"gcpCredentialJson" json:"gcpCredentialJson" swaggerignore:"true"`
+	GCPCredential     *multipart.FileHeader `form:"gcpCredential" json:"-" swaggerignore:"true"`
 }
 
 type NCPMigrationParams struct {

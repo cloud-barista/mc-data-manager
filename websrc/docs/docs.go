@@ -79,7 +79,17 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "name": "projectid",
+                        "name": "databaseId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpCredentialJson",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "projectId",
                         "in": "formData"
                     },
                     {
@@ -91,8 +101,7 @@ const docTemplate = `{
                         "type": "file",
                         "description": "Parameters required to generate test data",
                         "name": "gcpCredential",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -187,12 +196,22 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "databaseId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "databaseName",
                         "in": "formData"
                     },
                     {
                         "type": "string",
                         "name": "endpoint",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpCredentialJson",
                         "in": "formData"
                     },
                     {
@@ -217,7 +236,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "name": "projectid",
+                        "name": "projectId",
                         "in": "formData"
                     },
                     {
@@ -294,8 +313,7 @@ const docTemplate = `{
                         "type": "file",
                         "description": "Parameters required to generate test data",
                         "name": "gcpCredential",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -602,6 +620,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "databaseId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "gcpBucket",
                         "in": "formData"
                     },
@@ -612,7 +635,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "name": "projectid",
+                        "name": "projectId",
                         "in": "formData"
                     },
                     {
@@ -654,49 +677,22 @@ const docTemplate = `{
                 "summary": "Migrate data from DynamoDB to MongoDB",
                 "parameters": [
                     {
-                        "type": "string",
-                        "name": "awsAccessKey",
-                        "in": "formData"
+                        "description": "Parameters required for AWS migration",
+                        "name": "AWSMigrationParams",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.AWSMigrationParams"
+                        }
                     },
                     {
-                        "type": "string",
-                        "name": "awsBucket",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "awsRegion",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "awsSecretKey",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "databaseName",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "host",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "password",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "port",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "username",
-                        "in": "formData"
+                        "description": "Parameters required for NCP migration",
+                        "name": "MongoMigrationParams",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MongoMigrationParams"
+                        }
                     }
                 ],
                 "responses": {
@@ -731,6 +727,11 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "name": "databaseId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "gcpBucket",
                         "in": "formData"
                     },
@@ -741,7 +742,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "name": "projectid",
+                        "name": "projectId",
                         "in": "formData"
                     },
                     {
@@ -804,6 +805,11 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "name": "databaseId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "gcpBucket",
                         "in": "formData"
                     },
@@ -814,7 +820,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "name": "projectid",
+                        "name": "projectId",
                         "in": "formData"
                     },
                     {
@@ -902,6 +908,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "databaseId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "databaseName",
                         "in": "formData"
                     },
@@ -962,7 +973,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "name": "projectid",
+                        "name": "projectId",
                         "in": "formData"
                     },
                     {
@@ -972,10 +983,9 @@ const docTemplate = `{
                     },
                     {
                         "type": "file",
-                        "description": "Parameters required to generate test data",
+                        "description": "Parameters required for migration",
                         "name": "gcpCredential",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -1036,6 +1046,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "databaseId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "databaseName",
                         "in": "formData"
                     },
@@ -1096,7 +1111,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "name": "projectid",
+                        "name": "projectId",
                         "in": "formData"
                     },
                     {
@@ -1106,10 +1121,9 @@ const docTemplate = `{
                     },
                     {
                         "type": "file",
-                        "description": "Parameters required to generate test data",
+                        "description": "Parameters required for migration",
                         "name": "gcpCredential",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -1164,6 +1178,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "databaseId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "databaseName",
                         "in": "formData"
                     },
@@ -1224,7 +1243,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "name": "projectid",
+                        "name": "projectId",
                         "in": "formData"
                     },
                     {
@@ -1234,10 +1253,9 @@ const docTemplate = `{
                     },
                     {
                         "type": "file",
-                        "description": "Parameters required to generate test data",
+                        "description": "Parameters required for migration",
                         "name": "gcpCredential",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -1292,6 +1310,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "databaseId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "databaseName",
                         "in": "formData"
                     },
@@ -1352,7 +1375,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "name": "projectid",
+                        "name": "projectId",
                         "in": "formData"
                     },
                     {
@@ -1362,10 +1385,9 @@ const docTemplate = `{
                     },
                     {
                         "type": "file",
-                        "description": "Parameters required to generate test data",
+                        "description": "Parameters required for migration",
                         "name": "gcpCredential",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -1426,6 +1448,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "databaseId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "databaseName",
                         "in": "formData"
                     },
@@ -1486,7 +1513,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "name": "projectid",
+                        "name": "projectId",
                         "in": "formData"
                     },
                     {
@@ -1496,10 +1523,9 @@ const docTemplate = `{
                     },
                     {
                         "type": "file",
-                        "description": "Parameters required to generate test data",
+                        "description": "Parameters required for migration",
                         "name": "gcpCredential",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -1616,6 +1642,165 @@ const docTemplate = `{
                 }
             }
         },
+        "/migration/mongodb/dynamodb": {
+            "post": {
+                "description": "Migrate data stored in Naver Cloud MongoDB to AWS DynamoDB.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from MongoDB to DynamoDB",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "databaseName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "host",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "password",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "port",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "username",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsAccessKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "awsSecretKey",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/migration/mongodb/firestore": {
+            "post": {
+                "description": "Migrate data stored in Naver Cloud MongoDB to Google Cloud Firestore.",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Migration]"
+                ],
+                "summary": "Migrate data from MongoDB to Firestore",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "databaseName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "host",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "password",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "port",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "username",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "databaseId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpRegion",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "projectId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "file",
+                        "description": "Parameters required to generate test data",
+                        "name": "gcpCredential",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/migration/mysql": {
             "post": {
                 "description": "Migrate data from one MySQL database to another MySQL database.",
@@ -1692,6 +1877,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "databaseId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "databaseName",
                         "in": "formData"
                     },
@@ -1752,7 +1942,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "name": "projectid",
+                        "name": "projectId",
                         "in": "formData"
                     },
                     {
@@ -1961,6 +2151,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "databaseId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "databaseName",
                         "in": "formData"
                     },
@@ -2021,7 +2216,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "name": "projectid",
+                        "name": "projectId",
                         "in": "formData"
                     },
                     {
@@ -2221,6 +2416,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "databaseId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "databaseName",
                         "in": "formData"
                     },
@@ -2281,7 +2481,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "name": "projectid",
+                        "name": "projectId",
                         "in": "formData"
                     },
                     {
@@ -2291,10 +2491,9 @@ const docTemplate = `{
                     },
                     {
                         "type": "file",
-                        "description": "Parameters required to generate test data",
+                        "description": "Parameters required for migration",
                         "name": "gcpCredential",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -2410,163 +2609,26 @@ const docTemplate = `{
                     }
                 }
             }
-        },
-        "/mongodb/dynamodb": {
-            "post": {
-                "description": "Migrate data stored in Naver Cloud MongoDB to AWS DynamoDB.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[Data Migration]"
-                ],
-                "summary": "Migrate data from MongoDB to DynamoDB",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "name": "databaseName",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "host",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "password",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "port",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "username",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "awsAccessKey",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "awsBucket",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "awsRegion",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "awsSecretKey",
-                        "in": "formData"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully migrated data",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/mongodb/firestore": {
-            "post": {
-                "description": "Migrate data stored in Naver Cloud MongoDB to Google Cloud Firestore.",
-                "consumes": [
-                    "multipart/form-data"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[Data Migration]"
-                ],
-                "summary": "Migrate data from MongoDB to Firestore",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "name": "databaseName",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "host",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "password",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "port",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "username",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "gcpBucket",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "gcpRegion",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "projectid",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "file",
-                        "description": "Parameters required to generate test data",
-                        "name": "gcpCredential",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully migrated data",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {
+        "controllers.AWSMigrationParams": {
+            "type": "object",
+            "properties": {
+                "awsAccessKey": {
+                    "type": "string"
+                },
+                "awsBucket": {
+                    "type": "string"
+                },
+                "awsRegion": {
+                    "type": "string"
+                },
+                "awsSecretKey": {
+                    "type": "string"
+                }
+            }
+        },
         "controllers.GenDataParams": {
             "type": "object",
             "properties": {
@@ -2606,10 +2668,16 @@ const docTemplate = `{
                 "checkZIP": {
                     "type": "string"
                 },
+                "databaseId": {
+                    "type": "string"
+                },
                 "databaseName": {
                     "type": "string"
                 },
                 "endpoint": {
+                    "type": "string"
+                },
+                "gcpCredentialJson": {
                     "type": "string"
                 },
                 "host": {
@@ -2624,7 +2692,7 @@ const docTemplate = `{
                 "port": {
                     "type": "string"
                 },
-                "projectid": {
+                "projectId": {
                     "type": "string"
                 },
                 "provider": {
@@ -2718,6 +2786,9 @@ const docTemplate = `{
                 "awsSecretKey": {
                     "type": "string"
                 },
+                "databaseId": {
+                    "type": "string"
+                },
                 "databaseName": {
                     "type": "string"
                 },
@@ -2754,7 +2825,7 @@ const docTemplate = `{
                 "port": {
                     "type": "string"
                 },
-                "projectid": {
+                "projectId": {
                     "type": "string"
                 },
                 "username": {
@@ -2799,6 +2870,26 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "srcUsername": {
+                    "type": "string"
+                }
+            }
+        },
+        "controllers.MongoMigrationParams": {
+            "type": "object",
+            "properties": {
+                "databaseName": {
+                    "type": "string"
+                },
+                "host": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "string"
+                },
+                "username": {
                     "type": "string"
                 }
             }
