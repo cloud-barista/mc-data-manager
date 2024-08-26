@@ -630,6 +630,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "gcpCredentialJson",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "gcpRegion",
                         "in": "formData"
                     },
@@ -642,8 +647,7 @@ const docTemplate = `{
                         "type": "file",
                         "description": "Parameters required to generate test data",
                         "name": "gcpCredential",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -737,6 +741,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "gcpCredentialJson",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "gcpRegion",
                         "in": "formData"
                     },
@@ -769,8 +778,7 @@ const docTemplate = `{
                         "type": "file",
                         "description": "Parameters required to generate test data",
                         "name": "gcpCredential",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -815,6 +823,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "gcpCredentialJson",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "gcpRegion",
                         "in": "formData"
                     },
@@ -852,8 +865,7 @@ const docTemplate = `{
                         "type": "file",
                         "description": "Parameters required to generate test data",
                         "name": "gcpCredential",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -919,6 +931,11 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "gcpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpCredentialJson",
                         "in": "formData"
                     },
                     {
@@ -1061,6 +1078,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "gcpCredentialJson",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "gcpRegion",
                         "in": "formData"
                     },
@@ -1193,6 +1215,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "gcpCredentialJson",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "gcpRegion",
                         "in": "formData"
                     },
@@ -1321,6 +1348,11 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "gcpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpCredentialJson",
                         "in": "formData"
                     },
                     {
@@ -1459,6 +1491,11 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "gcpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpCredentialJson",
                         "in": "formData"
                     },
                     {
@@ -1769,6 +1806,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "gcpCredentialJson",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "gcpRegion",
                         "in": "formData"
                     },
@@ -1781,8 +1823,7 @@ const docTemplate = `{
                         "type": "file",
                         "description": "Parameters required to generate test data",
                         "name": "gcpCredential",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -1892,6 +1933,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "gcpCredentialJson",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "gcpRegion",
                         "in": "formData"
                     },
@@ -1954,8 +2000,7 @@ const docTemplate = `{
                         "type": "file",
                         "description": "Parameters required to generate test data",
                         "name": "gcpCredential",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -2166,6 +2211,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "gcpCredentialJson",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "gcpRegion",
                         "in": "formData"
                     },
@@ -2228,8 +2278,7 @@ const docTemplate = `{
                         "type": "file",
                         "description": "Parameters required to generate test data",
                         "name": "gcpCredential",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -2427,6 +2476,11 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "gcpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpCredentialJson",
                         "in": "formData"
                     },
                     {
@@ -2793,6 +2847,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "gcpBucket": {
+                    "type": "string"
+                },
+                "gcpCredentialJson": {
                     "type": "string"
                 },
                 "gcpRegion": {
