@@ -141,6 +141,20 @@ func GenerateMongoDBGetHandler(ctx echo.Context) error {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
+// Page handlers related to backup data
+
+func BackupHandler(ctx echo.Context) error {
+	logger := getLogger("backup")
+	logger.Info("backup get page accessed")
+	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
+		Content: "Backup",
+		Regions: GetAWSRegions(),
+		OS:      runtime.GOOS,
+		Error:   nil,
+	})
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////
 // Page handlers related to migration data
 
 // linux to object storage

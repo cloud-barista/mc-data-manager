@@ -29,6 +29,9 @@ window.addEventListener('DOMContentLoaded', event => {
     if (document.getElementById('migForm')) {
         migrationFormSubmit();
     }
+    if (document.getElementById('backForm')) {
+        backUpFormSubmit();
+    }
     
 });
 
@@ -120,6 +123,46 @@ function migrationFormSubmit() {
         });
 
         console.log("migration progressing...");
+    });
+}
+
+function backUpFormSubmit() {
+    const form = document.getElementById('backForm');
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        loadingButtonOn();
+        resultCollpase();
+
+        const payload = new FormData(form);
+        const dest = document.getElementById('backDest').value;
+        const source = document.getElementById('backSource').value;
+        let url = "/backup/" + source;
+
+        console.log(url);
+
+        fetch(url, {
+            method: 'POST',
+            body: payload
+        })
+        .then(response => {
+            return response.json();
+        })
+        .then(json => {
+            const resultText = document.getElementById('resultText');
+            resultText.value = json.Result;
+            console.log(json);
+            console.log("backup done.");
+        })
+        .catch(reason => {
+            console.log(reason);
+            alert(reason);
+        })
+        .finally(() => {
+            loadingButtonOff();
+        });
+
+        console.log("backup progressing...");
     });
 }
 

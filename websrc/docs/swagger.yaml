@@ -219,6 +219,55 @@ info:
   title: MC-Data-Manager REST API
   version: latest
 paths:
+  /backup:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Migrate data stored in AWS DynamoDB to Google Cloud Firestore.
+      parameters:
+      - in: formData
+        name: awsAccessKey
+        type: string
+      - in: formData
+        name: awsBucket
+        type: string
+      - in: formData
+        name: awsRegion
+        type: string
+      - in: formData
+        name: awsSecretKey
+        type: string
+      - in: formData
+        name: databaseId
+        type: string
+      - in: formData
+        name: gcpBucket
+        type: string
+      - in: formData
+        name: gcpRegion
+        type: string
+      - in: formData
+        name: projectId
+        type: string
+      - description: Parameters required to generate test data
+        in: formData
+        name: gcpCredential
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from DynamoDB to Firestore
+      tags:
+      - '[Data Migration]'
   /generate/dynamodb:
     post:
       consumes:
