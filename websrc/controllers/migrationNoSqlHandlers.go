@@ -30,9 +30,9 @@ import (
 // @Tags [Data Migration]
 // @Accept multipart/form-data
 // @Produce json
-// @Param AWSMigrationParams formData AWSMigrationParams true "Parameters required for Linux migration"
-// @Param GCPMigrationParams formData GCPMigrationParams true "Parameters required for GCP migration"
-// @Param gcpCredential	formData file true "Parameters required to generate test data"
+// @Param AWSMigrationParams 	formData AWSMigrationParams	true  "Parameters required for Linux migration"
+// @Param GCPMigrationParams 	formData GCPMigrationParams	true  "Parameters required for GCP migration"
+// @Param gcpCredential			formData file				false "Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /migration/dynamodb/firestore [post]
@@ -100,8 +100,8 @@ func MigrationDynamoDBToFirestorePostHandler(ctx echo.Context) error {
 // @Tags [Data Migration]
 // @Accept json
 // @Produce json
-// @Param AWSMigrationParams body AWSMigrationParams true "Parameters required for AWS migration"
-// @Param MongoMigrationParams body MongoMigrationParams true "Parameters required for NCP migration"
+// @Param AWSMigrationParams 	body AWSMigrationParams 	true "Parameters required for AWS migration"
+// @Param MongoMigrationParams 	body MongoMigrationParams 	true "Parameters required for NCP migration"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /migration/dynamodb/mongodb [post]
@@ -159,9 +159,9 @@ func MigrationDynamoDBToMongoDBPostHandler(ctx echo.Context) error {
 // @Tags [Data Migration]
 // @Accept multipart/form-data
 // @Produce json
-// @Param GCPMigrationParams formData GCPMigrationParams true "Parameters required for GCP migration"
-// @Param AWSMigrationParams formData AWSMigrationParams true "Parameters required for AWS migration"
-// @Param gcpCredential	formData file true "Parameters required to generate test data"
+// @Param GCPMigrationParams	formData GCPMigrationParams true  "Parameters required for GCP migration"
+// @Param AWSMigrationParams 	formData AWSMigrationParams true  "Parameters required for AWS migration"
+// @Param gcpCredential			formData file 				false "Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /migration/firestore/dynamodb [post]
@@ -229,9 +229,9 @@ func MigrationFirestoreToDynamoDBPostHandler(ctx echo.Context) error {
 // @Tags [Data Migration]
 // @Accept multipart/form-data
 // @Produce json
-// @Param GCPMigrationParams formData GCPMigrationParams true "Parameters required for GCP migration"
-// @Param MongoMigrationParams formData MongoMigrationParams true "Parameters required for NCP migration"
-// @Param gcpCredential	formData file true "Parameters required to generate test data"
+// @Param GCPMigrationParams 	formData GCPMigrationParams		true  "Parameters required for GCP migration"
+// @Param MongoMigrationParams 	formData MongoMigrationParams 	true  "Parameters required for NCP migration"
+// @Param gcpCredential			formData file				 	false "Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /migration/firestore/mongodb [post]
@@ -359,9 +359,9 @@ func MigrationMongoDBToDynamoDBPostHandler(ctx echo.Context) error {
 // @Tags [Data Migration]
 // @Accept multipart/form-data
 // @Produce json
-// @Param MongoMigrationParams formData MongoMigrationParams true "Parameters required for NCP migration"
-// @Param GCPMigrationParams formData GCPMigrationParams true "Parameters required for GCP migration"
-// @Param gcpCredential	formData file true "Parameters required to generate test data"
+// @Param MongoMigrationParams 	formData MongoMigrationParams 	true  "Parameters required for NCP migration"
+// @Param GCPMigrationParams 	formData GCPMigrationParams 	true  "Parameters required for GCP migration"
+// @Param gcpCredential			formData file 					false "Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /migration/mongodb/firestore [post]

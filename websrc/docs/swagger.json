@@ -623,6 +623,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "gcpCredentialJson",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "gcpRegion",
                         "in": "formData"
                     },
@@ -635,8 +640,7 @@
                         "type": "file",
                         "description": "Parameters required to generate test data",
                         "name": "gcpCredential",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -730,6 +734,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "gcpCredentialJson",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "gcpRegion",
                         "in": "formData"
                     },
@@ -762,8 +771,7 @@
                         "type": "file",
                         "description": "Parameters required to generate test data",
                         "name": "gcpCredential",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -808,6 +816,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "gcpCredentialJson",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "gcpRegion",
                         "in": "formData"
                     },
@@ -845,8 +858,7 @@
                         "type": "file",
                         "description": "Parameters required to generate test data",
                         "name": "gcpCredential",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -912,6 +924,11 @@
                     {
                         "type": "string",
                         "name": "gcpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpCredentialJson",
                         "in": "formData"
                     },
                     {
@@ -1054,6 +1071,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "gcpCredentialJson",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "gcpRegion",
                         "in": "formData"
                     },
@@ -1186,6 +1208,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "gcpCredentialJson",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "gcpRegion",
                         "in": "formData"
                     },
@@ -1314,6 +1341,11 @@
                     {
                         "type": "string",
                         "name": "gcpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpCredentialJson",
                         "in": "formData"
                     },
                     {
@@ -1452,6 +1484,11 @@
                     {
                         "type": "string",
                         "name": "gcpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpCredentialJson",
                         "in": "formData"
                     },
                     {
@@ -1762,6 +1799,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "gcpCredentialJson",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "gcpRegion",
                         "in": "formData"
                     },
@@ -1774,8 +1816,7 @@
                         "type": "file",
                         "description": "Parameters required to generate test data",
                         "name": "gcpCredential",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -1885,6 +1926,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "gcpCredentialJson",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "gcpRegion",
                         "in": "formData"
                     },
@@ -1947,8 +1993,7 @@
                         "type": "file",
                         "description": "Parameters required to generate test data",
                         "name": "gcpCredential",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -2159,6 +2204,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "gcpCredentialJson",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "gcpRegion",
                         "in": "formData"
                     },
@@ -2221,8 +2271,7 @@
                         "type": "file",
                         "description": "Parameters required to generate test data",
                         "name": "gcpCredential",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -2420,6 +2469,11 @@
                     {
                         "type": "string",
                         "name": "gcpBucket",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "gcpCredentialJson",
                         "in": "formData"
                     },
                     {
@@ -2786,6 +2840,9 @@
                     "type": "string"
                 },
                 "gcpBucket": {
+                    "type": "string"
+                },
+                "gcpCredentialJson": {
                     "type": "string"
                 },
                 "gcpRegion": {
