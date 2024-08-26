@@ -31,7 +31,7 @@ type MigrationForm struct {
 	DatabaseID        string                `json:"databaseId" form:"databaseId"`
 	GCPRegion         string                `form:"gcpRegion" json:"gcpRegion"`
 	GCPBucket         string                `form:"gcpBucket" json:"gcpBucket"`
-	GCPCredentialJson string                `form:"gcpCredentialJson" json:"gcpCredentialJson" swaggerignore:"true"`
+	GCPCredentialJson string                `form:"gcpCredentialJson" json:"gcpCredentialJson"`
 	GCPCredential     *multipart.FileHeader `form:"gcpCredential" json:"-" swaggerignore:"true"`
 
 	NCPRegion    string `form:"ncpRegion" json:"ncpRegion"`
@@ -63,7 +63,7 @@ type GCPMigrationParams struct {
 	DatabaseID        string                `json:"databaseId" form:"databaseId"`
 	GCPRegion         string                `form:"gcpRegion" json:"gcpRegion"`
 	GCPBucket         string                `form:"gcpBucket" json:"gcpBucket"`
-	GCPCredentialJson string                `form:"gcpCredentialJson" json:"gcpCredentialJson" swaggerignore:"true"`
+	GCPCredentialJson string                `form:"gcpCredentialJson" json:"gcpCredentialJson"`
 	GCPCredential     *multipart.FileHeader `form:"gcpCredential" json:"-" swaggerignore:"true"`
 }
 

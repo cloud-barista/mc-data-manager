@@ -86,8 +86,8 @@ func MigrationLinuxToS3PostHandler(ctx echo.Context) error {
 //	@Tags			[Data Migration]
 //	@Accept			multipart/form-data
 //	@Produce		json
-//	@Param			RequestBody	formData		MigrationForm			true	"Parameters required for migration"
-//	@Param			gcpCredential	formData	file					false	"Parameters required for migration"
+//	@Param			RequestBody		formData	MigrationForm	true	"Parameters required for migration"
+//	@Param			gcpCredential	formData	file			false	"Parameters required for migration"
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
@@ -273,8 +273,8 @@ func MigrationWindowsToS3PostHandler(ctx echo.Context) error {
 //	@Tags			[Data Migration]
 //	@Accept			multipart/form-data
 //	@Produce		json
-//	@Param			RequestBody	formData		MigrationForm			true	"Parameters required for migration"
-//	@Param			gcpCredential	formData	file					false	"Parameters required for migration"
+//	@Param			RequestBody		formData	MigrationForm	true	"Parameters required for migration"
+//	@Param			gcpCredential	formData	file			false	"Parameters required for migration"
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
