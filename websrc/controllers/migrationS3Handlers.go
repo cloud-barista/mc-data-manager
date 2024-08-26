@@ -160,7 +160,7 @@ func MigrationS3ToGCPPostHandler(ctx echo.Context) error {
 	}
 
 	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
-	if !ok {
+	if !ok && params.GCPCredentialJson == "" {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,

@@ -51,7 +51,7 @@ func MigrationDynamoDBToFirestorePostHandler(ctx echo.Context) error {
 	}
 
 	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
-	if !ok {
+	if !ok && params.GCPCredentialJson == "" {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -100,8 +100,8 @@ func MigrationDynamoDBToFirestorePostHandler(ctx echo.Context) error {
 // @Tags [Data Migration]
 // @Accept json
 // @Produce json
-// @Param AWSMigrationParams formData AWSMigrationParams true "Parameters required for AWS migration"
-// @Param MongoMigrationParams formData MongoMigrationParams true "Parameters required for NCP migration"
+// @Param AWSMigrationParams body AWSMigrationParams true "Parameters required for AWS migration"
+// @Param MongoMigrationParams body MongoMigrationParams true "Parameters required for NCP migration"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /migration/dynamodb/mongodb [post]
@@ -180,7 +180,7 @@ func MigrationFirestoreToDynamoDBPostHandler(ctx echo.Context) error {
 	}
 
 	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
-	if !ok {
+	if !ok && params.GCPCredentialJson == "" {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -250,7 +250,7 @@ func MigrationFirestoreToMongoDBPostHandler(ctx echo.Context) error {
 	}
 
 	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
-	if !ok {
+	if !ok && params.GCPCredentialJson == "" {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -303,7 +303,7 @@ func MigrationFirestoreToMongoDBPostHandler(ctx echo.Context) error {
 // @Param AWSMigrationParams formData AWSMigrationParams true "Parameters required for AWS migration"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
-// @Router /mongodb/dynamodb [post]
+// @Router /migration/mongodb/dynamodb [post]
 func MigrationMongoDBToDynamoDBPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -364,7 +364,7 @@ func MigrationMongoDBToDynamoDBPostHandler(ctx echo.Context) error {
 // @Param gcpCredential	formData file true "Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
-// @Router /mongodb/firestore [post]
+// @Router /migration/mongodb/firestore [post]
 func MigrationMongoDBToFirestorePostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -380,7 +380,7 @@ func MigrationMongoDBToFirestorePostHandler(ctx echo.Context) error {
 	}
 
 	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
-	if !ok {
+	if !ok && params.GCPCredentialJson == "" {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,

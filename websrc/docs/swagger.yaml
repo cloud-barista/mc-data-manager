@@ -1,5 +1,16 @@
 basePath: /
 definitions:
+  controllers.AWSMigrationParams:
+    properties:
+      awsAccessKey:
+        type: string
+      awsBucket:
+        type: string
+      awsRegion:
+        type: string
+      awsSecretKey:
+        type: string
+    type: object
   controllers.GenDataParams:
     properties:
       accessKey:
@@ -26,9 +37,13 @@ definitions:
         type: string
       checkZIP:
         type: string
+      databaseId:
+        type: string
       databaseName:
         type: string
       endpoint:
+        type: string
+      gcpCredentialJson:
         type: string
       host:
         type: string
@@ -38,7 +53,7 @@ definitions:
         type: string
       port:
         type: string
-      projectid:
+      projectId:
         type: string
       provider:
         type: string
@@ -101,6 +116,8 @@ definitions:
         type: string
       awsSecretKey:
         type: string
+      databaseId:
+        type: string
       databaseName:
         type: string
       gcpBucket:
@@ -125,7 +142,7 @@ definitions:
         type: string
       port:
         type: string
-      projectid:
+      projectId:
         type: string
       username:
         type: string
@@ -155,6 +172,19 @@ definitions:
       srcProvider:
         type: string
       srcUsername:
+        type: string
+    type: object
+  controllers.MongoMigrationParams:
+    properties:
+      databaseName:
+        type: string
+      host:
+        type: string
+      password:
+        type: string
+      port:
+        type: string
+      username:
         type: string
     type: object
   controllers.NCPMigrationParams:
@@ -222,7 +252,13 @@ paths:
       description: Generate test data on GCP Firestore.
       parameters:
       - in: formData
-        name: projectid
+        name: databaseId
+        type: string
+      - in: formData
+        name: gcpCredentialJson
+        type: string
+      - in: formData
+        name: projectId
         type: string
       - in: formData
         name: region
@@ -230,7 +266,6 @@ paths:
       - description: Parameters required to generate test data
         in: formData
         name: gcpCredential
-        required: true
         type: file
       produces:
       - application/json
@@ -289,10 +324,16 @@ paths:
         name: checkZIP
         type: string
       - in: formData
+        name: databaseId
+        type: string
+      - in: formData
         name: databaseName
         type: string
       - in: formData
         name: endpoint
+        type: string
+      - in: formData
+        name: gcpCredentialJson
         type: string
       - in: formData
         name: host
@@ -307,7 +348,7 @@ paths:
         name: port
         type: string
       - in: formData
-        name: projectid
+        name: projectId
         type: string
       - in: formData
         name: provider
@@ -354,7 +395,6 @@ paths:
       - description: Parameters required to generate test data
         in: formData
         name: gcpCredential
-        required: true
         type: file
       produces:
       - application/json
@@ -553,13 +593,16 @@ paths:
         name: awsSecretKey
         type: string
       - in: formData
+        name: databaseId
+        type: string
+      - in: formData
         name: gcpBucket
         type: string
       - in: formData
         name: gcpRegion
         type: string
       - in: formData
-        name: projectid
+        name: projectId
         type: string
       - description: Parameters required to generate test data
         in: formData
@@ -586,33 +629,18 @@ paths:
       - application/json
       description: Migrate data stored in AWS DynamoDB to Naver Cloud MongoDB.
       parameters:
-      - in: formData
-        name: awsAccessKey
-        type: string
-      - in: formData
-        name: awsBucket
-        type: string
-      - in: formData
-        name: awsRegion
-        type: string
-      - in: formData
-        name: awsSecretKey
-        type: string
-      - in: formData
-        name: databaseName
-        type: string
-      - in: formData
-        name: host
-        type: string
-      - in: formData
-        name: password
-        type: string
-      - in: formData
-        name: port
-        type: string
-      - in: formData
-        name: username
-        type: string
+      - description: Parameters required for AWS migration
+        in: body
+        name: AWSMigrationParams
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.AWSMigrationParams'
+      - description: Parameters required for NCP migration
+        in: body
+        name: MongoMigrationParams
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.MongoMigrationParams'
       produces:
       - application/json
       responses:
@@ -634,13 +662,16 @@ paths:
       description: Migrate data stored in Google Cloud Firestore to AWS DynamoDB.
       parameters:
       - in: formData
+        name: databaseId
+        type: string
+      - in: formData
         name: gcpBucket
         type: string
       - in: formData
         name: gcpRegion
         type: string
       - in: formData
-        name: projectid
+        name: projectId
         type: string
       - in: formData
         name: awsAccessKey
@@ -680,13 +711,16 @@ paths:
       description: Migrate data stored in Google Cloud Firestore to Naver Cloud MongoDB.
       parameters:
       - in: formData
+        name: databaseId
+        type: string
+      - in: formData
         name: gcpBucket
         type: string
       - in: formData
         name: gcpRegion
         type: string
       - in: formData
-        name: projectid
+        name: projectId
         type: string
       - in: formData
         name: databaseName
@@ -741,6 +775,9 @@ paths:
         name: awsSecretKey
         type: string
       - in: formData
+        name: databaseId
+        type: string
+      - in: formData
         name: databaseName
         type: string
       - in: formData
@@ -777,15 +814,14 @@ paths:
         name: port
         type: string
       - in: formData
-        name: projectid
+        name: projectId
         type: string
       - in: formData
         name: username
         type: string
-      - description: Parameters required to generate test data
+      - description: Parameters required for migration
         in: formData
         name: gcpCredential
-        required: true
         type: file
       produces:
       - application/json
@@ -824,6 +860,9 @@ paths:
         name: awsSecretKey
         type: string
       - in: formData
+        name: databaseId
+        type: string
+      - in: formData
         name: databaseName
         type: string
       - in: formData
@@ -860,15 +899,14 @@ paths:
         name: port
         type: string
       - in: formData
-        name: projectid
+        name: projectId
         type: string
       - in: formData
         name: username
         type: string
-      - description: Parameters required to generate test data
+      - description: Parameters required for migration
         in: formData
         name: gcpCredential
-        required: true
         type: file
       produces:
       - application/json
@@ -903,6 +941,9 @@ paths:
         name: awsSecretKey
         type: string
       - in: formData
+        name: databaseId
+        type: string
+      - in: formData
         name: databaseName
         type: string
       - in: formData
@@ -939,15 +980,14 @@ paths:
         name: port
         type: string
       - in: formData
-        name: projectid
+        name: projectId
         type: string
       - in: formData
         name: username
         type: string
-      - description: Parameters required to generate test data
+      - description: Parameters required for migration
         in: formData
         name: gcpCredential
-        required: true
         type: file
       produces:
       - application/json
@@ -982,6 +1022,9 @@ paths:
         name: awsSecretKey
         type: string
       - in: formData
+        name: databaseId
+        type: string
+      - in: formData
         name: databaseName
         type: string
       - in: formData
@@ -1018,15 +1061,14 @@ paths:
         name: port
         type: string
       - in: formData
-        name: projectid
+        name: projectId
         type: string
       - in: formData
         name: username
         type: string
-      - description: Parameters required to generate test data
+      - description: Parameters required for migration
         in: formData
         name: gcpCredential
-        required: true
         type: file
       produces:
       - application/json
@@ -1065,6 +1107,9 @@ paths:
         name: awsSecretKey
         type: string
       - in: formData
+        name: databaseId
+        type: string
+      - in: formData
         name: databaseName
         type: string
       - in: formData
@@ -1101,15 +1146,14 @@ paths:
         name: port
         type: string
       - in: formData
-        name: projectid
+        name: projectId
         type: string
       - in: formData
         name: username
         type: string
-      - description: Parameters required to generate test data
+      - description: Parameters required for migration
         in: formData
         name: gcpCredential
-        required: true
         type: file
       produces:
       - application/json
@@ -1189,6 +1233,105 @@ paths:
       summary: Migrate data from Linux to AWS S3
       tags:
       - '[Data Migration]'
+  /migration/mongodb/dynamodb:
+    post:
+      consumes:
+      - application/json
+      description: Migrate data stored in Naver Cloud MongoDB to AWS DynamoDB.
+      parameters:
+      - in: formData
+        name: databaseName
+        type: string
+      - in: formData
+        name: host
+        type: string
+      - in: formData
+        name: password
+        type: string
+      - in: formData
+        name: port
+        type: string
+      - in: formData
+        name: username
+        type: string
+      - in: formData
+        name: awsAccessKey
+        type: string
+      - in: formData
+        name: awsBucket
+        type: string
+      - in: formData
+        name: awsRegion
+        type: string
+      - in: formData
+        name: awsSecretKey
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from MongoDB to DynamoDB
+      tags:
+      - '[Data Migration]'
+  /migration/mongodb/firestore:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Migrate data stored in Naver Cloud MongoDB to Google Cloud Firestore.
+      parameters:
+      - in: formData
+        name: databaseName
+        type: string
+      - in: formData
+        name: host
+        type: string
+      - in: formData
+        name: password
+        type: string
+      - in: formData
+        name: port
+        type: string
+      - in: formData
+        name: username
+        type: string
+      - in: formData
+        name: databaseId
+        type: string
+      - in: formData
+        name: gcpBucket
+        type: string
+      - in: formData
+        name: gcpRegion
+        type: string
+      - in: formData
+        name: projectId
+        type: string
+      - description: Parameters required to generate test data
+        in: formData
+        name: gcpCredential
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully migrated data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Migrate data from MongoDB to Firestore
+      tags:
+      - '[Data Migration]'
   /migration/mysql:
     post:
       consumes:
@@ -1234,6 +1377,9 @@ paths:
         name: awsSecretKey
         type: string
       - in: formData
+        name: databaseId
+        type: string
+      - in: formData
         name: databaseName
         type: string
       - in: formData
@@ -1270,7 +1416,7 @@ paths:
         name: port
         type: string
       - in: formData
-        name: projectid
+        name: projectId
         type: string
       - in: formData
         name: username
@@ -1405,6 +1551,9 @@ paths:
         name: awsSecretKey
         type: string
       - in: formData
+        name: databaseId
+        type: string
+      - in: formData
         name: databaseName
         type: string
       - in: formData
@@ -1441,7 +1590,7 @@ paths:
         name: port
         type: string
       - in: formData
-        name: projectid
+        name: projectId
         type: string
       - in: formData
         name: username
@@ -1570,6 +1719,9 @@ paths:
         name: awsSecretKey
         type: string
       - in: formData
+        name: databaseId
+        type: string
+      - in: formData
         name: databaseName
         type: string
       - in: formData
@@ -1606,15 +1758,14 @@ paths:
         name: port
         type: string
       - in: formData
-        name: projectid
+        name: projectId
         type: string
       - in: formData
         name: username
         type: string
-      - description: Parameters required to generate test data
+      - description: Parameters required for migration
         in: formData
         name: gcpCredential
-        required: true
         type: file
       produces:
       - application/json
@@ -1692,102 +1843,6 @@ paths:
           schema:
             $ref: '#/definitions/models.BasicResponse'
       summary: Migrate data from Windows to AWS S3
-      tags:
-      - '[Data Migration]'
-  /mongodb/dynamodb:
-    post:
-      consumes:
-      - application/json
-      description: Migrate data stored in Naver Cloud MongoDB to AWS DynamoDB.
-      parameters:
-      - in: formData
-        name: databaseName
-        type: string
-      - in: formData
-        name: host
-        type: string
-      - in: formData
-        name: password
-        type: string
-      - in: formData
-        name: port
-        type: string
-      - in: formData
-        name: username
-        type: string
-      - in: formData
-        name: awsAccessKey
-        type: string
-      - in: formData
-        name: awsBucket
-        type: string
-      - in: formData
-        name: awsRegion
-        type: string
-      - in: formData
-        name: awsSecretKey
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully migrated data
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from MongoDB to DynamoDB
-      tags:
-      - '[Data Migration]'
-  /mongodb/firestore:
-    post:
-      consumes:
-      - multipart/form-data
-      description: Migrate data stored in Naver Cloud MongoDB to Google Cloud Firestore.
-      parameters:
-      - in: formData
-        name: databaseName
-        type: string
-      - in: formData
-        name: host
-        type: string
-      - in: formData
-        name: password
-        type: string
-      - in: formData
-        name: port
-        type: string
-      - in: formData
-        name: username
-        type: string
-      - in: formData
-        name: gcpBucket
-        type: string
-      - in: formData
-        name: gcpRegion
-        type: string
-      - in: formData
-        name: projectid
-        type: string
-      - description: Parameters required to generate test data
-        in: formData
-        name: gcpCredential
-        required: true
-        type: file
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully migrated data
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from MongoDB to Firestore
       tags:
       - '[Data Migration]'
 swagger: "2.0"

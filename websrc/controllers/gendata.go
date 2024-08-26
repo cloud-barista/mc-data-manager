@@ -62,14 +62,18 @@ type GenDataParams struct {
 	DBPassword   string `json:"password" form:"password"`
 	DatabaseName string `json:"databaseName" form:"databaseName"`
 
-	GCPCredential *multipart.FileHeader `form:"gcpCredential" swaggerignore:"true"`
-	ProjectID     string                `json:"projectid" form:"projectid"`
+	GCPCredential     *multipart.FileHeader `json:"-" form:"gcpCredential" swaggerignore:"true"`
+	GCPCredentialJson string                `json:"gcpCredentialJson" form:"gcpCredentialJson"`
+	DatabaseID        string                `json:"databaseId" form:"databaseId"`
+	ProjectID         string                `json:"projectId" form:"projectId"`
 }
 
 type GenFirestoreParams struct {
-	Region        string                `json:"region" form:"region"`
-	GCPCredential *multipart.FileHeader `form:"gcpCredential" swaggerignore:"true"`
-	ProjectID     string                `json:"projectid" form:"projectid"`
+	Region            string                `json:"region" form:"region"`
+	GCPCredential     *multipart.FileHeader `json:"-" form:"gcpCredential" swaggerignore:"true"`
+	GCPCredentialJson string                `json:"gcpCredentialJson" form:"gcpCredentialJson"`
+	DatabaseID        string                `json:"databaseId" form:"databaseId"`
+	ProjectID         string                `json:"projectId" form:"projectId"`
 }
 
 type GenMySQLParams struct {

@@ -87,7 +87,7 @@ func MigrationLinuxToS3PostHandler(ctx echo.Context) error {
 //	@Accept			multipart/form-data
 //	@Produce		json
 //	@Param			RequestBody	formData		MigrationForm			true	"Parameters required for migration"
-//	@Param			gcpCredential	formData	file					true	"Parameters required to generate test data"
+//	@Param			gcpCredential	formData	file					false	"Parameters required for migration"
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
@@ -115,7 +115,7 @@ func MigrationLinuxToGCPPostHandler(ctx echo.Context) error {
 	}
 
 	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
-	if !ok {
+	if !ok && params.GCPCredentialJson == "" {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -274,7 +274,7 @@ func MigrationWindowsToS3PostHandler(ctx echo.Context) error {
 //	@Accept			multipart/form-data
 //	@Produce		json
 //	@Param			RequestBody	formData		MigrationForm			true	"Parameters required for migration"
-//	@Param			gcpCredential	formData	file					true	"Parameters required to generate test data"
+//	@Param			gcpCredential	formData	file					false	"Parameters required for migration"
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
@@ -300,7 +300,7 @@ func MigrationWindowsToGCPPostHandler(ctx echo.Context) error {
 	}
 
 	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
-	if !ok {
+	if !ok && params.GCPCredentialJson == "" {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,

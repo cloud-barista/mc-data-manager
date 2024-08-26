@@ -196,7 +196,7 @@ func GetSrcNRDMS(datamoldParams *DatamoldParams) (*nrdbc.NRDBController, error) 
 		logrus.Infof("CredentialsFilePath : %s", datamoldParams.SrcGcpCredPath)
 		logrus.Infof("ProjectID : %s", datamoldParams.SrcProjectID)
 		logrus.Infof("Region : %s", datamoldParams.SrcRegion)
-		gcpnrdb, err := config.NewFireStoreClient(datamoldParams.SrcGcpCredPath, datamoldParams.SrcProjectID)
+		gcpnrdb, err := config.NewFireStoreClient(datamoldParams.SrcGcpCredPath, datamoldParams.SrcGcpCredJson, datamoldParams.SrcProjectID, datamoldParams.SrcDatabaseID)
 		if err != nil {
 			return nil, err
 		}
@@ -248,7 +248,7 @@ func GetDstNRDMS(datamoldParams *DatamoldParams) (*nrdbc.NRDBController, error) 
 		logrus.Infof("CredentialsFilePath : %s", datamoldParams.DstGcpCredPath)
 		logrus.Infof("ProjectID : %s", datamoldParams.DstProjectID)
 		logrus.Infof("Region : %s", datamoldParams.DstRegion)
-		gcpnrdb, err := config.NewFireStoreClient(datamoldParams.DstGcpCredPath, datamoldParams.DstProjectID)
+		gcpnrdb, err := config.NewFireStoreClient(datamoldParams.DstGcpCredPath, datamoldParams.DstGcpCredJson, datamoldParams.DstProjectID, datamoldParams.DstDatabaseID)
 		if err != nil {
 			return nil, err
 		}
