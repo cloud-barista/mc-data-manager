@@ -129,6 +129,9 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 
 	e.GET("/", controllers.MainGetHandler)
 
+	backupGroup := e.Group("/backup")
+	routes.BackupRoutes(backupGroup)
+
 	generateGroup := e.Group("/generate")
 	routes.GenerateRoutes(generateGroup)
 
