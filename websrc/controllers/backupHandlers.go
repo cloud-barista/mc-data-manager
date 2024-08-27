@@ -16,80 +16,9 @@ limitations under the License.
 package controllers
 
 import (
-	"net/http"
-	"os"
-	"time"
-
-	"github.com/cloud-barista/mc-data-manager/websrc/models"
 	"github.com/labstack/echo/v4"
 )
 
-// MigrationDynamoDBToFirestorePostHandler godoc
-// @Summary Migrate data from DynamoDB to Firestore
-// @Description Migrate data stored in AWS DynamoDB to Google Cloud Firestore.
-// @Tags [Data Migration]
-// @Accept multipart/form-data
-// @Produce json
-// @Param AWSMigrationParams formData AWSMigrationParams true "Parameters required for Linux migration"
-// @Param GCPMigrationParams formData GCPMigrationParams true "Parameters required for GCP migration"
-// @Param gcpCredential	formData file true "Parameters required to generate test data"
-// @Success 200 {object} models.BasicResponse "Successfully migrated data"
-// @Failure 500 {object} models.BasicResponse "Internal Server Error"
-// @Router /backup [post]
-func BackupRootHandler(ctx echo.Context) error {
+func BackupRootHandler(ctx echo.Context) {
 
-	start := time.Now()
-
-	logger, logstrings := pageLogInit("migDNFS", "Export dynamoDB data to firestoreDB", start)
-
-	params := MigrationForm{}
-	if !getDataWithBind(logger, start, ctx, &params) {
-		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
-			Result: logstrings.String(),
-			Error:  nil,
-		})
-	}
-
-	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
-	if !ok && params.GCPCredentialJson == "" {
-		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
-			Result: logstrings.String(),
-			Error:  nil,
-		})
-	}
-	defer os.RemoveAll(credTmpDir)
-
-	awsNRDB := getDynamoNRDBC(logger, start, "mig", params)
-	if awsNRDB == nil {
-		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
-			Result: logstrings.String(),
-			Error:  nil,
-		})
-	}
-
-	gcpNRDB := getFirestoreNRDBC(logger, start, "mig", params, credFileName)
-	if gcpNRDB == nil {
-		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
-			Result: logstrings.String(),
-			Error:  nil,
-		})
-	}
-
-	if err := awsNRDB.Copy(gcpNRDB); err != nil {
-		end := time.Now()
-		logger.Errorf("NRDBController copy failed : %v", err)
-		logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(start).String())
-		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
-			Result: logstrings.String(),
-			Error:  nil,
-		})
-	}
-
-	// migration success. Send result to client
-	jobEnd(logger, "Successfully migrated data from dynamoDB to firestoreDB", start)
-	return ctx.JSON(http.StatusOK, models.BasicResponse{
-		Result: logstrings.String(),
-		Error:  nil,
-	})
 }
