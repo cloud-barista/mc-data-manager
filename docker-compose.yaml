@@ -10,7 +10,7 @@ services:
       - .env
     init: true
 # service app
-  app:
+  mc-data-manger:
     depends_on:
       - init-chown-volumes
     build:
