@@ -37,8 +37,8 @@
     git config --global user.email "자신의 이메일"
     
     # git clone으로 datamanager 가져오기
-    git clone https://<자신의계정>@github.com/jjang-go/mc-data-manager.git
-    # ex : git clone https://jjang-go@github.com/jjang-go/mc-data-manager.git
+    git clone https://<자신의계정>@github.com/cloud-barista/mc-data-manager.git
+    # ex : git clone https://cloud-barista@github.com/cloud-barista/mc-data-manager.git
     
     # mc-data-manager로 이동
     cd ./mc-data-manager
