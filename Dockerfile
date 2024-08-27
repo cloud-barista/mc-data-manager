@@ -1,5 +1,5 @@
 ##############################################################
-## Stage 1 - Go Build
+## Stage 1 - Go Build As builder
 ##############################################################
 
 FROM golang:1.23 AS builder
@@ -8,9 +8,9 @@ COPY . .
 RUN go build -o app .
 
 #############################################################
-## Stage 2 - Application Setup
+## Stage 2 - Application Setup AS prod
 ##############################################################
-FROM ubuntu:22.04
+FROM ubuntu:22.04 AS prod
 ARG UID=0
 ARG GID=0
 ARG USER=root
