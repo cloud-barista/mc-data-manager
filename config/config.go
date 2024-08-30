@@ -156,7 +156,10 @@ func NewFireStoreClient(credentialsFile, credentialsJson, projectID, databaseID 
 	var err error
 
 	ctx := context.TODO()
-
+	// credentialsJson, err := json.Marshal(gcpCredentials)
+	// if err != nil {
+	// 	return nil, errors.New("failed to marshal GCP credentials to JSON")
+	// }
 	switch {
 	case credentialsFile != "":
 		fmt.Println(" Filename : ", credentialsFile)

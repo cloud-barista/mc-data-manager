@@ -86,11 +86,6 @@
                         "in": "formData"
                     },
                     {
-                        "type": "string",
-                        "name": "region",
-                        "in": "formData"
-                    },
-                    {
                         "type": "file",
                         "description": "Parameters required to generate test data",
                         "name": "gcpCredential",
@@ -214,6 +209,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "operationId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "password",
                         "in": "formData"
                     },
@@ -225,6 +225,11 @@
                     {
                         "type": "string",
                         "name": "port",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "profileName",
                         "in": "formData"
                     },
                     {
@@ -968,6 +973,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "operationId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "password",
                         "in": "formData"
                     },
@@ -983,7 +993,22 @@
                     },
                     {
                         "type": "string",
+                        "name": "profileName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "projectId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "provider",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "region",
                         "in": "formData"
                     },
                     {
@@ -1111,6 +1136,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "operationId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "password",
                         "in": "formData"
                     },
@@ -1126,7 +1156,22 @@
                     },
                     {
                         "type": "string",
+                        "name": "profileName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "projectId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "provider",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "region",
                         "in": "formData"
                     },
                     {
@@ -1248,6 +1293,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "operationId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "password",
                         "in": "formData"
                     },
@@ -1263,7 +1313,22 @@
                     },
                     {
                         "type": "string",
+                        "name": "profileName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "projectId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "provider",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "region",
                         "in": "formData"
                     },
                     {
@@ -1385,6 +1450,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "operationId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "password",
                         "in": "formData"
                     },
@@ -1400,7 +1470,22 @@
                     },
                     {
                         "type": "string",
+                        "name": "profileName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "projectId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "provider",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "region",
                         "in": "formData"
                     },
                     {
@@ -1528,6 +1613,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "operationId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "password",
                         "in": "formData"
                     },
@@ -1543,7 +1633,22 @@
                     },
                     {
                         "type": "string",
+                        "name": "profileName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "projectId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "provider",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "region",
                         "in": "formData"
                     },
                     {
@@ -1966,6 +2071,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "operationId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "password",
                         "in": "formData"
                     },
@@ -1981,7 +2091,22 @@
                     },
                     {
                         "type": "string",
+                        "name": "profileName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "projectId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "provider",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "region",
                         "in": "formData"
                     },
                     {
@@ -2244,6 +2369,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "operationId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "password",
                         "in": "formData"
                     },
@@ -2259,7 +2389,22 @@
                     },
                     {
                         "type": "string",
+                        "name": "profileName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "projectId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "provider",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "region",
                         "in": "formData"
                     },
                     {
@@ -2513,6 +2658,11 @@
                     },
                     {
                         "type": "string",
+                        "name": "operationId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "password",
                         "in": "formData"
                     },
@@ -2528,7 +2678,22 @@
                     },
                     {
                         "type": "string",
+                        "name": "profileName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "projectId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "provider",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "region",
                         "in": "formData"
                     },
                     {
@@ -2730,6 +2895,9 @@
                 "host": {
                     "type": "string"
                 },
+                "operationId": {
+                    "type": "string"
+                },
                 "password": {
                     "type": "string"
                 },
@@ -2737,6 +2905,9 @@
                     "type": "string"
                 },
                 "port": {
+                    "type": "string"
+                },
+                "profileName": {
                     "type": "string"
                 },
                 "projectId": {
@@ -2795,13 +2966,22 @@
                 "host": {
                     "type": "string"
                 },
+                "operationId": {
+                    "type": "string"
+                },
                 "password": {
                     "type": "string"
                 },
                 "port": {
                     "type": "string"
                 },
+                "profileName": {
+                    "type": "string"
+                },
                 "provider": {
+                    "type": "string"
+                },
+                "region": {
                     "type": "string"
                 },
                 "username": {
@@ -2818,7 +2998,6 @@
             }
         },
         "controllers.MigrationForm": {
-            "description": "MigrationForm contains all the necessary fields for migrating data between different services.",
             "type": "object",
             "properties": {
                 "awsAccessKey": {
@@ -2866,6 +3045,9 @@
                 "ncpSecretKey": {
                     "type": "string"
                 },
+                "operationId": {
+                    "type": "string"
+                },
                 "password": {
                     "type": "string"
                 },
@@ -2875,7 +3057,16 @@
                 "port": {
                     "type": "string"
                 },
+                "profileName": {
+                    "type": "string"
+                },
                 "projectId": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "region": {
                     "type": "string"
                 },
                 "username": {

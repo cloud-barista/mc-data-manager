@@ -47,11 +47,15 @@ definitions:
         type: string
       host:
         type: string
+      operationId:
+        type: string
       password:
         type: string
       path:
         type: string
       port:
+        type: string
+      profileName:
         type: string
       projectId:
         type: string
@@ -90,11 +94,17 @@ definitions:
         type: string
       host:
         type: string
+      operationId:
+        type: string
       password:
         type: string
       port:
         type: string
+      profileName:
+        type: string
       provider:
+        type: string
+      region:
         type: string
       username:
         type: string
@@ -105,8 +115,6 @@ definitions:
         type: string
     type: object
   controllers.MigrationForm:
-    description: MigrationForm contains all the necessary fields for migrating data
-      between different services.
     properties:
       awsAccessKey:
         type: string
@@ -138,13 +146,21 @@ definitions:
         type: string
       ncpSecretKey:
         type: string
+      operationId:
+        type: string
       password:
         type: string
       path:
         type: string
       port:
         type: string
+      profileName:
+        type: string
       projectId:
+        type: string
+      provider:
+        type: string
+      region:
         type: string
       username:
         type: string
@@ -262,9 +278,6 @@ paths:
       - in: formData
         name: projectId
         type: string
-      - in: formData
-        name: region
-        type: string
       - description: Parameters required to generate test data
         in: formData
         name: gcpCredential
@@ -341,6 +354,9 @@ paths:
         name: host
         type: string
       - in: formData
+        name: operationId
+        type: string
+      - in: formData
         name: password
         type: string
       - in: formData
@@ -348,6 +364,9 @@ paths:
         type: string
       - in: formData
         name: port
+        type: string
+      - in: formData
+        name: profileName
         type: string
       - in: formData
         name: projectId
@@ -816,6 +835,9 @@ paths:
         name: ncpSecretKey
         type: string
       - in: formData
+        name: operationId
+        type: string
+      - in: formData
         name: password
         type: string
       - in: formData
@@ -825,7 +847,16 @@ paths:
         name: port
         type: string
       - in: formData
+        name: profileName
+        type: string
+      - in: formData
         name: projectId
+        type: string
+      - in: formData
+        name: provider
+        type: string
+      - in: formData
+        name: region
         type: string
       - in: formData
         name: username
@@ -904,6 +935,9 @@ paths:
         name: ncpSecretKey
         type: string
       - in: formData
+        name: operationId
+        type: string
+      - in: formData
         name: password
         type: string
       - in: formData
@@ -913,7 +947,16 @@ paths:
         name: port
         type: string
       - in: formData
+        name: profileName
+        type: string
+      - in: formData
         name: projectId
+        type: string
+      - in: formData
+        name: provider
+        type: string
+      - in: formData
+        name: region
         type: string
       - in: formData
         name: username
@@ -988,6 +1031,9 @@ paths:
         name: ncpSecretKey
         type: string
       - in: formData
+        name: operationId
+        type: string
+      - in: formData
         name: password
         type: string
       - in: formData
@@ -997,7 +1043,16 @@ paths:
         name: port
         type: string
       - in: formData
+        name: profileName
+        type: string
+      - in: formData
         name: projectId
+        type: string
+      - in: formData
+        name: provider
+        type: string
+      - in: formData
+        name: region
         type: string
       - in: formData
         name: username
@@ -1072,6 +1127,9 @@ paths:
         name: ncpSecretKey
         type: string
       - in: formData
+        name: operationId
+        type: string
+      - in: formData
         name: password
         type: string
       - in: formData
@@ -1081,7 +1139,16 @@ paths:
         name: port
         type: string
       - in: formData
+        name: profileName
+        type: string
+      - in: formData
         name: projectId
+        type: string
+      - in: formData
+        name: provider
+        type: string
+      - in: formData
+        name: region
         type: string
       - in: formData
         name: username
@@ -1160,6 +1227,9 @@ paths:
         name: ncpSecretKey
         type: string
       - in: formData
+        name: operationId
+        type: string
+      - in: formData
         name: password
         type: string
       - in: formData
@@ -1169,7 +1239,16 @@ paths:
         name: port
         type: string
       - in: formData
+        name: profileName
+        type: string
+      - in: formData
         name: projectId
+        type: string
+      - in: formData
+        name: provider
+        type: string
+      - in: formData
+        name: region
         type: string
       - in: formData
         name: username
@@ -1435,6 +1514,9 @@ paths:
         name: ncpSecretKey
         type: string
       - in: formData
+        name: operationId
+        type: string
+      - in: formData
         name: password
         type: string
       - in: formData
@@ -1444,7 +1526,16 @@ paths:
         name: port
         type: string
       - in: formData
+        name: profileName
+        type: string
+      - in: formData
         name: projectId
+        type: string
+      - in: formData
+        name: provider
+        type: string
+      - in: formData
+        name: region
         type: string
       - in: formData
         name: username
@@ -1611,6 +1702,9 @@ paths:
         name: ncpSecretKey
         type: string
       - in: formData
+        name: operationId
+        type: string
+      - in: formData
         name: password
         type: string
       - in: formData
@@ -1620,7 +1714,16 @@ paths:
         name: port
         type: string
       - in: formData
+        name: profileName
+        type: string
+      - in: formData
         name: projectId
+        type: string
+      - in: formData
+        name: provider
+        type: string
+      - in: formData
+        name: region
         type: string
       - in: formData
         name: username
@@ -1781,6 +1884,9 @@ paths:
         name: ncpSecretKey
         type: string
       - in: formData
+        name: operationId
+        type: string
+      - in: formData
         name: password
         type: string
       - in: formData
@@ -1790,7 +1896,16 @@ paths:
         name: port
         type: string
       - in: formData
+        name: profileName
+        type: string
+      - in: formData
         name: projectId
+        type: string
+      - in: formData
+        name: provider
+        type: string
+      - in: formData
+        name: region
         type: string
       - in: formData
         name: username

@@ -126,7 +126,7 @@ func getS3OSC(logger *logrus.Logger, startTime time.Time, jobType string, params
 
 	logger.Info("Get S3 Client")
 	if jobType == "gen" {
-		s3c, err = config.NewS3Client(gparam.AccessKey, gparam.SecretKey, gparam.Region)
+		s3c, err = config.NewS3Client(gparam.AccessKey, gparam.SecretKey, gparam.RegionParams.Region)
 	} else {
 		s3c, err = config.NewS3Client(mparam.AWSAccessKey, mparam.AWSSecretKey, mparam.AWSRegion)
 	}
@@ -238,13 +238,13 @@ func getMysqlRDBC(logger *logrus.Logger, startTime time.Time, jobType string, pa
 
 	if jobType == "gen" {
 		logger.Info("Get SQL Client")
-		sqlDB, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", gparam.DBUser, gparam.DBPassword, gparam.DBHost, gparam.DBPort))
+		sqlDB, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", gparam.User, gparam.Password, gparam.Host, gparam.Port))
 	} else if jobType == "smig" {
 		logger.Info("Get Source SQL Client")
-		sqlDB, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", mparam.Source.Username, mparam.Source.Password, mparam.Source.Host, mparam.Source.Port))
+		sqlDB, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", mparam.Source.User, mparam.Source.Password, mparam.Source.Host, mparam.Source.Port))
 	} else if jobType == "tmig" {
 		logger.Info("Get Target SQL Client")
-		sqlDB, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", mparam.Dest.Username, mparam.Dest.Password, mparam.Dest.Host, mparam.Dest.Port))
+		sqlDB, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", mparam.Dest.User, mparam.Dest.Password, mparam.Dest.Host, mparam.Dest.Port))
 	}
 	if err != nil {
 		end := time.Now()
@@ -253,11 +253,21 @@ func getMysqlRDBC(logger *logrus.Logger, startTime time.Time, jobType string, pa
 		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
 		return nil
 	}
+	if jobType == "gen" {
+		logger.Info("Get SQL Client")
+		sqlDB, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", gparam.User, gparam.Password, gparam.Host, gparam.Port))
+	} else if jobType == "smig" {
+		logger.Info("Get Source SQL Client")
+		sqlDB, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", mparam.Source.User, mparam.Source.Password, mparam.Source.Host, mparam.Source.Port))
+	} else if jobType == "tmig" {
+		logger.Info("Get Target SQL Client")
+		sqlDB, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", mparam.Dest.User, mparam.Dest.Password, mparam.Dest.Host, mparam.Dest.Port))
+	}
 
 	logger.Info("Set up the client as an RDBController")
 	if jobType == "gen" {
 		logger.Info("Set up the client as an RDBController")
-		RDBC, err = rdbc.New(mysql.New(utils.Provider(gparam.DBProvider), sqlDB), rdbc.WithLogger(logger))
+		RDBC, err = rdbc.New(mysql.New(utils.Provider(gparam.Provider), sqlDB), rdbc.WithLogger(logger))
 	} else if jobType == "smig" {
 		logger.Info("Set up the client as an Source RDBController")
 		RDBC, err = rdbc.New(mysql.New(utils.Provider(mparam.Source.Provider), sqlDB), rdbc.WithLogger(logger))
@@ -365,7 +375,7 @@ func getMongoNRDBC(logger *logrus.Logger, startTime time.Time, jobType string, p
 	var NRDBC *nrdbc.NRDBController
 
 	if jobType == "gen" {
-		Port, err = strconv.Atoi(gparam.DBPort)
+		Port, err = strconv.Atoi(gparam.Port)
 	} else {
 		Port, err = strconv.Atoi(mparam.MongoPort)
 	}
@@ -379,7 +389,7 @@ func getMongoNRDBC(logger *logrus.Logger, startTime time.Time, jobType string, p
 
 	logger.Info("Get MongoDB Client")
 	if jobType == "gen" {
-		mc, err = config.NewNCPMongoDBClient(gparam.DBUser, gparam.DBPassword, gparam.DBHost, Port)
+		mc, err = config.NewNCPMongoDBClient(gparam.User, gparam.Password, gparam.Host, Port)
 	} else {
 		mc, err = config.NewNCPMongoDBClient(mparam.MongoUsername, mparam.MongoPassword, mparam.MongoHost, Port)
 	}
