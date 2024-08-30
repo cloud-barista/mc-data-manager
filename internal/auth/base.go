@@ -39,247 +39,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func PreRun(task string, datamoldParams *DatamoldParams, use string) {
-	logrus.SetFormatter(&log.CustomTextFormatter{CmdName: use, JobName: task})
-	logrus.Infof("launch an %s to %s", use, task)
-	err := preRunE(use, task, datamoldParams)
-	if err != nil {
-		logrus.Errorf("Pre-check for %s operation errors : %v", task, err)
-		os.Exit(1)
-	}
-	logrus.Infof("successful pre-check %s into %s", use, task)
-}
-
-func GetSrcOS(datamoldParams *DatamoldParams) (*osc.OSController, error) {
-	var OSC *osc.OSController
-	logrus.Infof("Provider : %s", datamoldParams.SrcProvider)
-	if datamoldParams.SrcProvider == "aws" {
-		logrus.Infof("AccessKey : %s", datamoldParams.SrcAccessKey)
-		logrus.Infof("SecretKey : %s", datamoldParams.SrcSecretKey)
-		logrus.Infof("Region : %s", datamoldParams.SrcRegion)
-		logrus.Infof("BucketName : %s", datamoldParams.SrcBucketName)
-		s3c, err := config.NewS3Client(datamoldParams.SrcAccessKey, datamoldParams.SrcSecretKey, datamoldParams.SrcRegion)
-		if err != nil {
-			return nil, fmt.Errorf("NewS3Client error : %v", err)
-		}
-
-		OSC, err = osc.New(s3fs.New(utils.AWS, s3c, datamoldParams.SrcBucketName, datamoldParams.SrcRegion), osc.WithLogger(logrus.StandardLogger()))
-		if err != nil {
-			return nil, fmt.Errorf("osc error : %v", err)
-		}
-	} else if datamoldParams.SrcProvider == "gcp" {
-		logrus.Infof("CredentialsFilePath : %s", datamoldParams.SrcGcpCredPath)
-		logrus.Infof("ProjectID : %s", datamoldParams.SrcProjectID)
-		logrus.Infof("Region : %s", datamoldParams.SrcRegion)
-		logrus.Infof("BucketName : %s", datamoldParams.SrcBucketName)
-		gc, err := config.NewGCPClient(datamoldParams.SrcGcpCredPath)
-		if err != nil {
-			return nil, fmt.Errorf("NewGCPClient error : %v", err)
-		}
-
-		OSC, err = osc.New(gcpfs.New(gc, datamoldParams.SrcProjectID, datamoldParams.SrcBucketName, datamoldParams.SrcRegion), osc.WithLogger(logrus.StandardLogger()))
-		if err != nil {
-			return nil, fmt.Errorf("osc error : %v", err)
-		}
-	} else if datamoldParams.SrcProvider == "ncp" {
-		logrus.Infof("AccessKey : %s", datamoldParams.SrcAccessKey)
-		logrus.Infof("SecretKey : %s", datamoldParams.SrcSecretKey)
-		logrus.Infof("Endpoint : %s", datamoldParams.SrcEndpoint)
-		logrus.Infof("Region : %s", datamoldParams.SrcRegion)
-		logrus.Infof("BucketName : %s", datamoldParams.SrcBucketName)
-		s3c, err := config.NewS3ClientWithEndpoint(datamoldParams.SrcAccessKey, datamoldParams.SrcSecretKey, datamoldParams.SrcRegion, datamoldParams.SrcEndpoint)
-		if err != nil {
-			return nil, fmt.Errorf("NewS3ClientWithEndpint error : %v", err)
-		}
-
-		OSC, err = osc.New(s3fs.New(utils.AWS, s3c, datamoldParams.SrcBucketName, datamoldParams.SrcRegion), osc.WithLogger(logrus.StandardLogger()))
-		if err != nil {
-			return nil, fmt.Errorf("osc error : %v", err)
-		}
-	}
-	return OSC, nil
-}
-
-func GetDstOS(datamoldParams *DatamoldParams) (*osc.OSController, error) {
-	var OSC *osc.OSController
-	logrus.Infof("Provider : %s", datamoldParams.DstProvider)
-	if datamoldParams.DstProvider == "aws" {
-		logrus.Infof("AccessKey : %s", datamoldParams.DstAccessKey)
-		logrus.Infof("SecretKey : %s", datamoldParams.DstSecretKey)
-		logrus.Infof("Region : %s", datamoldParams.DstRegion)
-		logrus.Infof("BucketName : %s", datamoldParams.DstBucketName)
-		s3c, err := config.NewS3Client(datamoldParams.DstAccessKey, datamoldParams.DstSecretKey, datamoldParams.DstRegion)
-		if err != nil {
-			return nil, fmt.Errorf("NewS3Client error : %v", err)
-		}
-
-		OSC, err = osc.New(s3fs.New(utils.AWS, s3c, datamoldParams.DstBucketName, datamoldParams.DstRegion), osc.WithLogger(logrus.StandardLogger()))
-		if err != nil {
-			return nil, fmt.Errorf("osc error : %v", err)
-		}
-	} else if datamoldParams.DstProvider == "gcp" {
-		logrus.Infof("CredentialsFilePath : %s", datamoldParams.DstGcpCredPath)
-		logrus.Infof("ProjectID : %s", datamoldParams.DstProjectID)
-		logrus.Infof("Region : %s", datamoldParams.DstRegion)
-		logrus.Infof("BucketName : %s", datamoldParams.DstBucketName)
-		gc, err := config.NewGCPClient(datamoldParams.DstGcpCredPath)
-		if err != nil {
-			return nil, fmt.Errorf("NewGCPClient error : %v", err)
-		}
-
-		OSC, err = osc.New(gcpfs.New(gc, datamoldParams.DstProjectID, datamoldParams.DstBucketName, datamoldParams.DstRegion), osc.WithLogger(logrus.StandardLogger()))
-		if err != nil {
-			return nil, fmt.Errorf("osc error : %v", err)
-		}
-	} else if datamoldParams.DstProvider == "ncp" {
-		logrus.Infof("AccessKey : %s", datamoldParams.DstAccessKey)
-		logrus.Infof("SecretKey : %s", datamoldParams.DstSecretKey)
-		logrus.Infof("Endpoint : %s", datamoldParams.DstEndpoint)
-		logrus.Infof("Region : %s", datamoldParams.DstRegion)
-		logrus.Infof("BucketName : %s", datamoldParams.DstBucketName)
-		s3c, err := config.NewS3ClientWithEndpoint(datamoldParams.DstAccessKey, datamoldParams.DstSecretKey, datamoldParams.DstRegion, datamoldParams.DstEndpoint)
-		if err != nil {
-			return nil, fmt.Errorf("NewS3ClientWithEndpint error : %v", err)
-		}
-
-		OSC, err = osc.New(s3fs.New(utils.AWS, s3c, datamoldParams.DstBucketName, datamoldParams.DstRegion), osc.WithLogger(logrus.StandardLogger()))
-		if err != nil {
-			return nil, fmt.Errorf("osc error : %v", err)
-		}
-	}
-	return OSC, nil
-}
-
-func GetSrcRDMS(datamoldParams *DatamoldParams) (*rdbc.RDBController, error) {
-	logrus.Infof("Provider : %s", datamoldParams.SrcProvider)
-	logrus.Infof("Username : %s", datamoldParams.SrcUsername)
-	logrus.Infof("Password : %s", datamoldParams.SrcPassword)
-	logrus.Infof("Host : %s", datamoldParams.SrcHost)
-	logrus.Infof("Port : %s", datamoldParams.SrcPort)
-	src, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", datamoldParams.SrcUsername, datamoldParams.SrcPassword, datamoldParams.SrcHost, datamoldParams.SrcPort))
-	if err != nil {
-		return nil, err
-	}
-	return rdbc.New(mysql.New(utils.Provider(datamoldParams.SrcProvider), src), rdbc.WithLogger(logrus.StandardLogger()))
-}
-
-func GetDstRDMS(datamoldParams *DatamoldParams) (*rdbc.RDBController, error) {
-	logrus.Infof("Provider : %s", datamoldParams.DstProvider)
-	logrus.Infof("Username : %s", datamoldParams.DstUsername)
-	logrus.Infof("Password : %s", datamoldParams.DstPassword)
-	logrus.Infof("Host : %s", datamoldParams.DstHost)
-	logrus.Infof("Port : %s", datamoldParams.DstPort)
-	dst, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", datamoldParams.DstUsername, datamoldParams.DstPassword, datamoldParams.DstHost, datamoldParams.DstPort))
-	if err != nil {
-		return nil, err
-	}
-	return rdbc.New(mysql.New(utils.Provider(datamoldParams.DstProvider), dst), rdbc.WithLogger(logrus.StandardLogger()))
-}
-
-func GetSrcNRDMS(datamoldParams *DatamoldParams) (*nrdbc.NRDBController, error) {
-	var NRDBC *nrdbc.NRDBController
-	logrus.Infof("Provider : %s", datamoldParams.SrcProvider)
-	if datamoldParams.SrcProvider == "aws" {
-		logrus.Infof("AccessKey : %s", datamoldParams.SrcAccessKey)
-		logrus.Infof("SecretKey : %s", datamoldParams.SrcSecretKey)
-		logrus.Infof("Region : %s", datamoldParams.SrcRegion)
-		awsnrdb, err := config.NewDynamoDBClient(datamoldParams.SrcAccessKey, datamoldParams.SrcSecretKey, datamoldParams.SrcRegion)
-		if err != nil {
-			return nil, err
-		}
-
-		NRDBC, err = nrdbc.New(awsdnmdb.New(awsnrdb, datamoldParams.SrcRegion), nrdbc.WithLogger(logrus.StandardLogger()))
-		if err != nil {
-			return nil, err
-		}
-	} else if datamoldParams.SrcProvider == "gcp" {
-		logrus.Infof("CredentialsFilePath : %s", datamoldParams.SrcGcpCredPath)
-		logrus.Infof("ProjectID : %s", datamoldParams.SrcProjectID)
-		logrus.Infof("Region : %s", datamoldParams.SrcRegion)
-		gcpnrdb, err := config.NewFireStoreClient(datamoldParams.SrcGcpCredPath, datamoldParams.SrcGcpCredJson, datamoldParams.SrcProjectID, datamoldParams.SrcDatabaseID)
-		if err != nil {
-			return nil, err
-		}
-
-		NRDBC, err = nrdbc.New(gcpfsdb.New(gcpnrdb, datamoldParams.SrcRegion), nrdbc.WithLogger(logrus.StandardLogger()))
-		if err != nil {
-			return nil, err
-		}
-	} else if datamoldParams.SrcProvider == "ncp" {
-		logrus.Infof("Username : %s", datamoldParams.SrcUsername)
-		logrus.Infof("Password : %s", datamoldParams.SrcPassword)
-		logrus.Infof("Host : %s", datamoldParams.SrcHost)
-		logrus.Infof("Port : %s", datamoldParams.SrcPort)
-		port, err := strconv.Atoi(datamoldParams.SrcPort)
-		if err != nil {
-			return nil, err
-		}
-
-		ncpnrdb, err := config.NewNCPMongoDBClient(datamoldParams.SrcUsername, datamoldParams.SrcPassword, datamoldParams.SrcHost, port)
-		if err != nil {
-			return nil, err
-		}
-
-		NRDBC, err = nrdbc.New(ncpmgdb.New(ncpnrdb, datamoldParams.SrcDBName), nrdbc.WithLogger(logrus.StandardLogger()))
-		if err != nil {
-			return nil, err
-		}
-	}
-	return NRDBC, nil
-}
-
-func GetDstNRDMS(datamoldParams *DatamoldParams) (*nrdbc.NRDBController, error) {
-	var NRDBC *nrdbc.NRDBController
-	logrus.Infof("Provider : %s", datamoldParams.DstProvider)
-	if datamoldParams.DstProvider == "aws" {
-		logrus.Infof("AccessKey : %s", datamoldParams.DstAccessKey)
-		logrus.Infof("SecretKey : %s", datamoldParams.DstSecretKey)
-		logrus.Infof("Region : %s", datamoldParams.DstRegion)
-		awsnrdb, err := config.NewDynamoDBClient(datamoldParams.DstAccessKey, datamoldParams.DstSecretKey, datamoldParams.DstRegion)
-		if err != nil {
-			return nil, err
-		}
-
-		NRDBC, err = nrdbc.New(awsdnmdb.New(awsnrdb, datamoldParams.DstRegion), nrdbc.WithLogger(logrus.StandardLogger()))
-		if err != nil {
-			return nil, err
-		}
-	} else if datamoldParams.DstProvider == "gcp" {
-		logrus.Infof("CredentialsFilePath : %s", datamoldParams.DstGcpCredPath)
-		logrus.Infof("ProjectID : %s", datamoldParams.DstProjectID)
-		logrus.Infof("Region : %s", datamoldParams.DstRegion)
-		gcpnrdb, err := config.NewFireStoreClient(datamoldParams.DstGcpCredPath, datamoldParams.DstGcpCredJson, datamoldParams.DstProjectID, datamoldParams.DstDatabaseID)
-		if err != nil {
-			return nil, err
-		}
-
-		NRDBC, err = nrdbc.New(gcpfsdb.New(gcpnrdb, datamoldParams.DstRegion), nrdbc.WithLogger(logrus.StandardLogger()))
-		if err != nil {
-			return nil, err
-		}
-	} else if datamoldParams.DstProvider == "ncp" {
-		logrus.Infof("Username : %s", datamoldParams.DstUsername)
-		logrus.Infof("Password : %s", datamoldParams.DstPassword)
-		logrus.Infof("Host : %s", datamoldParams.DstHost)
-		logrus.Infof("Port : %s", datamoldParams.DstPort)
-		port, err := strconv.Atoi(datamoldParams.DstPort)
-		if err != nil {
-			return nil, err
-		}
-
-		ncpnrdb, err := config.NewNCPMongoDBClient(datamoldParams.DstUsername, datamoldParams.DstPassword, datamoldParams.DstHost, port)
-		if err != nil {
-			return nil, err
-		}
-
-		NRDBC, err = nrdbc.New(ncpmgdb.New(ncpnrdb, datamoldParams.DstDBName), nrdbc.WithLogger(logrus.StandardLogger()))
-		if err != nil {
-			return nil, err
-		}
-	}
-	return NRDBC, nil
-}
-
 func GetConfig(credPath string, ConfigData *map[string]map[string]map[string]string) error {
 	data, err := os.ReadFile(credPath)
 	if err != nil {
@@ -431,320 +190,510 @@ func preRunE(pName string, cmdName string, datamoldParams *DatamoldParams) error
 
 func applyNRDMValue(src map[string]string, p string, datamoldParams *DatamoldParams) error {
 	provider, ok := src["provider"]
-	if ok {
-		if provider != "aws" && provider != "gcp" && provider != "ncp" {
-			return fmt.Errorf("provider[aws,gcp,ncp] error : %s", provider)
-		}
-	} else {
+	if !ok {
 		return errors.New("does not exist provider")
 	}
 
-	if p == "src" {
-		datamoldParams.SrcProvider = provider
-	} else {
-		datamoldParams.DstProvider = provider
+	if provider != "aws" && provider != "gcp" && provider != "ncp" {
+		return fmt.Errorf("provider[aws,gcp,ncp] error : %s", provider)
 	}
 
-	if provider == "aws" {
-		access, ok := src["assessKey"]
+	var access, secret, region, cred, projectID, username, password, host, port, DBName string
+
+	switch provider {
+	case "aws":
+		access, ok = src["assessKey"]
 		if !ok {
 			return errors.New("does not exist assessKey")
 		}
 
-		if p == "src" {
-			datamoldParams.SrcAccessKey = access
-		} else {
-			datamoldParams.DstAccessKey = access
-		}
-
-		secret, ok := src["secretKey"]
+		secret, ok = src["secretKey"]
 		if !ok {
 			return errors.New("does not exist secretKey")
 		}
 
-		if p == "src" {
-			datamoldParams.SrcSecretKey = secret
-		} else {
-			datamoldParams.DstSecretKey = secret
-		}
-
-		region, ok := src["region"]
+		region, ok = src["region"]
 		if !ok {
 			return errors.New("does not exist region")
 		}
 
-		if p == "src" {
-			datamoldParams.SrcRegion = region
-		} else {
-			datamoldParams.DstRegion = region
-		}
-	} else if provider == "gcp" {
-		cred, ok := src["gcpCredPath"]
+	case "gcp":
+		cred, ok = src["gcpCredPath"]
 		if !ok {
 			return errors.New("does not exist gcpCredPath")
 		}
-		if p == "src" {
-			datamoldParams.SrcGcpCredPath = cred
-		} else {
-			datamoldParams.DstGcpCredPath = cred
-		}
 
-		projectID, ok := src["projectID"]
+		projectID, ok = src["projectID"]
 		if !ok {
 			return errors.New("does not exist projectID")
 		}
-		if p == "src" {
-			datamoldParams.SrcProjectID = projectID
-		} else {
-			datamoldParams.DstProjectID = projectID
-		}
 
-		region, ok := src["region"]
+		region, ok = src["region"]
 		if !ok {
 			return errors.New("does not exist region")
 		}
 
-		if p == "src" {
-			datamoldParams.SrcRegion = region
-		} else {
-			datamoldParams.DstRegion = region
-		}
-	} else if provider == "ncp" {
-		username, ok := src["username"]
+	case "ncp":
+		username, ok = src["username"]
 		if !ok {
 			return errors.New("does not exist username")
 		}
 
-		if p == "src" {
-			datamoldParams.SrcUsername = username
-		} else {
-			datamoldParams.DstUsername = username
-		}
-
-		password, ok := src["password"]
+		password, ok = src["password"]
 		if !ok {
 			return errors.New("does not exist password")
 		}
 
-		if p == "src" {
-			datamoldParams.SrcPassword = password
-		} else {
-			datamoldParams.DstPassword = password
-		}
-
-		host, ok := src["host"]
+		host, ok = src["host"]
 		if !ok {
 			return errors.New("does not exist host")
 		}
 
-		if p == "src" {
-			datamoldParams.SrcHost = host
-		} else {
-			datamoldParams.DstHost = host
-		}
-
-		port, ok := src["port"]
+		port, ok = src["port"]
 		if !ok {
 			return errors.New("does not exist port")
 		}
 
-		if p == "src" {
-			datamoldParams.SrcPort = port
-		} else {
-			datamoldParams.DstPort = port
-		}
-
-		DBName, ok := src["databaseName"]
+		DBName, ok = src["databaseName"]
 		if !ok {
 			return errors.New("does not exist databaseName")
 		}
+	}
 
-		if p == "src" {
-			datamoldParams.SrcDBName = DBName
-		} else {
-			datamoldParams.DstDBName = DBName
+	// 데이터 대입
+	if p == "src" {
+		datamoldParams.SrcProvider.Provider = provider
+		if provider == "aws" {
+			datamoldParams.SrcProvider.AccessKey = access
+			datamoldParams.SrcProvider.SecretKey = secret
+			datamoldParams.SrcProvider.Region = region
+		} else if provider == "gcp" {
+			datamoldParams.SrcProvider.GcpCredPath = cred
+			datamoldParams.SrcProvider.ProjectID = projectID
+			datamoldParams.SrcProvider.Region = region
+		} else if provider == "ncp" {
+			datamoldParams.SrcProvider.Username = username
+			datamoldParams.SrcProvider.Password = password
+			datamoldParams.SrcProvider.Host = host
+			datamoldParams.SrcProvider.Port = port
+			datamoldParams.SrcProvider.DBName = DBName
+		}
+	} else {
+		datamoldParams.DstProvider.Provider = provider
+		if provider == "aws" {
+			datamoldParams.DstProvider.AccessKey = access
+			datamoldParams.DstProvider.SecretKey = secret
+			datamoldParams.DstProvider.Region = region
+		} else if provider == "gcp" {
+			datamoldParams.DstProvider.GcpCredPath = cred
+			datamoldParams.DstProvider.ProjectID = projectID
+			datamoldParams.DstProvider.Region = region
+		} else if provider == "ncp" {
+			datamoldParams.DstProvider.Username = username
+			datamoldParams.DstProvider.Password = password
+			datamoldParams.DstProvider.Host = host
+			datamoldParams.DstProvider.Port = port
+			datamoldParams.DstProvider.DBName = DBName
 		}
 	}
+
 	return nil
 }
 
 func applyRDMValue(src map[string]string, p string, datamoldParams *DatamoldParams) error {
 	provider, ok := src["provider"]
-	if ok {
-		if provider != "aws" && provider != "gcp" && provider != "ncp" {
-			return fmt.Errorf("provider[aws,gcp,ncp] error : %s", provider)
-		}
-	} else {
+	if !ok {
 		return errors.New("does not exist provider")
 	}
 
-	if p == "src" {
-		datamoldParams.SrcProvider = provider
-	} else {
-		datamoldParams.DstProvider = provider
+	if provider != "aws" && provider != "gcp" && provider != "ncp" {
+		return fmt.Errorf("provider[aws,gcp,ncp] error : %s", provider)
 	}
 
-	username, ok := src["username"]
+	// 무결성 검증을 위한 변수 선언
+	var username, password, host, port string
+
+	// 공통 필드 검증
+	username, ok = src["username"]
 	if !ok {
 		return errors.New("does not exist username")
 	}
 
-	if p == "src" {
-		datamoldParams.SrcUsername = username
-	} else {
-		datamoldParams.DstUsername = username
-	}
-
-	password, ok := src["password"]
+	password, ok = src["password"]
 	if !ok {
 		return errors.New("does not exist password")
 	}
 
-	if p == "src" {
-		datamoldParams.SrcPassword = password
-	} else {
-		datamoldParams.DstPassword = password
-	}
-
-	host, ok := src["host"]
+	host, ok = src["host"]
 	if !ok {
 		return errors.New("does not exist host")
 	}
 
-	if p == "src" {
-		datamoldParams.SrcHost = host
-	} else {
-		datamoldParams.DstHost = host
-	}
-
-	port, ok := src["port"]
+	port, ok = src["port"]
 	if !ok {
 		return errors.New("does not exist port")
 	}
 
+	// 데이터 대입
 	if p == "src" {
-		datamoldParams.SrcPort = port
+		datamoldParams.SrcProvider.Provider = provider
+		datamoldParams.SrcProvider.Username = username
+		datamoldParams.SrcProvider.Password = password
+		datamoldParams.SrcProvider.Host = host
+		datamoldParams.SrcProvider.Port = port
 	} else {
-		datamoldParams.DstPort = port
+		datamoldParams.DstProvider.Provider = provider
+		datamoldParams.DstProvider.Username = username
+		datamoldParams.DstProvider.Password = password
+		datamoldParams.DstProvider.Host = host
+		datamoldParams.DstProvider.Port = port
 	}
 
 	return nil
 }
 
 func applyOSValue(src map[string]string, p string, datamoldParams *DatamoldParams) error {
-	provider, ok := src["provider"]
-	if ok {
-		if provider != "aws" && provider != "gcp" && provider != "ncp" {
-			return fmt.Errorf("provider[aws,gcp,ncp] error : %s", provider)
-		}
-	} else {
+	type Provider string
+
+	const (
+		AWS Provider = "aws"
+		GCP Provider = "gcp"
+		NCP Provider = "ncp"
+	)
+
+	providerStr, ok := src["provider"]
+	if !ok {
 		return errors.New("does not exist provider")
 	}
 
-	if p == "src" {
-		datamoldParams.SrcProvider = provider
-	} else {
-		datamoldParams.DstProvider = provider
+	provider := Provider(providerStr)
+	switch provider {
+	case AWS, GCP, NCP:
+	default:
+		return fmt.Errorf("provider[aws,gcp,ncp] error : %s", provider)
 	}
 
-	if provider == "aws" || provider == "ncp" {
-		access, ok := src["assessKey"]
+	var access, secret, region, bktName, cred, projectID, endpoint string
+
+	switch provider {
+	case AWS, NCP:
+		access, ok = src["assessKey"]
 		if !ok {
 			return errors.New("does not exist assessKey")
 		}
 
-		if p == "src" {
-			datamoldParams.SrcAccessKey = access
-		} else {
-			datamoldParams.DstAccessKey = access
-		}
-
-		secret, ok := src["secretKey"]
+		secret, ok = src["secretKey"]
 		if !ok {
 			return errors.New("does not exist secretKey")
 		}
 
-		if p == "src" {
-			datamoldParams.SrcSecretKey = secret
-		} else {
-			datamoldParams.DstSecretKey = secret
-		}
-
-		region, ok := src["region"]
+		region, ok = src["region"]
 		if !ok {
 			return errors.New("does not exist region")
 		}
 
-		if p == "src" {
-			datamoldParams.SrcRegion = region
-		} else {
-			datamoldParams.DstRegion = region
-		}
-
-		bktName, ok := src["bucketName"]
+		bktName, ok = src["bucketName"]
 		if !ok {
 			return errors.New("does not exist bucketName")
 		}
 
-		if p == "src" {
-			datamoldParams.SrcBucketName = bktName
-		} else {
-			datamoldParams.DstBucketName = bktName
-		}
-
-		if provider == "ncp" {
-			endpoint, ok := src["endpoint"]
+		if provider == NCP {
+			endpoint, ok = src["endpoint"]
 			if !ok {
 				return errors.New("does not exist endpoint")
 			}
-			if p == "src" {
-				datamoldParams.SrcEndpoint = endpoint
-			} else {
-				datamoldParams.DstEndpoint = endpoint
-			}
 		}
-	}
 
-	if provider == "gcp" {
-		cred, ok := src["gcpCredPath"]
+	case GCP:
+		cred, ok = src["gcpCredPath"]
 		if !ok {
 			return errors.New("does not exist gcpCredPath")
 		}
-		if p == "src" {
-			datamoldParams.SrcGcpCredPath = cred
-		} else {
-			datamoldParams.DstGcpCredPath = cred
-		}
 
-		projectID, ok := src["projectID"]
+		projectID, ok = src["projectID"]
 		if !ok {
 			return errors.New("does not exist projectID")
 		}
-		if p == "src" {
-			datamoldParams.SrcProjectID = projectID
-		} else {
-			datamoldParams.DstProjectID = projectID
-		}
 
-		region, ok := src["region"]
+		region, ok = src["region"]
 		if !ok {
 			return errors.New("does not exist region")
 		}
-		if p == "src" {
-			datamoldParams.SrcRegion = region
-		} else {
-			datamoldParams.DstRegion = region
-		}
 
-		bktName, ok := src["bucketName"]
+		bktName, ok = src["bucketName"]
 		if !ok {
 			return errors.New("does not exist bucketName")
 		}
-		if p == "src" {
-			datamoldParams.SrcBucketName = bktName
-		} else {
-			datamoldParams.DstBucketName = bktName
+	}
+
+	if p == "src" {
+		datamoldParams.SrcProvider.Provider = providerStr
+		datamoldParams.SrcProvider.AccessKey = access
+		datamoldParams.SrcProvider.SecretKey = secret
+		datamoldParams.SrcProvider.Region = region
+		datamoldParams.SrcProvider.BucketName = bktName
+		if provider == NCP {
+			datamoldParams.SrcProvider.Endpoint = endpoint
+		}
+		if provider == GCP {
+			datamoldParams.SrcProvider.GcpCredPath = cred
+			datamoldParams.SrcProvider.ProjectID = projectID
+		}
+	} else {
+		datamoldParams.DstProvider.Provider = providerStr
+		datamoldParams.DstProvider.AccessKey = access
+		datamoldParams.DstProvider.SecretKey = secret
+		datamoldParams.DstProvider.Region = region
+		datamoldParams.DstProvider.BucketName = bktName
+		if provider == NCP {
+			datamoldParams.DstProvider.Endpoint = endpoint
+		}
+		if provider == GCP {
+			datamoldParams.DstProvider.GcpCredPath = cred
+			datamoldParams.DstProvider.ProjectID = projectID
 		}
 	}
+
 	return nil
+}
+
+func PreRun(task string, datamoldParams *DatamoldParams, use string) {
+	logrus.SetFormatter(&log.CustomTextFormatter{CmdName: use, JobName: task})
+	logrus.Infof("launch an %s to %s", use, task)
+	err := preRunE(use, task, datamoldParams)
+	if err != nil {
+		logrus.Errorf("Pre-check for %s operation errors : %v", task, err)
+		os.Exit(1)
+	}
+	logrus.Infof("successful pre-check %s into %s", use, task)
+}
+
+func GetSrcOS(datamoldParams *DatamoldParams) (*osc.OSController, error) {
+	var OSC *osc.OSController
+	logrus.Infof("Provider : %s", datamoldParams.SrcProvider.Provider)
+	if datamoldParams.SrcProvider.Provider == "aws" {
+		logrus.Infof("AccessKey : %s", datamoldParams.SrcProvider.AccessKey)
+		logrus.Infof("SecretKey : %s", datamoldParams.SrcProvider.SecretKey)
+		logrus.Infof("Region : %s", datamoldParams.SrcProvider.Region)
+		logrus.Infof("BucketName : %s", datamoldParams.SrcProvider.BucketName)
+		s3c, err := config.NewS3Client(datamoldParams.SrcProvider.AccessKey, datamoldParams.SrcProvider.SecretKey, datamoldParams.SrcProvider.Region)
+		if err != nil {
+			return nil, fmt.Errorf("NewS3Client error : %v", err)
+		}
+
+		OSC, err = osc.New(s3fs.New(utils.AWS, s3c, datamoldParams.SrcProvider.BucketName, datamoldParams.SrcProvider.Region), osc.WithLogger(logrus.StandardLogger()))
+		if err != nil {
+			return nil, fmt.Errorf("osc error : %v", err)
+		}
+	} else if datamoldParams.SrcProvider.Provider == "gcp" {
+		logrus.Infof("CredentialsFilePath : %s", datamoldParams.SrcProvider.GcpCredPath)
+		logrus.Infof("ProjectID : %s", datamoldParams.SrcProvider.ProjectID)
+		logrus.Infof("Region : %s", datamoldParams.SrcProvider.Region)
+		logrus.Infof("BucketName : %s", datamoldParams.SrcProvider.BucketName)
+		gc, err := config.NewGCPClient(datamoldParams.SrcProvider.GcpCredPath)
+		if err != nil {
+			return nil, fmt.Errorf("NewGCPClient error : %v", err)
+		}
+
+		OSC, err = osc.New(gcpfs.New(gc, datamoldParams.SrcProvider.ProjectID, datamoldParams.SrcProvider.BucketName, datamoldParams.SrcProvider.Region), osc.WithLogger(logrus.StandardLogger()))
+		if err != nil {
+			return nil, fmt.Errorf("osc error : %v", err)
+		}
+	} else if datamoldParams.SrcProvider.Provider == "ncp" {
+		logrus.Infof("AccessKey : %s", datamoldParams.SrcProvider.AccessKey)
+		logrus.Infof("SecretKey : %s", datamoldParams.SrcProvider.SecretKey)
+		logrus.Infof("Endpoint : %s", datamoldParams.SrcProvider.Endpoint)
+		logrus.Infof("Region : %s", datamoldParams.SrcProvider.Region)
+		logrus.Infof("BucketName : %s", datamoldParams.SrcProvider.BucketName)
+		s3c, err := config.NewS3ClientWithEndpoint(datamoldParams.SrcProvider.AccessKey, datamoldParams.SrcProvider.SecretKey, datamoldParams.SrcProvider.Region, datamoldParams.SrcProvider.Endpoint)
+		if err != nil {
+			return nil, fmt.Errorf("NewS3ClientWithEndpint error : %v", err)
+		}
+
+		OSC, err = osc.New(s3fs.New(utils.AWS, s3c, datamoldParams.SrcProvider.BucketName, datamoldParams.SrcProvider.Region), osc.WithLogger(logrus.StandardLogger()))
+		if err != nil {
+			return nil, fmt.Errorf("osc error : %v", err)
+		}
+	}
+	return OSC, nil
+}
+
+func GetDstOS(datamoldParams *DatamoldParams) (*osc.OSController, error) {
+	var OSC *osc.OSController
+	logrus.Infof("Provider : %s", datamoldParams.DstProvider.Provider)
+	if datamoldParams.DstProvider.Provider == "aws" {
+		logrus.Infof("AccessKey : %s", datamoldParams.DstProvider.AccessKey)
+		logrus.Infof("SecretKey : %s", datamoldParams.DstProvider.SecretKey)
+		logrus.Infof("Region : %s", datamoldParams.DstProvider.Region)
+		logrus.Infof("BucketName : %s", datamoldParams.DstProvider.BucketName)
+		s3c, err := config.NewS3Client(datamoldParams.DstProvider.AccessKey, datamoldParams.DstProvider.SecretKey, datamoldParams.DstProvider.Region)
+		if err != nil {
+			return nil, fmt.Errorf("NewS3Client error : %v", err)
+		}
+
+		OSC, err = osc.New(s3fs.New(utils.AWS, s3c, datamoldParams.DstProvider.BucketName, datamoldParams.DstProvider.Region), osc.WithLogger(logrus.StandardLogger()))
+		if err != nil {
+			return nil, fmt.Errorf("osc error : %v", err)
+		}
+	} else if datamoldParams.DstProvider.Provider == "gcp" {
+		logrus.Infof("CredentialsFilePath : %s", datamoldParams.DstProvider.GcpCredPath)
+		logrus.Infof("ProjectID : %s", datamoldParams.DstProvider.ProjectID)
+		logrus.Infof("Region : %s", datamoldParams.DstProvider.Region)
+		logrus.Infof("BucketName : %s", datamoldParams.DstProvider.BucketName)
+		gc, err := config.NewGCPClient(datamoldParams.DstProvider.GcpCredPath)
+		if err != nil {
+			return nil, fmt.Errorf("NewGCPClient error : %v", err)
+		}
+
+		OSC, err = osc.New(gcpfs.New(gc, datamoldParams.DstProvider.ProjectID, datamoldParams.DstProvider.BucketName, datamoldParams.DstProvider.Region), osc.WithLogger(logrus.StandardLogger()))
+		if err != nil {
+			return nil, fmt.Errorf("osc error : %v", err)
+		}
+	} else if datamoldParams.DstProvider.Provider == "ncp" {
+		logrus.Infof("AccessKey : %s", datamoldParams.DstProvider.AccessKey)
+		logrus.Infof("SecretKey : %s", datamoldParams.DstProvider.SecretKey)
+		logrus.Infof("Endpoint : %s", datamoldParams.DstProvider.Endpoint)
+		logrus.Infof("Region : %s", datamoldParams.DstProvider.Region)
+		logrus.Infof("BucketName : %s", datamoldParams.DstProvider.BucketName)
+		s3c, err := config.NewS3ClientWithEndpoint(datamoldParams.DstProvider.AccessKey, datamoldParams.DstProvider.SecretKey, datamoldParams.DstProvider.Region, datamoldParams.DstProvider.Endpoint)
+		if err != nil {
+			return nil, fmt.Errorf("NewS3ClientWithEndpint error : %v", err)
+		}
+
+		OSC, err = osc.New(s3fs.New(utils.AWS, s3c, datamoldParams.DstProvider.BucketName, datamoldParams.DstProvider.Region), osc.WithLogger(logrus.StandardLogger()))
+		if err != nil {
+			return nil, fmt.Errorf("osc error : %v", err)
+		}
+	}
+	return OSC, nil
+}
+
+func GetSrcRDMS(datamoldParams *DatamoldParams) (*rdbc.RDBController, error) {
+	logrus.Infof("Provider : %s", datamoldParams.SrcProvider.Provider)
+	logrus.Infof("Username : %s", datamoldParams.SrcProvider.Username)
+	logrus.Infof("Password : %s", datamoldParams.SrcProvider.Password)
+	logrus.Infof("Host : %s", datamoldParams.SrcProvider.Host)
+	logrus.Infof("Port : %s", datamoldParams.SrcProvider.Port)
+	src, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", datamoldParams.SrcProvider.Username, datamoldParams.SrcProvider.Password, datamoldParams.SrcProvider.Host, datamoldParams.SrcProvider.Port))
+	if err != nil {
+		return nil, err
+	}
+	return rdbc.New(mysql.New(utils.Provider(datamoldParams.SrcProvider.Provider), src), rdbc.WithLogger(logrus.StandardLogger()))
+}
+
+func GetDstRDMS(datamoldParams *DatamoldParams) (*rdbc.RDBController, error) {
+	logrus.Infof("Provider : %s", datamoldParams.DstProvider.Provider)
+	logrus.Infof("Username : %s", datamoldParams.DstProvider.Username)
+	logrus.Infof("Password : %s", datamoldParams.DstProvider.Password)
+	logrus.Infof("Host : %s", datamoldParams.DstProvider.Host)
+	logrus.Infof("Port : %s", datamoldParams.DstProvider.Port)
+	dst, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", datamoldParams.DstProvider.Username, datamoldParams.DstProvider.Password, datamoldParams.DstProvider.Host, datamoldParams.DstProvider.Port))
+	if err != nil {
+		return nil, err
+	}
+	return rdbc.New(mysql.New(utils.Provider(datamoldParams.DstProvider.Provider), dst), rdbc.WithLogger(logrus.StandardLogger()))
+}
+
+func GetSrcNRDMS(datamoldParams *DatamoldParams) (*nrdbc.NRDBController, error) {
+	var NRDBC *nrdbc.NRDBController
+	logrus.Infof("Provider : %s", datamoldParams.SrcProvider.Provider)
+	if datamoldParams.SrcProvider.Provider == "aws" {
+		logrus.Infof("AccessKey : %s", datamoldParams.SrcProvider.AccessKey)
+		logrus.Infof("SecretKey : %s", datamoldParams.SrcProvider.SecretKey)
+		logrus.Infof("Region : %s", datamoldParams.SrcProvider.Region)
+		awsnrdb, err := config.NewDynamoDBClient(datamoldParams.SrcProvider.AccessKey, datamoldParams.SrcProvider.SecretKey, datamoldParams.SrcProvider.Region)
+		if err != nil {
+			return nil, err
+		}
+
+		NRDBC, err = nrdbc.New(awsdnmdb.New(awsnrdb, datamoldParams.SrcProvider.Region), nrdbc.WithLogger(logrus.StandardLogger()))
+		if err != nil {
+			return nil, err
+		}
+	} else if datamoldParams.SrcProvider.Provider == "gcp" {
+		logrus.Infof("CredentialsFilePath : %s", datamoldParams.SrcProvider.GcpCredPath)
+		logrus.Infof("ProjectID : %s", datamoldParams.SrcProvider.ProjectID)
+		logrus.Infof("Region : %s", datamoldParams.SrcProvider.Region)
+		gcpnrdb, err := config.NewFireStoreClient(datamoldParams.SrcProvider.GcpCredPath, datamoldParams.SrcProvider.GcpCredJson, datamoldParams.SrcProvider.ProjectID, datamoldParams.SrcProvider.DatabaseID)
+		if err != nil {
+			return nil, err
+		}
+
+		NRDBC, err = nrdbc.New(gcpfsdb.New(gcpnrdb, datamoldParams.SrcProvider.Region), nrdbc.WithLogger(logrus.StandardLogger()))
+		if err != nil {
+			return nil, err
+		}
+	} else if datamoldParams.SrcProvider.Provider == "ncp" {
+		logrus.Infof("Username : %s", datamoldParams.SrcProvider.Username)
+		logrus.Infof("Password : %s", datamoldParams.SrcProvider.Password)
+		logrus.Infof("Host : %s", datamoldParams.SrcProvider.Host)
+		logrus.Infof("Port : %s", datamoldParams.SrcProvider.Port)
+		port, err := strconv.Atoi(datamoldParams.SrcProvider.Port)
+		if err != nil {
+			return nil, err
+		}
+
+		ncpnrdb, err := config.NewNCPMongoDBClient(datamoldParams.SrcProvider.Username, datamoldParams.SrcProvider.Password, datamoldParams.SrcProvider.Host, port)
+		if err != nil {
+			return nil, err
+		}
+
+		NRDBC, err = nrdbc.New(ncpmgdb.New(ncpnrdb, datamoldParams.SrcProvider.DBName), nrdbc.WithLogger(logrus.StandardLogger()))
+		if err != nil {
+			return nil, err
+		}
+	}
+	return NRDBC, nil
+}
+
+func GetDstNRDMS(datamoldParams *DatamoldParams) (*nrdbc.NRDBController, error) {
+	var NRDBC *nrdbc.NRDBController
+	logrus.Infof("Provider : %s", datamoldParams.DstProvider.Provider)
+	if datamoldParams.DstProvider.Provider == "aws" {
+		logrus.Infof("AccessKey : %s", datamoldParams.DstProvider.AccessKey)
+		logrus.Infof("SecretKey : %s", datamoldParams.DstProvider.SecretKey)
+		logrus.Infof("Region : %s", datamoldParams.DstProvider.Region)
+		awsnrdb, err := config.NewDynamoDBClient(datamoldParams.DstProvider.AccessKey, datamoldParams.DstProvider.SecretKey, datamoldParams.DstProvider.Region)
+		if err != nil {
+			return nil, err
+		}
+
+		NRDBC, err = nrdbc.New(awsdnmdb.New(awsnrdb, datamoldParams.DstProvider.Region), nrdbc.WithLogger(logrus.StandardLogger()))
+		if err != nil {
+			return nil, err
+		}
+	} else if datamoldParams.DstProvider.Provider == "gcp" {
+		logrus.Infof("CredentialsFilePath : %s", datamoldParams.DstProvider.GcpCredPath)
+		logrus.Infof("ProjectID : %s", datamoldParams.DstProvider.ProjectID)
+		logrus.Infof("Region : %s", datamoldParams.DstProvider.Region)
+		gcpnrdb, err := config.NewFireStoreClient(datamoldParams.DstProvider.GcpCredPath, datamoldParams.DstProvider.GcpCredJson, datamoldParams.DstProvider.ProjectID, datamoldParams.DstProvider.DatabaseID)
+		if err != nil {
+			return nil, err
+		}
+
+		NRDBC, err = nrdbc.New(gcpfsdb.New(gcpnrdb, datamoldParams.DstProvider.Region), nrdbc.WithLogger(logrus.StandardLogger()))
+		if err != nil {
+			return nil, err
+		}
+	} else if datamoldParams.DstProvider.Provider == "ncp" {
+		logrus.Infof("Username : %s", datamoldParams.DstProvider.Username)
+		logrus.Infof("Password : %s", datamoldParams.DstProvider.Password)
+		logrus.Infof("Host : %s", datamoldParams.DstProvider.Host)
+		logrus.Infof("Port : %s", datamoldParams.DstProvider.Port)
+		port, err := strconv.Atoi(datamoldParams.DstProvider.Port)
+		if err != nil {
+			return nil, err
+		}
+
+		ncpnrdb, err := config.NewNCPMongoDBClient(datamoldParams.DstProvider.Username, datamoldParams.DstProvider.Password, datamoldParams.DstProvider.Host, port)
+		if err != nil {
+			return nil, err
+		}
+
+		NRDBC, err = nrdbc.New(ncpmgdb.New(ncpnrdb, datamoldParams.DstProvider.DBName), nrdbc.WithLogger(logrus.StandardLogger()))
+		if err != nil {
+			return nil, err
+		}
+	}
+	return NRDBC, nil
 }

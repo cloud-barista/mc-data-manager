@@ -8,6 +8,8 @@
 *.so
 *.dylib
 tmp
+# credential
+# profile
 
 # Test binary, built with `go test -c`
 *.test
