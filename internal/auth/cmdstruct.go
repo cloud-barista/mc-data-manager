@@ -15,45 +15,20 @@ limitations under the License.
 */
 package auth
 
+import "github.com/cloud-barista/mc-data-manager/models"
+
 type DatamoldParams struct {
+	models.BaseProfile
 	// credential
 	CredentialPath string
 	ConfigData     map[string]map[string]map[string]string
 	TaskTarget     bool
 
 	//src
-	SrcProvider    string
-	SrcAccessKey   string
-	SrcSecretKey   string
-	SrcRegion      string
-	SrcBucketName  string
-	SrcGcpCredPath string
-	SrcGcpCredJson string
-	SrcProjectID   string
-	SrcDatabaseID  string
-	SrcEndpoint    string
-	SrcUsername    string
-	SrcPassword    string
-	SrcHost        string
-	SrcPort        string
-	SrcDBName      string
+	SrcProvider ProviderConfig
 
 	//dst
-	DstProvider    string
-	DstAccessKey   string
-	DstSecretKey   string
-	DstRegion      string
-	DstBucketName  string
-	DstGcpCredPath string
-	DstGcpCredJson string
-	DstProjectID   string
-	DstDatabaseID  string
-	DstEndpoint    string
-	DstUsername    string
-	DstPassword    string
-	DstHost        string
-	DstPort        string
-	DstDBName      string
+	DstProvider ProviderConfig
 
 	// dummy
 	DstPath  string
@@ -68,4 +43,48 @@ type DatamoldParams struct {
 
 	DeleteDBList    []string
 	DeleteTableList []string
+}
+
+type ProviderConfig struct {
+	// common
+	Provider string
+	Region   string
+	ObjectStorageParams
+	MySQLParams
+	GcpNosqlParams
+	CredParams
+}
+
+type ProviderConfigSet struct {
+	// common
+	Provider string
+	Region   string
+	ObjectStorageParams
+	MySQLParams
+	GcpNosqlParams
+}
+
+type CredParams struct {
+	AccessKey   string
+	SecretKey   string
+	GcpCredPath string
+	GcpCredJson string
+}
+
+type ObjectStorageParams struct {
+	BucketName string
+	Endpoint   string
+}
+
+type MySQLParams struct {
+	Username string
+	Password string
+	Host     string
+	Port     string
+	DBName   string
+}
+
+type GcpNosqlParams struct {
+	ProjectID  string
+	DatabaseID string
 }
