@@ -16,74 +16,14 @@ limitations under the License.
 package controllers
 
 import (
-	"mime/multipart"
 	"strconv"
 
 	"github.com/cloud-barista/mc-data-manager/pkg/dummy/semistructured"
 	"github.com/cloud-barista/mc-data-manager/pkg/dummy/structured"
 	"github.com/cloud-barista/mc-data-manager/pkg/dummy/unstructured"
+
 	"github.com/sirupsen/logrus"
 )
-
-type GenDataParams struct {
-	Region    string `json:"region" form:"region"`
-	AccessKey string `json:"accessKey" form:"accessKey"`
-	SecretKey string `json:"secretKey" form:"secretKey"`
-	Bucket    string `json:"bucket" form:"bucket"`
-	Endpoint  string `json:"endpoint" form:"endpoint"`
-	DummyPath string `json:"path" form:"path"`
-
-	CheckSQL        string `json:"checkSQL" form:"checkSQL"`
-	CheckCSV        string `json:"checkCSV" form:"checkCSV"`
-	CheckTXT        string `json:"checkTXT" form:"checkTXT"`
-	CheckPNG        string `json:"checkPNG" form:"checkPNG"`
-	CheckGIF        string `json:"checkGIF" form:"checkGIF"`
-	CheckZIP        string `json:"checkZIP" form:"checkZIP"`
-	CheckJSON       string `json:"checkJSON" form:"checkJSON"`
-	CheckXML        string `json:"checkXML" form:"checkXML"`
-	CheckServerJSON string `json:"checkServerJSON" form:"checkServerJSON"`
-	CheckServerSQL  string `json:"checkServerSQL" form:"checkServerSQL"`
-
-	SizeSQL        string `json:"sizeSQL" form:"sizeSQL"`
-	SizeCSV        string `json:"sizeCSV" form:"sizeCSV"`
-	SizeTXT        string `json:"sizeTXT" form:"sizeTXT"`
-	SizePNG        string `json:"sizePNG" form:"sizePNG"`
-	SizeGIF        string `json:"sizeGIF" form:"sizeGIF"`
-	SizeZIP        string `json:"sizeZIP" form:"sizeZIP"`
-	SizeJSON       string `json:"sizeJSON" form:"sizeJSON"`
-	SizeXML        string `json:"sizeXML" form:"sizeXML"`
-	SizeServerJSON string `json:"sizeServerJSON" form:"sizeServerJSON"`
-	SizeServerSQL  string `json:"sizeServerSQL" form:"sizeServerSQL"`
-
-	DBProvider   string `json:"provider" form:"provider"`
-	DBHost       string `json:"host" form:"host"`
-	DBPort       string `json:"port" form:"port"`
-	DBUser       string `json:"username" form:"username"`
-	DBPassword   string `json:"password" form:"password"`
-	DatabaseName string `json:"databaseName" form:"databaseName"`
-
-	GCPCredential     *multipart.FileHeader `json:"-" form:"gcpCredential" swaggerignore:"true"`
-	GCPCredentialJson string                `json:"gcpCredentialJson" form:"gcpCredentialJson"`
-	DatabaseID        string                `json:"databaseId" form:"databaseId"`
-	ProjectID         string                `json:"projectId" form:"projectId"`
-}
-
-type GenFirestoreParams struct {
-	Region            string                `json:"region" form:"region"`
-	GCPCredential     *multipart.FileHeader `json:"-" form:"gcpCredential" swaggerignore:"true"`
-	GCPCredentialJson string                `json:"gcpCredentialJson" form:"gcpCredentialJson"`
-	DatabaseID        string                `json:"databaseId" form:"databaseId"`
-	ProjectID         string                `json:"projectId" form:"projectId"`
-}
-
-type GenMySQLParams struct {
-	DBProvider   string `json:"provider" form:"provider"`
-	DBHost       string `json:"host" form:"host"`
-	DBPort       string `json:"port" form:"port"`
-	DBUser       string `json:"username" form:"username"`
-	DBPassword   string `json:"password" form:"password"`
-	DatabaseName string `json:"databaseName" form:"databaseName"`
-}
 
 func genData(params GenDataParams, logger *logrus.Logger) error {
 	if params.CheckSQL == "on" {

@@ -93,11 +93,6 @@ const docTemplate = `{
                         "in": "formData"
                     },
                     {
-                        "type": "string",
-                        "name": "region",
-                        "in": "formData"
-                    },
-                    {
                         "type": "file",
                         "description": "Parameters required to generate test data",
                         "name": "gcpCredential",
@@ -221,6 +216,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "operationId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "password",
                         "in": "formData"
                     },
@@ -232,6 +232,11 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "port",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "profileName",
                         "in": "formData"
                     },
                     {
@@ -975,6 +980,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "operationId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "password",
                         "in": "formData"
                     },
@@ -990,7 +1000,22 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "profileName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "projectId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "provider",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "region",
                         "in": "formData"
                     },
                     {
@@ -1118,6 +1143,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "operationId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "password",
                         "in": "formData"
                     },
@@ -1133,7 +1163,22 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "profileName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "projectId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "provider",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "region",
                         "in": "formData"
                     },
                     {
@@ -1255,6 +1300,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "operationId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "password",
                         "in": "formData"
                     },
@@ -1270,7 +1320,22 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "profileName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "projectId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "provider",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "region",
                         "in": "formData"
                     },
                     {
@@ -1392,6 +1457,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "operationId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "password",
                         "in": "formData"
                     },
@@ -1407,7 +1477,22 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "profileName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "projectId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "provider",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "region",
                         "in": "formData"
                     },
                     {
@@ -1535,6 +1620,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "operationId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "password",
                         "in": "formData"
                     },
@@ -1550,7 +1640,22 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "profileName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "projectId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "provider",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "region",
                         "in": "formData"
                     },
                     {
@@ -1973,6 +2078,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "operationId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "password",
                         "in": "formData"
                     },
@@ -1988,7 +2098,22 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "profileName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "projectId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "provider",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "region",
                         "in": "formData"
                     },
                     {
@@ -2251,6 +2376,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "operationId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "password",
                         "in": "formData"
                     },
@@ -2266,7 +2396,22 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "profileName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "projectId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "provider",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "region",
                         "in": "formData"
                     },
                     {
@@ -2520,6 +2665,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "operationId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "password",
                         "in": "formData"
                     },
@@ -2535,7 +2685,22 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "profileName",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
                         "name": "projectId",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "provider",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "region",
                         "in": "formData"
                     },
                     {
@@ -2737,6 +2902,9 @@ const docTemplate = `{
                 "host": {
                     "type": "string"
                 },
+                "operationId": {
+                    "type": "string"
+                },
                 "password": {
                     "type": "string"
                 },
@@ -2744,6 +2912,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "port": {
+                    "type": "string"
+                },
+                "profileName": {
                     "type": "string"
                 },
                 "projectId": {
@@ -2802,13 +2973,22 @@ const docTemplate = `{
                 "host": {
                     "type": "string"
                 },
+                "operationId": {
+                    "type": "string"
+                },
                 "password": {
                     "type": "string"
                 },
                 "port": {
                     "type": "string"
                 },
+                "profileName": {
+                    "type": "string"
+                },
                 "provider": {
+                    "type": "string"
+                },
+                "region": {
                     "type": "string"
                 },
                 "username": {
@@ -2825,7 +3005,6 @@ const docTemplate = `{
             }
         },
         "controllers.MigrationForm": {
-            "description": "MigrationForm contains all the necessary fields for migrating data between different services.",
             "type": "object",
             "properties": {
                 "awsAccessKey": {
@@ -2873,6 +3052,9 @@ const docTemplate = `{
                 "ncpSecretKey": {
                     "type": "string"
                 },
+                "operationId": {
+                    "type": "string"
+                },
                 "password": {
                     "type": "string"
                 },
@@ -2882,7 +3064,16 @@ const docTemplate = `{
                 "port": {
                     "type": "string"
                 },
+                "profileName": {
+                    "type": "string"
+                },
                 "projectId": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "region": {
                     "type": "string"
                 },
                 "username": {

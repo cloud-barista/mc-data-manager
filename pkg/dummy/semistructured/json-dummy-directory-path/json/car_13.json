@@ -1,0 +1,4277 @@
+[
+    {
+        "car_id": "D2QkVO40IWvrqpCUa27S0Lq7",
+        "type": "Passenger car medium",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Dodge",
+        "model": "S60 R Awd",
+        "year": 1976
+    },
+    {
+        "car_id": "evz3TMT7kiyF1gHGFm600g6d",
+        "type": "Passenger car heavy",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Lotus",
+        "model": "Mini Cooper S",
+        "year": 1967
+    },
+    {
+        "car_id": "PFbvbMEjhxNUOYmpQ95Lwm1M",
+        "type": "Passenger car light",
+        "fuel": "Ethanol",
+        "transmission": "Automatic",
+        "brand": "Audi",
+        "model": "Clk55 Amg (cabriolet)",
+        "year": 2023
+    },
+    {
+        "car_id": "WS5CLWIRn9cT7IiAW8Wcqi9B",
+        "type": "Van",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Dodge",
+        "model": "X-type Sport Brake",
+        "year": 1901
+    },
+    {
+        "car_id": "lEjT9X4KaC2No2v3b8yfk6p3",
+        "type": "Passenger car compact",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Toyota",
+        "model": "Z4 3.0 Si Coupe",
+        "year": 1919
+    },
+    {
+        "car_id": "te7kTy92HrKm9RPMktV1dbjK",
+        "type": "Passenger car heavy",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "McLaren",
+        "model": "Aerio Sx",
+        "year": 1991
+    },
+    {
+        "car_id": "ECRYIiu1Gn1nNyuzxg5Q01R0",
+        "type": "Sport utility vehicle",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Honda",
+        "model": "Sl65 Amg",
+        "year": 1925
+    },
+    {
+        "car_id": "nIHYkk1Hk84ehU0ZHbVN7Z0e",
+        "type": "Pickup truck",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Benz",
+        "model": "Camry Solara Convertible",
+        "year": 1939
+    },
+    {
+        "car_id": "5m5eL9dSEcPnuh57Pr5hTPZP",
+        "type": "Passenger car medium",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "DAF",
+        "model": "Navigator 2wd",
+        "year": 1950
+    },
+    {
+        "car_id": "JKQ6DC55F23b9L2A7R4525uD",
+        "type": "Passenger car medium",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Suzuki",
+        "model": "Lancer",
+        "year": 1901
+    },
+    {
+        "car_id": "B4Y7XKVk6D61e7my6SQN2zVH",
+        "type": "Passenger car medium",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Hyundai",
+        "model": "Db9 Volante",
+        "year": 1985
+    },
+    {
+        "car_id": "S4ofFWHnWJTB9730YNnr0bMm",
+        "type": "Sport utility vehicle",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Saab",
+        "model": "Element 4wd",
+        "year": 1996
+    },
+    {
+        "car_id": "DmqK0cQX7C42TjUi9d3UMYom",
+        "type": "Passenger car heavy",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Land Rover",
+        "model": "Coupe Cambiocorsa/gt/g-sport",
+        "year": 1909
+    },
+    {
+        "car_id": "3VtgdpUCS70s89bWK7zrLeiE",
+        "type": "Passenger car mini",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Volvo",
+        "model": "Legacy Awd",
+        "year": 1951
+    },
+    {
+        "car_id": "FvYEVK5N1iM9aT2906sW5Kkb",
+        "type": "Van",
+        "fuel": "CNG",
+        "transmission": "Automatic",
+        "brand": "Bugatti",
+        "model": "Accord",
+        "year": 2023
+    },
+    {
+        "car_id": "jZ3A2D6n2rYhSuLcgssUZo1q",
+        "type": "Passenger car heavy",
+        "fuel": "LPG",
+        "transmission": "Manual",
+        "brand": "Volkswagen",
+        "model": "Pacifica Awd",
+        "year": 1916
+    },
+    {
+        "car_id": "KdF8LYH7mG40cUPFFiHB3O3W",
+        "type": "Van",
+        "fuel": "CNG",
+        "transmission": "Automatic",
+        "brand": "Benz",
+        "model": "C1500 Yukon 2wd",
+        "year": 2001
+    },
+    {
+        "car_id": "pCg4TMKEHES3G1wY4nkGBJ7i",
+        "type": "Passenger car heavy",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Lancia",
+        "model": "Ram 1500 Pickup 2wd",
+        "year": 1918
+    },
+    {
+        "car_id": "w2bI9JtaL829jy5cjoP694u0",
+        "type": "Passenger car medium",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "Daihatsu",
+        "model": "A4 Cabriolet Quattro",
+        "year": 2011
+    },
+    {
+        "car_id": "YV7XQzZO2OU1nNb15VKp4aEV",
+        "type": "Passenger car heavy",
+        "fuel": "LPG",
+        "transmission": "Manual",
+        "brand": "Corvette",
+        "model": "F150 Supercrew 4wd",
+        "year": 1952
+    },
+    {
+        "car_id": "2mIqi7ftJgS7Fjq98V1hrLJe",
+        "type": "Passenger car mini",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Mitsubishi",
+        "model": "Ls 430",
+        "year": 1929
+    },
+    {
+        "car_id": "t2O1OSWG5VsCXcNZ8Vi4akso",
+        "type": "Pickup truck",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Noble",
+        "model": "Ferrari 612 Scaglietti",
+        "year": 1980
+    },
+    {
+        "car_id": "d0pLPn1vBwVxBJSn3GHH9Iio",
+        "type": "Passenger car medium",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "DAF",
+        "model": "Sienna 4wd",
+        "year": 1937
+    },
+    {
+        "car_id": "wOoHB93Qo0cEDXTV34PV7YwA",
+        "type": "Passenger car heavy",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "De Lorean",
+        "model": "C1500 Silverado 2wd",
+        "year": 2021
+    },
+    {
+        "car_id": "1pxzx032iD7vU2URqB7K9wJn",
+        "type": "Passenger car light",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Subaru",
+        "model": "Cls500",
+        "year": 1996
+    },
+    {
+        "car_id": "RAW6Vr0LkhM0I9E5h536aaWL",
+        "type": "Passenger car light",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Koenigsegg",
+        "model": "Gs 300/gs 430",
+        "year": 1956
+    },
+    {
+        "car_id": "PG8h31JWk4lOr8iQ7I08c8WF",
+        "type": "Passenger car heavy",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Jeep",
+        "model": "Sonata",
+        "year": 1967
+    },
+    {
+        "car_id": "7kj0xOPXo6i3hq77W22ikRIf",
+        "type": "Passenger car light",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Cadillac",
+        "model": "Cayenne",
+        "year": 2014
+    },
+    {
+        "car_id": "DnqjBEDG5W7I7MXyWTi30jLB",
+        "type": "Passenger car mini",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Corvette",
+        "model": "Rl",
+        "year": 1970
+    },
+    {
+        "car_id": "3w6v319wge5ngq9vMa9jlrf2",
+        "type": "Passenger car medium",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "BMW",
+        "model": "G1500/2500 Chevy Van 2wd",
+        "year": 1920
+    },
+    {
+        "car_id": "29RX2dznt7gQ4T98GyAKD5nt",
+        "type": "Sport utility vehicle",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Farboud",
+        "model": "B4000 4wd",
+        "year": 1936
+    },
+    {
+        "car_id": "d44ASqfKXakyTecMh2EsCEOf",
+        "type": "Passenger car light",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Peugeot",
+        "model": "Db9 Coupe",
+        "year": 1964
+    },
+    {
+        "car_id": "b9yyq74ppFpOvi51UPKc9XLW",
+        "type": "Passenger car light",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Lada",
+        "model": "New Beetle Convertible",
+        "year": 1907
+    },
+    {
+        "car_id": "ZY11b3FtFQ8Qfm6L772GDCAq",
+        "type": "Pickup truck",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Lamborghini",
+        "model": "Rendezvous Awd",
+        "year": 1942
+    },
+    {
+        "car_id": "OrF9jgN0J1BH0v5lhOHSF5R6",
+        "type": "Passenger car medium",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Daihatsu",
+        "model": "C350",
+        "year": 1917
+    },
+    {
+        "car_id": "5Ud0SwOW6d2t2J3zo7g818Io",
+        "type": "Passenger car heavy",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Aston Martin",
+        "model": "Db9 Volante",
+        "year": 1964
+    },
+    {
+        "car_id": "yO85ajJbOi83F1kL6kopC142",
+        "type": "Van",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Chrysler",
+        "model": "Mini Cooper S Convertible",
+        "year": 1942
+    },
+    {
+        "car_id": "7i5XT7wwEaS73ZL7s3MM1RR6",
+        "type": "Pickup truck",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Maybach",
+        "model": "Sienna 4wd",
+        "year": 1975
+    },
+    {
+        "car_id": "kVltOj42NV9nidj5HC237sje",
+        "type": "Sport utility vehicle",
+        "fuel": "Ethanol",
+        "transmission": "Automatic",
+        "brand": "Dodge",
+        "model": "Odyssey 2wd",
+        "year": 1968
+    },
+    {
+        "car_id": "Aa4zgleW66y9MmGm7PEKljJk",
+        "type": "Sport utility vehicle",
+        "fuel": "CNG",
+        "transmission": "Automatic",
+        "brand": "Chevrolet",
+        "model": "Mazda 6 Sport Wagon",
+        "year": 1978
+    },
+    {
+        "car_id": "b1QC06B9P7e1IdfpXI6iE1cH",
+        "type": "Passenger car heavy",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Maybach",
+        "model": "M35x",
+        "year": 2018
+    },
+    {
+        "car_id": "8QRZhMLhBbEK117ZV1SCRkMS",
+        "type": "Van",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Lamborghini",
+        "model": "M35",
+        "year": 1949
+    },
+    {
+        "car_id": "sG9C6hJGde4OfT70KzPwyAl7",
+        "type": "Passenger car heavy",
+        "fuel": "LPG",
+        "transmission": "Manual",
+        "brand": "Opel",
+        "model": "4runner 2wd",
+        "year": 1949
+    },
+    {
+        "car_id": "eJ0rJsP7fE9fvwTnRbOyfZWv",
+        "type": "Passenger car medium",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Ligier",
+        "model": "Armada 2wd",
+        "year": 1926
+    },
+    {
+        "car_id": "7yOG4huSUCv030tiMk3AGoqB",
+        "type": "Passenger car heavy",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "DAF",
+        "model": "325xi Sport Wagon",
+        "year": 1976
+    },
+    {
+        "car_id": "sXeNkfU7U79J40Yy2H2xgRDe",
+        "type": "Sport utility vehicle",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Maybach",
+        "model": "M45",
+        "year": 1992
+    },
+    {
+        "car_id": "McaiQa2Q2afabFnKd8Whq1oh",
+        "type": "Passenger car medium",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Jeep",
+        "model": "Colorado Crew Cab 2wd",
+        "year": 1948
+    },
+    {
+        "car_id": "oh2bn9Y3SulQ6ueDjEEipPKN",
+        "type": "Passenger car medium",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Maserati",
+        "model": "B9 Tribeca Awd",
+        "year": 1962
+    },
+    {
+        "car_id": "da6pOd1nyjm9xczC1TK30zzw",
+        "type": "Passenger car heavy",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Mini",
+        "model": "Corolla",
+        "year": 1981
+    },
+    {
+        "car_id": "rBP2YaIFhSplHE6MY32RAT8j",
+        "type": "Pickup truck",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "Skoda",
+        "model": "Mx-5",
+        "year": 1963
+    },
+    {
+        "car_id": "RZA4t7gkck7Oq7N3KnAnH990",
+        "type": "Passenger car medium",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Vauxhall",
+        "model": "Xkr Convertible",
+        "year": 2007
+    },
+    {
+        "car_id": "RvyMf03cM42OeQk3EqtzBZpG",
+        "type": "Passenger car medium",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Corvette",
+        "model": "Jetta",
+        "year": 1983
+    },
+    {
+        "car_id": "nJb15WC1m5NhyIEStk6QrY04",
+        "type": "Passenger car compact",
+        "fuel": "CNG",
+        "transmission": "Automatic",
+        "brand": "Ligier",
+        "model": "Rx 330 4wd",
+        "year": 1914
+    },
+    {
+        "car_id": "9pztHd3dVHBK4h0QanrU12tL",
+        "type": "Passenger car medium",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Nissan",
+        "model": "C1500 Silverado 2wd",
+        "year": 2016
+    },
+    {
+        "car_id": "81J20JT99NbeC3I889MvNc96",
+        "type": "Passenger car medium",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Suzuki",
+        "model": "Sl500",
+        "year": 1943
+    },
+    {
+        "car_id": "IgqPBqbGMnFIUojwvLQXkjCF",
+        "type": "Passenger car heavy",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "Jeep",
+        "model": "Crossfire Roadster",
+        "year": 2003
+    },
+    {
+        "car_id": "q06Xh9LS7tSreBv499xcn0e4",
+        "type": "Pickup truck",
+        "fuel": "Ethanol",
+        "transmission": "Automatic",
+        "brand": "Lancia",
+        "model": "C15 Silverado Hybrid 2wd",
+        "year": 2000
+    },
+    {
+        "car_id": "16TsebZw5oLbuY9R2FhJC9YY",
+        "type": "Pickup truck",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Maserati",
+        "model": "Es 330",
+        "year": 1918
+    },
+    {
+        "car_id": "38L8j64p4Tj8dWdKBFw3VmK9",
+        "type": "Van",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Vauxhall",
+        "model": "C280",
+        "year": 1915
+    },
+    {
+        "car_id": "lxou3RxkAPeVr37eLzI43CCt",
+        "type": "Passenger car light",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Chrysler",
+        "model": "525xi",
+        "year": 1971
+    },
+    {
+        "car_id": "KUv2aBmYvxh4wnPFbEmJEQqJ",
+        "type": "Pickup truck",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Mazda",
+        "model": "M5",
+        "year": 2002
+    },
+    {
+        "car_id": "8f5rik9RD8XkL3S74N5g426K",
+        "type": "Passenger car mini",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Volvo",
+        "model": "Escalade Esv Awd",
+        "year": 1912
+    },
+    {
+        "car_id": "fkqdULTWhLlBCoHG4H9ZGfOX",
+        "type": "Passenger car medium",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Saab",
+        "model": "Is 250",
+        "year": 1912
+    },
+    {
+        "car_id": "CpEEE6F4rP3Pf4k0g050exy8",
+        "type": "Passenger car mini",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Daihatsu",
+        "model": "Rav4 4wd",
+        "year": 1928
+    },
+    {
+        "car_id": "I8Z11BN28Gk1miF21u1SsZFL",
+        "type": "Passenger car medium",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "Seat",
+        "model": "Monte Carlo",
+        "year": 1903
+    },
+    {
+        "car_id": "WAQiRte0VIp3F0oIYu9MOhgr",
+        "type": "Sport utility vehicle",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Datsun",
+        "model": "S-type 4.2 Litre",
+        "year": 1958
+    },
+    {
+        "car_id": "sZXs64V35BOzXzfbS443jPc0",
+        "type": "Passenger car heavy",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Volvo",
+        "model": "Altima",
+        "year": 1984
+    },
+    {
+        "car_id": "EWSE54ThLT9An4X70pD0cFeR",
+        "type": "Passenger car compact",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Martini",
+        "model": "Xlr",
+        "year": 1975
+    },
+    {
+        "car_id": "j1LI1OHQobtjkb7kuN1C27zp",
+        "type": "Passenger car mini",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "Hummer",
+        "model": "Cl65 Amg",
+        "year": 1935
+    },
+    {
+        "car_id": "9I62nqvtvwJx9Ct7cFphBaNu",
+        "type": "Passenger car mini",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Fiat",
+        "model": "Frontier 2wd",
+        "year": 1911
+    },
+    {
+        "car_id": "yuemB42p2VGQZn65l7k5O4sc",
+        "type": "Passenger car mini",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Koenigsegg",
+        "model": "Frontier V6-4wd",
+        "year": 2022
+    },
+    {
+        "car_id": "Lz4bM5q0njP0vbBirP5ysw74",
+        "type": "Passenger car mini",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Skoda",
+        "model": "Mini Cooper S",
+        "year": 2006
+    },
+    {
+        "car_id": "wofpkBm7qnCk46hiK72ddoM8",
+        "type": "Sport utility vehicle",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Bugatti",
+        "model": "Quest",
+        "year": 1998
+    },
+    {
+        "car_id": "uiEm2SvScv6yC7pbXDDc61B0",
+        "type": "Passenger car compact",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Daihatsu",
+        "model": "C15 Silverado Hybrid 2wd",
+        "year": 1949
+    },
+    {
+        "car_id": "YhF8Aqi1H2S4idG7EmPP0fZU",
+        "type": "Passenger car heavy",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Chevrolet",
+        "model": "Grand Vitara Xv6 Awd",
+        "year": 1967
+    },
+    {
+        "car_id": "yQWIDyc2yafN72ig2t6aNKDl",
+        "type": "Passenger car medium",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Tesla",
+        "model": "S430",
+        "year": 1948
+    },
+    {
+        "car_id": "83shNfeC9bS21R2W1cFu70nY",
+        "type": "Van",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Audi",
+        "model": "Ram 1500 Pickup 2wd",
+        "year": 1919
+    },
+    {
+        "car_id": "85cih3kmo2cFzfjUwI4G6UTd",
+        "type": "Passenger car mini",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Subaru",
+        "model": "Vue Fwd",
+        "year": 2017
+    },
+    {
+        "car_id": "6z0d9oBB898i93D7PfX9wge5",
+        "type": "Passenger car heavy",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Noble",
+        "model": "Highlander 4wd",
+        "year": 1907
+    },
+    {
+        "car_id": "HRMpReMX4nDqpBzS676ZD0az",
+        "type": "Passenger car compact",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Lancia",
+        "model": "Town Car",
+        "year": 1914
+    },
+    {
+        "car_id": "JbC1C6U5RGNqKm24wKD24FLx",
+        "type": "Passenger car light",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Audi",
+        "model": "A4 Quattro",
+        "year": 1987
+    },
+    {
+        "car_id": "c8IMOGvMvctg5NviYG9Khk9P",
+        "type": "Passenger car compact",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Lamborghini",
+        "model": "Sl65 Amg",
+        "year": 1918
+    },
+    {
+        "car_id": "4Jg5y6alwq4xNNsMgKsFPxTh",
+        "type": "Sport utility vehicle",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Peugeot",
+        "model": "Vue Fwd",
+        "year": 2009
+    },
+    {
+        "car_id": "1jen9OKQCugJlVk6d24mcp3W",
+        "type": "Passenger car heavy",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Nissan",
+        "model": "Db9 Volante",
+        "year": 1998
+    },
+    {
+        "car_id": "D8X0Jimw1kpk8BB7b4vWpUBg",
+        "type": "Passenger car light",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Citroen",
+        "model": "Maybach 57s",
+        "year": 1927
+    },
+    {
+        "car_id": "n4FI0WF6tuJTTRUB9lVeKBN9",
+        "type": "Passenger car medium",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Daihatsu",
+        "model": "Explorer 2wd",
+        "year": 1959
+    },
+    {
+        "car_id": "tv291W6Ct6idacKHuNzis6IO",
+        "type": "Van",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Lancia",
+        "model": "S-type 4.2 Litre",
+        "year": 1982
+    },
+    {
+        "car_id": "4Zznrtp43RBD5I8nJANO521g",
+        "type": "Passenger car light",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Martini",
+        "model": "Tiburon",
+        "year": 1938
+    },
+    {
+        "car_id": "x7MdU8m7VW5zgqRfGl1YXryJ",
+        "type": "Sport utility vehicle",
+        "fuel": "LPG",
+        "transmission": "Manual",
+        "brand": "KIA",
+        "model": "Mazda Rx-8",
+        "year": 1929
+    },
+    {
+        "car_id": "PWHT9J06u6cG4foN2qt4RGRY",
+        "type": "Passenger car mini",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Lamborghini",
+        "model": "Pilot 2wd",
+        "year": 1949
+    },
+    {
+        "car_id": "11662QETl8Bb5D6gbhSLG60g",
+        "type": "Passenger car heavy",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Mercedes",
+        "model": "Malibu",
+        "year": 1984
+    },
+    {
+        "car_id": "28KtVuCKQOXE6TjXuOQ24u9u",
+        "type": "Van",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "De Lorean",
+        "model": "Db9 Coupe",
+        "year": 1970
+    },
+    {
+        "car_id": "YAxHEhB0h0C03Z32mNLQjQ5o",
+        "type": "Passenger car light",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Saab",
+        "model": "G6 Gt/gtp Convertible",
+        "year": 1990
+    },
+    {
+        "car_id": "s58MPnQ26i2ZGcb67vAq1A6g",
+        "type": "Van",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Chrysler",
+        "model": "Ram 1500 Pickup 4wd",
+        "year": 1998
+    },
+    {
+        "car_id": "Ci76u5H1k6qRmdQNJGeE1COX",
+        "type": "Passenger car light",
+        "fuel": "Ethanol",
+        "transmission": "Automatic",
+        "brand": "Jeep",
+        "model": "Gto",
+        "year": 1970
+    },
+    {
+        "car_id": "PIDHiPOQ1gNFj4ois2EX0uR7",
+        "type": "Pickup truck",
+        "fuel": "CNG",
+        "transmission": "Automatic",
+        "brand": "Aston Martin",
+        "model": "Ml500",
+        "year": 1913
+    },
+    {
+        "car_id": "O527ZkG9krp9X7WpJRHgGVHE",
+        "type": "Pickup truck",
+        "fuel": "CNG",
+        "transmission": "Automatic",
+        "brand": "Daihatsu",
+        "model": "Mountaineer 4wd",
+        "year": 1922
+    },
+    {
+        "car_id": "9gKXcH5UGk28wx730nJfTD0B",
+        "type": "Passenger car mini",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Subaru",
+        "model": "Passat Wagon 4motion",
+        "year": 1989
+    },
+    {
+        "car_id": "f9iCMPRIZqQ8KA7rIcyvkJqN",
+        "type": "Passenger car light",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Vauxhall",
+        "model": "Liberty/cherokee 4wd",
+        "year": 1907
+    },
+    {
+        "car_id": "Ky6g75DFWUeS67oo0q163tbX",
+        "type": "Pickup truck",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Rolls-Royce",
+        "model": "C280",
+        "year": 1949
+    },
+    {
+        "car_id": "HrYX111TbF6V6d0oQ4YTWHe2",
+        "type": "Passenger car compact",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Lexus",
+        "model": "Q45",
+        "year": 1926
+    },
+    {
+        "car_id": "1Iob0f2ds14KO1TnwB5qPz27",
+        "type": "Pickup truck",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Maybach",
+        "model": "A4",
+        "year": 1934
+    },
+    {
+        "car_id": "adccCApXp1sJDKpdpo01T23B",
+        "type": "Pickup truck",
+        "fuel": "CNG",
+        "transmission": "Automatic",
+        "brand": "Mercedes-Benz",
+        "model": "Colorado Crew Cab 4wd",
+        "year": 1937
+    },
+    {
+        "car_id": "0hP6k931cgzKgQ64s9x78iQX",
+        "type": "Pickup truck",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Citroen",
+        "model": "Sts Awd",
+        "year": 1990
+    },
+    {
+        "car_id": "ZkkieCg5JQoXiBUSiTyuAgP0",
+        "type": "Pickup truck",
+        "fuel": "CNG",
+        "transmission": "Automatic",
+        "brand": "Rover",
+        "model": "Colorado Crew Cab 2wd",
+        "year": 2024
+    },
+    {
+        "car_id": "IODK85aFzyxy0Ys543n0vzLc",
+        "type": "Van",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Martini",
+        "model": "S60 Awd",
+        "year": 1911
+    },
+    {
+        "car_id": "bLLHC1IYv0r4Z5NfN7kClNHJ",
+        "type": "Passenger car medium",
+        "fuel": "CNG",
+        "transmission": "Automatic",
+        "brand": "Toyota",
+        "model": "Camry Solara Convertible",
+        "year": 1967
+    },
+    {
+        "car_id": "V50IPDuvB9cT3ggJLv20a2jQ",
+        "type": "Passenger car medium",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Opel",
+        "model": "Sedona",
+        "year": 2009
+    },
+    {
+        "car_id": "o957C5YG0cJ5Qk3B9sdssqen",
+        "type": "Passenger car medium",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Daewoo",
+        "model": "325i",
+        "year": 1959
+    },
+    {
+        "car_id": "SU05byEL4z2i50BNnDq0OmxX",
+        "type": "Van",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Honda",
+        "model": "530xi",
+        "year": 1967
+    },
+    {
+        "car_id": "GvcnJy4bQLf462GVqhvODxR9",
+        "type": "Passenger car light",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Rolls-Royce",
+        "model": "530xi Sport Wagon",
+        "year": 1995
+    },
+    {
+        "car_id": "QI13V670EwX9Y9g4GbGbjEv9",
+        "type": "Passenger car compact",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "Saab",
+        "model": "Escalade 2wd",
+        "year": 1990
+    },
+    {
+        "car_id": "05720kV5XIdbK8gkDypICLUM",
+        "type": "Sport utility vehicle",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Saab",
+        "model": "Phantom",
+        "year": 1901
+    },
+    {
+        "car_id": "CEjpZfZ7TnmdsU86MhJq9V8X",
+        "type": "Sport utility vehicle",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Land Rover",
+        "model": "Sentra",
+        "year": 1981
+    },
+    {
+        "car_id": "W7384yF4P68RldzOEIGIwpD4",
+        "type": "Passenger car compact",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Dodge",
+        "model": "Toyota Tacoma 2wd",
+        "year": 1928
+    },
+    {
+        "car_id": "Uy5jwVxbuKU8548uSo01w265",
+        "type": "Passenger car mini",
+        "fuel": "Ethanol",
+        "transmission": "Automatic",
+        "brand": "Benz",
+        "model": "Clk350 (cabriolet)",
+        "year": 1937
+    },
+    {
+        "car_id": "8ZXBreK1R6i8AIS5eg0l448O",
+        "type": "Van",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Alfa Romeo",
+        "model": "Tt Roadster",
+        "year": 1934
+    },
+    {
+        "car_id": "nFseBKBbr0k4g5ghFAad878W",
+        "type": "Passenger car heavy",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Farboud",
+        "model": "A4 Cabriolet",
+        "year": 1961
+    },
+    {
+        "car_id": "l7odd3VSCl63L2a42j8tuFv5",
+        "type": "Pickup truck",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Seat",
+        "model": "G1500/2500 Chevy Van 2wd",
+        "year": 1964
+    },
+    {
+        "car_id": "9hHNPG58iBm21QbdF1ZyEeI8",
+        "type": "Passenger car light",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Noble",
+        "model": "Liberty/cherokee 2wd",
+        "year": 2003
+    },
+    {
+        "car_id": "HFZ3NU3Ts86D9PBt1akm15ln",
+        "type": "Passenger car heavy",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Peugeot",
+        "model": "Galant",
+        "year": 1949
+    },
+    {
+        "car_id": "snnrziR9h02BhSjLS2iz4X4l",
+        "type": "Sport utility vehicle",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Rolls-Royce",
+        "model": "Eclipse",
+        "year": 1955
+    },
+    {
+        "car_id": "Q3oAL2vdt99JJjYy2g4YF6Kp",
+        "type": "Sport utility vehicle",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Lotus",
+        "model": "Db9 Volante",
+        "year": 1973
+    },
+    {
+        "car_id": "8Omp98W14n1zxR6EpX3IwVYw",
+        "type": "Van",
+        "fuel": "LPG",
+        "transmission": "Manual",
+        "brand": "Dino",
+        "model": "Dts",
+        "year": 1972
+    },
+    {
+        "car_id": "jM85Zs7cL1utkRz2XmClkQA5",
+        "type": "Pickup truck",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Daihatsu",
+        "model": "Highlander 2wd",
+        "year": 2017
+    },
+    {
+        "car_id": "LPSstrXau9a9f1zi4WrHi5xC",
+        "type": "Passenger car medium",
+        "fuel": "LPG",
+        "transmission": "Manual",
+        "brand": "Benz",
+        "model": "A6 Quattro",
+        "year": 1924
+    },
+    {
+        "car_id": "E9wOZ3CsObb580lZSUQn73CS",
+        "type": "Passenger car heavy",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Porsche",
+        "model": "Sc 430",
+        "year": 1953
+    },
+    {
+        "car_id": "z3pBRWjDKlJJ00BkH435n9LV",
+        "type": "Passenger car medium",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Hummer",
+        "model": "Five Hundred Awd",
+        "year": 2023
+    },
+    {
+        "car_id": "j9VEDfCHaBLqc17nPS7eBuM1",
+        "type": "Sport utility vehicle",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Pontiac",
+        "model": "Colorado Cab Chassis Inc 2wd",
+        "year": 1911
+    },
+    {
+        "car_id": "mv225cuR62fLd6tWduNC9i2V",
+        "type": "Passenger car compact",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Smart",
+        "model": "Grand Cherokee 2wd",
+        "year": 1924
+    },
+    {
+        "car_id": "8C31XPXLa66Ki6hlRp0l4pdy",
+        "type": "Pickup truck",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Hyundai",
+        "model": "Five Hundred Awd",
+        "year": 1945
+    },
+    {
+        "car_id": "cV1MNg4MTtOHFKXIvGFYPmyk",
+        "type": "Van",
+        "fuel": "Ethanol",
+        "transmission": "Automatic",
+        "brand": "Renault",
+        "model": "Sorento 2wd",
+        "year": 2012
+    },
+    {
+        "car_id": "n1x1O8a0pGWO16DzydiQ1Cq3",
+        "type": "Passenger car medium",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Citroen",
+        "model": "V50 Awd",
+        "year": 1943
+    },
+    {
+        "car_id": "eaiJoOCeRODPM0u04g13tUPS",
+        "type": "Pickup truck",
+        "fuel": "LPG",
+        "transmission": "Manual",
+        "brand": "Bentley",
+        "model": "Fx45 Awd",
+        "year": 2006
+    },
+    {
+        "car_id": "VO8llCDCDIq3y65xAQOA7gF7",
+        "type": "Passenger car heavy",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Cadillac",
+        "model": "Xk8 Convertible",
+        "year": 1960
+    },
+    {
+        "car_id": "luH2mkE1HtT4inHRWmZrr1le",
+        "type": "Pickup truck",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Rover",
+        "model": "Gt 2wd",
+        "year": 1914
+    },
+    {
+        "car_id": "eAMzj351f08WNVzwDake2Mv2",
+        "type": "Passenger car mini",
+        "fuel": "CNG",
+        "transmission": "Automatic",
+        "brand": "Daewoo",
+        "model": "F150 Pickup 2wd",
+        "year": 1989
+    },
+    {
+        "car_id": "JGDT965r6eclYh5k0Dq1hsTy",
+        "type": "Passenger car light",
+        "fuel": "CNG",
+        "transmission": "Automatic",
+        "brand": "Lexus",
+        "model": "I-280 2wd Ext Cab",
+        "year": 1976
+    },
+    {
+        "car_id": "9rIJAVTyFiaEx21Y15ycvpRP",
+        "type": "Sport utility vehicle",
+        "fuel": "CNG",
+        "transmission": "Automatic",
+        "brand": "Tesla",
+        "model": "Sebring 4-dr",
+        "year": 1978
+    },
+    {
+        "car_id": "3Nd872Y4J0I7m2KL90YqxTDB",
+        "type": "Pickup truck",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Koenigsegg",
+        "model": "Endeavor 2wd",
+        "year": 1927
+    },
+    {
+        "car_id": "dJugPf3N08bQI86Hh4zkpS5N",
+        "type": "Passenger car heavy",
+        "fuel": "Ethanol",
+        "transmission": "Automatic",
+        "brand": "Land Rover",
+        "model": "K15 Silverado Hybrid 4wd",
+        "year": 1938
+    },
+    {
+        "car_id": "7nnqd8RVcPPiq4scwsMuXOud",
+        "type": "Passenger car heavy",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "KIA",
+        "model": "Maybach 62",
+        "year": 1900
+    },
+    {
+        "car_id": "ZUGdgE6R4AMK37ZLkYoeX4Ai",
+        "type": "Passenger car compact",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Benz",
+        "model": "Taurus",
+        "year": 1996
+    },
+    {
+        "car_id": "9jVSGBGXxntSXPfrsZ1KX70s",
+        "type": "Sport utility vehicle",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "BMW",
+        "model": "Mazda Rx-8",
+        "year": 1985
+    },
+    {
+        "car_id": "a9u6Xs8Einx1OK65P1I7CvFZ",
+        "type": "Van",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Hyundai",
+        "model": "S4 Cabriolet",
+        "year": 2021
+    },
+    {
+        "car_id": "8nSlah9SXWV1O05pOIXoeYWL",
+        "type": "Passenger car mini",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Lamborghini",
+        "model": "Civic Hybrid",
+        "year": 1901
+    },
+    {
+        "car_id": "waP8zoFAx38450zNaBweZIqM",
+        "type": "Pickup truck",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Rover",
+        "model": "Cayenne Turbo",
+        "year": 2021
+    },
+    {
+        "car_id": "EARM1W02NJFS7u1M861L5a7r",
+        "type": "Passenger car medium",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Martini",
+        "model": "Mpv",
+        "year": 1990
+    },
+    {
+        "car_id": "0BRDwJ0p9NDIqJE325uTwses",
+        "type": "Passenger car medium",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Citroen",
+        "model": "Db9 Coupe Manual",
+        "year": 1912
+    },
+    {
+        "car_id": "PLMCf9h2TcJx369wdL60fM1A",
+        "type": "Pickup truck",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Maybach",
+        "model": "Sts Awd",
+        "year": 2021
+    },
+    {
+        "car_id": "APHI8LKx2eQaVlkIDiA1Mt0O",
+        "type": "Sport utility vehicle",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Lexus",
+        "model": "650ci Convertible",
+        "year": 1982
+    },
+    {
+        "car_id": "ZYqRspp9NZ6YA4630wsj7x4v",
+        "type": "Passenger car heavy",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Suzuki",
+        "model": "Armada 4wd",
+        "year": 1903
+    },
+    {
+        "car_id": "QEncA9jOk6dcODN94Emu87cX",
+        "type": "Sport utility vehicle",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Volvo",
+        "model": "Forester Awd",
+        "year": 2024
+    },
+    {
+        "car_id": "4hbvP1VjHdEvw6tteIF2nAFL",
+        "type": "Passenger car light",
+        "fuel": "LPG",
+        "transmission": "Manual",
+        "brand": "Dino",
+        "model": "Cl65 Amg",
+        "year": 1990
+    },
+    {
+        "car_id": "94Mucs23Pg1S4hnmAvg2WArD",
+        "type": "Passenger car medium",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Datsun",
+        "model": "Camry",
+        "year": 1951
+    },
+    {
+        "car_id": "65GI61niD165E1OtVz6zmW69",
+        "type": "Passenger car mini",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Dacia",
+        "model": "Srx 2wd",
+        "year": 2005
+    },
+    {
+        "car_id": "ARh1Xz4cWPzVBS6C0xVatK5u",
+        "type": "Passenger car medium",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "Maserati",
+        "model": "Thunderbird",
+        "year": 1921
+    },
+    {
+        "car_id": "Ep6ONGMOwpyGVDYAgKnV9iVW",
+        "type": "Passenger car light",
+        "fuel": "Ethanol",
+        "transmission": "Automatic",
+        "brand": "De Lorean",
+        "model": "Cayenne S",
+        "year": 1978
+    },
+    {
+        "car_id": "d1oZNQkK649LMj8yFvP4G1mD",
+        "type": "Passenger car mini",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Lancia",
+        "model": "Pacifica 2wd",
+        "year": 1944
+    },
+    {
+        "car_id": "KyyF1l5wR6Zp4cSl7RznQTtP",
+        "type": "Passenger car mini",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "Citroen",
+        "model": "325xi",
+        "year": 1990
+    },
+    {
+        "car_id": "lRSjp3APljhxWxmxnkeSevLI",
+        "type": "Passenger car mini",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Daewoo",
+        "model": "S80 Fwd",
+        "year": 1964
+    },
+    {
+        "car_id": "YOe8Xb22bQ5Ni9u4W1Ww63kZ",
+        "type": "Pickup truck",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Dino",
+        "model": "L-147/148 Murcielago",
+        "year": 1992
+    },
+    {
+        "car_id": "64XA0guRIZ6t5uJsK40xRjYl",
+        "type": "Pickup truck",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Subaru",
+        "model": "Rabbit",
+        "year": 1933
+    },
+    {
+        "car_id": "OWbO8rL81Wjzmp1F7iS81xmw",
+        "type": "Pickup truck",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "De Lorean",
+        "model": "650ci",
+        "year": 2011
+    },
+    {
+        "car_id": "C13fvbuK2i03VRnrXEavOPNe",
+        "type": "Passenger car light",
+        "fuel": "Ethanol",
+        "transmission": "Automatic",
+        "brand": "Land Rover",
+        "model": "Xterra 2wd",
+        "year": 1953
+    },
+    {
+        "car_id": "NgJYjLGR6V3G7O14FVocKGxc",
+        "type": "Passenger car mini",
+        "fuel": "CNG",
+        "transmission": "Automatic",
+        "brand": "Smart",
+        "model": "Clk55 Amg (cabriolet)",
+        "year": 1902
+    },
+    {
+        "car_id": "OAGv3sVVzgm6JuOac3iZb3Dg",
+        "type": "Passenger car mini",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Aston Martin",
+        "model": "Baja Awd",
+        "year": 1952
+    },
+    {
+        "car_id": "t10mdVVEAFuvT5JRP00E9C46",
+        "type": "Passenger car mini",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Ligier",
+        "model": "Fx35 Awd",
+        "year": 1972
+    },
+    {
+        "car_id": "JA0NauuufpI3xqUb5tQ70TwI",
+        "type": "Passenger car heavy",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Alfa Romeo",
+        "model": "Boxster",
+        "year": 1943
+    },
+    {
+        "car_id": "om5aBwAtx799g8NWcIjm96NU",
+        "type": "Passenger car light",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Jeep",
+        "model": "Maybach 57s",
+        "year": 1937
+    },
+    {
+        "car_id": "i7rVJId5WYG81qNh4cvg89OP",
+        "type": "Passenger car heavy",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Pontiac",
+        "model": "Durango 2wd",
+        "year": 1979
+    },
+    {
+        "car_id": "54Z6XoR3EbTt73i33hb0EhYw",
+        "type": "Passenger car medium",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "De Lorean",
+        "model": "E350",
+        "year": 2012
+    },
+    {
+        "car_id": "9qbYxXZZ4UZJIfwDiOV3fY7Z",
+        "type": "Passenger car heavy",
+        "fuel": "LPG",
+        "transmission": "Manual",
+        "brand": "Hyundai",
+        "model": "E350",
+        "year": 1945
+    },
+    {
+        "car_id": "ivtU0dc5qXKS95NG5sGBA2w6",
+        "type": "Passenger car compact",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Maserati",
+        "model": "Legacy Wagon Awd",
+        "year": 2008
+    },
+    {
+        "car_id": "Zs2deWptw6OVI6g5SWL1F4kO",
+        "type": "Sport utility vehicle",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Smart",
+        "model": "Ranger Pickup 2wd",
+        "year": 2009
+    },
+    {
+        "car_id": "s53b6907P5UnSx435oy9S9Uj",
+        "type": "Passenger car heavy",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Daihatsu",
+        "model": "Ram 1500 Pickup 2wd",
+        "year": 1935
+    },
+    {
+        "car_id": "AyNIbGaLTlHgfS47MFoFMHZ3",
+        "type": "Passenger car medium",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Volvo",
+        "model": "Trailblazer 4wd",
+        "year": 1908
+    },
+    {
+        "car_id": "VuzQUSI4ZQ407t0eHLiJqNc0",
+        "type": "Passenger car compact",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Lada",
+        "model": "Xj8",
+        "year": 1988
+    },
+    {
+        "car_id": "QISGAwznW0KNT1y0E9lTxDa9",
+        "type": "Passenger car medium",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Nissan",
+        "model": "Element 2wd",
+        "year": 1956
+    },
+    {
+        "car_id": "31JCb4AeDfI8Qw6o4PBHZYQX",
+        "type": "Passenger car medium",
+        "fuel": "LPG",
+        "transmission": "Manual",
+        "brand": "Rolls-Royce",
+        "model": "H3 4wd",
+        "year": 1959
+    },
+    {
+        "car_id": "UL210m12ncpyBe0x34R6kpG6",
+        "type": "Van",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Farboud",
+        "model": "Ml350",
+        "year": 1900
+    },
+    {
+        "car_id": "X1N3SiOq8QPNkO4f769fJ7f5",
+        "type": "Van",
+        "fuel": "LPG",
+        "transmission": "Manual",
+        "brand": "Chevrolet",
+        "model": "Toyota Tundra 2wd",
+        "year": 1977
+    },
+    {
+        "car_id": "h27zUAjX7AVQjDxcHGf49NYR",
+        "type": "Passenger car heavy",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Daihatsu",
+        "model": "Uplander Fwd",
+        "year": 1903
+    },
+    {
+        "car_id": "ZnZPGGDWGr9aLFRaB8msuIDt",
+        "type": "Passenger car heavy",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Saab",
+        "model": "Aerio Sx",
+        "year": 1922
+    },
+    {
+        "car_id": "K9EO2aIKnNXd4UG18B71aa68",
+        "type": "Passenger car mini",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Cadillac",
+        "model": "330i",
+        "year": 1952
+    },
+    {
+        "car_id": "kfUoX455pXg795h98lk7cRJR",
+        "type": "Passenger car medium",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Chrysler",
+        "model": "Xterra 2wd",
+        "year": 1970
+    },
+    {
+        "car_id": "74L3Dpzp2R1GGQ5KH39Nyg95",
+        "type": "Passenger car medium",
+        "fuel": "CNG",
+        "transmission": "Automatic",
+        "brand": "McLaren",
+        "model": "Forester Awd",
+        "year": 2004
+    },
+    {
+        "car_id": "y4BeWzThF2HeOoeyB4zFeruo",
+        "type": "Passenger car heavy",
+        "fuel": "LPG",
+        "transmission": "Manual",
+        "brand": "Lotus",
+        "model": "Lancer Evolution",
+        "year": 1935
+    },
+    {
+        "car_id": "04JTnzV6xRm4R60tTb89F7O6",
+        "type": "Passenger car light",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Farboud",
+        "model": "Scion Xb",
+        "year": 1915
+    },
+    {
+        "car_id": "UR3fvPTr96K1Sy4RcaQB5rR3",
+        "type": "Passenger car medium",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "Mercedes",
+        "model": "Escalade 2wd",
+        "year": 1932
+    },
+    {
+        "car_id": "2aZ98xY03ew1ss9Ay1idOsd1",
+        "type": "Pickup truck",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Daewoo",
+        "model": "Taurus",
+        "year": 1988
+    },
+    {
+        "car_id": "O5f17Bm6yUQjl3rMbxghv09w",
+        "type": "Passenger car light",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Volkswagen",
+        "model": "E350",
+        "year": 1936
+    },
+    {
+        "car_id": "5r0L55gQuy3w5QQsAVImZUI0",
+        "type": "Pickup truck",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Suzuki",
+        "model": "Corvette",
+        "year": 1943
+    },
+    {
+        "car_id": "lwt8okEWctNi08Vl8hGXeSnM",
+        "type": "Passenger car heavy",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Datsun",
+        "model": "Escape 4wd",
+        "year": 1916
+    },
+    {
+        "car_id": "DmEWLi243IMDN8OmsBC43rBz",
+        "type": "Pickup truck",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Hummer",
+        "model": "Commander 4wd",
+        "year": 1907
+    },
+    {
+        "car_id": "KRBv0fIDZy6seK2jp19ursY9",
+        "type": "Passenger car medium",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Citroen",
+        "model": "X3",
+        "year": 1941
+    },
+    {
+        "car_id": "t6E928IGvNIue08bGIl30b1T",
+        "type": "Passenger car heavy",
+        "fuel": "Ethanol",
+        "transmission": "Automatic",
+        "brand": "Mazda",
+        "model": "Prius",
+        "year": 1954
+    },
+    {
+        "car_id": "eq5mqR7FPsdkWGzb5eyG0cqa",
+        "type": "Pickup truck",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Suzuki",
+        "model": "Q45",
+        "year": 1960
+    },
+    {
+        "car_id": "taU3JgBUuuR6SNC9bL09Gl1g",
+        "type": "Van",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Lexus",
+        "model": "A4 Cabriolet Quattro",
+        "year": 1914
+    },
+    {
+        "car_id": "2NsVO7XCm67eWCM1GsFWDS0A",
+        "type": "Passenger car light",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Lotus",
+        "model": "Z4 3.0si",
+        "year": 1972
+    },
+    {
+        "car_id": "O7KAcaq2P5KiC9EDpUaSomOz",
+        "type": "Passenger car medium",
+        "fuel": "Ethanol",
+        "transmission": "Automatic",
+        "brand": "De Lorean",
+        "model": "Range Rover Sport",
+        "year": 2002
+    },
+    {
+        "car_id": "WfTo9hZrj3LZ5vB5Aaa6ap40",
+        "type": "Pickup truck",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Ligier",
+        "model": "Toyota Tundra 2wd",
+        "year": 2017
+    },
+    {
+        "car_id": "vkk0cce7TixyD5FL4OYoF55p",
+        "type": "Passenger car heavy",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Chrysler",
+        "model": "Mazda 6",
+        "year": 1942
+    },
+    {
+        "car_id": "GvglwMW2V7R4tncVftRWn8rV",
+        "type": "Passenger car medium",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Lotus",
+        "model": "B4000 4wd",
+        "year": 2002
+    },
+    {
+        "car_id": "Mf6bn0pkW98E271xMG0jZ9eJ",
+        "type": "Pickup truck",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Daewoo",
+        "model": "Ferrari 612 Scaglietti",
+        "year": 2014
+    },
+    {
+        "car_id": "vjVFNVh9p6eJv5QOidMBmXAF",
+        "type": "Sport utility vehicle",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Porsche",
+        "model": "F150 Pickup 4wd",
+        "year": 1909
+    },
+    {
+        "car_id": "a9XT5Z69pH2dCO3Oe4hdfPJs",
+        "type": "Passenger car medium",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Spyker",
+        "model": "Z4 3.0 Si Coupe",
+        "year": 1934
+    },
+    {
+        "car_id": "ysHA5XI05lZ40W4JRslVcTdX",
+        "type": "Passenger car heavy",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Alfa Romeo",
+        "model": "325xi",
+        "year": 2002
+    },
+    {
+        "car_id": "e8P7Tkz19x8h5Qa2NudGV6cc",
+        "type": "Pickup truck",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Mazda",
+        "model": "Vue Awd",
+        "year": 1974
+    },
+    {
+        "car_id": "ibPWldhZwKt2HYu0ziCPyWI6",
+        "type": "Pickup truck",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "Tesla",
+        "model": "Legacy Wagon Awd",
+        "year": 1997
+    },
+    {
+        "car_id": "Oj2LJDznPqUTL30R5JnBmteT",
+        "type": "Passenger car compact",
+        "fuel": "CNG",
+        "transmission": "Automatic",
+        "brand": "Alfa Romeo",
+        "model": "Xlr",
+        "year": 1966
+    },
+    {
+        "car_id": "3DZNVuq9mB9ayuz70yBR24FQ",
+        "type": "Van",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Hummer",
+        "model": "S350",
+        "year": 1922
+    },
+    {
+        "car_id": "aZ3cUVrv43SlqcGb8BZF3See",
+        "type": "Passenger car light",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Bugatti",
+        "model": "Cls55 Amg",
+        "year": 2003
+    },
+    {
+        "car_id": "3cZ7jVzDfhKPRO1I673WXEOP",
+        "type": "Pickup truck",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Citroen",
+        "model": "Rl",
+        "year": 1949
+    },
+    {
+        "car_id": "81r5yIZ3RhNG2KU5bu3afpM0",
+        "type": "Passenger car light",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Corvette",
+        "model": "S4 Avant",
+        "year": 1947
+    },
+    {
+        "car_id": "zI3zRsh9kyRVe65uPGJWVL7H",
+        "type": "Pickup truck",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Land Rover",
+        "model": "Ssr Pickup 2wd",
+        "year": 1985
+    },
+    {
+        "car_id": "BZrxX57MrZT5A9330coG2S2j",
+        "type": "Passenger car medium",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "Daihatsu",
+        "model": "Tiburon",
+        "year": 2019
+    },
+    {
+        "car_id": "wvzfL889b9JMcn7cwcip6U5G",
+        "type": "Passenger car mini",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Chrysler",
+        "model": "Mx-5",
+        "year": 2008
+    },
+    {
+        "car_id": "vqHhoJ8OZTx0PqW3A062KiGx",
+        "type": "Passenger car medium",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "De Lorean",
+        "model": "C1500 Suburban 2wd",
+        "year": 1973
+    },
+    {
+        "car_id": "3ObJZ7Xkhfh98xjS4OL5UNxO",
+        "type": "Passenger car mini",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Aston Martin",
+        "model": "L-147/148 Murcielago",
+        "year": 1976
+    },
+    {
+        "car_id": "4SLvkyl73N6n4d9oWUZwJDY7",
+        "type": "Passenger car heavy",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "Mini",
+        "model": "530xi Sport Wagon",
+        "year": 1997
+    },
+    {
+        "car_id": "DjPbvMsUW6tkedhHH51w922i",
+        "type": "Sport utility vehicle",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Ford",
+        "model": "A6 Avant Quattro",
+        "year": 2002
+    },
+    {
+        "car_id": "EPDN2oC62gS6F0XNCh2b5qDn",
+        "type": "Passenger car compact",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Benz",
+        "model": "Gs 300/gs 430",
+        "year": 1954
+    },
+    {
+        "car_id": "8njTD1q7dxzu18r0CXH8SfMS",
+        "type": "Passenger car light",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Citroen",
+        "model": "Corolla Matrix",
+        "year": 1986
+    },
+    {
+        "car_id": "dMvq5bT2XGY0tffel149b85p",
+        "type": "Van",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Renault",
+        "model": "Xterra 4wd",
+        "year": 2003
+    },
+    {
+        "car_id": "hhzrPY75SK9ivY44tTgHB1Ve",
+        "type": "Passenger car medium",
+        "fuel": "LPG",
+        "transmission": "Manual",
+        "brand": "Benz",
+        "model": "Sonata",
+        "year": 1977
+    },
+    {
+        "car_id": "Dy61zDuJSNUR1L1HyTYfs1m1",
+        "type": "Sport utility vehicle",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Daihatsu",
+        "model": "Mazda 3",
+        "year": 1946
+    },
+    {
+        "car_id": "d2gg4GGmrW7vYY32XeNkdxSL",
+        "type": "Passenger car compact",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Toyota",
+        "model": "Accent",
+        "year": 1969
+    },
+    {
+        "car_id": "u8Q9QDzrK7Xtg5BTDQc6xT93",
+        "type": "Passenger car compact",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "Mini",
+        "model": "330i",
+        "year": 1974
+    },
+    {
+        "car_id": "vp1kxG82M1xnIuh5wF3t9WJC",
+        "type": "Sport utility vehicle",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Mercedes",
+        "model": "Srx Awd",
+        "year": 1949
+    },
+    {
+        "car_id": "HnVIKS1RKsy0xzDxoLq6P633",
+        "type": "Passenger car heavy",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Rolls-Royce",
+        "model": "Aerio Sx Awd",
+        "year": 2002
+    },
+    {
+        "car_id": "rPw1qzQjl02q7fM5ynfdCHdY",
+        "type": "Van",
+        "fuel": "Ethanol",
+        "transmission": "Automatic",
+        "brand": "Koenigsegg",
+        "model": "New Beetle",
+        "year": 1920
+    },
+    {
+        "car_id": "e4O690I3Mv1B2ELzlt9JGF1C",
+        "type": "Passenger car compact",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Corvette",
+        "model": "Optima",
+        "year": 1934
+    },
+    {
+        "car_id": "T9CUCdQ8Dnn44uTYbR8vXzJw",
+        "type": "Passenger car light",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Daewoo",
+        "model": "525xi",
+        "year": 2013
+    },
+    {
+        "car_id": "a3UOAn7V3kuD24xIxx1lcDOf",
+        "type": "Passenger car compact",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Mini",
+        "model": "Mpv",
+        "year": 1921
+    },
+    {
+        "car_id": "JYo180LnMb1sYSfN92IecL5u",
+        "type": "Passenger car compact",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Dino",
+        "model": "Is 350",
+        "year": 2009
+    },
+    {
+        "car_id": "spc3QubJ3peZ1f71tH3CA7u0",
+        "type": "Passenger car mini",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Mazda",
+        "model": "Ranger Pickup 4wd",
+        "year": 1999
+    },
+    {
+        "car_id": "G8J6B9i19Y35o9W6Rbde04MW",
+        "type": "Pickup truck",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Corvette",
+        "model": "B4000 4wd",
+        "year": 1965
+    },
+    {
+        "car_id": "ZC2Ybv41m1KJlTJ55AiWcncz",
+        "type": "Passenger car heavy",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Martini",
+        "model": "Fx35 Awd",
+        "year": 1900
+    },
+    {
+        "car_id": "706kL3vzc98M40ZA3PgP6zL6",
+        "type": "Van",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Fiat",
+        "model": "Ferrari F141",
+        "year": 1946
+    },
+    {
+        "car_id": "lQ783upDLL7yHE5dEYb2SrcC",
+        "type": "Passenger car heavy",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Hyundai",
+        "model": "Colorado Crew Cab 4wd",
+        "year": 1975
+    },
+    {
+        "car_id": "R05zqvTNKn5pj152cD5yAPrA",
+        "type": "Sport utility vehicle",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Tesla",
+        "model": "Taurus Ethanol Ffv",
+        "year": 1992
+    },
+    {
+        "car_id": "0GsZCwS931f9578124RbYZfr",
+        "type": "Passenger car heavy",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Spyker",
+        "model": "Endeavor 4wd",
+        "year": 1914
+    },
+    {
+        "car_id": "pvEoRpW1upiwAMCpVPh4dC2Z",
+        "type": "Passenger car light",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "McLaren",
+        "model": "E55 Amg",
+        "year": 1920
+    },
+    {
+        "car_id": "qI4ryI9OwLpilUPr51q1RYs9",
+        "type": "Passenger car heavy",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Lincoln",
+        "model": "Liberty/cherokee 4wd",
+        "year": 2023
+    },
+    {
+        "car_id": "gaWSnIQ88lTi0Q70GuZRW4ja",
+        "type": "Passenger car mini",
+        "fuel": "LPG",
+        "transmission": "Manual",
+        "brand": "Peugeot",
+        "model": "Quest",
+        "year": 2012
+    },
+    {
+        "car_id": "xbNi6708qgTWX4LzicOZgZMJ",
+        "type": "Passenger car light",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Mazda",
+        "model": "Passat",
+        "year": 1943
+    },
+    {
+        "car_id": "4C01MHasr9PYZXvXREWj0zRQ",
+        "type": "Passenger car compact",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Datsun",
+        "model": "Rsx",
+        "year": 1960
+    },
+    {
+        "car_id": "9PnLFyx8MBMaX9cFfnP2N67E",
+        "type": "Pickup truck",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Daewoo",
+        "model": "Forenza Wagon",
+        "year": 1926
+    },
+    {
+        "car_id": "ftwJ95tAbsC74zDl3nu8gztV",
+        "type": "Passenger car medium",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Honda",
+        "model": "X-type",
+        "year": 1976
+    },
+    {
+        "car_id": "m4fE1IyMP6sEJG55oVL4rucv",
+        "type": "Van",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Seat",
+        "model": "Freestar Wagon Fwd",
+        "year": 1982
+    },
+    {
+        "car_id": "oNMRWpBYHKE1h1RfwW16gFwb",
+        "type": "Passenger car compact",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Skoda",
+        "model": "Pilot 4wd",
+        "year": 1990
+    },
+    {
+        "car_id": "DAX1o2G0S6UA1RrFofv8Sh2h",
+        "type": "Passenger car light",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "Alfa Romeo",
+        "model": "A4 Cabriolet",
+        "year": 1939
+    },
+    {
+        "car_id": "2aYCK21q8cFCNeNFzr1WteyG",
+        "type": "Passenger car light",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Lancia",
+        "model": "Mazda 6 Sport Wagon",
+        "year": 1958
+    },
+    {
+        "car_id": "15G5Da2e2R9BW1MDlPlTHt9G",
+        "type": "Van",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Corvette",
+        "model": "R350",
+        "year": 1923
+    },
+    {
+        "car_id": "djD9lwnHazitoAkF11UukUHX",
+        "type": "Passenger car compact",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Pontiac",
+        "model": "C230",
+        "year": 1975
+    },
+    {
+        "car_id": "0aReyrrA6c0XlvzS6R2mr0T1",
+        "type": "Passenger car light",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Jeep",
+        "model": "Thunderbird",
+        "year": 1986
+    },
+    {
+        "car_id": "44xvHv5yFQfAjYV1y0Ga7VKi",
+        "type": "Sport utility vehicle",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "BMW",
+        "model": "F150 Pickup 2wd",
+        "year": 1925
+    },
+    {
+        "car_id": "U7GPRx4LSf9QxgjWwyswIA6O",
+        "type": "Passenger car light",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "Land Rover",
+        "model": "Rsx",
+        "year": 1905
+    },
+    {
+        "car_id": "0lc157zWqEd9584bJrlUiHoi",
+        "type": "Passenger car medium",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Toyota",
+        "model": "Maybach 57s",
+        "year": 2015
+    },
+    {
+        "car_id": "XaSsyG9zXM8OEbjwjIWnt5Pu",
+        "type": "Pickup truck",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Ferrari",
+        "model": "Altima",
+        "year": 1984
+    },
+    {
+        "car_id": "w7ozBXq52tDYZ1R33lL5J0p8",
+        "type": "Passenger car medium",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Porsche",
+        "model": "Z4 3.0i",
+        "year": 1992
+    },
+    {
+        "car_id": "iqgcmToTlNAUYoYmMssYcbK3",
+        "type": "Van",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "Opel",
+        "model": "Sebring 4-dr",
+        "year": 1988
+    },
+    {
+        "car_id": "13qKUmB9EiMGW8k2xLxCFyst",
+        "type": "Passenger car heavy",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Alfa Romeo",
+        "model": "Escalade Esv Awd",
+        "year": 2005
+    },
+    {
+        "car_id": "mL0QZ38QvpRBZkGyw5yQ37Za",
+        "type": "Sport utility vehicle",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Lancia",
+        "model": "Sportage 4wd",
+        "year": 1940
+    },
+    {
+        "car_id": "SHwLGlAr4V4MYazC31h4Jlq0",
+        "type": "Pickup truck",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Vauxhall",
+        "model": "Z4 3.0i",
+        "year": 2005
+    },
+    {
+        "car_id": "Xl2x0AzupcyTN89eDy6YgNxW",
+        "type": "Sport utility vehicle",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Chevrolet",
+        "model": "Monterey Wagon Fwd",
+        "year": 1950
+    },
+    {
+        "car_id": "wzpEOXpIS5lbYSll9muIXmpx",
+        "type": "Passenger car mini",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Mazda",
+        "model": "A8 L",
+        "year": 2004
+    },
+    {
+        "car_id": "Nzms32o6n1Qb6vXw7CEzoAWB",
+        "type": "Sport utility vehicle",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Saab",
+        "model": "Xc 90 Fwd",
+        "year": 1950
+    },
+    {
+        "car_id": "51EQ6E79nsxh7hat0i7GEapV",
+        "type": "Van",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Datsun",
+        "model": "C350 4matic",
+        "year": 1910
+    },
+    {
+        "car_id": "cToecz4q2t3tqyN7Vr9I6cGr",
+        "type": "Pickup truck",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Farboud",
+        "model": "A4 Cabriolet Quattro",
+        "year": 1918
+    },
+    {
+        "car_id": "dVjamXKA3G3RrhvBeRloSf6n",
+        "type": "Passenger car medium",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Pontiac",
+        "model": "Gto",
+        "year": 1920
+    },
+    {
+        "car_id": "DiuC2N0Fzn3a7RZfTi31l78a",
+        "type": "Pickup truck",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Tesla",
+        "model": "Cayman S",
+        "year": 1958
+    },
+    {
+        "car_id": "9Dg74E9E2r9nkiI66516H5Dd",
+        "type": "Passenger car light",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Porsche",
+        "model": "Tucson 4wd",
+        "year": 1936
+    },
+    {
+        "car_id": "ChneJ36JRrfGRT9K7PYk7JuO",
+        "type": "Passenger car heavy",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Vauxhall",
+        "model": "Rio",
+        "year": 1907
+    },
+    {
+        "car_id": "3Bzp67sscr4EB9z2oXwOOeDZ",
+        "type": "Passenger car compact",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Datsun",
+        "model": "Xk8 Convertible",
+        "year": 1911
+    },
+    {
+        "car_id": "U9rguBlMPga2jKrujS4ITkG5",
+        "type": "Passenger car mini",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "De Lorean",
+        "model": "C350 4matic",
+        "year": 1939
+    },
+    {
+        "car_id": "1Hjeqt0vG69A1eTA9QWz9HLz",
+        "type": "Passenger car heavy",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Maybach",
+        "model": "Gti",
+        "year": 1994
+    },
+    {
+        "car_id": "Mvtf1VqBJKj9ucDaQtz5lqLE",
+        "type": "Passenger car heavy",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "De Lorean",
+        "model": "Taurus Ethanol Ffv",
+        "year": 1928
+    },
+    {
+        "car_id": "adZjBzd9PS4cqcX752vlIBhH",
+        "type": "Passenger car medium",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Vauxhall",
+        "model": "Eclipse",
+        "year": 2017
+    },
+    {
+        "car_id": "7MEBkneh1WhjRlkBu8GKgkp8",
+        "type": "Pickup truck",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Lada",
+        "model": "Ssr Pickup 2wd",
+        "year": 2021
+    },
+    {
+        "car_id": "80Le1AETFd2vQIpjkN43d0t1",
+        "type": "Sport utility vehicle",
+        "fuel": "Ethanol",
+        "transmission": "Automatic",
+        "brand": "Mini",
+        "model": "Xterra 4wd",
+        "year": 1979
+    },
+    {
+        "car_id": "89N1EdHgigDjGKw8OFQUdv32",
+        "type": "Sport utility vehicle",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Corvette",
+        "model": "Es 330",
+        "year": 1932
+    },
+    {
+        "car_id": "lv1w5nYXSWRG01atK8rKW55P",
+        "type": "Sport utility vehicle",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Fiat",
+        "model": "Azera",
+        "year": 1962
+    },
+    {
+        "car_id": "lbPCq38ivwwf6Gl8C12VQyfL",
+        "type": "Passenger car heavy",
+        "fuel": "Ethanol",
+        "transmission": "Automatic",
+        "brand": "Martini",
+        "model": "300c/srt-8",
+        "year": 1935
+    },
+    {
+        "car_id": "9x4fH09v17lwzmywM2vu4v5Q",
+        "type": "Passenger car mini",
+        "fuel": "Ethanol",
+        "transmission": "Automatic",
+        "brand": "Chrysler",
+        "model": "Cayenne S",
+        "year": 1917
+    },
+    {
+        "car_id": "550oUZ7GPh6wFwt47f5HYP1Y",
+        "type": "Sport utility vehicle",
+        "fuel": "Ethanol",
+        "transmission": "Automatic",
+        "brand": "Pontiac",
+        "model": "Ls 430",
+        "year": 2001
+    },
+    {
+        "car_id": "skS0p595L4XCNEkOIUU57T5q",
+        "type": "Van",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Maserati",
+        "model": "Aveo",
+        "year": 2002
+    },
+    {
+        "car_id": "Om9j35QE6mQM4iFqGi4IGA22",
+        "type": "Sport utility vehicle",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Subaru",
+        "model": "M35",
+        "year": 2003
+    },
+    {
+        "car_id": "1VFolZ5DK2NG2BhkzFjT1s4H",
+        "type": "Pickup truck",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Lancia",
+        "model": "Town Car",
+        "year": 1976
+    },
+    {
+        "car_id": "2nEulH1RA5bfJ9W2wM7J3S7i",
+        "type": "Passenger car light",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Suzuki",
+        "model": "Tt Coupe Quattro",
+        "year": 1932
+    },
+    {
+        "car_id": "af5VX6f7MJmQaRO7edj0OYQj",
+        "type": "Passenger car mini",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Koenigsegg",
+        "model": "Q45",
+        "year": 2015
+    },
+    {
+        "car_id": "f84tml84EJVfI0u6s5F27DoU",
+        "type": "Passenger car light",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Spyker",
+        "model": "Range Rover Sport",
+        "year": 1957
+    },
+    {
+        "car_id": "c6oDxcXIemZiwLEjkEeOe7Dz",
+        "type": "Passenger car medium",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Volkswagen",
+        "model": "Montero",
+        "year": 1963
+    },
+    {
+        "car_id": "ioq6T8vM15lH6SpIzs3PZfLj",
+        "type": "Pickup truck",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Chevrolet",
+        "model": "Db9 Volante",
+        "year": 2009
+    },
+    {
+        "car_id": "M0uQ3hONPAJoBNFC23Sp6Usx",
+        "type": "Passenger car mini",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "BMW",
+        "model": "Insight",
+        "year": 1930
+    },
+    {
+        "car_id": "3KAyR56DdyluZh0A8B7ne1cy",
+        "type": "Passenger car light",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Vauxhall",
+        "model": "G1500/2500 Chevy Van 2wd",
+        "year": 1939
+    },
+    {
+        "car_id": "cC749XX4W8sQdCMvJsj1MYAE",
+        "type": "Passenger car heavy",
+        "fuel": "LPG",
+        "transmission": "Manual",
+        "brand": "Opel",
+        "model": "Highlander 4wd",
+        "year": 1956
+    },
+    {
+        "car_id": "cEZ95d4RQqaOchvGk18JjhdZ",
+        "type": "Passenger car mini",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Opel",
+        "model": "Camry",
+        "year": 1951
+    },
+    {
+        "car_id": "fwScO6v9Do6uL8WLpG1aV3Gk",
+        "type": "Sport utility vehicle",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Lancia",
+        "model": "Scion Xa",
+        "year": 2001
+    },
+    {
+        "car_id": "4bZB0crsYcruV03MkJ0O34JT",
+        "type": "Passenger car heavy",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Fiat",
+        "model": "K1500 Tahoe 4wd",
+        "year": 1944
+    },
+    {
+        "car_id": "zCO87T65hbqXtrSWp6deU4Ay",
+        "type": "Passenger car medium",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Corvette",
+        "model": "F150 Ffv  2wd",
+        "year": 1990
+    },
+    {
+        "car_id": "7x105tQE9XmNHpJPrb72yO2Y",
+        "type": "Passenger car mini",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Bentley",
+        "model": "Scion Xa",
+        "year": 2005
+    },
+    {
+        "car_id": "Tq8Q5tPGEcQ5LGlVeukvnEzp",
+        "type": "Sport utility vehicle",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Vauxhall",
+        "model": "Z4 3.0si",
+        "year": 2016
+    },
+    {
+        "car_id": "7X46wj8yofijUV1TZuJD34iF",
+        "type": "Passenger car mini",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Vauxhall",
+        "model": "A4 Avant Quattro",
+        "year": 1961
+    },
+    {
+        "car_id": "XclfEFmUeYDJid7573pj5Zfd",
+        "type": "Passenger car medium",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Mini",
+        "model": "Q45",
+        "year": 1957
+    },
+    {
+        "car_id": "x8P2X6jbApBloYS8sPEgycw1",
+        "type": "Passenger car mini",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Citroen",
+        "model": "Five Hundred Awd",
+        "year": 1959
+    },
+    {
+        "car_id": "496l2WVYol40bf5M9l68hsmg",
+        "type": "Passenger car light",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Cadillac",
+        "model": "Limousine",
+        "year": 1903
+    },
+    {
+        "car_id": "g7diXMh3Dnh40O2JuiHN0fkn",
+        "type": "Passenger car heavy",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Jeep",
+        "model": "Verona",
+        "year": 1997
+    },
+    {
+        "car_id": "hbkyQrU56q42QRB42THlHG5O",
+        "type": "Passenger car heavy",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Seat",
+        "model": "Sedona",
+        "year": 1943
+    },
+    {
+        "car_id": "d6R8Rbb5YSddkA4mcr8X765I",
+        "type": "Van",
+        "fuel": "LPG",
+        "transmission": "Manual",
+        "brand": "Honda",
+        "model": "Passat Wagon 4motion",
+        "year": 1947
+    },
+    {
+        "car_id": "0woRW7taU7pV45EA0shlMx4q",
+        "type": "Passenger car light",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Benz",
+        "model": "Highlander Hybrid 2wd",
+        "year": 2000
+    },
+    {
+        "car_id": "Du0mH0eP8kIaiT7mJ8sviQHx",
+        "type": "Passenger car mini",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Volkswagen",
+        "model": "Veyron",
+        "year": 2004
+    },
+    {
+        "car_id": "3JA8N1jwv8L2aZKbS2otn28u",
+        "type": "Van",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Mitsubishi",
+        "model": "Vue Awd",
+        "year": 2013
+    },
+    {
+        "car_id": "mLGBSTPZDhM2CswO2qiMSm9L",
+        "type": "Sport utility vehicle",
+        "fuel": "CNG",
+        "transmission": "Automatic",
+        "brand": "Bentley",
+        "model": "Dts",
+        "year": 1946
+    },
+    {
+        "car_id": "IVDK1DpayhTRtUYvBJAoCRaM",
+        "type": "Passenger car mini",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Spyker",
+        "model": "Mountaineer 4wd",
+        "year": 1915
+    },
+    {
+        "car_id": "2Q6mkJOEhQOHpjznXlK35T1Z",
+        "type": "Passenger car mini",
+        "fuel": "CNG",
+        "transmission": "Automatic",
+        "brand": "Dacia",
+        "model": "Pilot 2wd",
+        "year": 1994
+    },
+    {
+        "car_id": "zCdf3UGQ6sJOBvpq24x06lp4",
+        "type": "Passenger car light",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Farboud",
+        "model": "Freestyle Awd",
+        "year": 2008
+    },
+    {
+        "car_id": "yqqvjY29eWLnpQM27wMxVJta",
+        "type": "Passenger car mini",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Chevrolet",
+        "model": "Mazda 6",
+        "year": 2021
+    },
+    {
+        "car_id": "3QpZbfwwUUZH0m7x4RSI6auH",
+        "type": "Van",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Chevrolet",
+        "model": "Murano Awd",
+        "year": 1933
+    },
+    {
+        "car_id": "6g1slv956eQ89r8T366nqisc",
+        "type": "Sport utility vehicle",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Volvo",
+        "model": "S4 Avant",
+        "year": 1974
+    },
+    {
+        "car_id": "kNKoogK1EbDGRI2KZ40TE23s",
+        "type": "Passenger car mini",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "McLaren",
+        "model": "E150 Club Wagon",
+        "year": 1926
+    },
+    {
+        "car_id": "cQTYic871aZy9jc0qHV6Gb24",
+        "type": "Passenger car light",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "Citroen",
+        "model": "Sportage 2wd",
+        "year": 1954
+    },
+    {
+        "car_id": "9781Wzm4F4qGb6H1QVbwUOVd",
+        "type": "Passenger car light",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Lamborghini",
+        "model": "Sportage 4wd",
+        "year": 1912
+    },
+    {
+        "car_id": "KOiW4phw1bH9ga928RYsVZfB",
+        "type": "Pickup truck",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Volkswagen",
+        "model": "B4000 4wd",
+        "year": 2015
+    },
+    {
+        "car_id": "49wOIuI8udrHwb1970gG5M95",
+        "type": "Passenger car mini",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Pontiac",
+        "model": "Passat Wagon 4motion",
+        "year": 2004
+    },
+    {
+        "car_id": "W8R5mDxZ9spCDJm5PxecNF0Y",
+        "type": "Passenger car medium",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Jeep",
+        "model": "Forester Awd",
+        "year": 1996
+    },
+    {
+        "car_id": "3r27mF26O79djF6lvDE8Qkm4",
+        "type": "Passenger car mini",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "BMW",
+        "model": "Mountaineer 4wd",
+        "year": 1992
+    },
+    {
+        "car_id": "Kxp0K9QBy5sp7d8qx1r6GekL",
+        "type": "Passenger car light",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Fiat",
+        "model": "Murano Awd",
+        "year": 1964
+    },
+    {
+        "car_id": "2wTlIm2gABcI4H9A70JS8WgV",
+        "type": "Van",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Alfa Romeo",
+        "model": "Pacifica Awd",
+        "year": 1978
+    },
+    {
+        "car_id": "6T2fg3JtP16rjtl0u5qTf0ib",
+        "type": "Passenger car medium",
+        "fuel": "Ethanol",
+        "transmission": "Automatic",
+        "brand": "Koenigsegg",
+        "model": "Ls",
+        "year": 1952
+    },
+    {
+        "car_id": "5lyYo6pFra2mF81rts0EW6bX",
+        "type": "Sport utility vehicle",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Ferrari",
+        "model": "Malibu",
+        "year": 1908
+    },
+    {
+        "car_id": "Elf7YXNrgajqib6o97J3u5Om",
+        "type": "Passenger car medium",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Lancia",
+        "model": "Maxima",
+        "year": 1947
+    },
+    {
+        "car_id": "8c4Xm8vyOvW4GVmlshZzy01j",
+        "type": "Passenger car medium",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Dacia",
+        "model": "Xterra 4wd",
+        "year": 1963
+    },
+    {
+        "car_id": "8UsWArV6kBh4EUbH98m6y6n7",
+        "type": "Sport utility vehicle",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Datsun",
+        "model": "E350 4matic (wagon)",
+        "year": 2023
+    },
+    {
+        "car_id": "33gLsS4yFGuKl8lDFp2rYdXP",
+        "type": "Passenger car mini",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Skoda",
+        "model": "M35",
+        "year": 2008
+    },
+    {
+        "car_id": "hpX6x7K2QvnE0mns86z08Bzu",
+        "type": "Passenger car heavy",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Lotus",
+        "model": "Spectra(ld)",
+        "year": 2011
+    },
+    {
+        "car_id": "cLPG5U3ZK70oNVSajfgy2XVu",
+        "type": "Passenger car mini",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Lexus",
+        "model": "Dts",
+        "year": 1944
+    },
+    {
+        "car_id": "pYM7WRE1Ble032FyRAOY6HSp",
+        "type": "Passenger car heavy",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Lancia",
+        "model": "Accent",
+        "year": 1960
+    },
+    {
+        "car_id": "GQDRkjBNfu6p6sMe2rFHGd7n",
+        "type": "Van",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Citroen",
+        "model": "Explorer 4wd",
+        "year": 1965
+    },
+    {
+        "car_id": "lPg3JhdUdV5pPUVfxK1fue84",
+        "type": "Passenger car light",
+        "fuel": "LPG",
+        "transmission": "Manual",
+        "brand": "Fiat",
+        "model": "Dts",
+        "year": 1906
+    },
+    {
+        "car_id": "fR8zecvv77v7ZE5a0XHaKJuD",
+        "type": "Passenger car compact",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Smart",
+        "model": "Forenza Wagon",
+        "year": 1927
+    },
+    {
+        "car_id": "C1Xl0x92gzb3gvUB9q3kazUY",
+        "type": "Pickup truck",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Ford",
+        "model": "S2000",
+        "year": 1959
+    },
+    {
+        "car_id": "1f9yN58lz670BQtW3cYzz2WO",
+        "type": "Passenger car mini",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Peugeot",
+        "model": "4runner 4wd",
+        "year": 1940
+    },
+    {
+        "car_id": "e8f1C03WkDJV9fbJc6zc27y8",
+        "type": "Sport utility vehicle",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Dodge",
+        "model": "Scion Xa",
+        "year": 2005
+    },
+    {
+        "car_id": "2bfe7gU7ifB656GN86Um357b",
+        "type": "Passenger car medium",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "Mazda",
+        "model": "S4 Avant",
+        "year": 2012
+    },
+    {
+        "car_id": "JW6o07YOfFYmg9CWjxZRtEGT",
+        "type": "Pickup truck",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Volvo",
+        "model": "Uplander Fwd",
+        "year": 1967
+    },
+    {
+        "car_id": "EaggEESFXniuP9h6d2p008tN",
+        "type": "Sport utility vehicle",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Ford",
+        "model": "Xc 90 Awd",
+        "year": 1954
+    },
+    {
+        "car_id": "r4A5m47y5psSs3d2c712Ev20",
+        "type": "Passenger car compact",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Audi",
+        "model": "Equinox Fwd",
+        "year": 1917
+    },
+    {
+        "car_id": "IMlYIvslU3Xd0FExUm59DSD3",
+        "type": "Sport utility vehicle",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "DAF",
+        "model": "G35",
+        "year": 2022
+    },
+    {
+        "car_id": "qfmUcLeoskoFsb6njcOqTXWu",
+        "type": "Sport utility vehicle",
+        "fuel": "LPG",
+        "transmission": "Manual",
+        "brand": "Vauxhall",
+        "model": "Civic Hybrid",
+        "year": 1914
+    },
+    {
+        "car_id": "u7Sq14WB3MBWC7Us72UgEPEP",
+        "type": "Pickup truck",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Peugeot",
+        "model": "X-type Sport Brake",
+        "year": 1919
+    },
+    {
+        "car_id": "DXFGp95AL6r5g86AM1FhKV4j",
+        "type": "Van",
+        "fuel": "CNG",
+        "transmission": "Automatic",
+        "brand": "Ligier",
+        "model": "Tt Coupe",
+        "year": 1929
+    },
+    {
+        "car_id": "1Cjw9RwBzs80aAb81ZFwfXs4",
+        "type": "Passenger car light",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "De Lorean",
+        "model": "9-5 Sedan",
+        "year": 1933
+    },
+    {
+        "car_id": "8C85f8kbaRDamJTL0gq9r3pH",
+        "type": "Sport utility vehicle",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Bentley",
+        "model": "Sequoia 2wd",
+        "year": 1958
+    },
+    {
+        "car_id": "v52EgdjTD18Adv7B6AKy9L0n",
+        "type": "Passenger car heavy",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Audi",
+        "model": "Avalon",
+        "year": 1965
+    },
+    {
+        "car_id": "N3s067gQ2s4c4Rv5DOqFt0SN",
+        "type": "Sport utility vehicle",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "De Lorean",
+        "model": "Grand Cherokee 4wd",
+        "year": 1909
+    },
+    {
+        "car_id": "05yQT2706W4i4j3I1udW6O2T",
+        "type": "Pickup truck",
+        "fuel": "CNG",
+        "transmission": "Automatic",
+        "brand": "Peugeot",
+        "model": "Five Hundred Awd",
+        "year": 1940
+    },
+    {
+        "car_id": "kejcJpA50WSNJtlEx4bDTFk6",
+        "type": "Sport utility vehicle",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Koenigsegg",
+        "model": "650ci Convertible",
+        "year": 1924
+    },
+    {
+        "car_id": "glt54O9CCgg8nBKkLT8577mj",
+        "type": "Sport utility vehicle",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Lincoln",
+        "model": "Passat Wagon 4motion",
+        "year": 2016
+    },
+    {
+        "car_id": "cfmJ84B9P3K5405mKi7uhwLK",
+        "type": "Passenger car compact",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "Nissan",
+        "model": "Endeavor 2wd",
+        "year": 1907
+    },
+    {
+        "car_id": "1w6DKRI5Y5jC08Z7GZ5sk96T",
+        "type": "Passenger car mini",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Citroen",
+        "model": "Mini Cooper Convertible",
+        "year": 1904
+    },
+    {
+        "car_id": "2B8wfOI9sIAjM8aNkdaA6vsp",
+        "type": "Passenger car light",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Smart",
+        "model": "F150 Supercrew 4wd",
+        "year": 1982
+    },
+    {
+        "car_id": "940o3EYIiLj7UiEf4rkKSI0r",
+        "type": "Sport utility vehicle",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "Vauxhall",
+        "model": "Sequoia 2wd",
+        "year": 1903
+    },
+    {
+        "car_id": "fu0fAwHUdKWUEJW94YvtIZgB",
+        "type": "Passenger car light",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "KIA",
+        "model": "Frontier V6-2wd",
+        "year": 1967
+    },
+    {
+        "car_id": "yj8PV76pWsgHF9uYa2FYT90b",
+        "type": "Passenger car mini",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Lamborghini",
+        "model": "Bentley Arnage",
+        "year": 1958
+    },
+    {
+        "car_id": "VrdGU2Ef5ULC26Bu28w75HY9",
+        "type": "Passenger car medium",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Lincoln",
+        "model": "Titan 4wd",
+        "year": 1944
+    },
+    {
+        "car_id": "6iBoTTE271HwSY4Vp4k03K5O",
+        "type": "Passenger car light",
+        "fuel": "Ethanol",
+        "transmission": "Automatic",
+        "brand": "Seat",
+        "model": "Trailblazer Awd",
+        "year": 1939
+    },
+    {
+        "car_id": "VU17xH3tpqf9uxaFWCg176vu",
+        "type": "Passenger car mini",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Citroen",
+        "model": "Mini Cooper S Convertible",
+        "year": 2004
+    },
+    {
+        "car_id": "10wCfA8Lcj6N9kRSa7AlAtlE",
+        "type": "Van",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "BMW",
+        "model": "X5 4.8is",
+        "year": 1914
+    },
+    {
+        "car_id": "LIFVROk7R766rbYR2K65jZIq",
+        "type": "Passenger car compact",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "Mini",
+        "model": "Sebring 4-dr",
+        "year": 1977
+    },
+    {
+        "car_id": "p535906V7GJcsWng1NSoBGjQ",
+        "type": "Pickup truck",
+        "fuel": "Ethanol",
+        "transmission": "Automatic",
+        "brand": "Honda",
+        "model": "E350",
+        "year": 2001
+    },
+    {
+        "car_id": "WJJvj68QIYyJLdAaYTpCl1P5",
+        "type": "Passenger car compact",
+        "fuel": "Ethanol",
+        "transmission": "Automatic",
+        "brand": "Daewoo",
+        "model": "Camry Solara",
+        "year": 1934
+    },
+    {
+        "car_id": "o7bbGeCEsvLiFcS2Ynn9lPZX",
+        "type": "Passenger car medium",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Vauxhall",
+        "model": "Db9 Coupe Manual",
+        "year": 2023
+    },
+    {
+        "car_id": "GBTsTGAAxMwR4i4CX85uO1P4",
+        "type": "Van",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Porsche",
+        "model": "Montero",
+        "year": 1930
+    },
+    {
+        "car_id": "mAeKqjNTsLwH3uTC0e40lj2G",
+        "type": "Passenger car medium",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "DAF",
+        "model": "G35",
+        "year": 1922
+    },
+    {
+        "car_id": "x6jBvZGNnt3no3M8c7bgGapS",
+        "type": "Passenger car compact",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Corvette",
+        "model": "9-3 Convertible",
+        "year": 1970
+    },
+    {
+        "car_id": "E0uWdT5t6V2Kn5CEHpCwGZkZ",
+        "type": "Passenger car mini",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Rover",
+        "model": "Boxster",
+        "year": 2012
+    },
+    {
+        "car_id": "ndAvo5g07j3J353Qq0WNkKxy",
+        "type": "Passenger car medium",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Maybach",
+        "model": "Milan",
+        "year": 1904
+    },
+    {
+        "car_id": "jPly3x8a7Q8pyjPI93hXBIu3",
+        "type": "Sport utility vehicle",
+        "fuel": "CNG",
+        "transmission": "Automatic",
+        "brand": "Jaguar",
+        "model": "C1500 Yukon 2wd",
+        "year": 1903
+    },
+    {
+        "car_id": "KN5HE37qEAt6Ae3wMX8eQ38o",
+        "type": "Passenger car heavy",
+        "fuel": "CNG",
+        "transmission": "Automatic",
+        "brand": "Citroen",
+        "model": "L-140/715 Gallardo",
+        "year": 1933
+    },
+    {
+        "car_id": "b3Ee915D700xH48ZnEwQ8Nqz",
+        "type": "Passenger car light",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "McLaren",
+        "model": "Envoy Xl 4wd",
+        "year": 1939
+    },
+    {
+        "car_id": "9LF8ov3oaqJU083gWBwPMCdp",
+        "type": "Passenger car compact",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Maybach",
+        "model": "Equinox Awd",
+        "year": 1978
+    },
+    {
+        "car_id": "S7i1XjQnrZ7vSnklMpR7mLmq",
+        "type": "Passenger car medium",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Lada",
+        "model": "Phaeton",
+        "year": 1975
+    },
+    {
+        "car_id": "7p97Q8Y8N41sHI8u67Oz44Rm",
+        "type": "Pickup truck",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Honda",
+        "model": "Rx 400h 4wd",
+        "year": 2002
+    },
+    {
+        "car_id": "XOryPZ0ta15mZzbXbu6430jw",
+        "type": "Passenger car medium",
+        "fuel": "Ethanol",
+        "transmission": "Automatic",
+        "brand": "Martini",
+        "model": "Vibe",
+        "year": 2002
+    },
+    {
+        "car_id": "orhe9V7PEUGqoG1S4HVMF9uh",
+        "type": "Van",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Tesla",
+        "model": "E55 Amg (wagon)",
+        "year": 1949
+    },
+    {
+        "car_id": "BsS0gR70Gzv9rabLFiZCtirD",
+        "type": "Passenger car mini",
+        "fuel": "Ethanol",
+        "transmission": "Automatic",
+        "brand": "Lincoln",
+        "model": "Sl600",
+        "year": 1907
+    },
+    {
+        "car_id": "tlI3cmFtuJO0qc2SMxST2O4v",
+        "type": "Sport utility vehicle",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Ford",
+        "model": "Santafe 4wd",
+        "year": 1960
+    },
+    {
+        "car_id": "G0AicKbS0Vyk1lpsqH67tJOw",
+        "type": "Van",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Saab",
+        "model": "S80 Fwd",
+        "year": 1947
+    },
+    {
+        "car_id": "XDhvXgrizabxm7Vcp4W6513h",
+        "type": "Passenger car mini",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Lexus",
+        "model": "L-140/715 Gallardo",
+        "year": 1947
+    },
+    {
+        "car_id": "WKfA2PSFi4iZcjkccsb7OI0K",
+        "type": "Sport utility vehicle",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Maybach",
+        "model": "Gti",
+        "year": 1917
+    },
+    {
+        "car_id": "0N31EQw1ktFmkvshjhuT5UtQ",
+        "type": "Passenger car mini",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Dacia",
+        "model": "Rabbit",
+        "year": 1940
+    },
+    {
+        "car_id": "465m65teXY85ham46vyN2w13",
+        "type": "Sport utility vehicle",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "De Lorean",
+        "model": "Cayenne",
+        "year": 2022
+    },
+    {
+        "car_id": "SvBq4gRE2yY9iCjYmF7ct8XS",
+        "type": "Passenger car compact",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Mini",
+        "model": "Cayenne",
+        "year": 1993
+    },
+    {
+        "car_id": "loIZBu9s7na44K5g8IIqMK3x",
+        "type": "Passenger car light",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "De Lorean",
+        "model": "Xterra 4wd",
+        "year": 1987
+    },
+    {
+        "car_id": "g7GEU538n9eW3aB1K7nygc0L",
+        "type": "Passenger car mini",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Bentley",
+        "model": "Gx 470",
+        "year": 2018
+    },
+    {
+        "car_id": "84pxFVOx5Cm6yJNDe43TutGi",
+        "type": "Passenger car heavy",
+        "fuel": "Ethanol",
+        "transmission": "Automatic",
+        "brand": "Ligier",
+        "model": "H3 4wd",
+        "year": 1956
+    },
+    {
+        "car_id": "iNXhXMJhejZTrCY3lwylA1BE",
+        "type": "Passenger car light",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Mercedes",
+        "model": "Rendezvous Fwd",
+        "year": 2014
+    },
+    {
+        "car_id": "CKG29W22i3M50Tc4tKY4VgPk",
+        "type": "Pickup truck",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Citroen",
+        "model": "Colorado 2wd",
+        "year": 1944
+    },
+    {
+        "car_id": "vVY5QdOMEM6V2IN7LVM4ErXB",
+        "type": "Passenger car heavy",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Martini",
+        "model": "Quest",
+        "year": 1915
+    },
+    {
+        "car_id": "NXoLY2hfl2iCCMkx39Xd052g",
+        "type": "Sport utility vehicle",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Fiat",
+        "model": "S40 Awd",
+        "year": 1983
+    },
+    {
+        "car_id": "8Tx4ik8ovnlcs5m4aqDt3P08",
+        "type": "Van",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Martini",
+        "model": "330ci Convertible",
+        "year": 1942
+    },
+    {
+        "car_id": "RG7xzRRS19Yc7G4A0OBmVoJv",
+        "type": "Passenger car compact",
+        "fuel": "LPG",
+        "transmission": "Manual",
+        "brand": "Martini",
+        "model": "Baja Awd",
+        "year": 1974
+    },
+    {
+        "car_id": "61mamTefEtooByc6MoAQ1IQU",
+        "type": "Sport utility vehicle",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Skoda",
+        "model": "Z4 3.0si",
+        "year": 1919
+    },
+    {
+        "car_id": "4yx86IQrRKRYxDkabVUKGQ5z",
+        "type": "Passenger car heavy",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Corvette",
+        "model": "Santafe 2wd",
+        "year": 1976
+    },
+    {
+        "car_id": "DhzU5GW150FdHXVzRYSTi5bS",
+        "type": "Passenger car heavy",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Alfa Romeo",
+        "model": "525i",
+        "year": 2017
+    },
+    {
+        "car_id": "1RUL4Hd58JQvn7z6UioL9RBS",
+        "type": "Passenger car compact",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Seat",
+        "model": "V8 Vantage",
+        "year": 2017
+    },
+    {
+        "car_id": "1SBNuPuz6ctB0940uYeF1ME3",
+        "type": "Passenger car light",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Subaru",
+        "model": "K1500 Tahoe 4wd",
+        "year": 2018
+    },
+    {
+        "car_id": "WzxE185aR8wkUpj0Cv1Npyaa",
+        "type": "Sport utility vehicle",
+        "fuel": "CNG",
+        "transmission": "Automatic",
+        "brand": "Benz",
+        "model": "Touareg",
+        "year": 1983
+    },
+    {
+        "car_id": "LEsaxA69x0Dw3UAq7OOP9037",
+        "type": "Passenger car compact",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "McLaren",
+        "model": "Avalon",
+        "year": 2008
+    },
+    {
+        "car_id": "8f08Pkw7nO0b2G0vX57C9gIH",
+        "type": "Sport utility vehicle",
+        "fuel": "Ethanol",
+        "transmission": "Automatic",
+        "brand": "Dodge",
+        "model": "Escape 4wd",
+        "year": 1994
+    },
+    {
+        "car_id": "uWJreeXQS5VK2t534M9waQ59",
+        "type": "Passenger car mini",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Mini",
+        "model": "Clk350",
+        "year": 1980
+    },
+    {
+        "car_id": "3fd39ln02UVCEg6KIYbulNrL",
+        "type": "Sport utility vehicle",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "DAF",
+        "model": "Mdx 4wd",
+        "year": 1977
+    },
+    {
+        "car_id": "XW3qamadn38z0ZBhZSb5l8aX",
+        "type": "Pickup truck",
+        "fuel": "CNG",
+        "transmission": "Automatic",
+        "brand": "Ford",
+        "model": "Impala",
+        "year": 1930
+    },
+    {
+        "car_id": "S0ibQ3V887gD8x3XW8jvzgdw",
+        "type": "Passenger car mini",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Bentley",
+        "model": "Caravan 2wd",
+        "year": 1935
+    },
+    {
+        "car_id": "FwfbK9KI4GNhSe94lr5lWSf7",
+        "type": "Passenger car compact",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Pontiac",
+        "model": "Highlander 2wd",
+        "year": 1970
+    },
+    {
+        "car_id": "zbRahhBElO0DPU0GVNTDutpi",
+        "type": "Passenger car heavy",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Pontiac",
+        "model": "Z4 3.0si",
+        "year": 2019
+    },
+    {
+        "car_id": "CzpUvseQxm8R8Xj33436n1TF",
+        "type": "Passenger car light",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Suzuki",
+        "model": "Cl65 Amg",
+        "year": 1935
+    },
+    {
+        "car_id": "XZygfmR8XAYSBWwrIrwTJCzM",
+        "type": "Passenger car heavy",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Ferrari",
+        "model": "Armada 4wd",
+        "year": 1947
+    },
+    {
+        "car_id": "288p98fMc4Tzt0z5aFkXTq0T",
+        "type": "Passenger car medium",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Peugeot",
+        "model": "Rendezvous Fwd",
+        "year": 1943
+    },
+    {
+        "car_id": "YMEJ6muctM5Oq9f4E2Se3G16",
+        "type": "Passenger car compact",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Dino",
+        "model": "Mazda 6 Sport Wagon",
+        "year": 1936
+    },
+    {
+        "car_id": "EKITtZ8CHsnMmvd1SOi7n0c0",
+        "type": "Pickup truck",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Lamborghini",
+        "model": "Freestyle Awd",
+        "year": 1966
+    },
+    {
+        "car_id": "Bk8xB47DSavbDTUUdEFjHQu3",
+        "type": "Passenger car medium",
+        "fuel": "LPG",
+        "transmission": "Manual",
+        "brand": "Chrysler",
+        "model": "Explorer 4wd",
+        "year": 1928
+    },
+    {
+        "car_id": "3W5ITr4gpvTZZy5f7hvVVsqy",
+        "type": "Passenger car compact",
+        "fuel": "Ethanol",
+        "transmission": "Automatic",
+        "brand": "Dodge",
+        "model": "Bentley Arnage",
+        "year": 1953
+    },
+    {
+        "car_id": "35bvPP5p7fFzS72qi4XWVqvf",
+        "type": "Pickup truck",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Jeep",
+        "model": "Sedona",
+        "year": 1982
+    },
+    {
+        "car_id": "V2ehqRWRYQysz6S76kytaJMj",
+        "type": "Sport utility vehicle",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Chevrolet",
+        "model": "A6 Quattro",
+        "year": 1976
+    },
+    {
+        "car_id": "2r6KWP6b28lEtu8I5Qp96j1V",
+        "type": "Passenger car mini",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Martini",
+        "model": "E500",
+        "year": 1922
+    },
+    {
+        "car_id": "biyPpuUgCYQaUVbTn1ZP7175",
+        "type": "Passenger car mini",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Renault",
+        "model": "Wrangler/tj 4wd",
+        "year": 2011
+    },
+    {
+        "car_id": "9LFGa2yG2JOfe20ODK7KOzQF",
+        "type": "Pickup truck",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Tesla",
+        "model": "Durango 4wd",
+        "year": 1957
+    },
+    {
+        "car_id": "5LSUQbhxruvtVV9Vxcmeh4mo",
+        "type": "Passenger car medium",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Seat",
+        "model": "Is 350",
+        "year": 1931
+    },
+    {
+        "car_id": "4R3nzFtpLPf3L3kgVK76wEd2",
+        "type": "Sport utility vehicle",
+        "fuel": "CNG",
+        "transmission": "Automatic",
+        "brand": "DAF",
+        "model": "Outback Awd",
+        "year": 1953
+    },
+    {
+        "car_id": "9gAKkAC4otmXb0ed340OUa5f",
+        "type": "Passenger car light",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Mercedes",
+        "model": "C15 Silverado Hybrid 2wd",
+        "year": 1919
+    },
+    {
+        "car_id": "XaLUNJH3yPIte8Ga08t1l631",
+        "type": "Van",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Toyota",
+        "model": "Toyota Tacoma 4wd",
+        "year": 1987
+    },
+    {
+        "car_id": "snrq2z9C1lSHLlxsyvIhpljR",
+        "type": "Passenger car medium",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "Jaguar",
+        "model": "Armada 2wd",
+        "year": 1964
+    },
+    {
+        "car_id": "qV0AzsS6l07Cy2aU69n3u75q",
+        "type": "Passenger car heavy",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Martini",
+        "model": "Sequoia 2wd",
+        "year": 1945
+    },
+    {
+        "car_id": "95GtTQcy7U9o8jP4Tj5519Kx",
+        "type": "Passenger car heavy",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Mitsubishi",
+        "model": "Endeavor 2wd",
+        "year": 1925
+    },
+    {
+        "car_id": "Udear6nPvTYhZGJ6umd6LU0r",
+        "type": "Sport utility vehicle",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Suzuki",
+        "model": "Xkr Convertible",
+        "year": 2006
+    },
+    {
+        "car_id": "CvmDs8Wq22c4Wo6G14m7DxLZ",
+        "type": "Sport utility vehicle",
+        "fuel": "CNG",
+        "transmission": "Automatic",
+        "brand": "Bugatti",
+        "model": "Srx Awd",
+        "year": 1986
+    },
+    {
+        "car_id": "S5NVHmYIiz46lH5Eb6AOu75y",
+        "type": "Sport utility vehicle",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "Alfa Romeo",
+        "model": "Sorento 4wd",
+        "year": 2000
+    },
+    {
+        "car_id": "3rizo4WsD53w67Ua7ZxapNfl",
+        "type": "Van",
+        "fuel": "LPG",
+        "transmission": "Manual",
+        "brand": "Daihatsu",
+        "model": "A8 L",
+        "year": 1954
+    },
+    {
+        "car_id": "376SyxcWyGAZgiM8fxddj8OG",
+        "type": "Pickup truck",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Vauxhall",
+        "model": "Slk350",
+        "year": 1952
+    },
+    {
+        "car_id": "b19059m8H8vmL9Hjg4GgjyL8",
+        "type": "Passenger car light",
+        "fuel": "LPG",
+        "transmission": "Manual",
+        "brand": "Fiat",
+        "model": "Corvette",
+        "year": 1993
+    },
+    {
+        "car_id": "P8FfH61zaHApfSuxuKpme79p",
+        "type": "Passenger car light",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "Bentley",
+        "model": "Passat Wagon 4motion",
+        "year": 1940
+    },
+    {
+        "car_id": "1UNN2yUcaa2bb9bZ67Ua00Cr",
+        "type": "Van",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Ligier",
+        "model": "Colorado Crew Cab 2wd",
+        "year": 1909
+    },
+    {
+        "car_id": "TE9ixtpmzI1Ha20100pM8k9D",
+        "type": "Passenger car light",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Volvo",
+        "model": "Endeavor 4wd",
+        "year": 1959
+    },
+    {
+        "car_id": "35RE4WkK2e4tJ5vG99j24NdN",
+        "type": "Passenger car light",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Ferrari",
+        "model": "A4",
+        "year": 2005
+    },
+    {
+        "car_id": "J1bQ6FuvMMri0YjCvP6J1RWM",
+        "type": "Passenger car light",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Spyker",
+        "model": "Outlander 4wd",
+        "year": 1977
+    },
+    {
+        "car_id": "xWK53CFyOpOuZG52sFE2uvFi",
+        "type": "Passenger car mini",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Hyundai",
+        "model": "Sportage 4wd",
+        "year": 1968
+    },
+    {
+        "car_id": "bR2qVtNgTr9KsFF4YHl7EnPV",
+        "type": "Passenger car heavy",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "Renault",
+        "model": "Pathfinder 4wd",
+        "year": 1982
+    },
+    {
+        "car_id": "r5Q4PPz09w2lylwrcLQO1aTv",
+        "type": "Passenger car light",
+        "fuel": "Electric",
+        "transmission": "Automatic",
+        "brand": "Citroen",
+        "model": "Legacy Awd",
+        "year": 1984
+    },
+    {
+        "car_id": "SN2qqurl5PAx6jLM5nkq43Oq",
+        "type": "Pickup truck",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Alfa Romeo",
+        "model": "Gs 300/gs 430",
+        "year": 1971
+    },
+    {
+        "car_id": "uCJgvGkUlZwf1786p0tyerSm",
+        "type": "Pickup truck",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Lincoln",
+        "model": "S60 Fwd",
+        "year": 2008
+    },
+    {
+        "car_id": "noS068zs4Mf08sntoH8j0Q25",
+        "type": "Pickup truck",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Honda",
+        "model": "V70 Fwd",
+        "year": 2018
+    },
+    {
+        "car_id": "I6vYRCou56a6Swm1zf256v8n",
+        "type": "Passenger car light",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Dacia",
+        "model": "Commander 4wd",
+        "year": 2002
+    },
+    {
+        "car_id": "j420q0Hbg59dztGbpqBEjbVj",
+        "type": "Sport utility vehicle",
+        "fuel": "LPG",
+        "transmission": "Manual",
+        "brand": "Lotus",
+        "model": "Rendezvous Awd",
+        "year": 1914
+    },
+    {
+        "car_id": "HI0l8tKp2Pf47Qe9vzeEafMZ",
+        "type": "Van",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Aston Martin",
+        "model": "Highlander Hybrid 4wd",
+        "year": 1908
+    },
+    {
+        "car_id": "s0tzXr3JTiw80NsHcXL0lh6b",
+        "type": "Passenger car light",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Lada",
+        "model": "Outback Awd",
+        "year": 1925
+    },
+    {
+        "car_id": "VpwcXQ0WDnPbaXf9Ei15k6iL",
+        "type": "Passenger car light",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Suzuki",
+        "model": "K1500 Silverado 4wd",
+        "year": 1974
+    },
+    {
+        "car_id": "EGj1fBjnK08CqvhH9U11kosj",
+        "type": "Passenger car heavy",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "De Lorean",
+        "model": "A6",
+        "year": 2011
+    },
+    {
+        "car_id": "lyCrG77e7lra4yfmF27lrD3T",
+        "type": "Passenger car mini",
+        "fuel": "Electric",
+        "transmission": "Manual",
+        "brand": "Daihatsu",
+        "model": "M3",
+        "year": 1973
+    },
+    {
+        "car_id": "W20PfP42csGSH3Epa123BK49",
+        "type": "Passenger car light",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Daihatsu",
+        "model": "Is 350",
+        "year": 1916
+    },
+    {
+        "car_id": "q53FNCh1Ccf2bJAZ20ohYr3p",
+        "type": "Pickup truck",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Mercedes",
+        "model": "F150 Pickup 4wd",
+        "year": 1998
+    },
+    {
+        "car_id": "x2I4LxwrbO5uRo5BTZEMIN0Z",
+        "type": "Sport utility vehicle",
+        "fuel": "Diesel",
+        "transmission": "Manual",
+        "brand": "Toyota",
+        "model": "Milan",
+        "year": 2021
+    },
+    {
+        "car_id": "I1ErZDaUUex4NupF6ZODm9Ee",
+        "type": "Passenger car heavy",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Jaguar",
+        "model": "Xj8",
+        "year": 1937
+    },
+    {
+        "car_id": "YzztA0R4tZgnCU0jxSRSl047",
+        "type": "Passenger car medium",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Lancia",
+        "model": "Jetta",
+        "year": 1915
+    },
+    {
+        "car_id": "v8f8tHUiU8z7gZSQg1JM8sjO",
+        "type": "Passenger car medium",
+        "fuel": "LPG",
+        "transmission": "Automatic",
+        "brand": "Volvo",
+        "model": "Range Rover Sport",
+        "year": 1949
+    },
+    {
+        "car_id": "dpi3kXl7IPCX28Ru8PyXSE11",
+        "type": "Passenger car heavy",
+        "fuel": "Ethanol",
+        "transmission": "Manual",
+        "brand": "Noble",
+        "model": "Toyota Tacoma 4wd",
+        "year": 1919
+    },
+    {
+        "car_id": "AqK7hIP0L9ad8hi4LnnBXI1a",
+        "type": "Passenger car heavy",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Cadillac",
+        "model": "F150 Pickup 2wd",
+        "year": 1905
+    },
+    {
+        "car_id": "3F7tIx9Km6eiJISemWte0z2X",
+        "type": "Passenger car compact",
+        "fuel": "CNG",
+        "transmission": "Manual",
+        "brand": "Bentley",
+        "model": "X-type Sport Brake",
+        "year": 1908
+    },
+    {
+        "car_id": "gNyGtT2VGltmmIc6lFMjhdOF",
+        "type": "Passenger car compact",
+        "fuel": "Methanol",
+        "transmission": "Automatic",
+        "brand": "Land Rover",
+        "model": "Scion Xa",
+        "year": 1931
+    },
+    {
+        "car_id": "1TN6UbB111UYXZ5v3G5i0hlj",
+        "type": "Sport utility vehicle",
+        "fuel": "Diesel",
+        "transmission": "Automatic",
+        "brand": "Skoda",
+        "model": "S4",
+        "year": 1904
+    },
+    {
+        "car_id": "209od3bZ4cA0FQC2T2EC5ark",
+        "type": "Passenger car light",
+        "fuel": "Gasoline",
+        "transmission": "Automatic",
+        "brand": "Vauxhall",
+        "model": "B9 Tribeca Awd",
+        "year": 2013
+    },
+    {
+        "car_id": "7TumMYHlMex96sB7E0zpGJh6",
+        "type": "Passenger car heavy",
+        "fuel": "Gasoline",
+        "transmission": "Manual",
+        "brand": "Lancia",
+        "model": "Crown Victoria Police",
+        "year": 1902
+    },
+    {
+        "car_id": "4gnbXCIK782AlAW612tuyi98",
+        "type": "Sport utility vehicle",
+        "fuel": "Methanol",
+        "transmission": "Manual",
+        "brand": "Cadillac",
+        "model": "Xj8",
+        "year": 1979
+    }
+]
