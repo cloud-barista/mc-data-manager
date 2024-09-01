@@ -32,7 +32,7 @@ var rootCmd = &cobra.Command{
 	Long: `It is a tool that builds an environment for verification of data migration technology and 
 generates test data necessary for data migration.`,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		log.LogFile()
+		log.Info("Data Manager started")
 		return nil
 	},
 }

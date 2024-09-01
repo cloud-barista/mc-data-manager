@@ -260,7 +260,6 @@ func applyNRDMValue(src map[string]string, p string, datamoldParams *DatamoldPar
 		}
 	}
 
-	// 데이터 대입
 	if p == "src" {
 		datamoldParams.SrcProvider.Provider = provider
 		if provider == "aws" {
@@ -310,10 +309,8 @@ func applyRDMValue(src map[string]string, p string, datamoldParams *DatamoldPara
 		return fmt.Errorf("provider[aws,gcp,ncp] error : %s", provider)
 	}
 
-	// 무결성 검증을 위한 변수 선언
 	var username, password, host, port string
 
-	// 공통 필드 검증
 	username, ok = src["username"]
 	if !ok {
 		return errors.New("does not exist username")
@@ -334,7 +331,6 @@ func applyRDMValue(src map[string]string, p string, datamoldParams *DatamoldPara
 		return errors.New("does not exist port")
 	}
 
-	// 데이터 대입
 	if p == "src" {
 		datamoldParams.SrcProvider.Provider = provider
 		datamoldParams.SrcProvider.Username = username
