@@ -21,7 +21,7 @@ var mu sync.Mutex
 
 const (
 	// Define the constant path for the credentials file
-	CredentialsFilePath = ".dm/var/run/mc-data-manager/profile/auth/auth.json"
+	CredentialsFilePath = "./data/var/run/mc-data-manager/profile/auth/auth.json"
 )
 
 // CredentialsManager interface definition
@@ -169,12 +169,10 @@ func (fcm *FileCredentialsManager) LoadCredentialsByProfile(profileName string, 
 	if err != nil {
 		return nil, err
 	}
-
 	credentials, exists := profiles[profileName]
 	if !exists {
 		return nil, errors.New("profile not found")
 	}
-
 	switch provider {
 	case "aws":
 		return credentials.AWS, nil

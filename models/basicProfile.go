@@ -15,6 +15,8 @@ limitations under the License.
 */
 package models
 
+import "mime/multipart"
+
 type BaseProfile struct {
 	ProfileName string `json:"profileName" form:"profileName"`
 }
@@ -47,4 +49,9 @@ type GCPCredentials struct {
 	AuthProviderCertURL string `json:"auth_provider_x509_cert_url" form:"auth_provider_x509_cert_url"`
 	ClientCertURL       string `json:"client_x509_cert_url" form:"client_x509_cert_url"`
 	UniverseDomain      string `json:"universe_domain" form:"universe_domain"`
+}
+
+type GCPCredentalCreateParams struct {
+	GCPCredentialJson string                `form:"gcpCredentialJson" json:"gcpCredentialJson"`
+	GCPCredential     *multipart.FileHeader `form:"gcpCredential" json:"-" swaggerignore:"true"`
 }
