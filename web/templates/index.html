@@ -39,7 +39,7 @@
                             </a>
                             <div class="collapse" id="collapseObjectStorageGenerate" data-bs-parent="#collapseObjectStorageGenerate">
                                 <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="/generate/s3">AWS S3</a>
+                                    <a class="nav-link" href="/generate/aws">AWS S3</a>
                                     <a class="nav-link" href="/generate/gcp">Google Cloud Storage</a>
                                     <a class="nav-link" href="/generate/ncp">Naver Object Storage</a>
                                 </nav>
@@ -87,7 +87,7 @@
                                         </a>
                                         <div class="collapse" id="migrationCollapseLinux" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionOnpremiseMigration">
                                             <nav class="sb-sidenav-menu-nested nav">
-                                                <a class="nav-link" href="/migration/linux/s3">AWS S3</a>
+                                                <a class="nav-link" href="/migration/linux/aws">AWS S3</a>
                                                 <a class="nav-link" href="/migration/linux/gcp">Google Cloud Storage</a>
                                                 <a class="nav-link" href="/migration/linux/ncp">Naver Object Storage</a>
                                             </nav>
@@ -99,7 +99,7 @@
                                         </a>
                                         <div class="collapse" id="migrationCollapseWindows" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionOnpremiseMigration">
                                             <nav class="sb-sidenav-menu-nested nav">
-                                                <a class="nav-link" href="/migration/windows/s3">AWS S3</a>
+                                                <a class="nav-link" href="/migration/windows/aws">AWS S3</a>
                                                 <a class="nav-link" href="/migration/windows/gcp">Google Cloud Storage</a>
                                                 <a class="nav-link" href="/migration/windows/ncp">Naver Object Storage</a>
                                             </nav>
@@ -117,19 +117,19 @@
                             <div class="collapse" id="collapseObjectStorageMigration" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionObjectStorageMigration">
 
-                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#migrationCollapseS3" aria-expanded="false" aria-controls="migrationCollapseS3">
+                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#migrationCollapseaws" aria-expanded="false" aria-controls="migrationCollapseaws">
                                         AWS S3 to
                                         <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                     </a>
-                                    <div class="collapse" id="migrationCollapseS3" data-bs-parent="#sidenavAccordionObjectStorageMigration">
+                                    <div class="collapse" id="migrationCollapseaws" data-bs-parent="#sidenavAccordionObjectStorageMigration">
                                         <nav class="sb-sidenav-menu-nested nav">
                                             {{if eq .OS "linux"}}
-                                                <a class="nav-link" href="/migration/s3/linux">Linux</a>
+                                                <a class="nav-link" href="/migration/aws/linux">Linux</a>
                                             {{else}}
-                                                <a class="nav-link" href="/migration/s3/windows">Windows</a>
+                                                <a class="nav-link" href="/migration/aws/windows">Windows</a>
                                             {{end}}
-                                            <a class="nav-link" href="/migration/s3/gcp">Google Cloud Storage</a>
-                                            <a class="nav-link" href="/migration/s3/ncp">Naver Object Storage</a>
+                                            <a class="nav-link" href="/migration/aws/gcp">Google Cloud Storage</a>
+                                            <a class="nav-link" href="/migration/aws/ncp">Naver Object Storage</a>
                                         </nav>
                                     </div>
 
@@ -144,7 +144,7 @@
                                             {{else}}
                                                 <a class="nav-link" href="/migration/gcp/windows">Windows</a>
                                             {{end}}
-                                            <a class="nav-link" href="/migration/gcp/s3">AWS S3</a>
+                                            <a class="nav-link" href="/migration/gcp/aws">AWS S3</a>
                                             <a class="nav-link" href="/migration/gcp/ncp">Naver Object Storage</a>
                                         </nav>
                                     </div>
@@ -160,7 +160,7 @@
                                             {{else}}
                                                 <a class="nav-link" href="/migration/ncp/windows">Windows</a>
                                             {{end}}
-                                            <a class="nav-link" href="/migration/ncp/s3">AWS S3</a>
+                                            <a class="nav-link" href="/migration/ncp/aws">AWS S3</a>
                                             <a class="nav-link" href="/migration/ncp/gcp">Google Cloud Storage</a>
                                         </nav>
                                     </div>

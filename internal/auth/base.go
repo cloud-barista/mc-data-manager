@@ -25,6 +25,7 @@ import (
 
 	"github.com/cloud-barista/mc-data-manager/config"
 	"github.com/cloud-barista/mc-data-manager/internal/log"
+	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/pkg/nrdbms/awsdnmdb"
 	"github.com/cloud-barista/mc-data-manager/pkg/nrdbms/gcpfsdb"
 	"github.com/cloud-barista/mc-data-manager/pkg/nrdbms/ncpmgdb"
@@ -52,142 +53,119 @@ func GetConfig(credPath string, ConfigData *map[string]map[string]map[string]str
 	return nil
 }
 
+func preRunProfileE(pName, cmdName string, datamoldParams *DatamoldParams) error {
+	logrus.Info("initiate a profile scan")
+	credentailMangeer := config.NewFileCredentialsManager()
+	if srcCreds, err := credentailMangeer.LoadCredentialsByProfile(datamoldParams.ProfileName, datamoldParams.SrcProvider.Provider); err != nil {
+		return fmt.Errorf("get config error : %s", err)
+
+	} else {
+		logrus.Infof("initiate a profile scan %v", srcCreds)
+	}
+
+	switch cmdName {
+	case "objectstorage":
+		return handleObjectStorage(pName, datamoldParams)
+	case "rdbms":
+		return handleRDBMS(pName, datamoldParams)
+	case "nrdbms":
+		return handleNRDBMS(pName, datamoldParams)
+	default:
+		return nil
+	}
+}
+
 func preRunE(pName string, cmdName string, datamoldParams *DatamoldParams) error {
 	logrus.Info("initiate a configuration scan")
 	if err := GetConfig(datamoldParams.CredentialPath, &datamoldParams.ConfigData); err != nil {
-		return fmt.Errorf("get config error : %s", err)
+		return fmt.Errorf("get config error: %s", err)
 	}
 
-	if cmdName == "objectstorage" {
-		if value, ok := datamoldParams.ConfigData["objectstorage"]; ok {
-			if !datamoldParams.TaskTarget {
-				if src, ok := value["src"]; ok {
-					if err := applyOSValue(src, "src", datamoldParams); err != nil {
-						return err
-					}
-				}
-			} else {
-				if dst, ok := value["dst"]; ok {
-					if err := applyOSValue(dst, "dst", datamoldParams); err != nil {
-						return err
-					}
-				}
-			}
-		} else {
-			return errors.New("does not exist objectstorage")
-		}
-
-		if pName != "migration" && pName != "delete" {
-			if err := utils.IsDir(datamoldParams.DstPath); err != nil {
-				return errors.New("dstPath error")
-			}
-		} else if pName == "migration" {
-			if value, ok := datamoldParams.ConfigData["objectstorage"]; ok {
-				if !datamoldParams.TaskTarget {
-					if dst, ok := value["dst"]; ok {
-						if err := applyOSValue(dst, "dst", datamoldParams); err != nil {
-							return err
-						}
-					}
-				} else {
-					if src, ok := value["src"]; ok {
-						if err := applyOSValue(src, "src", datamoldParams); err != nil {
-							return err
-						}
-					}
-				}
-			} else {
-				return errors.New("does not exist objectstorage dst")
-			}
-		}
-	} else if cmdName == "rdbms" {
-		if value, ok := datamoldParams.ConfigData["rdbms"]; ok {
-			if !datamoldParams.TaskTarget {
-				if src, ok := value["src"]; ok {
-					if err := applyRDMValue(src, "src", datamoldParams); err != nil {
-						return err
-					}
-				}
-			} else {
-				if value, ok := datamoldParams.ConfigData["rdbms"]; ok {
-					if dst, ok := value["dst"]; ok {
-						return applyRDMValue(dst, "dst", datamoldParams)
-					}
+	switch cmdName {
+	case "objectstorage":
+		return handleObjectStorage(pName, datamoldParams)
+	case "rdbms":
+		return handleRDBMS(pName, datamoldParams)
+	case "nrdbms":
+		return handleNRDBMS(pName, datamoldParams)
+	default:
+		return nil
+	}
+}
+func handleObjectStorage(pName string, datamoldParams *DatamoldParams) error {
+	if value, ok := datamoldParams.ConfigData["objectstorage"]; ok {
+		if !datamoldParams.TaskTarget {
+			if src, ok := value["src"]; ok {
+				if err := applyOSValue(src, "src", datamoldParams); err != nil {
+					return err
 				}
 			}
 		} else {
-			return errors.New("does not exist rdbms src")
+			if dst, ok := value["dst"]; ok {
+				if err := applyOSValue(dst, "dst", datamoldParams); err != nil {
+					return err
+				}
+			}
 		}
+	} else {
+		return errors.New("does not exist objectstorage")
+	}
 
-		if pName != "migration" && pName != "delete" {
-			if err := utils.IsDir(datamoldParams.DstPath); err != nil {
-				return errors.New("dstPath error")
-			}
-		} else if pName == "migration" {
-			if value, ok := datamoldParams.ConfigData["rdbms"]; ok {
-				if !datamoldParams.TaskTarget {
-					if value, ok := datamoldParams.ConfigData["rdbms"]; ok {
-						if dst, ok := value["dst"]; ok {
-							return applyRDMValue(dst, "dst", datamoldParams)
-						}
-					}
-				} else {
-					if src, ok := value["src"]; ok {
-						if err := applyRDMValue(src, "src", datamoldParams); err != nil {
-							return err
-						}
-					}
-				}
-			} else {
-				return errors.New("does not exist rdbms dst")
-			}
-		}
-	} else if cmdName == "nrdbms" {
-		if value, ok := datamoldParams.ConfigData["nrdbms"]; ok {
-			if !datamoldParams.TaskTarget {
-				if src, ok := value["src"]; ok {
-					if err := applyNRDMValue(src, "src", datamoldParams); err != nil {
-						return err
-					}
-				}
-			} else {
-				if dst, ok := value["dst"]; ok {
-					if err := applyNRDMValue(dst, "dst", datamoldParams); err != nil {
-						return err
-					}
+	return validateDestinationPath(pName, datamoldParams)
+}
+
+func handleRDBMS(pName string, datamoldParams *DatamoldParams) error {
+	if value, ok := datamoldParams.ConfigData["rdbms"]; ok {
+		if !datamoldParams.TaskTarget {
+			if src, ok := value["src"]; ok {
+				if err := applyRDMValue(src, "src", datamoldParams); err != nil {
+					return err
 				}
 			}
 		} else {
-			return errors.New("does not exist nrdbms src")
-		}
-
-		if pName != "migration" && pName != "delete" {
-			if err := utils.IsDir(datamoldParams.DstPath); err != nil {
-				return errors.New("dstPath error")
-			}
-		} else if pName == "migration" {
-			if value, ok := datamoldParams.ConfigData["nrdbms"]; ok {
-				if !datamoldParams.TaskTarget {
-					if value, ok := datamoldParams.ConfigData["nrdbms"]; ok {
-						if dst, ok := value["dst"]; ok {
-							return applyNRDMValue(dst, "dst", datamoldParams)
-						}
-					}
-				} else {
-					if src, ok := value["src"]; ok {
-						if err := applyNRDMValue(src, "src", datamoldParams); err != nil {
-							return err
-						}
-					}
+			if dst, ok := value["dst"]; ok {
+				if err := applyRDMValue(dst, "dst", datamoldParams); err != nil {
+					return err
 				}
-			} else {
-				return errors.New("does not exist nrdbms dst")
 			}
+		}
+	} else {
+		return errors.New("does not exist rdbms src")
+	}
+
+	return validateDestinationPath(pName, datamoldParams)
+}
+
+func handleNRDBMS(pName string, datamoldParams *DatamoldParams) error {
+	if value, ok := datamoldParams.ConfigData["nrdbms"]; ok {
+		if !datamoldParams.TaskTarget {
+			if src, ok := value["src"]; ok {
+				if err := applyNRDMValue(src, "src", datamoldParams); err != nil {
+					return err
+				}
+			}
+		} else {
+			if dst, ok := value["dst"]; ok {
+				if err := applyNRDMValue(dst, "dst", datamoldParams); err != nil {
+					return err
+				}
+			}
+		}
+	} else {
+		return errors.New("does not exist nrdbms src")
+	}
+
+	return validateDestinationPath(pName, datamoldParams)
+}
+
+func validateDestinationPath(pName string, datamoldParams *DatamoldParams) error {
+	if pName != "migration" && pName != "delete" {
+		if err := utils.IsDir(datamoldParams.DstPath); err != nil {
+			return errors.New("dstPath error")
 		}
 	}
 	return nil
 }
-
 func applyNRDMValue(src map[string]string, p string, datamoldParams *DatamoldParams) error {
 	provider, ok := src["provider"]
 	if !ok {
@@ -195,7 +173,7 @@ func applyNRDMValue(src map[string]string, p string, datamoldParams *DatamoldPar
 	}
 
 	if provider != "aws" && provider != "gcp" && provider != "ncp" {
-		return fmt.Errorf("provider[aws,gcp,ncp] error : %s", provider)
+		return fmt.Errorf("provider error : %s", provider)
 	}
 
 	var access, secret, region, cred, projectID, username, password, host, port, DBName string
@@ -306,7 +284,7 @@ func applyRDMValue(src map[string]string, p string, datamoldParams *DatamoldPara
 	}
 
 	if provider != "aws" && provider != "gcp" && provider != "ncp" {
-		return fmt.Errorf("provider[aws,gcp,ncp] error : %s", provider)
+		return fmt.Errorf("provider error : %s", provider)
 	}
 
 	var username, password, host, port string
@@ -477,7 +455,7 @@ func GetSrcOS(datamoldParams *DatamoldParams) (*osc.OSController, error) {
 			return nil, fmt.Errorf("NewS3Client error : %v", err)
 		}
 
-		OSC, err = osc.New(s3fs.New(utils.AWS, s3c, datamoldParams.SrcProvider.BucketName, datamoldParams.SrcProvider.Region), osc.WithLogger(logrus.StandardLogger()))
+		OSC, err = osc.New(s3fs.New(models.AWS, s3c, datamoldParams.SrcProvider.BucketName, datamoldParams.SrcProvider.Region), osc.WithLogger(logrus.StandardLogger()))
 		if err != nil {
 			return nil, fmt.Errorf("osc error : %v", err)
 		}
@@ -506,7 +484,7 @@ func GetSrcOS(datamoldParams *DatamoldParams) (*osc.OSController, error) {
 			return nil, fmt.Errorf("NewS3ClientWithEndpint error : %v", err)
 		}
 
-		OSC, err = osc.New(s3fs.New(utils.AWS, s3c, datamoldParams.SrcProvider.BucketName, datamoldParams.SrcProvider.Region), osc.WithLogger(logrus.StandardLogger()))
+		OSC, err = osc.New(s3fs.New(models.AWS, s3c, datamoldParams.SrcProvider.BucketName, datamoldParams.SrcProvider.Region), osc.WithLogger(logrus.StandardLogger()))
 		if err != nil {
 			return nil, fmt.Errorf("osc error : %v", err)
 		}
@@ -527,7 +505,7 @@ func GetDstOS(datamoldParams *DatamoldParams) (*osc.OSController, error) {
 			return nil, fmt.Errorf("NewS3Client error : %v", err)
 		}
 
-		OSC, err = osc.New(s3fs.New(utils.AWS, s3c, datamoldParams.DstProvider.BucketName, datamoldParams.DstProvider.Region), osc.WithLogger(logrus.StandardLogger()))
+		OSC, err = osc.New(s3fs.New(models.AWS, s3c, datamoldParams.DstProvider.BucketName, datamoldParams.DstProvider.Region), osc.WithLogger(logrus.StandardLogger()))
 		if err != nil {
 			return nil, fmt.Errorf("osc error : %v", err)
 		}
@@ -556,7 +534,7 @@ func GetDstOS(datamoldParams *DatamoldParams) (*osc.OSController, error) {
 			return nil, fmt.Errorf("NewS3ClientWithEndpint error : %v", err)
 		}
 
-		OSC, err = osc.New(s3fs.New(utils.AWS, s3c, datamoldParams.DstProvider.BucketName, datamoldParams.DstProvider.Region), osc.WithLogger(logrus.StandardLogger()))
+		OSC, err = osc.New(s3fs.New(models.AWS, s3c, datamoldParams.DstProvider.BucketName, datamoldParams.DstProvider.Region), osc.WithLogger(logrus.StandardLogger()))
 		if err != nil {
 			return nil, fmt.Errorf("osc error : %v", err)
 		}
@@ -574,7 +552,7 @@ func GetSrcRDMS(datamoldParams *DatamoldParams) (*rdbc.RDBController, error) {
 	if err != nil {
 		return nil, err
 	}
-	return rdbc.New(mysql.New(utils.Provider(datamoldParams.SrcProvider.Provider), src), rdbc.WithLogger(logrus.StandardLogger()))
+	return rdbc.New(mysql.New(models.Provider(datamoldParams.SrcProvider.Provider), src), rdbc.WithLogger(logrus.StandardLogger()))
 }
 
 func GetDstRDMS(datamoldParams *DatamoldParams) (*rdbc.RDBController, error) {
@@ -587,7 +565,7 @@ func GetDstRDMS(datamoldParams *DatamoldParams) (*rdbc.RDBController, error) {
 	if err != nil {
 		return nil, err
 	}
-	return rdbc.New(mysql.New(utils.Provider(datamoldParams.DstProvider.Provider), dst), rdbc.WithLogger(logrus.StandardLogger()))
+	return rdbc.New(mysql.New(models.Provider(datamoldParams.DstProvider.Provider), dst), rdbc.WithLogger(logrus.StandardLogger()))
 }
 
 func GetSrcNRDMS(datamoldParams *DatamoldParams) (*nrdbc.NRDBController, error) {
@@ -610,7 +588,7 @@ func GetSrcNRDMS(datamoldParams *DatamoldParams) (*nrdbc.NRDBController, error) 
 		logrus.Infof("CredentialsFilePath : %s", datamoldParams.SrcProvider.GcpCredPath)
 		logrus.Infof("ProjectID : %s", datamoldParams.SrcProvider.ProjectID)
 		logrus.Infof("Region : %s", datamoldParams.SrcProvider.Region)
-		gcpnrdb, err := config.NewFireStoreClient(datamoldParams.SrcProvider.GcpCredPath, datamoldParams.SrcProvider.GcpCredJson, datamoldParams.SrcProvider.ProjectID, datamoldParams.SrcProvider.DatabaseID)
+		gcpnrdb, err := config.NewFireStoreClient(datamoldParams.SrcProvider.GcpCredJson, datamoldParams.SrcProvider.ProjectID, datamoldParams.SrcProvider.DatabaseID)
 		if err != nil {
 			return nil, err
 		}
@@ -662,7 +640,7 @@ func GetDstNRDMS(datamoldParams *DatamoldParams) (*nrdbc.NRDBController, error) 
 		logrus.Infof("CredentialsFilePath : %s", datamoldParams.DstProvider.GcpCredPath)
 		logrus.Infof("ProjectID : %s", datamoldParams.DstProvider.ProjectID)
 		logrus.Infof("Region : %s", datamoldParams.DstProvider.Region)
-		gcpnrdb, err := config.NewFireStoreClient(datamoldParams.DstProvider.GcpCredPath, datamoldParams.DstProvider.GcpCredJson, datamoldParams.DstProvider.ProjectID, datamoldParams.DstProvider.DatabaseID)
+		gcpnrdb, err := config.NewFireStoreClient(datamoldParams.DstProvider.GcpCredJson, datamoldParams.DstProvider.ProjectID, datamoldParams.DstProvider.DatabaseID)
 		if err != nil {
 			return nil, err
 		}

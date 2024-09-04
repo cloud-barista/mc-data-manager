@@ -1,24 +1,62 @@
 package models
 
+type OperationParams struct {
+	OperationId string `json:"operationId" form:"operationId"`
+}
+
+type TaskMeta struct {
+	ServiceType CloudServiceType `json:"serviceType"`
+	TaskType    TaskType         `json:"taskType" `
+	TaskID      string           `json:"taskId,omitempty" `
+	TaskName    string           `json:"taskName,omitempty" `
+	Description string           `json:"description,omitempty"`
+}
+
 type Task struct {
-	TaskID      string `json:"taskId"`
-	TaskName    string `json:"taskName"`
-	Description string `json:"description"`
-	Status      string `json:"status"`   // active, inactive, etc.
-	Schedule    string `json:"schedule"` // Cron format
+	OperationParams
+	Meta   TaskMeta `json:"meta,omitempty" swaggerignore:"true"`
+	Status Status   `json:"status,omitempty" swaggerignore:"true"` // active, inactive, etc.
 }
 
 type Flow struct {
-	FlowID   string `json:"flowId"`
+	OperationParams
+	FlowID   string `json:"flowId,omitempty"`
 	FlowName string `json:"flowName"`
 	Tasks    []Task `json:"tasks"`  // List of tasks in the flow
-	Status   string `json:"status"` // active, inactive, etc.
+	Status   Status `json:"status"` // active, inactive, etc.
 }
 
 type Schedule struct {
-	ScheduleID string `json:"scheduleId"`
+	OperationParams
+	ScheduleID string `json:"scheduleId,omitempty"`
 	FlowID     string `json:"flowId,omitempty"` // Optional, if scheduling a flow
 	TaskID     string `json:"taskId,omitempty"` // Optional, if scheduling a task
 	Cron       string `json:"cron"`             // Cron expression for scheduling
-	Status     string `json:"status"`           // active, inactive, etc.
+	Status     Status `json:"status"`           // active, inactive, etc.
+}
+
+type GenarateTask struct {
+	Task
+	TargetPoint GenTaskTarget `json:"targetPoint"`
+}
+type GenTaskTarget struct {
+	ProviderConfig
+	GenFileParams
+}
+
+type DataTask struct {
+	Task
+	SourcePoint ProviderConfig `json:"sourcePoint,omitempty"`
+	TargetPoint ProviderConfig `json:"targetPoint,omitempty"`
+}
+type MigrateTask struct {
+	DataTask
+}
+
+type BackupTask struct {
+	DataTask
+}
+
+type RestoreTask struct {
+	DataTask
 }

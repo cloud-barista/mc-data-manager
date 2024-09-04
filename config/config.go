@@ -139,41 +139,34 @@ func NewDynamoDBClientWithEndpoint(accesskey, secretkey, region string, endpoint
 	return dynamodb.NewFromConfig(*cfg), nil
 }
 
-func NewGCPClient(credentialsFile string) (*storage.Client, error) {
-	client, err := storage.NewClient(
-		context.TODO(),
-		option.WithCredentialsFile(credentialsFile),
-	)
+func NewGCPClient(credentialsJson string) (*storage.Client, error) {
+	var client *storage.Client
+	var err error
+	ctx := context.TODO()
+	switch {
+
+	case credentialsJson != "":
+		client, err = storage.NewClient(ctx, option.WithCredentialsJSON([]byte(credentialsJson)))
+
+	default:
+		return nil, errors.New("either credentialsFile or credentialsJson must be provided")
+	}
 	if err != nil {
 		return nil, err
 	}
-
 	return client, nil
 }
 
-func NewFireStoreClient(credentialsFile, credentialsJson, projectID, databaseID string) (*firestore.Client, error) {
+func NewFireStoreClient(credentialsJson, projectID, databaseID string) (*firestore.Client, error) {
 	var client *firestore.Client
 	var err error
 
 	ctx := context.TODO()
-	switch {
-	case credentialsFile != "":
-		fmt.Println(" Filename : ", credentialsFile)
-		if databaseID != "" {
-			client, err = firestore.NewClientWithDatabase(ctx, projectID, databaseID, option.WithCredentialsFile(credentialsFile))
-		} else {
-			client, err = firestore.NewClient(ctx, projectID, option.WithCredentialsFile(credentialsFile))
-		}
-	case credentialsJson != "":
-		if databaseID != "" {
-			client, err = firestore.NewClientWithDatabase(ctx, projectID, databaseID, option.WithCredentialsJSON([]byte(credentialsJson)))
-		} else {
-			client, err = firestore.NewClient(ctx, projectID, option.WithCredentialsJSON([]byte(credentialsJson)))
-		}
-	default:
-		return nil, errors.New("either credentialsFile or credentialsJson must be provided")
+	if databaseID != "" {
+		client, err = firestore.NewClientWithDatabase(ctx, projectID, databaseID, option.WithCredentialsJSON([]byte(credentialsJson)))
+	} else {
+		client, err = firestore.NewClient(ctx, projectID, option.WithCredentialsJSON([]byte(credentialsJson)))
 	}
-
 	if err != nil {
 		return nil, err
 	}

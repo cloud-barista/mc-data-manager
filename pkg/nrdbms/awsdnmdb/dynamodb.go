@@ -24,7 +24,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
-	"github.com/cloud-barista/mc-data-manager/pkg/utils"
+	"github.com/cloud-barista/mc-data-manager/models"
 )
 
 func init() {
@@ -32,7 +32,7 @@ func init() {
 }
 
 type DynamoDBMS struct {
-	provider utils.Provider
+	provider models.Provider
 	region   string
 
 	client *dynamodb.Client
@@ -52,7 +52,7 @@ type DynamoDBOption func(*DynamoDBMS)
 
 func New(client *dynamodb.Client, region string, opts ...DynamoDBOption) *DynamoDBMS {
 	dms := &DynamoDBMS{
-		provider:         utils.AWS,
+		provider:         models.AWS,
 		region:           region,
 		client:           client,
 		ctx:              context.TODO(),

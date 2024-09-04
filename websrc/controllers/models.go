@@ -20,10 +20,19 @@ import (
 )
 
 type (
+	OperationParams = models.OperationParams
 	// Gen
 	GenDataParams      = models.GenDataParams
+	GenFileParams      = models.GenFileParams
 	GenMySQLParams     = models.GenMySQLParams
 	GenFirestoreParams = models.FirestoreParams
+
+	//
+	ProviderConfig = models.ProviderConfig
+	Task           = models.Task
+	GenarateTask   = models.GenarateTask
+	MigrateTask    = models.MigrateTask
+
 	// Mig
 	MigrationMySQLForm   = models.MigrationMySQLForm
 	MigrationMySQLParams = models.MigrationMySQLParams
