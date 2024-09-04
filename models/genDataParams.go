@@ -16,9 +16,8 @@ limitations under the License.
 package models
 
 type GenDataParams struct {
+	OperationParams
 	BaseParams
-	AccessKey string `json:"accessKey" form:"accessKey"`
-	SecretKey string `json:"secretKey" form:"secretKey"`
 
 	ObjectStorageParams
 
@@ -30,7 +29,7 @@ type GenDataParams struct {
 }
 
 type GenFileParams struct {
-	DummyPath string `json:"path" form:"path"`
+	DummyPath string `json:"dummyPath,omitempty" swaggerignore:"true"`
 	FileFormatParams
 	FileSizeParams
 }
@@ -38,4 +37,13 @@ type GenFileParams struct {
 type GenMySQLParams struct {
 	BaseParams
 	MySQLParams
+}
+
+type APICredentailPatams struct {
+	GCPCredentialJson string
+	GCPCredentialPath string
+	AWSAccessKey      string
+	AWSSecretKey      string
+	NCPAccessKey      string
+	NCPSecretKey      string
 }

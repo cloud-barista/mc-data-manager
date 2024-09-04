@@ -21,7 +21,7 @@ import (
 	"io"
 	"sync"
 
-	"github.com/cloud-barista/mc-data-manager/pkg/utils"
+	"github.com/cloud-barista/mc-data-manager/models"
 )
 
 func (src *OSController) Copy(dst *OSController) error {
@@ -48,7 +48,7 @@ func (src *OSController) Copy(dst *OSController) error {
 		src.logWrite("Info", fmt.Sprintf("skip file : %s", skip.Key), nil)
 	}
 
-	jobs := make(chan utils.Object, len(copyList))
+	jobs := make(chan models.Object, len(copyList))
 	resultChan := make(chan Result, len(copyList))
 
 	var wg sync.WaitGroup
@@ -79,7 +79,7 @@ func (src *OSController) Copy(dst *OSController) error {
 	return nil
 }
 
-func copyWorker(src *OSController, dst *OSController, jobs chan utils.Object, resultChan chan<- Result) {
+func copyWorker(src *OSController, dst *OSController, jobs chan models.Object, resultChan chan<- Result) {
 	for obj := range jobs {
 		ret := Result{
 			name: obj.Key,

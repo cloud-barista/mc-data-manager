@@ -23,13 +23,13 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/cloud-barista/mc-data-manager/pkg/utils"
+	"github.com/cloud-barista/mc-data-manager/models"
 	_ "github.com/go-sql-driver/mysql"
 )
 
 // mysqlDBMS struct
 type MysqlDBMS struct {
-	provider utils.Provider
+	provider models.Provider
 
 	db  *sql.DB
 	ctx context.Context
@@ -37,7 +37,7 @@ type MysqlDBMS struct {
 
 type MysqlDBOption func(*MysqlDBMS)
 
-func New(provider utils.Provider, sqlDB *sql.DB, opts ...MysqlDBOption) *MysqlDBMS {
+func New(provider models.Provider, sqlDB *sql.DB, opts ...MysqlDBOption) *MysqlDBMS {
 	dms := &MysqlDBMS{
 		provider: provider,
 		db:       sqlDB,
@@ -53,16 +53,65 @@ func New(provider utils.Provider, sqlDB *sql.DB, opts ...MysqlDBOption) *MysqlDB
 
 // Functions that execute EXEC commands in sql
 func (d *MysqlDBMS) Exec(query string) error {
-	// Create db with CALL system.ncp_cp_create_db command when provider is ncp and CREATE DATABASE is called
-	if d.provider == utils.NCP && strings.HasPrefix(query, "CREATE DATABASE") {
+	if strings.HasPrefix(query, "CREATE DATABASE") {
+		query = removeSQLComments(query)
+		query = addCharsetIfMissing(query)
+		query = addCollateIfMissing(query)
 		dbName, charSet, collate := extractDatabaseInfo(query)
 		if dbName == "" {
 			return errors.New("exec error")
 		}
-		query = fmt.Sprintf("CALL sys.ncp_create_db('%s', '%s', '%s');", dbName, charSet, collate)
+		// Ensure charset is utf8mb4
+		query = EnsureCharsetAndCollate(query, charSet, collate)
+
+		// Create db with CALL system.ncp_cp_create_db command when provider is ncp and CREATE DATABASE is called
+		if d.provider == models.NCP {
+			query = fmt.Sprintf("CALL sys.ncp_create_db('%s', '%s', '%s');", dbName, charSet, collate)
+		}
+
+	} else if strings.HasPrefix(query, "CREATE TABLE") {
+		query = ReplaceCharsetAndCollate(query)
 	}
+
 	_, err := d.db.Exec(query)
 	return err
+}
+
+func removeSQLComments(line string) string {
+	// Remove single line comments
+	line = regexp.MustCompile(`--.*`).ReplaceAllString(line, "")
+	// Remove multi-line comments
+	line = regexp.MustCompile(`/\*.*?\*/`).ReplaceAllString(line, "")
+	return line
+}
+
+// addCollateIfMissing adds COLLATE to DEFAULT CHARACTER SET if it's missing
+func addCollateIfMissing(sql string) string {
+	if !strings.Contains(sql, "COLLATE") {
+		sql = sql + " " + "COLLATE utf8mb4_general_ci"
+	}
+	return sql
+}
+
+// addCollateIfMissing adds COLLATE to DEFAULT CHARACTER SET if it's missing
+func addCharsetIfMissing(sql string) string {
+	if !strings.Contains(sql, "DEFAULT CHARACTER SET") && !strings.Contains(sql, "DEFAULT CHARSET") {
+		sql = sql + " " + "DEFAULT CHARACTER SET utf8mb4"
+	}
+	return sql
+}
+
+// ReplaceCharsetAndCollate replaces any charset and collate in the SQL statement with utf8mb4 and utf8mb4_general_ci.
+func ReplaceCharsetAndCollate(sql string) string {
+	// Regular expression to match DEFAULT CHARSET and COLLATE settings
+	reCharset := regexp.MustCompile(`(?i)DEFAULT CHARSET=\w+`)
+	reCollate := regexp.MustCompile(`(?i)COLLATE=\w+`)
+
+	// Replace with utf8mb4 and utf8mb4_general_ci
+	sql = reCharset.ReplaceAllString(sql, "DEFAULT CHARSET=utf8mb4")
+	sql = reCollate.ReplaceAllString(sql, "COLLATE=utf8mb4_general_ci")
+
+	return sql
 }
 
 // Extract database information
@@ -86,6 +135,24 @@ func extractDatabaseInfo(sql string) (string, string, string) {
 	}
 
 	return "", "", ""
+}
+
+// EnsureCharsetAndCollate ensures that the charset is utf8mb4 and collate is utf8mb4_general_ci in the SQL query.
+func EnsureCharsetAndCollate(query, charSet, collate string) string {
+	// Ensure charset is utf8mb4
+	if charSet != "utf8mb4" {
+		query = strings.Replace(query, charSet, "utf8mb4", 1)
+	}
+	// Ensure collate is utf8mb4_general_ci
+	if collate != "utf8mb4_general_ci" {
+		if strings.Contains(query, "COLLATE") {
+			re := regexp.MustCompile(`(?i)COLLATE\s+[^\s]+`)
+			query = re.ReplaceAllString(query, "COLLATE utf8mb4_general_ci")
+		} else {
+			query = query + " COLLATE utf8mb4_general_ci"
+		}
+	}
+	return query
 }
 
 // Delete database

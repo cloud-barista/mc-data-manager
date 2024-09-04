@@ -19,20 +19,19 @@ package controllers
 // @Description MigrationForm contains all the necessary fields for migrating data between different services.
 
 func GetMigrationParamsFormFormData(form MigrationMySQLForm) MigrationMySQLParams {
-	src := MySQLParams{
-		Provider:     form.SProvider,
+	source := MySQLParams{
 		Host:         form.SHost,
 		Port:         form.SPort,
 		User:         form.SUsername,
 		Password:     form.SPassword,
 		DatabaseName: form.SDatabaseName,
 	}
-	dest := MySQLParams{
+	target := MySQLParams{
 		Host:         form.DProvider,
 		Port:         form.DPort,
 		User:         form.DUsername,
 		Password:     form.DPassword,
 		DatabaseName: form.DDatabaseName,
 	}
-	return MigrationMySQLParams{Source: src, Dest: dest}
+	return MigrationMySQLParams{SourcePoint: source, TargetPoint: target}
 }

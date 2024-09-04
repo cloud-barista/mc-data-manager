@@ -85,10 +85,37 @@ func (rdb *RDBController) Put(sql string) error {
 
 	for scanner.Scan() {
 		line := scanner.Text()
+
 		line = strings.ReplaceAll(line, "\n", "")
 		if line != "" {
 			err := rdb.client.Exec(line)
+			// cd_qr := strings.HasPrefix(line, "CREATE DATABASE")
+			// if cd_qr {
+			// 	rdb.logger.Warnf("C_D_SQL : %v", line)
+			// }
+			// if err != nil {
+			// 	// Handle collation error when migrating from MySQL 8.0 to versions below 8.0
+			// 	updatedLine := strings.ReplaceAll(line, "utf8mb4_0900_ai_ci", "utf8mb4_general_ci")
+			// 	err = rdb.client.Exec(updatedLine)
+			// 	if err == nil {
+			// 		rdb.logger.Warnf("Warning Line: \n %+v", line)
+			// 		rdb.logger.Warnf("Collation error handled: MySQL 8.0 to versions below 8.0")
+			// 		rdb.logger.Warnf("Changed DB collation from utf8mb4_0900_ai_ci to utf8mb4_general_ci")
+			// 	}
+			// }
+			// if err != nil {
+			// 	// Remove SQL comments
+			// 	updatedLine := HandleSQL(line)
+			// 	err = rdb.client.Exec(updatedLine)
+			// 	rdb.logger.Warnf("Changed Line : %+v", updatedLine)
+			// 	if err == nil {
+			// 		rdb.logger.Warnf("Warning Line: \n %+v", line)
+			// 		rdb.logger.Warnf("comments error handled")
+			// 		rdb.logger.Warnf("Changed Line : %+v", updatedLine)
+			// 	}
+			// }
 			if err != nil {
+				rdb.logger.Errorf("err Line : %+v", line)
 				rdb.logWrite("Error", "sql exec error", err)
 				return err
 			}
