@@ -17,7 +17,6 @@ package controllers
 
 import (
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/cloud-barista/mc-data-manager/models"
@@ -31,11 +30,11 @@ import (
 //	@Tags			[Data Migration]
 //	@Accept			json
 //	@Produce		json
-//	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
+//	@Param			RequestBody		body	MigrateTask	true	"Parameters required for migration"
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/migration/linux/s3 [post]
+//	@Router			/migration/linux/aws [post]
 func MigrationLinuxToS3PostHandler(ctx echo.Context) error {
 	start := time.Now()
 
@@ -48,7 +47,7 @@ func MigrationLinuxToS3PostHandler(ctx echo.Context) error {
 		})
 	}
 
-	params := MigrationForm{}
+	params := MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -56,7 +55,7 @@ func MigrationLinuxToS3PostHandler(ctx echo.Context) error {
 		})
 	}
 
-	awsOSC := getS3OSC(logger, start, "mig", params)
+	awsOSC := getS3OSC(logger, start, "mig", params.SourcePoint)
 	if awsOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -64,7 +63,7 @@ func MigrationLinuxToS3PostHandler(ctx echo.Context) error {
 		})
 	}
 
-	if !oscImport(logger, start, "s3", awsOSC, params.Path) {
+	if !oscImport(logger, start, "s3", awsOSC, params.TargetPoint.Path) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -84,10 +83,9 @@ func MigrationLinuxToS3PostHandler(ctx echo.Context) error {
 //	@Summary		Migrate data from Linux to GCP Cloud Storage
 //	@Description	Migrate data stored in a Linux-based system to GCP Cloud Storage.
 //	@Tags			[Data Migration]
-//	@Accept			multipart/form-data
+//	@Accept			json
 //	@Produce		json
-//	@Param			RequestBody		formData	MigrationForm	true	"Parameters required for migration"
-//	@Param			gcpCredential	formData	file			false	"Parameters required for migration"
+//	@Param			RequestBody		body	MigrateTask	true	"Parameters required for migration"
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
@@ -105,7 +103,7 @@ func MigrationLinuxToGCPPostHandler(ctx echo.Context) error {
 
 	}
 
-	params := MigrationForm{}
+	params := MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -114,17 +112,7 @@ func MigrationLinuxToGCPPostHandler(ctx echo.Context) error {
 
 	}
 
-	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
-	if !ok && params.GCPCredentialJson == "" {
-		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
-			Result: logstrings.String(),
-			Error:  nil,
-		})
-
-	}
-	defer os.RemoveAll(credTmpDir)
-
-	gcpOSC := getGCPCOSC(logger, start, "mig", params, credFileName)
+	gcpOSC := getGCPCOSC(logger, start, "mig", params.SourcePoint)
 	if gcpOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -133,7 +121,7 @@ func MigrationLinuxToGCPPostHandler(ctx echo.Context) error {
 
 	}
 
-	if !oscImport(logger, start, "gcp", gcpOSC, params.Path) {
+	if !oscImport(logger, start, "gcp", gcpOSC, params.TargetPoint.Path) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -156,7 +144,7 @@ func MigrationLinuxToGCPPostHandler(ctx echo.Context) error {
 //	@Tags			[Data Migration]
 //	@Accept			json
 //	@Produce		json
-//	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
+//	@Param			RequestBody		body	MigrateTask	true	"Parameters required for migration"
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
@@ -175,7 +163,7 @@ func MigrationLinuxToNCPPostHandler(ctx echo.Context) error {
 
 	}
 
-	params := MigrationForm{}
+	params := MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -183,7 +171,7 @@ func MigrationLinuxToNCPPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	ncpOSC := getS3COSC(logger, start, "mig", params)
+	ncpOSC := getS3COSC(logger, start, "mig", params.SourcePoint)
 	if ncpOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -191,7 +179,7 @@ func MigrationLinuxToNCPPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	if !oscImport(logger, start, "ncp", ncpOSC, params.Path) {
+	if !oscImport(logger, start, "ncp", ncpOSC, params.TargetPoint.Path) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -213,11 +201,11 @@ func MigrationLinuxToNCPPostHandler(ctx echo.Context) error {
 //	@Tags			[Data Migration]
 //	@Accept			json
 //	@Produce		json
-//	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
+//	@Param			RequestBody		body	MigrateTask	true	"Parameters required for migration"
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/migration/windows/s3 [post]
+//	@Router			/migration/windows/aws [post]
 func MigrationWindowsToS3PostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -232,7 +220,7 @@ func MigrationWindowsToS3PostHandler(ctx echo.Context) error {
 
 	}
 
-	params := MigrationForm{}
+	params := MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -241,7 +229,7 @@ func MigrationWindowsToS3PostHandler(ctx echo.Context) error {
 
 	}
 
-	awsOSC := getS3OSC(logger, start, "mig", params)
+	awsOSC := getS3OSC(logger, start, "mig", params.SourcePoint)
 	if awsOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -250,7 +238,7 @@ func MigrationWindowsToS3PostHandler(ctx echo.Context) error {
 
 	}
 
-	if !oscImport(logger, start, "s3", awsOSC, params.Path) {
+	if !oscImport(logger, start, "s3", awsOSC, params.TargetPoint.Path) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -271,10 +259,9 @@ func MigrationWindowsToS3PostHandler(ctx echo.Context) error {
 //	@Summary		Migrate data from Windows to GCP Cloud Storage
 //	@Description	Migrate data stored in a Windows-based system to GCP Cloud Storage.
 //	@Tags			[Data Migration]
-//	@Accept			multipart/form-data
+//	@Accept			json
 //	@Produce		json
-//	@Param			RequestBody		formData	MigrationForm	true	"Parameters required for migration"
-//	@Param			gcpCredential	formData	file			false	"Parameters required for migration"
+//	@Param			RequestBody		body	MigrateTask	true	"Parameters required for migration"
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
@@ -291,7 +278,7 @@ func MigrationWindowsToGCPPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	params := MigrationForm{}
+	params := MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -299,16 +286,7 @@ func MigrationWindowsToGCPPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
-	if !ok && params.GCPCredentialJson == "" {
-		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
-			Result: logstrings.String(),
-			Error:  nil,
-		})
-	}
-	defer os.RemoveAll(credTmpDir)
-
-	gcpOSC := getGCPCOSC(logger, start, "mig", params, credFileName)
+	gcpOSC := getGCPCOSC(logger, start, "mig", params.SourcePoint)
 	if gcpOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -316,7 +294,7 @@ func MigrationWindowsToGCPPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	if !oscImport(logger, start, "gcp", gcpOSC, params.Path) {
+	if !oscImport(logger, start, "gcp", gcpOSC, params.TargetPoint.Path) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -338,7 +316,7 @@ func MigrationWindowsToGCPPostHandler(ctx echo.Context) error {
 //	@Tags			[Data Migration]
 //	@Accept			json
 //	@Produce		json
-//	@Param			RequestBody	body		MigrationForm			true	"Parameters required for migration"
+//	@Param			RequestBody		body	MigrateTask	true	"Parameters required for migration"
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
@@ -356,7 +334,7 @@ func MigrationWindowsToNCPPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	params := MigrationForm{}
+	params := MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusOK, models.BasicResponse{
 			Result: logstrings.String(),
@@ -364,7 +342,7 @@ func MigrationWindowsToNCPPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	ncpOSC := getS3COSC(logger, start, "mig", params)
+	ncpOSC := getS3COSC(logger, start, "mig", params.SourcePoint)
 	if ncpOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -372,7 +350,7 @@ func MigrationWindowsToNCPPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	if !oscImport(logger, start, "ncp", ncpOSC, params.Path) {
+	if !oscImport(logger, start, "ncp", ncpOSC, params.TargetPoint.Path) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -391,10 +369,10 @@ func MigrationWindowsToNCPPostHandler(ctx echo.Context) error {
 //
 //	@Summary		Migrate data from MySQL to MySQL
 //	@Description	Migrate data from one MySQL database to another MySQL database.
-//	@Tags			[Data Migration]
+//	@Tags			[Data Migration], [RDBMS]
 //	@Accept			json
 //	@Produce		json
-//	@Param			RequestBody	body		MigrationMySQLForm		true	"Parameters required for MySQL migration"
+//	@Param			RequestBody		body	MigrateTask	true	"Parameters required for migration"
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
 //	@Router			/migration/mysql [post]
@@ -404,16 +382,15 @@ func MigrationMySQLPostHandler(ctx echo.Context) error {
 
 	logger, logstrings := pageLogInit("migmysql", "Import mysql to mysql", start)
 
-	formdata := MigrationMySQLForm{}
-	if !getDataWithBind(logger, start, ctx, &formdata) {
+	params := MigrateTask{}
+	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusOK, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
 		})
 	}
-	params := GetMigrationParamsFormFormData(formdata)
 
-	srdbc := getMysqlRDBC(logger, start, "smig", params)
+	srdbc := getMysqlRDBC(logger, start, "smig", params.SourcePoint)
 	if srdbc == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -421,7 +398,7 @@ func MigrationMySQLPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	trdbc := getMysqlRDBC(logger, start, "tmig", params)
+	trdbc := getMysqlRDBC(logger, start, "tmig", params.TargetPoint)
 	if trdbc == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),

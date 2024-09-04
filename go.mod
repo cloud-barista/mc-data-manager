@@ -95,6 +95,7 @@ require (
 	github.com/klauspost/compress v1.17.9 // indirect
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/montanaflynn/stats v0.7.1 // indirect
+	github.com/spf13/cast v1.7.0
 	github.com/swaggo/echo-swagger v1.4.1
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.2 // indirect

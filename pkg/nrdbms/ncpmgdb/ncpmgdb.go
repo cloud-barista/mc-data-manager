@@ -18,14 +18,14 @@ package ncpmgdb
 import (
 	"context"
 
-	"github.com/cloud-barista/mc-data-manager/pkg/utils"
+	"github.com/cloud-barista/mc-data-manager/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type NCPMongoDBMS struct {
-	provider utils.Provider
+	provider models.Provider
 	dbName   string
 
 	client *mongo.Client
@@ -37,7 +37,7 @@ type NCPMongoDBOption func(*NCPMongoDBMS)
 
 func New(client *mongo.Client, databaseName string, opts ...NCPMongoDBOption) *NCPMongoDBMS {
 	dms := &NCPMongoDBMS{
-		provider: utils.NCP,
+		provider: models.NCP,
 		dbName:   databaseName,
 		client:   client,
 		ctx:      context.TODO(),

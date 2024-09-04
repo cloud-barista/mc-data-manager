@@ -25,7 +25,6 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -35,18 +34,19 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/cloud-barista/mc-data-manager/config"
 	"github.com/cloud-barista/mc-data-manager/internal/log"
+	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/pkg/nrdbms/awsdnmdb"
 	"github.com/cloud-barista/mc-data-manager/pkg/nrdbms/gcpfsdb"
 	"github.com/cloud-barista/mc-data-manager/pkg/nrdbms/ncpmgdb"
 	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/gcpfs"
 	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/s3fs"
 	"github.com/cloud-barista/mc-data-manager/pkg/rdbms/mysql"
-	"github.com/cloud-barista/mc-data-manager/pkg/utils"
 	"github.com/cloud-barista/mc-data-manager/service/nrdbc"
 	"github.com/cloud-barista/mc-data-manager/service/osc"
 	"github.com/cloud-barista/mc-data-manager/service/rdbc"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/cast"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -82,7 +82,7 @@ func osCheck(logger *logrus.Logger, startTime time.Time, osName string) bool {
 	return true
 }
 
-func dummyCreate(logger *logrus.Logger, startTime time.Time, params GenDataParams) bool {
+func dummyCreate(logger *logrus.Logger, startTime time.Time, params GenFileParams) bool {
 	logger.Info("Start dummy generation")
 	err := genData(params, logger)
 	if err != nil {
@@ -117,19 +117,32 @@ func createDummyTemp(logger *logrus.Logger, startTime time.Time) (string, bool) 
 }
 
 func getS3OSC(logger *logrus.Logger, startTime time.Time, jobType string, params interface{}) *osc.OSController {
-	gparam, _ := params.(GenDataParams)
-	mparam, _ := params.(MigrationForm)
-
+	gparam, _ := params.(ProviderConfig)
 	var err error
 	var s3c *s3.Client
 	var awsOSC *osc.OSController
-
+	logger.Infof("gmaraps : %v", gparam)
 	logger.Info("Get S3 Client")
-	if jobType == "gen" {
-		s3c, err = config.NewS3Client(gparam.AccessKey, gparam.SecretKey, gparam.RegionParams.Region)
-	} else {
-		s3c, err = config.NewS3Client(mparam.AWSAccessKey, mparam.AWSSecretKey, mparam.AWSRegion)
+	credentailManger := config.NewFileCredentialsManager()
+	creds, err := credentailManger.LoadCredentialsByProfile(gparam.ProfileName, gparam.Provider)
+	if err != nil {
+		end := time.Now()
+		logger.Errorf("credentail load failed : %v", err)
+		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		return nil
 	}
+
+	awsc, ok := creds.(models.AWSCredentials)
+	if !ok {
+		end := time.Now()
+		logger.Errorf("AWS client creation failed")
+		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		return nil
+	}
+
+	s3c, err = config.NewS3Client(awsc.AccessKey, awsc.SecretKey, gparam.Region)
 	if err != nil {
 		end := time.Now()
 		logger.Errorf("s3 client creation failed : %v", err)
@@ -140,9 +153,9 @@ func getS3OSC(logger *logrus.Logger, startTime time.Time, jobType string, params
 
 	logger.Info("Set up the client as an OSController")
 	if jobType == "gen" {
-		awsOSC, err = osc.New(s3fs.New(utils.AWS, s3c, gparam.Bucket, gparam.Region), osc.WithLogger(logger))
+		awsOSC, err = osc.New(s3fs.New(models.AWS, s3c, gparam.Bucket, gparam.Region), osc.WithLogger(logger))
 	} else {
-		awsOSC, err = osc.New(s3fs.New(utils.AWS, s3c, mparam.AWSBucket, mparam.AWSRegion), osc.WithLogger(logger))
+		awsOSC, err = osc.New(s3fs.New(models.AWS, s3c, gparam.Bucket, gparam.Region), osc.WithLogger(logger))
 	}
 	if err != nil {
 		end := time.Now()
@@ -156,22 +169,31 @@ func getS3OSC(logger *logrus.Logger, startTime time.Time, jobType string, params
 }
 
 func getS3COSC(logger *logrus.Logger, startTime time.Time, jobType string, params interface{}) *osc.OSController {
-	gparam, _ := params.(GenDataParams)
-	mparam, _ := params.(MigrationForm)
+	gparam, _ := params.(ProviderConfig)
 
 	var err error
 	var s3c *s3.Client
 	var OSC *osc.OSController
 
 	logger.Info("Get S3 Compataible Client")
-	if jobType == "gen" {
-		s3c, err = config.NewS3ClientWithEndpoint(gparam.AccessKey, gparam.SecretKey, gparam.Region, gparam.Endpoint)
-	} else {
-		s3c, err = config.NewS3ClientWithEndpoint(mparam.NCPAccessKey, mparam.NCPSecretKey, mparam.NCPRegion, mparam.NCPEndPoint)
-	}
+	credentailManger := config.NewFileCredentialsManager()
+	creds, err := credentailManger.LoadCredentialsByProfile(gparam.ProfileName, gparam.Provider)
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("s3 compatible client creation failed : %v", err)
+		logger.Errorf("S3 credentail load failed : %v", err)
+		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		return nil
+	}
+	ncpc, ok := creds.(models.NCPCredentials)
+	if !ok {
+		logger.Errorf(" credential load failed")
+	}
+	s3c, err = config.NewS3ClientWithEndpoint(ncpc.AccessKey, ncpc.SecretKey, gparam.Region, gparam.Endpoint)
+
+	if err != nil {
+		end := time.Now()
+		logger.Errorf("S3 s3 compatible client creation failed : %v", err)
 		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
 		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
 		return nil
@@ -179,9 +201,9 @@ func getS3COSC(logger *logrus.Logger, startTime time.Time, jobType string, param
 
 	logger.Info("Set up the client as an OSController")
 	if jobType == "gen" {
-		OSC, err = osc.New(s3fs.New(utils.NCP, s3c, gparam.Bucket, gparam.Region), osc.WithLogger(logger))
+		OSC, err = osc.New(s3fs.New(models.NCP, s3c, gparam.Bucket, gparam.Region), osc.WithLogger(logger))
 	} else {
-		OSC, err = osc.New(s3fs.New(utils.NCP, s3c, mparam.NCPBucket, mparam.NCPRegion), osc.WithLogger(logger))
+		OSC, err = osc.New(s3fs.New(models.NCP, s3c, gparam.Bucket, gparam.Region), osc.WithLogger(logger))
 	}
 	if err != nil {
 		end := time.Now()
@@ -194,15 +216,37 @@ func getS3COSC(logger *logrus.Logger, startTime time.Time, jobType string, param
 	return OSC
 }
 
-func getGCPCOSC(logger *logrus.Logger, startTime time.Time, jobType string, params interface{}, credFileName string) *osc.OSController {
-	gparam, _ := params.(GenDataParams)
-	mparam, _ := params.(MigrationForm)
+func getGCPCOSC(logger *logrus.Logger, startTime time.Time, jobType string, params interface{}) *osc.OSController {
+	gparam, _ := params.(ProviderConfig)
 
 	var err error
 	var gcpOSC *osc.OSController
 
 	logger.Info("Get GCP Client")
-	gc, err := config.NewGCPClient(credFileName)
+	credentailManger := config.NewFileCredentialsManager()
+	creds, err := credentailManger.LoadCredentialsByProfile(gparam.ProfileName, gparam.Provider)
+	if err != nil {
+		end := time.Now()
+		logger.Errorf("gcp credentail load failed : %v", err)
+		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		return nil
+	}
+	gcpc, ok := creds.(models.GCPCredentials)
+	if !ok {
+		logger.Errorf(" credential load failed")
+		return nil
+	}
+	credentialsJson, err := json.Marshal(gcpc)
+	if err != nil {
+		end := time.Now()
+		logger.Errorf("gcp credentail json Marshal failed : %v", err)
+		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		return nil
+	}
+
+	gc, err := config.NewGCPClient(string(credentialsJson))
 	if err != nil {
 		end := time.Now()
 		logger.Errorf("gcp client creation failed : %v", err)
@@ -213,9 +257,9 @@ func getGCPCOSC(logger *logrus.Logger, startTime time.Time, jobType string, para
 
 	logger.Info("Set up the client as an OSController")
 	if jobType == "gen" {
-		gcpOSC, err = osc.New(gcpfs.New(gc, gparam.ProjectID, gparam.Bucket, gparam.Region), osc.WithLogger(logger))
+		gcpOSC, err = osc.New(gcpfs.New(gc, gcpc.ProjectID, gparam.Bucket, gparam.Region), osc.WithLogger(logger))
 	} else {
-		gcpOSC, err = osc.New(gcpfs.New(gc, mparam.ProjectID, mparam.GCPBucket, mparam.GCPRegion), osc.WithLogger(logger))
+		gcpOSC, err = osc.New(gcpfs.New(gc, gcpc.ProjectID, gparam.Bucket, gparam.Region), osc.WithLogger(logger))
 	}
 	if err != nil {
 		end := time.Now()
@@ -229,8 +273,7 @@ func getGCPCOSC(logger *logrus.Logger, startTime time.Time, jobType string, para
 }
 
 func getMysqlRDBC(logger *logrus.Logger, startTime time.Time, jobType string, params interface{}) *rdbc.RDBController {
-	gparam, _ := params.(GenDataParams)
-	mparam, _ := params.(MigrationMySQLParams)
+	gparam, _ := params.(ProviderConfig)
 
 	var err error
 	var sqlDB *sql.DB
@@ -241,10 +284,10 @@ func getMysqlRDBC(logger *logrus.Logger, startTime time.Time, jobType string, pa
 		sqlDB, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", gparam.User, gparam.Password, gparam.Host, gparam.Port))
 	} else if jobType == "smig" {
 		logger.Info("Get Source SQL Client")
-		sqlDB, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", mparam.Source.User, mparam.Source.Password, mparam.Source.Host, mparam.Source.Port))
+		sqlDB, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", gparam.User, gparam.Password, gparam.Host, gparam.Port))
 	} else if jobType == "tmig" {
 		logger.Info("Get Target SQL Client")
-		sqlDB, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", mparam.Dest.User, mparam.Dest.Password, mparam.Dest.Host, mparam.Dest.Port))
+		sqlDB, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", gparam.User, gparam.Password, gparam.Host, gparam.Port))
 	}
 	if err != nil {
 		end := time.Now()
@@ -253,27 +296,17 @@ func getMysqlRDBC(logger *logrus.Logger, startTime time.Time, jobType string, pa
 		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
 		return nil
 	}
-	if jobType == "gen" {
-		logger.Info("Get SQL Client")
-		sqlDB, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", gparam.User, gparam.Password, gparam.Host, gparam.Port))
-	} else if jobType == "smig" {
-		logger.Info("Get Source SQL Client")
-		sqlDB, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", mparam.Source.User, mparam.Source.Password, mparam.Source.Host, mparam.Source.Port))
-	} else if jobType == "tmig" {
-		logger.Info("Get Target SQL Client")
-		sqlDB, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", mparam.Dest.User, mparam.Dest.Password, mparam.Dest.Host, mparam.Dest.Port))
-	}
 
 	logger.Info("Set up the client as an RDBController")
 	if jobType == "gen" {
 		logger.Info("Set up the client as an RDBController")
-		RDBC, err = rdbc.New(mysql.New(utils.Provider(gparam.Provider), sqlDB), rdbc.WithLogger(logger))
+		RDBC, err = rdbc.New(mysql.New(models.Provider(gparam.Provider), sqlDB), rdbc.WithLogger(logger))
 	} else if jobType == "smig" {
 		logger.Info("Set up the client as an Source RDBController")
-		RDBC, err = rdbc.New(mysql.New(utils.Provider(mparam.Source.Provider), sqlDB), rdbc.WithLogger(logger))
+		RDBC, err = rdbc.New(mysql.New(models.Provider(gparam.Provider), sqlDB), rdbc.WithLogger(logger))
 	} else if jobType == "tmig" {
 		logger.Info("Set up the client as an Target RDBController")
-		RDBC, err = rdbc.New(mysql.New(utils.Provider(mparam.Dest.Provider), sqlDB), rdbc.WithLogger(logger))
+		RDBC, err = rdbc.New(mysql.New(models.Provider(gparam.Provider), sqlDB), rdbc.WithLogger(logger))
 	}
 
 	if err != nil {
@@ -288,18 +321,30 @@ func getMysqlRDBC(logger *logrus.Logger, startTime time.Time, jobType string, pa
 }
 
 func getDynamoNRDBC(logger *logrus.Logger, startTime time.Time, jobType string, params interface{}) *nrdbc.NRDBController {
-	gparam, _ := params.(GenDataParams)
-	mparam, _ := params.(MigrationForm)
+	gparam, _ := params.(ProviderConfig)
 
 	var err error
 	var dc *dynamodb.Client
 	var NRDBC *nrdbc.NRDBController
 
 	logger.Info("Get DynamoDB Client")
+	credentailManger := config.NewFileCredentialsManager()
+	creds, err := credentailManger.LoadCredentialsByProfile(gparam.ProfileName, gparam.Provider)
+	if err != nil {
+		end := time.Now()
+		logger.Errorf("aws credentail load failed : %v", err)
+		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		return nil
+	}
+	awsc, ok := creds.(models.AWSCredentials)
+	if !ok {
+		logger.Errorf(" credential load failed")
+	}
 	if jobType == "gen" {
-		dc, err = config.NewDynamoDBClient(gparam.AccessKey, gparam.SecretKey, gparam.Region)
+		dc, err = config.NewDynamoDBClient(awsc.AccessKey, awsc.SecretKey, gparam.Region)
 	} else {
-		dc, err = config.NewDynamoDBClient(mparam.AWSAccessKey, mparam.AWSSecretKey, mparam.AWSRegion)
+		dc, err = config.NewDynamoDBClient(awsc.AccessKey, awsc.SecretKey, gparam.Region)
 	}
 	if err != nil {
 		end := time.Now()
@@ -313,7 +358,7 @@ func getDynamoNRDBC(logger *logrus.Logger, startTime time.Time, jobType string, 
 	if jobType == "gen" {
 		NRDBC, err = nrdbc.New(awsdnmdb.New(dc, gparam.Region), nrdbc.WithLogger(logger))
 	} else {
-		NRDBC, err = nrdbc.New(awsdnmdb.New(dc, mparam.AWSRegion), nrdbc.WithLogger(logger))
+		NRDBC, err = nrdbc.New(awsdnmdb.New(dc, gparam.Region), nrdbc.WithLogger(logger))
 	}
 	if err != nil {
 		end := time.Now()
@@ -326,20 +371,40 @@ func getDynamoNRDBC(logger *logrus.Logger, startTime time.Time, jobType string, 
 	return NRDBC
 }
 
-func getFirestoreNRDBC(logger *logrus.Logger, startTime time.Time, jobType string, params interface{}, credFileName string) *nrdbc.NRDBController {
-	gparam, _ := params.(GenDataParams)
-	mparam, _ := params.(MigrationForm)
+func getFirestoreNRDBC(logger *logrus.Logger, startTime time.Time, jobType string, params interface{}) *nrdbc.NRDBController {
+	gparam, _ := params.(ProviderConfig)
 
 	var err error
 	var fc *firestore.Client
 	var NRDBC *nrdbc.NRDBController
 
 	logger.Info("Get FirestoreDB Client")
-	if jobType == "gen" {
-		fc, err = config.NewFireStoreClient(credFileName, gparam.GCPCredentialJson, gparam.ProjectID, gparam.DatabaseID)
-	} else {
-		fc, err = config.NewFireStoreClient(credFileName, mparam.GCPCredentialJson, mparam.ProjectID, mparam.DatabaseID)
+
+	credentailManger := config.NewFileCredentialsManager()
+	creds, err := credentailManger.LoadCredentialsByProfile(gparam.ProfileName, gparam.Provider)
+	if err != nil {
+		end := time.Now()
+		logger.Errorf("gcp credentail load failed : %v", err)
+		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		return nil
 	}
+	gcpc, ok := creds.(models.GCPCredentials)
+	if !ok {
+		logger.Errorf(" credential load failed")
+		return nil
+	}
+	credentialsJson, err := json.Marshal(gcpc)
+	if err != nil {
+		end := time.Now()
+		logger.Errorf("gcp credentail json Marshal failed : %v", err)
+		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		return nil
+	}
+
+	fc, err = config.NewFireStoreClient(string(credentialsJson), gcpc.ProjectID, gparam.DatabaseID)
+
 	if err != nil {
 		end := time.Now()
 		logger.Errorf("firestoreDB client creation failed : %v", err)
@@ -349,11 +414,8 @@ func getFirestoreNRDBC(logger *logrus.Logger, startTime time.Time, jobType strin
 	}
 
 	logger.Info("Set up the client as an NRDBController")
-	if jobType == "gen" {
-		NRDBC, err = nrdbc.New(gcpfsdb.New(fc, gparam.Region), nrdbc.WithLogger(logger))
-	} else {
-		NRDBC, err = nrdbc.New(gcpfsdb.New(fc, mparam.GCPRegion), nrdbc.WithLogger(logger))
-	}
+	NRDBC, err = nrdbc.New(gcpfsdb.New(fc, gparam.Region), nrdbc.WithLogger(logger))
+
 	if err != nil {
 		end := time.Now()
 		logger.Errorf("NRDBController creation failed : %v", err)
@@ -366,32 +428,17 @@ func getFirestoreNRDBC(logger *logrus.Logger, startTime time.Time, jobType strin
 }
 
 func getMongoNRDBC(logger *logrus.Logger, startTime time.Time, jobType string, params interface{}) *nrdbc.NRDBController {
-	gparam, _ := params.(GenDataParams)
-	mparam, _ := params.(MigrationForm)
+	gparam, _ := params.(ProviderConfig)
 
-	var Port int
 	var err error
 	var mc *mongo.Client
 	var NRDBC *nrdbc.NRDBController
 
-	if jobType == "gen" {
-		Port, err = strconv.Atoi(gparam.Port)
-	} else {
-		Port, err = strconv.Atoi(mparam.MongoPort)
-	}
-	if err != nil {
-		end := time.Now()
-		logger.Errorf("port atoi failed : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
-		return nil
-	}
-
 	logger.Info("Get MongoDB Client")
 	if jobType == "gen" {
-		mc, err = config.NewNCPMongoDBClient(gparam.User, gparam.Password, gparam.Host, Port)
+		mc, err = config.NewNCPMongoDBClient(gparam.User, gparam.Password, gparam.Host, cast.ToInt(gparam.Port))
 	} else {
-		mc, err = config.NewNCPMongoDBClient(mparam.MongoUsername, mparam.MongoPassword, mparam.MongoHost, Port)
+		mc, err = config.NewNCPMongoDBClient(gparam.User, gparam.Password, gparam.Host, cast.ToInt(gparam.Port))
 	}
 	if err != nil {
 		end := time.Now()
@@ -405,7 +452,7 @@ func getMongoNRDBC(logger *logrus.Logger, startTime time.Time, jobType string, p
 	if jobType == "gen" {
 		NRDBC, err = nrdbc.New(ncpmgdb.New(mc, gparam.DatabaseName), nrdbc.WithLogger(logger))
 	} else {
-		NRDBC, err = nrdbc.New(ncpmgdb.New(mc, mparam.MongoDBName), nrdbc.WithLogger(logger))
+		NRDBC, err = nrdbc.New(ncpmgdb.New(mc, gparam.DatabaseName), nrdbc.WithLogger(logger))
 	}
 	if err != nil {
 		end := time.Now()
@@ -534,11 +581,30 @@ func getData(jobtype string, ctx echo.Context) interface{} {
 		if err != nil {
 			return err
 		}
-
 		// Reset the request body using io.NopCloser
 		ctx.Request().Body = io.NopCloser(bytes.NewBuffer(data))
 
 		params := GenDataParams{}
+		json.Unmarshal(data, &params)
+		return params
+	} else {
+
+		return nil
+	}
+}
+
+func getFileData(jobtype string, ctx echo.Context) interface{} {
+	if jobtype == "gen" {
+
+		// Read the request body
+		data, err := io.ReadAll(ctx.Request().Body)
+		if err != nil {
+			return err
+		}
+		// Reset the request body using io.NopCloser
+		ctx.Request().Body = io.NopCloser(bytes.NewBuffer(data))
+
+		params := GenFileParams{}
 		json.Unmarshal(data, &params)
 		return params
 	} else {
