@@ -200,11 +200,7 @@ func getS3COSC(logger *logrus.Logger, startTime time.Time, jobType string, param
 	}
 
 	logger.Info("Set up the client as an OSController")
-	if jobType == "gen" {
-		OSC, err = osc.New(s3fs.New(models.NCP, s3c, gparam.Bucket, gparam.Region), osc.WithLogger(logger))
-	} else {
-		OSC, err = osc.New(s3fs.New(models.NCP, s3c, gparam.Bucket, gparam.Region), osc.WithLogger(logger))
-	}
+	OSC, err = osc.New(s3fs.New(models.NCP, s3c, gparam.Bucket, gparam.Region), osc.WithLogger(logger))
 	if err != nil {
 		end := time.Now()
 		logger.Errorf("OSController creation failed : %v", err)
@@ -279,16 +275,8 @@ func getMysqlRDBC(logger *logrus.Logger, startTime time.Time, jobType string, pa
 	var sqlDB *sql.DB
 	var RDBC *rdbc.RDBController
 
-	if jobType == "gen" {
-		logger.Info("Get SQL Client")
-		sqlDB, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", gparam.User, gparam.Password, gparam.Host, gparam.Port))
-	} else if jobType == "smig" {
-		logger.Info("Get Source SQL Client")
-		sqlDB, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", gparam.User, gparam.Password, gparam.Host, gparam.Port))
-	} else if jobType == "tmig" {
-		logger.Info("Get Target SQL Client")
-		sqlDB, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", gparam.User, gparam.Password, gparam.Host, gparam.Port))
-	}
+	logger.Infof("Get SQL Client %v", jobType)
+	sqlDB, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", gparam.User, gparam.Password, gparam.Host, gparam.Port))
 	if err != nil {
 		end := time.Now()
 		logger.Errorf("sqlDB client creation failed : %v", err)
@@ -298,17 +286,7 @@ func getMysqlRDBC(logger *logrus.Logger, startTime time.Time, jobType string, pa
 	}
 
 	logger.Info("Set up the client as an RDBController")
-	if jobType == "gen" {
-		logger.Info("Set up the client as an RDBController")
-		RDBC, err = rdbc.New(mysql.New(models.Provider(gparam.Provider), sqlDB), rdbc.WithLogger(logger))
-	} else if jobType == "smig" {
-		logger.Info("Set up the client as an Source RDBController")
-		RDBC, err = rdbc.New(mysql.New(models.Provider(gparam.Provider), sqlDB), rdbc.WithLogger(logger))
-	} else if jobType == "tmig" {
-		logger.Info("Set up the client as an Target RDBController")
-		RDBC, err = rdbc.New(mysql.New(models.Provider(gparam.Provider), sqlDB), rdbc.WithLogger(logger))
-	}
-
+	RDBC, err = rdbc.New(mysql.New(models.Provider(gparam.Provider), sqlDB), rdbc.WithLogger(logger))
 	if err != nil {
 		end := time.Now()
 		logger.Errorf("RDBController creation failed : %v", err)

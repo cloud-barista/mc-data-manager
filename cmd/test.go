@@ -29,7 +29,7 @@ var testCmd = &cobra.Command{
 	Long:  `test-command`,
 	Run: func(_ *cobra.Command, _ []string) {
 		logrus.SetFormatter(&log.CustomTextFormatter{CmdName: "test", JobName: "test dummy create"})
-		if err := execfunc.DummyCreate(datamoldParams); err != nil {
+		if err := execfunc.DummyCreate(commandTask); err != nil {
 			logrus.Errorf("test dummy create failed : %v", err)
 		}
 	},
@@ -38,15 +38,15 @@ var testCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(testCmd)
 
-	testCmd.Flags().StringVarP(&datamoldParams.DstPath, "dst-path", "d", "", "Directory path to create dummy data")
+	testCmd.Flags().StringVarP(&commandTask.DummyPath, "dst-path", "d", "", "Directory path to create dummy data")
 	testCmd.MarkFlagRequired("dst-path")
 
-	testCmd.Flags().IntVarP(&datamoldParams.SqlSize, "sql-size", "s", 0, "Total size of sql files")
-	testCmd.Flags().IntVarP(&datamoldParams.CsvSize, "csv-size", "c", 0, "Total size of csv files")
-	testCmd.Flags().IntVarP(&datamoldParams.JsonSize, "json-size", "j", 0, "Total size of json files")
-	testCmd.Flags().IntVarP(&datamoldParams.XmlSize, "xml-size", "x", 0, "Total size of xml files")
-	testCmd.Flags().IntVarP(&datamoldParams.TxtSize, "txt-size", "t", 0, "Total size of txt files")
-	testCmd.Flags().IntVarP(&datamoldParams.PngSize, "png-size", "p", 0, "Total size of png files")
-	testCmd.Flags().IntVarP(&datamoldParams.GifSize, "gif-size", "g", 0, "Total size of gif files")
-	testCmd.Flags().IntVarP(&datamoldParams.ZipSize, "zip-size", "z", 0, "Total size of zip files")
+	testCmd.Flags().StringVarP(&commandTask.SizeSQL, "sql-size", "s", "0", "Total size of sql files")
+	testCmd.Flags().StringVarP(&commandTask.SizeCSV, "csv-size", "c", "0", "Total size of csv files")
+	testCmd.Flags().StringVarP(&commandTask.SizeJSON, "json-size", "j", "0", "Total size of json files")
+	testCmd.Flags().StringVarP(&commandTask.SizeXML, "xml-size", "x", "0", "Total size of xml files")
+	testCmd.Flags().StringVarP(&commandTask.SizeTXT, "txt-size", "t", "0", "Total size of txt files")
+	testCmd.Flags().StringVarP(&commandTask.SizePNG, "png-size", "p", "0", "Total size of png files")
+	testCmd.Flags().StringVarP(&commandTask.SizeGIF, "gif-size", "g", "0", "Total size of gif files")
+	testCmd.Flags().StringVarP(&commandTask.SizeZIP, "zip-size", "z", "0", "Total size of zip files")
 }

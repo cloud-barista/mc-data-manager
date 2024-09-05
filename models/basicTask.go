@@ -20,10 +20,10 @@ type Task struct {
 
 type Flow struct {
 	OperationParams
-	FlowID   string `json:"flowId,omitempty"`
-	FlowName string `json:"flowName"`
-	Tasks    []Task `json:"tasks"`  // List of tasks in the flow
-	Status   Status `json:"status"` // active, inactive, etc.
+	FlowID   string        `json:"flowId,omitempty"`
+	FlowName string        `json:"flowName"`
+	Tasks    []interface{} `json:"tasks"`  // List of tasks in the flow
+	Status   Status        `json:"status"` // active, inactive, etc.
 }
 
 type Schedule struct {
@@ -38,6 +38,16 @@ type Schedule struct {
 type GenarateTask struct {
 	Task
 	TargetPoint GenTaskTarget `json:"targetPoint"`
+}
+
+type CommandTask struct {
+	Task
+	TaskFilePath string
+	GenFileParams
+	SourcePoint     ProviderConfig `json:"sourcePoint,omitempty"`
+	TargetPoint     ProviderConfig `json:"targetPoint,omitempty"`
+	DeleteDBList    []string
+	DeleteTableList []string
 }
 type GenTaskTarget struct {
 	ProviderConfig
