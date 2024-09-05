@@ -29,8 +29,7 @@ var importCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(importCmd)
 
-	importCmd.PersistentFlags().StringVarP(&datamoldParams.CredentialPath, "credential-path", "C", "", "Json file path containing the user's credentials")
-	importCmd.PersistentFlags().StringVarP(&datamoldParams.DstPath, "dst-path", "d", "", "Destination path where dummy data exists")
-	importCmd.PersistentFlags().BoolVarP(&datamoldParams.TaskTarget, "task", "T", false, "Select a destination(src, dst) to work with in the credential-path")
-	importCmd.MarkFlagsRequiredTogether("credential-path", "dst-path")
+	importCmd.PersistentFlags().StringVarP(&commandTask.TaskFilePath, "task-file-path", "f", "task.json", "Json file path containing the user's task")
+	importCmd.PersistentFlags().StringVarP(&commandTask.Directory, "dst-path", "d", "", "Destination path where dummy data exists")
+	importCmd.MarkFlagsRequiredTogether("task-file-path", "dst-path")
 }

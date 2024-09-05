@@ -18,12 +18,12 @@ package cmd
 import (
 	"os"
 
-	"github.com/cloud-barista/mc-data-manager/internal/auth"
 	"github.com/cloud-barista/mc-data-manager/internal/log"
+	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/spf13/cobra"
 )
 
-var datamoldParams auth.DatamoldParams
+var commandTask models.CommandTask
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{

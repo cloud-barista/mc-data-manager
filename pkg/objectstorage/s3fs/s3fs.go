@@ -92,7 +92,6 @@ func (f *S3FS) CreateBucket() error {
 	_, err := f.client.HeadBucket(f.ctx, &s3.HeadBucketInput{
 		Bucket: aws.String(f.bucketName),
 	})
-
 	if err != nil {
 		var bae *types.BucketAlreadyExists
 		if errors.As(err, &bae) {
