@@ -29,6 +29,7 @@ type GenDataParams struct {
 }
 
 type GenFileParams struct {
+	Directory string `json:"Directory,omitempty" swaggerignore:"true"`
 	DummyPath string `json:"dummyPath,omitempty" swaggerignore:"true"`
 	FileFormatParams
 	FileSizeParams
@@ -39,7 +40,7 @@ type GenMySQLParams struct {
 	MySQLParams
 }
 
-type APICredentailPatams struct {
+type APICredentialParams struct {
 	GCPCredentialJson string
 	GCPCredentialPath string
 	AWSAccessKey      string
