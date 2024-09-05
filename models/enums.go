@@ -15,6 +15,7 @@ limitations under the License.
 */
 package models
 
+// Cloud Service Provider type
 type Provider string
 
 const (

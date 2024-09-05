@@ -26,32 +26,31 @@ import (
 // deleteCmd represents the delete command
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Delete dummy data",
+	Short: "Delete local data",
 	Long: `Delete unstructured, semi-structured, and structured data, 
 which are CSP or local dummy data`,
 }
 
-var deleteDummyCmd = &cobra.Command{
-	Use: "dummy",
+var deleteLocalCmd = &cobra.Command{
+	Use: "local",
 
 	Run: func(cmd *cobra.Command, args []string) {
 		logrus.SetFormatter(&log.CustomTextFormatter{CmdName: "delete"})
-		logrus.WithFields(logrus.Fields{"jobName": "dummy delete"}).Info("start deleting dummy")
+		logrus.WithFields(logrus.Fields{"jobName": "local delete"}).Info("start deleting local data")
 
-		if err := os.RemoveAll(datamoldParams.DstPath); err != nil {
-			logrus.WithFields(logrus.Fields{"jobName": "dummy delete"}).Errorf("failed to delete dummy : %v", err)
+		if err := os.RemoveAll(commandTask.Directory); err != nil {
+			logrus.WithFields(logrus.Fields{"jobName": "local delete"}).Errorf("failed to delete local : %v", err)
 			return
 		}
-		logrus.Infof("successfully deleted : %s\n", datamoldParams.DstPath)
-		return
+		logrus.Infof("successfully deleted : %s\n", commandTask.Directory)
+
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(deleteCmd)
-	deleteCmd.AddCommand(deleteDummyCmd)
+	deleteCmd.AddCommand(deleteLocalCmd)
 
-	deleteCmd.PersistentFlags().BoolVarP(&datamoldParams.TaskTarget, "task", "T", false, "Select a destination(src, dst) to work with in the credential-path")
-	deleteDummyCmd.Flags().StringVarP(&datamoldParams.DstPath, "dst-path", "d", "", "Delete data in directory paths")
-	deleteDummyCmd.MarkFlagRequired("dst-path")
+	deleteLocalCmd.Flags().StringVarP(&commandTask.Directory, "dst-path", "d", "", "Delete data in directory paths")
+	deleteLocalCmd.MarkFlagRequired("dst-path")
 }

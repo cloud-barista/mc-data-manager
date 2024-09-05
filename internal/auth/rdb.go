@@ -21,26 +21,23 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/service/rdbc"
 	"github.com/sirupsen/logrus"
 )
 
-func ImportRDMFunc(datamoldParams *DatamoldParams) error {
+func ImportRDMFunc(datamoldParams *models.CommandTask) error {
 	var RDBC *rdbc.RDBController
 	var err error
 	logrus.Infof("User Information")
-	if !datamoldParams.TaskTarget {
-		RDBC, err = GetSrcRDMS(datamoldParams)
-	} else {
-		RDBC, err = GetDstRDMS(datamoldParams)
-	}
+	RDBC, err = GetRDMS(&datamoldParams.TargetPoint)
 	if err != nil {
 		logrus.Errorf("RDBController error importing into rdbms : %v", err)
 		return err
 	}
 
 	sqlList := []string{}
-	err = filepath.Walk(datamoldParams.DstPath, func(path string, info fs.FileInfo, err error) error {
+	err = filepath.Walk(datamoldParams.Directory, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -67,25 +64,21 @@ func ImportRDMFunc(datamoldParams *DatamoldParams) error {
 		}
 		logrus.Infof("Import success: %s", sqlPath)
 	}
-	logrus.Infof("successfully imported : %s", datamoldParams.DstPath)
+	logrus.Infof("successfully imported : %s", datamoldParams.Directory)
 	return nil
 }
 
-func ExportRDMFunc(datamoldParams *DatamoldParams) error {
+func ExportRDMFunc(datamoldParams *models.CommandTask) error {
 	var RDBC *rdbc.RDBController
 	var err error
 	logrus.Infof("User Information")
-	if !datamoldParams.TaskTarget {
-		RDBC, err = GetSrcRDMS(datamoldParams)
-	} else {
-		RDBC, err = GetDstRDMS(datamoldParams)
-	}
+	RDBC, err = GetRDMS(&datamoldParams.TargetPoint)
 	if err != nil {
-		logrus.Errorf("RDBController error exporting into rdbms : %v", err)
+		logrus.Errorf("RDBController error importing into rdbms : %v", err)
 		return err
 	}
 
-	err = os.MkdirAll(datamoldParams.DstPath, 0755)
+	err = os.MkdirAll(datamoldParams.Directory, 0755)
 	if err != nil {
 		logrus.Errorf("MkdirAll error : %v", err)
 		return err
@@ -106,7 +99,7 @@ func ExportRDMFunc(datamoldParams *DatamoldParams) error {
 			return err
 		}
 
-		file, err := os.Create(filepath.Join(datamoldParams.DstPath, fmt.Sprintf("%s.sql", db)))
+		file, err := os.Create(filepath.Join(datamoldParams.Directory, fmt.Sprintf("%s.sql", db)))
 		if err != nil {
 			logrus.Errorf("File create error : %v", err)
 			return err
@@ -121,41 +114,26 @@ func ExportRDMFunc(datamoldParams *DatamoldParams) error {
 		logrus.Infof("successfully exported : %s", file.Name())
 		file.Close()
 	}
-	logrus.Infof("successfully exported : %s", datamoldParams.DstPath)
+	logrus.Infof("successfully exported : %s", datamoldParams.Directory)
 	return nil
 }
 
-func MigrationRDMFunc(datamoldParams *DatamoldParams) error {
+func MigrationRDMFunc(datamoldParams *models.CommandTask) error {
 	var srcRDBC *rdbc.RDBController
 	var srcErr error
 	var dstRDBC *rdbc.RDBController
 	var dstErr error
-	if !datamoldParams.TaskTarget {
-		logrus.Infof("Source Information")
-		srcRDBC, srcErr = GetSrcRDMS(datamoldParams)
-		if srcErr != nil {
-			logrus.Errorf("RDBController error migration into rdbms : %v", srcErr)
-			return srcErr
-		}
-		logrus.Infof("Target Information")
-		dstRDBC, dstErr = GetDstRDMS(datamoldParams)
-		if dstErr != nil {
-			logrus.Errorf("RDBController error migration into rdbms : %v", dstErr)
-			return dstErr
-		}
-	} else {
-		logrus.Infof("Source Information")
-		srcRDBC, srcErr = GetDstRDMS(datamoldParams)
-		if srcErr != nil {
-			logrus.Errorf("RDBController error migration into rdbms : %v", srcErr)
-			return srcErr
-		}
-		logrus.Infof("Target Information")
-		dstRDBC, dstErr = GetSrcRDMS(datamoldParams)
-		if dstErr != nil {
-			logrus.Errorf("RDBController error migration into rdbms : %v", dstErr)
-			return dstErr
-		}
+	logrus.Infof("Source Information")
+	srcRDBC, srcErr = GetRDMS(&datamoldParams.SourcePoint)
+	if srcErr != nil {
+		logrus.Errorf("RDBController error migration into rdbms : %v", srcErr)
+		return srcErr
+	}
+	logrus.Infof("Target Information")
+	dstRDBC, dstErr = GetRDMS(&datamoldParams.TargetPoint)
+	if dstErr != nil {
+		logrus.Errorf("RDBController error migration into rdbms : %v", dstErr)
+		return dstErr
 	}
 
 	logrus.Info("Launch RDBController Copy")
@@ -167,14 +145,11 @@ func MigrationRDMFunc(datamoldParams *DatamoldParams) error {
 	return nil
 }
 
-func DeleteRDMFunc(datamoldParams *DatamoldParams) error {
+func DeleteRDMFunc(datamoldParams *models.CommandTask) error {
 	var RDBC *rdbc.RDBController
 	var err error
-	if !datamoldParams.TaskTarget {
-		RDBC, err = GetSrcRDMS(datamoldParams)
-	} else {
-		RDBC, err = GetDstRDMS(datamoldParams)
-	}
+	RDBC, err = GetRDMS(&datamoldParams.TargetPoint)
+
 	if err != nil {
 		logrus.Errorf("RDBController error deleting into rdbms : %v", err)
 		return err
