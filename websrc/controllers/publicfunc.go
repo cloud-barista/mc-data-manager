@@ -123,7 +123,7 @@ func getS3OSC(logger *logrus.Logger, startTime time.Time, jobType string, params
 	var awsOSC *osc.OSController
 	logger.Infof("gmaraps : %v", gparam)
 	logger.Info("Get S3 Client")
-	credentailManger := config.NewFileCredentialsManager()
+	credentailManger := config.NewProfileManager()
 	creds, err := credentailManger.LoadCredentialsByProfile(gparam.ProfileName, gparam.Provider)
 	if err != nil {
 		end := time.Now()
@@ -176,7 +176,7 @@ func getS3COSC(logger *logrus.Logger, startTime time.Time, jobType string, param
 	var OSC *osc.OSController
 
 	logger.Info("Get S3 Compataible Client")
-	credentailManger := config.NewFileCredentialsManager()
+	credentailManger := config.NewProfileManager()
 	creds, err := credentailManger.LoadCredentialsByProfile(gparam.ProfileName, gparam.Provider)
 	if err != nil {
 		end := time.Now()
@@ -219,7 +219,7 @@ func getGCPCOSC(logger *logrus.Logger, startTime time.Time, jobType string, para
 	var gcpOSC *osc.OSController
 
 	logger.Info("Get GCP Client")
-	credentailManger := config.NewFileCredentialsManager()
+	credentailManger := config.NewProfileManager()
 	creds, err := credentailManger.LoadCredentialsByProfile(gparam.ProfileName, gparam.Provider)
 	if err != nil {
 		end := time.Now()
@@ -306,7 +306,7 @@ func getDynamoNRDBC(logger *logrus.Logger, startTime time.Time, jobType string, 
 	var NRDBC *nrdbc.NRDBController
 
 	logger.Info("Get DynamoDB Client")
-	credentailManger := config.NewFileCredentialsManager()
+	credentailManger := config.NewProfileManager()
 	creds, err := credentailManger.LoadCredentialsByProfile(gparam.ProfileName, gparam.Provider)
 	if err != nil {
 		end := time.Now()
@@ -358,7 +358,7 @@ func getFirestoreNRDBC(logger *logrus.Logger, startTime time.Time, jobType strin
 
 	logger.Info("Get FirestoreDB Client")
 
-	credentailManger := config.NewFileCredentialsManager()
+	credentailManger := config.NewProfileManager()
 	creds, err := credentailManger.LoadCredentialsByProfile(gparam.ProfileName, gparam.Provider)
 	if err != nil {
 		end := time.Now()

@@ -54,7 +54,7 @@ func GetConfig(credPath string, ConfigData *models.CommandTask) error {
 
 func preRunProfileE(pName, cmdName string, params *models.ProviderConfig) error {
 	logrus.Info("initiate a profile scan")
-	credentailMangeer := config.NewFileCredentialsManager()
+	credentailMangeer := config.NewProfileManager()
 	if srcCreds, err := credentailMangeer.LoadCredentialsByProfile(params.ProfileName, params.Provider); err != nil {
 		return fmt.Errorf("get config error : %s", err)
 
@@ -108,7 +108,7 @@ func GetOS(params *models.ProviderConfig) (*osc.OSController, error) {
 	logrus.Infof("ProfileName : %s", params.ProfileName)
 	logrus.Infof("Provider : %s", params.Provider)
 	logrus.Info("Get  Credentail")
-	credentailManger := config.NewFileCredentialsManager()
+	credentailManger := config.NewProfileManager()
 	creds, err := credentailManger.LoadCredentialsByProfile(params.ProfileName, params.Provider)
 	if err != nil {
 		logrus.Errorf("credentail load failed : %v", err)
@@ -203,7 +203,7 @@ func GetNRDMS(params *models.ProviderConfig) (*nrdbc.NRDBController, error) {
 	logrus.Infof("Provider : %s", params.Provider)
 
 	logrus.Info("Get  Credentail")
-	credentailManger := config.NewFileCredentialsManager()
+	credentailManger := config.NewProfileManager()
 	creds, err := credentailManger.LoadCredentialsByProfile(params.ProfileName, params.Provider)
 	if err != nil {
 		logrus.Errorf("credentail load failed : %v", err)
