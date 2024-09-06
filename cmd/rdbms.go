@@ -26,8 +26,8 @@ import (
 var importRDBCmd = &cobra.Command{
 	Use: "rdbms",
 	Run: func(cmd *cobra.Command, args []string) {
-		auth.PreRun("rdbms", &datamoldParams, cmd.Parent().Use)
-		if err := auth.ImportRDMFunc(&datamoldParams); err != nil {
+		auth.PreRun("rdbms", &commandTask, cmd.Parent().Use)
+		if err := auth.ImportRDMFunc(&commandTask); err != nil {
 			os.Exit(1)
 		}
 	},
@@ -36,8 +36,8 @@ var importRDBCmd = &cobra.Command{
 var exportRDBCmd = &cobra.Command{
 	Use: "rdbms",
 	Run: func(cmd *cobra.Command, args []string) {
-		auth.PreRun("rdbms", &datamoldParams, cmd.Parent().Use)
-		if err := auth.ExportRDMFunc(&datamoldParams); err != nil {
+		auth.PreRun("rdbms", &commandTask, cmd.Parent().Use)
+		if err := auth.ExportRDMFunc(&commandTask); err != nil {
 			os.Exit(1)
 		}
 	},
@@ -46,8 +46,8 @@ var exportRDBCmd = &cobra.Command{
 var migrationRDBCmd = &cobra.Command{
 	Use: "rdbms",
 	Run: func(cmd *cobra.Command, args []string) {
-		auth.PreRun("rdbms", &datamoldParams, cmd.Parent().Use)
-		if err := auth.MigrationRDMFunc(&datamoldParams); err != nil {
+		auth.PreRun("rdbms", &commandTask, cmd.Parent().Use)
+		if err := auth.MigrationRDMFunc(&commandTask); err != nil {
 			os.Exit(1)
 		}
 	},
@@ -56,8 +56,8 @@ var migrationRDBCmd = &cobra.Command{
 var deleteRDBMSCmd = &cobra.Command{
 	Use: "rdbms",
 	Run: func(cmd *cobra.Command, args []string) {
-		auth.PreRun("rdbms", &datamoldParams, cmd.Parent().Use)
-		if err := auth.DeleteRDMFunc(&datamoldParams); err != nil {
+		auth.PreRun("rdbms", &commandTask, cmd.Parent().Use)
+		if err := auth.DeleteRDMFunc(&commandTask); err != nil {
 			os.Exit(1)
 		}
 	},
@@ -69,7 +69,7 @@ func init() {
 	migrationCmd.AddCommand(migrationRDBCmd)
 	deleteCmd.AddCommand(deleteRDBMSCmd)
 
-	deleteRDBMSCmd.Flags().StringVarP(&datamoldParams.CredentialPath, "credential-path", "C", "", "Json file path containing the user's credentials")
-	deleteRDBMSCmd.Flags().StringArrayVarP(&datamoldParams.DeleteDBList, "delete-db-list", "D", []string{}, "List of db names to delete")
-	deleteRDBMSCmd.MarkFlagsRequiredTogether("credential-path", "delete-db-list")
+	deleteRDBMSCmd.PersistentFlags().StringVarP(&commandTask.TaskFilePath, "task-file-path", "f", "task.json", "Json file path containing the user's task")
+	deleteRDBMSCmd.Flags().StringArrayVarP(&commandTask.DeleteDBList, "delete-db-list", "D", []string{}, "List of db names to delete")
+	deleteRDBMSCmd.MarkFlagsRequiredTogether("task-file-path", "delete-db-list")
 }

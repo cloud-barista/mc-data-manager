@@ -19,12 +19,12 @@ import (
 	"context"
 
 	"cloud.google.com/go/firestore"
-	"github.com/cloud-barista/mc-data-manager/pkg/utils"
+	"github.com/cloud-barista/mc-data-manager/models"
 	"google.golang.org/api/iterator"
 )
 
 type FirestoreDBMS struct {
-	provider utils.Provider
+	provider models.Provider
 	region   string
 
 	client *firestore.Client
@@ -35,7 +35,7 @@ type FirestoreDBOption func(*FirestoreDBMS)
 
 func New(client *firestore.Client, region string, opts ...FirestoreDBOption) *FirestoreDBMS {
 	dms := &FirestoreDBMS{
-		provider: utils.GCP,
+		provider: models.GCP,
 		region:   region,
 		client:   client,
 		ctx:      context.TODO(),

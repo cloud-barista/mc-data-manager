@@ -16,77 +16,20 @@ limitations under the License.
 package controllers
 
 import (
-	"mime/multipart"
 	"strconv"
 
 	"github.com/cloud-barista/mc-data-manager/pkg/dummy/semistructured"
 	"github.com/cloud-barista/mc-data-manager/pkg/dummy/structured"
 	"github.com/cloud-barista/mc-data-manager/pkg/dummy/unstructured"
+	"github.com/spf13/cast"
+
 	"github.com/sirupsen/logrus"
 )
 
-type GenDataParams struct {
-	Region    string `json:"region" form:"region"`
-	AccessKey string `json:"accessKey" form:"accessKey"`
-	SecretKey string `json:"secretKey" form:"secretKey"`
-	Bucket    string `json:"bucket" form:"bucket"`
-	Endpoint  string `json:"endpoint" form:"endpoint"`
-	DummyPath string `json:"path" form:"path"`
+func genData(params GenFileParams, logger *logrus.Logger) error {
+	logger.Info("Let's getnetate")
 
-	CheckSQL        string `json:"checkSQL" form:"checkSQL"`
-	CheckCSV        string `json:"checkCSV" form:"checkCSV"`
-	CheckTXT        string `json:"checkTXT" form:"checkTXT"`
-	CheckPNG        string `json:"checkPNG" form:"checkPNG"`
-	CheckGIF        string `json:"checkGIF" form:"checkGIF"`
-	CheckZIP        string `json:"checkZIP" form:"checkZIP"`
-	CheckJSON       string `json:"checkJSON" form:"checkJSON"`
-	CheckXML        string `json:"checkXML" form:"checkXML"`
-	CheckServerJSON string `json:"checkServerJSON" form:"checkServerJSON"`
-	CheckServerSQL  string `json:"checkServerSQL" form:"checkServerSQL"`
-
-	SizeSQL        string `json:"sizeSQL" form:"sizeSQL"`
-	SizeCSV        string `json:"sizeCSV" form:"sizeCSV"`
-	SizeTXT        string `json:"sizeTXT" form:"sizeTXT"`
-	SizePNG        string `json:"sizePNG" form:"sizePNG"`
-	SizeGIF        string `json:"sizeGIF" form:"sizeGIF"`
-	SizeZIP        string `json:"sizeZIP" form:"sizeZIP"`
-	SizeJSON       string `json:"sizeJSON" form:"sizeJSON"`
-	SizeXML        string `json:"sizeXML" form:"sizeXML"`
-	SizeServerJSON string `json:"sizeServerJSON" form:"sizeServerJSON"`
-	SizeServerSQL  string `json:"sizeServerSQL" form:"sizeServerSQL"`
-
-	DBProvider   string `json:"provider" form:"provider"`
-	DBHost       string `json:"host" form:"host"`
-	DBPort       string `json:"port" form:"port"`
-	DBUser       string `json:"username" form:"username"`
-	DBPassword   string `json:"password" form:"password"`
-	DatabaseName string `json:"databaseName" form:"databaseName"`
-
-	GCPCredential     *multipart.FileHeader `json:"-" form:"gcpCredential" swaggerignore:"true"`
-	GCPCredentialJson string                `json:"gcpCredentialJson" form:"gcpCredentialJson"`
-	DatabaseID        string                `json:"databaseId" form:"databaseId"`
-	ProjectID         string                `json:"projectId" form:"projectId"`
-}
-
-type GenFirestoreParams struct {
-	Region            string                `json:"region" form:"region"`
-	GCPCredential     *multipart.FileHeader `json:"-" form:"gcpCredential" swaggerignore:"true"`
-	GCPCredentialJson string                `json:"gcpCredentialJson" form:"gcpCredentialJson"`
-	DatabaseID        string                `json:"databaseId" form:"databaseId"`
-	ProjectID         string                `json:"projectId" form:"projectId"`
-}
-
-type GenMySQLParams struct {
-	DBProvider   string `json:"provider" form:"provider"`
-	DBHost       string `json:"host" form:"host"`
-	DBPort       string `json:"port" form:"port"`
-	DBUser       string `json:"username" form:"username"`
-	DBPassword   string `json:"password" form:"password"`
-	DatabaseName string `json:"databaseName" form:"databaseName"`
-}
-
-func genData(params GenDataParams, logger *logrus.Logger) error {
-	if params.CheckSQL == "on" {
+	if params.CheckSQL {
 		logger.Info("Start creating sql dummy")
 		sql, _ := strconv.Atoi(params.SizeSQL)
 		if err := structured.GenerateRandomSQL(params.DummyPath, sql); err != nil {
@@ -95,8 +38,7 @@ func genData(params GenDataParams, logger *logrus.Logger) error {
 		}
 		logger.Info("Successfully generated sql dummy")
 	}
-
-	if params.CheckCSV == "on" {
+	if cast.ToBool(params.CheckCSV) {
 		logger.Info("Start creating csv dummy")
 		csv, _ := strconv.Atoi(params.SizeCSV)
 		if err := structured.GenerateRandomCSV(params.DummyPath, csv); err != nil {
@@ -106,7 +48,7 @@ func genData(params GenDataParams, logger *logrus.Logger) error {
 		logger.Info("Successfully generated csv dummy")
 	}
 
-	if params.CheckTXT == "on" {
+	if params.CheckTXT {
 		logger.Info("Start creating txt dummy")
 		txt, _ := strconv.Atoi(params.SizeTXT)
 		if err := unstructured.GenerateRandomTXT(params.DummyPath, txt); err != nil {
@@ -116,7 +58,7 @@ func genData(params GenDataParams, logger *logrus.Logger) error {
 		logger.Info("Successfully generated txt dummy")
 	}
 
-	if params.CheckPNG == "on" {
+	if params.CheckPNG {
 		logger.Info("Start creating png dummy")
 		png, _ := strconv.Atoi(params.SizePNG)
 		if err := unstructured.GenerateRandomPNGImage(params.DummyPath, png); err != nil {
@@ -126,7 +68,7 @@ func genData(params GenDataParams, logger *logrus.Logger) error {
 		logger.Info("Successfully generated png dummy")
 	}
 
-	if params.CheckGIF == "on" {
+	if params.CheckGIF {
 		logger.Info("Start creating gif dummy")
 		gif, _ := strconv.Atoi(params.SizeGIF)
 		if err := unstructured.GenerateRandomGIF(params.DummyPath, gif); err != nil {
@@ -136,7 +78,7 @@ func genData(params GenDataParams, logger *logrus.Logger) error {
 		logger.Info("Successfully generated gif dummy")
 	}
 
-	if params.CheckZIP == "on" {
+	if params.CheckZIP {
 		logger.Info("Start creating a pile of zip files that compressed txt")
 		zip, _ := strconv.Atoi(params.SizeZIP)
 		if err := unstructured.GenerateRandomZIP(params.DummyPath, zip); err != nil {
@@ -146,7 +88,7 @@ func genData(params GenDataParams, logger *logrus.Logger) error {
 		logger.Info("Successfully created zip file dummy compressed txt")
 	}
 
-	if params.CheckJSON == "on" {
+	if params.CheckJSON {
 		logger.Info("Start creating json dummy")
 		json, _ := strconv.Atoi(params.SizeJSON)
 		if err := semistructured.GenerateRandomJSON(params.DummyPath, json); err != nil {
@@ -156,7 +98,7 @@ func genData(params GenDataParams, logger *logrus.Logger) error {
 		logger.Info("Successfully generated json dummy")
 	}
 
-	if params.CheckXML == "on" {
+	if params.CheckXML {
 		logger.Info("Start creating xml dummy")
 		xml, _ := strconv.Atoi(params.SizeXML)
 		if err := semistructured.GenerateRandomXML(params.DummyPath, xml); err != nil {
@@ -166,7 +108,7 @@ func genData(params GenDataParams, logger *logrus.Logger) error {
 		logger.Info("Successfully generated xml dummy")
 	}
 
-	if params.CheckServerJSON == "on" {
+	if params.CheckServerJSON {
 		logger.Info("Start creating json dummy")
 		json, _ := strconv.Atoi(params.SizeServerJSON)
 		if err := semistructured.GenerateRandomJSONWithServer(params.DummyPath, json); err != nil {
@@ -176,7 +118,7 @@ func genData(params GenDataParams, logger *logrus.Logger) error {
 		logger.Info("Successfully generated json dummy")
 	}
 
-	if params.CheckServerSQL == "on" {
+	if params.CheckServerSQL {
 		logger.Info("Start creating sql dummy")
 		sql, _ := strconv.Atoi(params.SizeServerSQL)
 		if err := structured.GenerateRandomSQLWithServer(params.DummyPath, sql); err != nil {

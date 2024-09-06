@@ -18,26 +18,25 @@ package mysql
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 	"regexp"
 	"strings"
 
-	"github.com/cloud-barista/mc-data-manager/pkg/utils"
+	"github.com/cloud-barista/mc-data-manager/internal/log"
+	"github.com/cloud-barista/mc-data-manager/models"
 	_ "github.com/go-sql-driver/mysql"
 )
 
 // mysqlDBMS struct
 type MysqlDBMS struct {
-	provider utils.Provider
-
-	db  *sql.DB
-	ctx context.Context
+	provider models.Provider
+	db       *sql.DB
+	ctx      context.Context
 }
 
 type MysqlDBOption func(*MysqlDBMS)
 
-func New(provider utils.Provider, sqlDB *sql.DB, opts ...MysqlDBOption) *MysqlDBMS {
+func New(provider models.Provider, sqlDB *sql.DB, opts ...MysqlDBOption) *MysqlDBMS {
 	dms := &MysqlDBMS{
 		provider: provider,
 		db:       sqlDB,
@@ -53,39 +52,30 @@ func New(provider utils.Provider, sqlDB *sql.DB, opts ...MysqlDBOption) *MysqlDB
 
 // Functions that execute EXEC commands in sql
 func (d *MysqlDBMS) Exec(query string) error {
-	// Create db with CALL system.ncp_cp_create_db command when provider is ncp and CREATE DATABASE is called
-	if d.provider == utils.NCP && strings.HasPrefix(query, "CREATE DATABASE") {
-		dbName, charSet, collate := extractDatabaseInfo(query)
-		if dbName == "" {
-			return errors.New("exec error")
-		}
-		query = fmt.Sprintf("CALL sys.ncp_create_db('%s', '%s', '%s');", dbName, charSet, collate)
-	}
+
 	_, err := d.db.Exec(query)
+	if err != nil {
+		log.Error(query)
+	}
 	return err
 }
 
-// Extract database information
-func extractDatabaseInfo(sql string) (string, string, string) {
-	match := []string{}
-	if strings.Contains(sql, ";") {
-		re := regexp.MustCompile(`CREATE\s+DATABASE\s+(IF\s+NOT\s+EXISTS\s+)?([^\s;]+)[^;]*;`)
-		match = re.FindStringSubmatch(sql)
-	} else {
-		re := regexp.MustCompile("`([^`]*)`[^']*DEFAULT CHARACTER SET ([^ ]*) COLLATE ([^ ]*)")
-		match = re.FindStringSubmatch(sql)
+// EnsureCharsetAndCollate ensures that the charset is utf8mb4 and collate is utf8mb4_general_ci in the SQL query.
+func EnsureCharsetAndCollate(query, charSet, collate string) string {
+	// Ensure charset is utf8mb4
+	if charSet != "utf8mb4" {
+		query = strings.Replace(query, charSet, "utf8mb4", 1)
 	}
-
-	if len(match) == 4 {
-		dbName := match[1]
-		charSet := match[2]
-		collate := match[3]
-		return dbName, charSet, collate
-	} else if len(match) == 3 {
-		return match[2], "", ""
+	// Ensure collate is utf8mb4_general_ci
+	if collate != "utf8mb4_general_ci" {
+		if strings.Contains(query, "COLLATE") {
+			re := regexp.MustCompile(`(?i)COLLATE\s+[^\s]+`)
+			query = re.ReplaceAllString(query, "COLLATE utf8mb4_general_ci")
+		} else {
+			query = query + " COLLATE utf8mb4_general_ci"
+		}
 	}
-
-	return "", "", ""
+	return query
 }
 
 // Delete database
@@ -138,13 +128,21 @@ func (d *MysqlDBMS) ListTable(dbName string, dst *[]string) error {
 	return nil
 }
 
-// Get database create sql
+// ShowCreateDBSql modifies the CREATE DATABASE SQL and returns it
 func (d *MysqlDBMS) ShowCreateDBSql(dbName string, dbCreateSql *string) error {
 	err := d.db.QueryRow(fmt.Sprintf("SHOW CREATE DATABASE %s;", dbName)).Scan(&dbName, dbCreateSql)
 	if err != nil {
 		return err
 	}
+
+	// Add "IF NOT EXISTS" to the CREATE DATABASE statement
 	*dbCreateSql = strings.Replace(*dbCreateSql, "CREATE DATABASE", "CREATE DATABASE /*!32312 IF NOT EXISTS*/", 1)
+
+	// Ensure charset and collate are utf8mb4 and utf8mb4_general_ci
+	*dbCreateSql = addCharsetIfMissing(*dbCreateSql)
+	*dbCreateSql = addCollateIfMissing(*dbCreateSql)
+	*dbCreateSql = EnsureCharsetAndCollate(*dbCreateSql, extractCharacterSet(*dbCreateSql), extractCollation(*dbCreateSql))
+
 	return nil
 }
 
@@ -156,6 +154,7 @@ func (d *MysqlDBMS) ShowCreateTableSql(dbName, tableName string, tableCreateSql 
 	if err := d.db.QueryRow(fmt.Sprintf("SHOW CREATE TABLE %s;", tableName)).Scan(&tableName, tableCreateSql); err != nil {
 		return err
 	}
+	*tableCreateSql = ReplaceCharsetAndCollate(*tableCreateSql)
 	return nil
 }
 
@@ -217,4 +216,71 @@ func (d *MysqlDBMS) GetInsert(dbName, tableName string, insertSql *[]string) err
 	}
 
 	return nil
+}
+
+// addCollateIfMissing adds COLLATE to DEFAULT CHARACTER SET if it's missing
+func addCollateIfMissing(sql string) string {
+	if !strings.Contains(sql, "COLLATE") {
+		sql = sql + " " + "COLLATE utf8mb4_general_ci"
+	}
+	return sql
+}
+
+// addCollateIfMissing adds COLLATE to DEFAULT CHARACTER SET if it's missing
+func addCharsetIfMissing(sql string) string {
+	if !strings.Contains(sql, "DEFAULT CHARACTER SET") && !strings.Contains(sql, "DEFAULT CHARSET") {
+		sql = sql + " " + "DEFAULT CHARACTER SET utf8mb4"
+	}
+	return sql
+}
+
+// ReplaceCharsetAndCollate replaces any charset and collate in the SQL statement with utf8mb4 and utf8mb4_general_ci.
+func ReplaceCharsetAndCollate(sql string) string {
+	// Regular expression to match DEFAULT CHARSET and COLLATE settings
+	reCharset := regexp.MustCompile(`(?i)DEFAULT CHARSET=\w+`)
+	reCollate := regexp.MustCompile(`(?i)COLLATE=\w+`)
+
+	// Replace with utf8mb4 and utf8mb4_general_ci
+	sql = reCharset.ReplaceAllString(sql, "DEFAULT CHARSET=utf8mb4")
+	sql = reCollate.ReplaceAllString(sql, "COLLATE=utf8mb4_general_ci")
+
+	return sql
+}
+
+// Extract database information
+func extractDatabaseInfo(sql string) (string, string, string) {
+	dbName := extractDatabaseName(sql)
+	charSet := extractCharacterSet(sql)
+	collate := extractCollation(sql)
+	return dbName, charSet, collate
+}
+
+// extract DBname
+func extractDatabaseName(sql string) string {
+	re := regexp.MustCompile(`CREATE\s+DATABASE\s+(?:/\*.*?\*/\s*)?(IF\s+NOT\s+EXISTS\s+)?\s*` + "`([^`]*)`")
+	match := re.FindStringSubmatch(sql)
+	if len(match) >= 3 {
+		return match[2]
+	}
+	return ""
+}
+
+// extract Charset
+func extractCharacterSet(sql string) string {
+	re := regexp.MustCompile(`DEFAULT\s+CHARACTER\s+SET\s+([^\s]+)`)
+	match := re.FindStringSubmatch(sql)
+	if len(match) >= 2 {
+		return match[1]
+	}
+	return ""
+}
+
+// extract Collation
+func extractCollation(sql string) string {
+	re := regexp.MustCompile(`(?:/\*.*?\*/\s*)?COLLATE\s+([^\s]+)`)
+	match := re.FindStringSubmatch(sql)
+	if len(match) >= 2 {
+		return match[1]
+	}
+	return ""
 }
