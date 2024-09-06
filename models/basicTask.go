@@ -14,8 +14,8 @@ type TaskMeta struct {
 
 type Task struct {
 	OperationParams
-	Meta   TaskMeta `json:"meta,omitempty" swaggerignore:"true"`
-	Status Status   `json:"status,omitempty" swaggerignore:"true"` // active, inactive, etc.
+	TaskMeta `json:"meta,omitempty" swaggerignore:"true"`
+	Status   `json:"status,omitempty" swaggerignore:"true"` // active, inactive, etc.
 }
 
 type Flow struct {
