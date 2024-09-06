@@ -24,7 +24,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/pkg/utils"
 )
 
@@ -41,7 +40,7 @@ func (osc *OSController) MGet(dirPath string) error {
 		return err
 	}
 
-	var fileList []*models.Object
+	var fileList []*utils.Object
 
 	err = filepath.Walk(dirPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -49,7 +48,7 @@ func (osc *OSController) MGet(dirPath string) error {
 		}
 
 		if !info.IsDir() {
-			fileList = append(fileList, &models.Object{
+			fileList = append(fileList, &utils.Object{
 				ChecksumAlgorithm: []string{},
 				ETag:              "",
 				Key:               path,
@@ -79,7 +78,7 @@ func (osc *OSController) MGet(dirPath string) error {
 		osc.logWrite("Info", fmt.Sprintf("skip file : %s", skip.Key), nil)
 	}
 
-	jobs := make(chan models.Object, len(downlaodList))
+	jobs := make(chan utils.Object, len(downlaodList))
 	resultChan := make(chan Result, len(downlaodList))
 
 	var wg sync.WaitGroup
@@ -109,9 +108,9 @@ func (osc *OSController) MGet(dirPath string) error {
 	return nil
 }
 
-func getDownloadList(fileList, objList []*models.Object, dirPath string) ([]*models.Object, []*models.Object) {
-	downloadList := []*models.Object{}
-	skipList := []*models.Object{}
+func getDownloadList(fileList, objList []*utils.Object, dirPath string) ([]*utils.Object, []*utils.Object) {
+	downloadList := []*utils.Object{}
+	skipList := []*utils.Object{}
 
 	for _, obj := range objList {
 		chk := false
@@ -146,7 +145,7 @@ func combinePaths(basePath, relativePath string) (string, error) {
 	return filepath.Join(basePath, relativePath), nil
 }
 
-func mGetWorker(osc *OSController, dirPath string, jobs chan models.Object, resultChan chan<- Result) {
+func mGetWorker(osc *OSController, dirPath string, jobs chan utils.Object, resultChan chan<- Result) {
 	for obj := range jobs {
 		ret := Result{
 			name: obj.Key,

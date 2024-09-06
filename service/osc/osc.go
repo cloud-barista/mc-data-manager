@@ -18,14 +18,14 @@ package osc
 import (
 	"io"
 
-	"github.com/cloud-barista/mc-data-manager/models"
+	"github.com/cloud-barista/mc-data-manager/pkg/utils"
 	"github.com/sirupsen/logrus"
 )
 
 type OSFS interface {
 	CreateBucket() error
 	DeleteBucket() error
-	ObjectList() ([]*models.Object, error)
+	ObjectList() ([]*utils.Object, error)
 
 	Open(name string) (io.ReadCloser, error)
 	Create(name string) (io.WriteCloser, error)
@@ -59,7 +59,7 @@ func (osc *OSController) DeleteBucket() error {
 	return nil
 }
 
-func (osc *OSController) ObjectList() ([]*models.Object, error) {
+func (osc *OSController) ObjectList() ([]*utils.Object, error) {
 	objList, err := osc.osfs.ObjectList()
 	if err != nil {
 		return objList, err

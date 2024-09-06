@@ -21,35 +21,15 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"sync"
 
 	"github.com/sirupsen/logrus"
 )
 
-var (
-	instance *Logger
-	once     sync.Once
-)
-
-type Logger struct {
-	*logrus.Logger
-}
-
-// GetInstance returns the singleton instance of Logger
-func GetInstance() *Logger {
-	once.Do(func() {
-		instance = &Logger{
-			Logger: logrus.New(),
-		}
-		instance.setupLogger()
-	})
-	return instance
-}
-
-func (l *Logger) setupLogger() {
+func LogFile() {
 	execPath, err := os.Executable()
+	// fmt.Println(execPath)
 	if err != nil {
-		l.Fatal("Failed to get executable path: ", err)
+		logrus.WithError(err).Fatal("Failed to get executable path")
 	}
 
 	// Get the directory path of the binary file
@@ -92,24 +72,4 @@ func (f *CustomTextFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 		jn = entry.Data["jobName"].(string)
 	}
 	return []byte(fmt.Sprintf("[%s] [%s] [%s] [%s] %s\n", timeFormatted, entry.Level, cn, jn, strings.ToUpper(entry.Message[:1])+entry.Message[1:])), nil
-}
-
-func Debug(args ...interface{}) {
-	GetInstance().Debug(args...)
-}
-
-func Info(args ...interface{}) {
-	GetInstance().Info(args...)
-}
-
-func Warn(args ...interface{}) {
-	GetInstance().Warn(args...)
-}
-
-func Error(args ...interface{}) {
-	GetInstance().Error(args...)
-}
-
-func Fatal(args ...interface{}) {
-	GetInstance().Fatal(args...)
 }

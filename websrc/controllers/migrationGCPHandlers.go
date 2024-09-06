@@ -17,9 +17,10 @@ package controllers
 
 import (
 	"net/http"
+	"os"
 	"time"
 
-	"github.com/cloud-barista/mc-data-manager/models"
+	"github.com/cloud-barista/mc-data-manager/websrc/models"
 	"github.com/labstack/echo/v4"
 )
 
@@ -28,9 +29,10 @@ import (
 //	@Summary		Migrate data from GCP to Linux
 //	@Description	Migrate data stored in GCP Cloud Storage to a Linux-based system.
 //	@Tags			[Data Migration]
-//	@Accept			json
+//	@Accept			multipart/form-data
 //	@Produce		json
-//	@Param			RequestBody		body	MigrateTask	true	"Parameters required for migration"
+//	@Param			RequestBody		formData	MigrationForm	true	"Parameters required for migration"
+//	@Param			gcpCredential	formData	file			false	"Parameters required for migration"
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
@@ -48,7 +50,7 @@ func MigrationGCPToLinuxPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	params := MigrateTask{}
+	params := MigrationForm{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -56,7 +58,16 @@ func MigrationGCPToLinuxPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	gcpOSC := getGCPCOSC(logger, start, "mig", params.SourcePoint)
+	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
+	if !ok && params.GCPCredentialJson == "" {
+		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
+			Result: logstrings.String(),
+			Error:  nil,
+		})
+	}
+	defer os.RemoveAll(credTmpDir)
+
+	gcpOSC := getGCPCOSC(logger, start, "mig", params, credFileName)
 	if gcpOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -64,7 +75,7 @@ func MigrationGCPToLinuxPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	if !oscExport(logger, start, "gcp", gcpOSC, params.TargetPoint.Path) {
+	if !oscExport(logger, start, "gcp", gcpOSC, params.Path) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -84,9 +95,10 @@ func MigrationGCPToLinuxPostHandler(ctx echo.Context) error {
 //	@Summary		Migrate data from GCP to Windows
 //	@Description	Migrate data stored in GCP Cloud Storage to a Windows-based system.
 //	@Tags			[Data Migration]
-//	@Accept			json
+//	@Accept			multipart/form-data
 //	@Produce		json
-//	@Param			RequestBody		body	MigrateTask	true	"Parameters required for migration"
+//	@Param			RequestBody		formData	MigrationForm	true	"Parameters required for migration"
+//	@Param			gcpCredential	formData	file			false	"Parameters required for migration"
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
@@ -104,7 +116,7 @@ func MigrationGCPToWindowsPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	params := MigrateTask{}
+	params := MigrationForm{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -112,7 +124,16 @@ func MigrationGCPToWindowsPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	gcpOSC := getGCPCOSC(logger, start, "mig", params.SourcePoint)
+	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
+	if !ok && params.GCPCredentialJson == "" {
+		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
+			Result: logstrings.String(),
+			Error:  nil,
+		})
+	}
+	defer os.RemoveAll(credTmpDir)
+
+	gcpOSC := getGCPCOSC(logger, start, "mig", params, credFileName)
 	if gcpOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -120,7 +141,7 @@ func MigrationGCPToWindowsPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	if !oscExport(logger, start, "gcp", gcpOSC, params.TargetPoint.Path) {
+	if !oscExport(logger, start, "gcp", gcpOSC, params.Path) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -139,20 +160,21 @@ func MigrationGCPToWindowsPostHandler(ctx echo.Context) error {
 //
 //	@Summary		Migrate data from GCP to AWS S3
 //	@Description	Migrate data stored in GCP Cloud Storage to AWS S3.
-//	@Tags			[Data Migration], [Object Storage]
-//	@Accept			json
+//	@Tags			[Data Migration]
+//	@Accept			multipart/form-data
 //	@Produce		json
-//	@Param			RequestBody		body	MigrateTask	true	"Parameters required for migration"
+//	@Param			RequestBody		formData	MigrationForm	true	"Parameters required for migration"
+//	@Param			gcpCredential	formData	file			false	"Parameters required for migration"
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/migration/gcp/aws [post]
+//	@Router			/migration/gcp/s3 [post]
 func MigrationGCPToS3PostHandler(ctx echo.Context) error {
 
 	start := time.Now()
 
 	logger, logstrings := pageLogInit("genlinux", "Export gcp data to s3", start)
 
-	params := MigrateTask{}
+	params := MigrationForm{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -160,7 +182,16 @@ func MigrationGCPToS3PostHandler(ctx echo.Context) error {
 		})
 	}
 
-	gcpOSC := getGCPCOSC(logger, start, "mig", params.SourcePoint)
+	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
+	if !ok && params.GCPCredentialJson == "" {
+		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
+			Result: logstrings.String(),
+			Error:  nil,
+		})
+	}
+	defer os.RemoveAll(credTmpDir)
+
+	gcpOSC := getGCPCOSC(logger, start, "mig", params, credFileName)
 	if gcpOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -168,7 +199,7 @@ func MigrationGCPToS3PostHandler(ctx echo.Context) error {
 		})
 	}
 
-	awsOSC := getS3OSC(logger, start, "mig", params.TargetPoint)
+	awsOSC := getS3OSC(logger, start, "mig", params)
 	if awsOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -200,10 +231,11 @@ func MigrationGCPToS3PostHandler(ctx echo.Context) error {
 //
 //	@Summary		Migrate data from GCP to NCP Object Storage
 //	@Description	Migrate data stored in GCP Cloud Storage to NCP Object Storage.
-//	@Tags			[Data Migration], [Object Storage]
-//	@Accept			json
+//	@Tags			[Data Migration]
+//	@Accept			multipart/form-data
 //	@Produce		json
-//	@Param			RequestBody		body	MigrateTask	true	"Parameters required for migration"
+//	@Param			RequestBody		formData	MigrationForm	true	"Parameters required for migration"
+//	@Param			gcpCredential	formData	file			false	"Parameters required for migration"
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
 //	@Router			/migration/gcp/ncp [post]
@@ -213,7 +245,7 @@ func MigrationGCPToNCPPostHandler(ctx echo.Context) error {
 
 	logger, logstrings := pageLogInit("miggcpncp", "Export gcp data to ncp objectstorage", start)
 
-	params := MigrateTask{}
+	params := MigrationForm{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -221,7 +253,16 @@ func MigrationGCPToNCPPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	gcpOSC := getGCPCOSC(logger, start, "mig", params.SourcePoint)
+	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
+	if !ok && params.GCPCredentialJson == "" {
+		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
+			Result: logstrings.String(),
+			Error:  nil,
+		})
+	}
+	defer os.RemoveAll(credTmpDir)
+
+	gcpOSC := getGCPCOSC(logger, start, "mig", params, credFileName)
 	if gcpOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -229,7 +270,7 @@ func MigrationGCPToNCPPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	ncpOSC := getS3COSC(logger, start, "mig", params.TargetPoint)
+	ncpOSC := getS3COSC(logger, start, "mig", params)
 	if ncpOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),

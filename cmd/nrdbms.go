@@ -27,41 +27,38 @@ var importNRDBCmd = &cobra.Command{
 	Use:     "nrdbms",
 	Aliases: []string{"ndb"},
 	Run: func(cmd *cobra.Command, args []string) {
-		auth.PreRun("nrdbms", &commandTask, cmd.Parent().Use)
-		if err := auth.ImportNRDMFunc(&commandTask); err != nil {
+		auth.PreRun("nrdbms", &datamoldParams, cmd.Parent().Use)
+		if err := auth.ImportNRDMFunc(&datamoldParams); err != nil {
 			os.Exit(1)
 		}
 	},
 }
 
 var exportNRDBCmd = &cobra.Command{
-	Use:     "nrdbms",
-	Aliases: []string{"ndb"},
+	Use: "nrdbms",
 	Run: func(cmd *cobra.Command, args []string) {
-		auth.PreRun("nrdbms", &commandTask, cmd.Parent().Use)
-		if err := auth.ExportNRDMFunc(&commandTask); err != nil {
+		auth.PreRun("nrdbms", &datamoldParams, cmd.Parent().Use)
+		if err := auth.ExportNRDMFunc(&datamoldParams); err != nil {
 			os.Exit(1)
 		}
 	},
 }
 
 var migrationNRDBCmd = &cobra.Command{
-	Use:     "nrdbms",
-	Aliases: []string{"ndb"},
+	Use: "nrdbms",
 	Run: func(cmd *cobra.Command, args []string) {
-		auth.PreRun("nrdbms", &commandTask, cmd.Parent().Use)
-		if err := auth.MigrationNRDMFunc(&commandTask); err != nil {
+		auth.PreRun("nrdbms", &datamoldParams, cmd.Parent().Use)
+		if err := auth.MigrationNRDMFunc(&datamoldParams); err != nil {
 			os.Exit(1)
 		}
 	},
 }
 
 var deleteNRDBMSCmd = &cobra.Command{
-	Use:     "nrdbms",
-	Aliases: []string{"ndb"},
+	Use: "nrdbms",
 	Run: func(cmd *cobra.Command, args []string) {
-		auth.PreRun("nrdbms", &commandTask, cmd.Parent().Use)
-		if err := auth.DeleteNRDMFunc(&commandTask); err != nil {
+		auth.PreRun("nrdbms", &datamoldParams, cmd.Parent().Use)
+		if err := auth.DeleteNRDMFunc(&datamoldParams); err != nil {
 			os.Exit(1)
 		}
 	},
@@ -73,7 +70,7 @@ func init() {
 	migrationCmd.AddCommand(migrationNRDBCmd)
 	deleteCmd.AddCommand(deleteNRDBMSCmd)
 
-	deleteNRDBMSCmd.PersistentFlags().StringVarP(&commandTask.TaskFilePath, "task-file-path", "f", "task.json", "Json file path containing the user's task")
-	deleteNRDBMSCmd.Flags().StringArrayVarP(&commandTask.DeleteTableList, "delete-table-list", "D", []string{}, "List of table names to delete")
-	deleteNRDBMSCmd.MarkFlagsRequiredTogether("task-file-path", "delete-table-list")
+	deleteNRDBMSCmd.Flags().StringVarP(&datamoldParams.CredentialPath, "credential-path", "C", "", "Json file path containing the user's credentials")
+	deleteNRDBMSCmd.Flags().StringArrayVarP(&datamoldParams.DeleteTableList, "delete-table-list", "D", []string{}, "List of table names to delete")
+	deleteNRDBMSCmd.MarkFlagsRequiredTogether("credential-path", "delete-table-list")
 }

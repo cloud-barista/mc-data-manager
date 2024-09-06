@@ -17,9 +17,10 @@ package controllers
 
 import (
 	"net/http"
+	"os"
 	"time"
 
-	"github.com/cloud-barista/mc-data-manager/models"
+	"github.com/cloud-barista/mc-data-manager/websrc/models"
 	"github.com/labstack/echo/v4"
 )
 
@@ -29,11 +30,11 @@ import (
 // @Tags [Data Migration]
 // @Accept json
 // @Produce json
-// @Param RequestBody body MigrateTask	true	"Parameters required for migration"
+// @Param RequestBody body MigrationForm true "Parameters required for migration"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 400 {object} models.BasicResponse "Invalid Request"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
-// @Router /migration/aws/linux [post]
+// @Router /migration/s3/linux [post]
 func MigrationS3ToLinuxPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -47,14 +48,15 @@ func MigrationS3ToLinuxPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	params := MigrateTask{}
+	params := MigrationForm{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
 		})
 	}
-	awsOSC := getS3OSC(logger, start, "mig", params.SourcePoint)
+
+	awsOSC := getS3OSC(logger, start, "mig", params)
 	if awsOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -62,7 +64,7 @@ func MigrationS3ToLinuxPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	if !oscExport(logger, start, "s3", awsOSC, params.TargetPoint.Path) {
+	if !oscExport(logger, start, "s3", awsOSC, params.Path) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -83,11 +85,11 @@ func MigrationS3ToLinuxPostHandler(ctx echo.Context) error {
 // @Tags [Data Migration]
 // @Accept json
 // @Produce json
-// @Param RequestBody body MigrateTask	true	"Parameters required for migration"
+// @Param RequestBody body MigrationForm true "Parameters required for migration"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 400 {object} models.BasicResponse "Invalid Request"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
-// @Router /migration/aws/windows [post]
+// @Router /migration/s3/windows [post]
 func MigrationS3ToWindowsPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
@@ -101,7 +103,7 @@ func MigrationS3ToWindowsPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	params := MigrateTask{}
+	params := MigrationForm{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -109,7 +111,7 @@ func MigrationS3ToWindowsPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	awsOSC := getS3OSC(logger, start, "mig", params.SourcePoint)
+	awsOSC := getS3OSC(logger, start, "mig", params)
 	if awsOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -117,7 +119,7 @@ func MigrationS3ToWindowsPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	if !oscExport(logger, start, "s3", awsOSC, params.TargetPoint.Path) {
+	if !oscExport(logger, start, "s3", awsOSC, params.Path) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -135,20 +137,21 @@ func MigrationS3ToWindowsPostHandler(ctx echo.Context) error {
 // MigrationS3ToGCPPostHandler godoc
 // @Summary Migrate data from AWS S3 to GCP
 // @Description Migrate data stored in AWS S3 to Google Cloud Storage.
-// @Tags	[Data Migration], [Object Storage]
-// @Accept json
+// @Tags [Data Migration]
+// @Accept multipart/form-data
 // @Produce json
-// @Param RequestBody body MigrateTask	true	"Parameters required for migration"
+// @Param RequestBody 	formData MigrationForm	true  "Parameters required for migration"
+// @Param gcpCredential	formData file 			false "Parameters required to generate test data"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
-// @Router /migration/aws/gcp [post]
+// @Router /migration/s3/gcp [post]
 func MigrationS3ToGCPPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
 
 	logger, logstrings := pageLogInit("migs3gcp", "Export s3 data to gcp", start)
 
-	params := MigrateTask{}
+	params := MigrationForm{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -156,7 +159,16 @@ func MigrationS3ToGCPPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	awsOSC := getS3OSC(logger, start, "mig", params.SourcePoint)
+	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
+	if !ok && params.GCPCredentialJson == "" {
+		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
+			Result: logstrings.String(),
+			Error:  nil,
+		})
+	}
+	defer os.RemoveAll(credTmpDir)
+
+	awsOSC := getS3OSC(logger, start, "mig", params)
 	if awsOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -164,7 +176,7 @@ func MigrationS3ToGCPPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	gcpOSC := getGCPCOSC(logger, start, "mig", params.TargetPoint)
+	gcpOSC := getGCPCOSC(logger, start, "mig", params, credFileName)
 	if gcpOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -195,20 +207,20 @@ func MigrationS3ToGCPPostHandler(ctx echo.Context) error {
 // MigrationS3ToNCPPostHandler godoc
 // @Summary Migrate data from AWS S3 to NCP
 // @Description Migrate data stored in AWS S3 to Naver Cloud Object Storage.
-// @Tags	[Data Migration], [Object Storage]
+// @Tags [Data Migration]
 // @Accept json
 // @Produce json
-// @Param RequestBody body MigrateTask	true	"Parameters required for migration"
+// @Param RequestBody body MigrationForm true "Parameters required for migration"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
-// @Router /migration/aws/ncp [post]
+// @Router /migration/s3/ncp [post]
 func MigrationS3ToNCPPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
 
 	logger, logstrings := pageLogInit("migs3ncp", "Export s3 data to ncp objectstorage", start)
 
-	params := MigrateTask{}
+	params := MigrationForm{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -216,7 +228,7 @@ func MigrationS3ToNCPPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	awsOSC := getS3OSC(logger, start, "mig", params.SourcePoint)
+	awsOSC := getS3OSC(logger, start, "mig", params)
 	if awsOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -224,7 +236,7 @@ func MigrationS3ToNCPPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	ncpOSC := getS3COSC(logger, start, "mig", params.TargetPoint)
+	ncpOSC := getS3COSC(logger, start, "mig", params)
 	if ncpOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),

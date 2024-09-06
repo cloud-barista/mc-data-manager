@@ -24,9 +24,9 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/gcpfs"
 	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/s3fs"
+	"github.com/cloud-barista/mc-data-manager/pkg/utils"
 	"github.com/cloud-barista/mc-data-manager/service/osc"
 	"google.golang.org/api/option"
 )
@@ -72,7 +72,7 @@ func AWSInfo(accessKey, secretKey, region, bucketName string) (*osc.OSController
 
 	client := s3.NewFromConfig(cfg, func(o *s3.Options) { o.UsePathStyle = true })
 
-	return osc.New(s3fs.New(models.AWS, client, bucketName, region))
+	return osc.New(s3fs.New(utils.AWS, client, bucketName, region))
 }
 
 func NCPInfo(accessKey, secretKey, endpoint, region, bucketName string) (*osc.OSController, error) {
@@ -101,7 +101,7 @@ func NCPInfo(accessKey, secretKey, endpoint, region, bucketName string) (*osc.OS
 
 	client := s3.NewFromConfig(cfg, func(o *s3.Options) { o.UsePathStyle = true })
 
-	return osc.New(s3fs.New(models.AWS, client, bucketName, region))
+	return osc.New(s3fs.New(utils.AWS, client, bucketName, region))
 }
 
 func GCPInfo(projectID, credentialsFile, region, bucketName string) (*osc.OSController, error) {

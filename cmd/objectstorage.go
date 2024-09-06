@@ -23,44 +23,40 @@ import (
 )
 
 var importOSCmd = &cobra.Command{
-	Use:     "objectstorage",
-	Aliases: []string{"obj"},
+	Use: "objectstorage",
 	Run: func(cmd *cobra.Command, args []string) {
-		auth.PreRun("objectstorage", &commandTask, cmd.Parent().Use)
-		if err := auth.ImportOSFunc(&commandTask); err != nil {
+		auth.PreRun("objectstorage", &datamoldParams, cmd.Parent().Use)
+		if err := auth.ImportOSFunc(&datamoldParams); err != nil {
 			os.Exit(1)
 		}
 	},
 }
 
 var exportOSCmd = &cobra.Command{
-	Use:     "objectstorage",
-	Aliases: []string{"obj"},
+	Use: "objectstorage",
 	Run: func(cmd *cobra.Command, args []string) {
-		auth.PreRun("objectstorage", &commandTask, cmd.Parent().Use)
-		if err := auth.ExportOSFunc(&commandTask); err != nil {
+		auth.PreRun("objectstorage", &datamoldParams, cmd.Parent().Use)
+		if err := auth.ExportOSFunc(&datamoldParams); err != nil {
 			os.Exit(1)
 		}
 	},
 }
 
 var migrationOSCmd = &cobra.Command{
-	Use:     "objectstorage",
-	Aliases: []string{"obj"},
+	Use: "objectstorage",
 	Run: func(cmd *cobra.Command, args []string) {
-		auth.PreRun("objectstorage", &commandTask, cmd.Parent().Use)
-		if err := auth.MigrationOSFunc(&commandTask); err != nil {
+		auth.PreRun("objectstorage", &datamoldParams, cmd.Parent().Use)
+		if err := auth.MigrationOSFunc(&datamoldParams); err != nil {
 			os.Exit(1)
 		}
 	},
 }
 
 var deleteOSCmd = &cobra.Command{
-	Use:     "objectstorage",
-	Aliases: []string{"obj"},
+	Use: "objectstorage",
 	Run: func(cmd *cobra.Command, args []string) {
-		auth.PreRun("objectstorage", &commandTask, cmd.Parent().Use)
-		if err := auth.DeleteOSFunc(&commandTask); err != nil {
+		auth.PreRun("objectstorage", &datamoldParams, cmd.Parent().Use)
+		if err := auth.DeleteOSFunc(&datamoldParams); err != nil {
 			os.Exit(1)
 		}
 	},
@@ -72,6 +68,6 @@ func init() {
 	migrationCmd.AddCommand(migrationOSCmd)
 	deleteCmd.AddCommand(deleteOSCmd)
 
-	deleteOSCmd.PersistentFlags().StringVarP(&commandTask.TaskFilePath, "task-file-path", "f", "task.json", "Json file path containing the user's task")
-	deleteOSCmd.MarkFlagRequired("task-file-path")
+	deleteOSCmd.Flags().StringVarP(&datamoldParams.CredentialPath, "credential-path", "C", "", "Json file path containing the user's credentials")
+	deleteOSCmd.MarkFlagRequired("credential-path")
 }

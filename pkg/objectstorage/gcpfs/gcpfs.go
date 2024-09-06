@@ -20,12 +20,12 @@ import (
 	"io"
 
 	"cloud.google.com/go/storage"
-	"github.com/cloud-barista/mc-data-manager/models"
+	"github.com/cloud-barista/mc-data-manager/pkg/utils"
 	"google.golang.org/api/iterator"
 )
 
 type GCPfs struct {
-	provider   models.Provider
+	provider   utils.Provider
 	projectID  string
 	bucketName string
 	region     string
@@ -86,8 +86,8 @@ func (f *GCPfs) Create(name string) (io.WriteCloser, error) {
 }
 
 // Look up the list of objects in your bucket
-func (f *GCPfs) ObjectList() ([]*models.Object, error) {
-	var objList []*models.Object
+func (f *GCPfs) ObjectList() ([]*utils.Object, error) {
+	var objList []*utils.Object
 	it := f.bktclient.Objects(f.ctx, nil)
 	for {
 		objAttrs, err := it.Next()
@@ -99,7 +99,7 @@ func (f *GCPfs) ObjectList() ([]*models.Object, error) {
 			return nil, err
 		}
 
-		objList = append(objList, &models.Object{
+		objList = append(objList, &utils.Object{
 			ETag:         objAttrs.Etag,
 			Key:          objAttrs.Name,
 			LastModified: objAttrs.Created,
@@ -116,7 +116,7 @@ func New(client *storage.Client, projectID, bucketName string, region string) *G
 		bucketName: bucketName,
 		client:     client,
 		bktclient:  client.Bucket(bucketName),
-		provider:   models.GCP,
+		provider:   utils.GCP,
 		region:     region,
 		projectID:  projectID,
 	}
