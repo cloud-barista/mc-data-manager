@@ -28,6 +28,7 @@ var migrationCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(migrationCmd)
-	migrationCmd.PersistentFlags().StringVarP(&commandTask.TaskFilePath, "task-file-path", "f", "task.json", "Json file path containing the user's task")
-	migrationCmd.MarkFlagRequired("task-file-path")
+	migrationCmd.PersistentFlags().BoolVarP(&datamoldParams.TaskTarget, "task", "T", false, "Select a destination(src, dst) to work with in the credential-path")
+	migrationCmd.PersistentFlags().StringVarP(&datamoldParams.CredentialPath, "credential-path", "C", "", "Json file path containing the user's credentials")
+	migrationCmd.MarkFlagRequired("credential-path")
 }

@@ -27,8 +27,8 @@ func GenerateRoutes(g *echo.Group) {
 	g.GET("/windows", controllers.GenerateWindowsGetHandler)
 	g.POST("/windows", controllers.GenerateWindowsPostHandler)
 
-	g.GET("/aws", controllers.GenerateS3GetHandler)
-	g.POST("/aws", controllers.GenerateS3PostHandler)
+	g.GET("/s3", controllers.GenerateS3GetHandler)
+	g.POST("/s3", controllers.GenerateS3PostHandler)
 
 	g.GET("/gcp", controllers.GenerateGCPGetHandler)
 	g.POST("/gcp", controllers.GenerateGCPPostHandler)

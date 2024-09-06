@@ -37,7 +37,7 @@ Semi-structured data: json, xml
 You must enter the data size in GB.`,
 	Run: func(_ *cobra.Command, _ []string) {
 		logrus.SetFormatter(&log.CustomTextFormatter{CmdName: "create", JobName: "dummy create"})
-		if err := execfunc.DummyCreate(commandTask); err != nil {
+		if err := execfunc.DummyCreate(datamoldParams); err != nil {
 			logrus.Errorf("dummy create failed : %v", err)
 		}
 	},
@@ -46,15 +46,15 @@ You must enter the data size in GB.`,
 func init() {
 	rootCmd.AddCommand(createCmd)
 
-	createCmd.Flags().StringVarP(&commandTask.DummyPath, "dst-path", "d", "", "Directory path to create dummy data")
+	createCmd.Flags().StringVarP(&datamoldParams.DstPath, "dst-path", "d", "", "Directory path to create dummy data")
 	createCmd.MarkFlagRequired("dst-path")
 
-	createCmd.Flags().StringVarP(&commandTask.SizeSQL, "sql-size", "s", "0", "Total size of sql files")
-	createCmd.Flags().StringVarP(&commandTask.SizeCSV, "csv-size", "c", "0", "Total size of csv files")
-	createCmd.Flags().StringVarP(&commandTask.SizeJSON, "json-size", "j", "0", "Total size of json files")
-	createCmd.Flags().StringVarP(&commandTask.SizeXML, "xml-size", "x", "0", "Total size of xml files")
-	createCmd.Flags().StringVarP(&commandTask.SizeTXT, "txt-size", "t", "0", "Total size of txt files")
-	createCmd.Flags().StringVarP(&commandTask.SizePNG, "png-size", "p", "0", "Total size of png files")
-	createCmd.Flags().StringVarP(&commandTask.SizeGIF, "gif-size", "g", "0", "Total size of gif files")
-	createCmd.Flags().StringVarP(&commandTask.SizeZIP, "zip-size", "z", "0", "Total size of zip files")
+	createCmd.Flags().IntVarP(&datamoldParams.SqlSize, "sql-size", "s", 0, "Total size of sql files")
+	createCmd.Flags().IntVarP(&datamoldParams.CsvSize, "csv-size", "c", 0, "Total size of csv files")
+	createCmd.Flags().IntVarP(&datamoldParams.JsonSize, "json-size", "j", 0, "Total size of json files")
+	createCmd.Flags().IntVarP(&datamoldParams.XmlSize, "xml-size", "x", 0, "Total size of xml files")
+	createCmd.Flags().IntVarP(&datamoldParams.TxtSize, "txt-size", "t", 0, "Total size of txt files")
+	createCmd.Flags().IntVarP(&datamoldParams.PngSize, "png-size", "p", 0, "Total size of png files")
+	createCmd.Flags().IntVarP(&datamoldParams.GifSize, "gif-size", "g", 0, "Total size of gif files")
+	createCmd.Flags().IntVarP(&datamoldParams.ZipSize, "zip-size", "z", 0, "Total size of zip files")
 }

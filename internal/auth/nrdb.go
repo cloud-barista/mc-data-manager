@@ -22,22 +22,26 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/service/nrdbc"
 	"github.com/sirupsen/logrus"
 )
 
-func ImportNRDMFunc(params *models.CommandTask) error {
+func ImportNRDMFunc(datamoldParams *DatamoldParams) error {
 	var NRDBC *nrdbc.NRDBController
 	var err error
-	NRDBC, err = GetNRDMS(&params.TargetPoint)
+	if !datamoldParams.TaskTarget {
+		NRDBC, err = GetSrcNRDMS(datamoldParams)
+	} else {
+		NRDBC, err = GetDstNRDMS(datamoldParams)
+	}
+
 	if err != nil {
 		logrus.Errorf("NRDBController error importing into nrdbms : %v", err)
 		return err
 	}
 
 	jsonList := []string{}
-	err = filepath.Walk(params.Directory, func(path string, info fs.FileInfo, err error) error {
+	err = filepath.Walk(datamoldParams.DstPath, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -76,18 +80,19 @@ func ImportNRDMFunc(params *models.CommandTask) error {
 			logrus.Error("Put error importing into nrdbms")
 			return err
 		}
-		logrus.Infof("successfully imported : %s", params.Directory)
+		logrus.Infof("successfully imported : %s", datamoldParams.DstPath)
 	}
 	return nil
 }
 
-func ExportNRDMFunc(params *models.CommandTask) error {
+func ExportNRDMFunc(datamoldParams *DatamoldParams) error {
 	var NRDBC *nrdbc.NRDBController
 	var err error
-	NRDBC, err = GetNRDMS(&params.TargetPoint)
-	if err != nil {
-		logrus.Errorf("NRDBController error importing into nrdbms : %v", err)
-		return err
+	logrus.Infof("User Information")
+	if !datamoldParams.TaskTarget {
+		NRDBC, err = GetSrcNRDMS(datamoldParams)
+	} else {
+		NRDBC, err = GetDstNRDMS(datamoldParams)
 	}
 	if err != nil {
 		logrus.Errorf("NRDBController error exporting into rdbms : %v", err)
@@ -110,7 +115,7 @@ func ExportNRDMFunc(params *models.CommandTask) error {
 			return err
 		}
 
-		file, err := os.Create(filepath.Join(params.Directory, fmt.Sprintf("%s.json", table)))
+		file, err := os.Create(filepath.Join(datamoldParams.DstPath, fmt.Sprintf("%s.json", table)))
 		if err != nil {
 			logrus.Errorf("File create error : %v", err)
 			return err
@@ -125,28 +130,42 @@ func ExportNRDMFunc(params *models.CommandTask) error {
 		}
 		logrus.Infof("successfully exported : %s", file.Name())
 	}
-	logrus.Infof("successfully exported : %s", params.Directory)
+	logrus.Infof("successfully exported : %s", datamoldParams.DstPath)
 	return nil
 }
 
-func MigrationNRDMFunc(params *models.CommandTask) error {
+func MigrationNRDMFunc(datamoldParams *DatamoldParams) error {
 	var srcNRDBC *nrdbc.NRDBController
 	var srcErr error
 	var dstNRDBC *nrdbc.NRDBController
 	var dstErr error
-	logrus.Infof("Source Information")
-	srcNRDBC, srcErr = GetNRDMS(&params.SourcePoint)
-	if srcErr != nil {
-		logrus.Errorf("NRDBController error migration into nrdbms : %v", srcErr)
-		return srcErr
+	if !datamoldParams.TaskTarget {
+		logrus.Infof("Source Information")
+		srcNRDBC, srcErr = GetSrcNRDMS(datamoldParams)
+		if srcErr != nil {
+			logrus.Errorf("NRDBController error migration into nrdbms : %v", srcErr)
+			return srcErr
+		}
+		logrus.Infof("Target Information")
+		dstNRDBC, dstErr = GetDstNRDMS(datamoldParams)
+		if dstErr != nil {
+			logrus.Errorf("NRDBController error migration into nrdbms : %v", dstErr)
+			return dstErr
+		}
+	} else {
+		logrus.Infof("Source Information")
+		srcNRDBC, srcErr = GetDstNRDMS(datamoldParams)
+		if srcErr != nil {
+			logrus.Errorf("NRDBController error migration into nrdbms : %v", srcErr)
+			return srcErr
+		}
+		logrus.Infof("Target Information")
+		dstNRDBC, dstErr = GetSrcNRDMS(datamoldParams)
+		if dstErr != nil {
+			logrus.Errorf("NRDBController error migration into nrdbms : %v", dstErr)
+			return dstErr
+		}
 	}
-	logrus.Infof("Target Information")
-	dstNRDBC, dstErr = GetNRDMS(&params.TargetPoint)
-	if dstErr != nil {
-		logrus.Errorf("NRDBController error migration into nrdbms : %v", dstErr)
-		return dstErr
-	}
-
 	logrus.Info("Launch NRDBController Copy")
 	if err := srcNRDBC.Copy(dstNRDBC); err != nil {
 		logrus.Errorf("Copy error copying into nrdbms : %v", err)
@@ -156,18 +175,21 @@ func MigrationNRDMFunc(params *models.CommandTask) error {
 	return nil
 }
 
-func DeleteNRDMFunc(params *models.CommandTask) error {
+func DeleteNRDMFunc(datamoldParams *DatamoldParams) error {
 	var NRDBC *nrdbc.NRDBController
 	var err error
-	NRDBC, err = GetNRDMS(&params.TargetPoint)
-
+	if !datamoldParams.TaskTarget {
+		NRDBC, err = GetSrcNRDMS(datamoldParams)
+	} else {
+		NRDBC, err = GetDstNRDMS(datamoldParams)
+	}
 	if err != nil {
 		logrus.Errorf("NRDBController error deleting into nrdbms : %v", err)
 		return err
 	}
 
 	logrus.Info("Launch NRDBController Delete")
-	if err := NRDBC.DeleteTables(params.DeleteTableList...); err != nil {
+	if err := NRDBC.DeleteTables(datamoldParams.DeleteTableList...); err != nil {
 		logrus.Errorf("Delete error deleting into nrdbms : %v", err)
 		return err
 	}

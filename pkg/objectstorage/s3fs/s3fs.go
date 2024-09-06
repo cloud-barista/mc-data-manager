@@ -24,7 +24,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
-	"github.com/cloud-barista/mc-data-manager/models"
+	"github.com/cloud-barista/mc-data-manager/pkg/utils"
 )
 
 type reader struct {
@@ -75,7 +75,7 @@ func (w *fakeWriteAt) WriteAt(p []byte, off int64) (n int, err error) {
 }
 
 type S3FS struct {
-	provider   models.Provider
+	provider   utils.Provider
 	bucketName string
 	region     string
 
@@ -92,6 +92,7 @@ func (f *S3FS) CreateBucket() error {
 	_, err := f.client.HeadBucket(f.ctx, &s3.HeadBucketInput{
 		Bucket: aws.String(f.bucketName),
 	})
+
 	if err != nil {
 		var bae *types.BucketAlreadyExists
 		if errors.As(err, &bae) {
@@ -192,8 +193,8 @@ func (f *S3FS) Create(name string) (io.WriteCloser, error) {
 }
 
 // Look up the list of objects in your bucket
-func (f *S3FS) ObjectList() ([]*models.Object, error) {
-	var objlist []*models.Object
+func (f *S3FS) ObjectList() ([]*utils.Object, error) {
+	var objlist []*utils.Object
 	var ContinuationToken *string
 
 	for {
@@ -209,7 +210,7 @@ func (f *S3FS) ObjectList() ([]*models.Object, error) {
 		}
 
 		for _, obj := range LOut.Contents {
-			objlist = append(objlist, &models.Object{
+			objlist = append(objlist, &utils.Object{
 				ETag:         *obj.ETag,
 				Key:          *obj.Key,
 				LastModified: *obj.LastModified,
@@ -228,7 +229,7 @@ func (f *S3FS) ObjectList() ([]*models.Object, error) {
 	return objlist, nil
 }
 
-func New(provider models.Provider, client *s3.Client, bucketName, region string) *S3FS {
+func New(provider utils.Provider, client *s3.Client, bucketName, region string) *S3FS {
 	sfs := &S3FS{
 		ctx:        context.TODO(),
 		provider:   provider,

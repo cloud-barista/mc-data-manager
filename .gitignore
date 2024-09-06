@@ -8,8 +8,6 @@
 *.so
 *.dylib
 tmp
-# credential
-# profile
 
 # Test binary, built with `go test -c`
 *.test
@@ -27,6 +25,3 @@ go.work
 
 # mc-data-manager binary, built with `go build`
 mc-data-manager
-
-# Credential
-profile.json

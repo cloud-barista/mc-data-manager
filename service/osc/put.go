@@ -24,7 +24,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/pkg/utils"
 )
 
@@ -40,7 +39,7 @@ func (osc *OSController) MPut(dirPath string) error {
 		return err
 	}
 
-	var objList []models.Object
+	var objList []utils.Object
 
 	err := filepath.Walk(dirPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -48,7 +47,7 @@ func (osc *OSController) MPut(dirPath string) error {
 		}
 
 		if !info.IsDir() {
-			objList = append(objList, models.Object{
+			objList = append(objList, utils.Object{
 				ChecksumAlgorithm: []string{},
 				ETag:              "",
 				Key:               path,
@@ -66,7 +65,7 @@ func (osc *OSController) MPut(dirPath string) error {
 		return err
 	}
 
-	jobs := make(chan models.Object, len(objList))
+	jobs := make(chan utils.Object, len(objList))
 	resultChan := make(chan Result, len(objList))
 
 	var wg sync.WaitGroup
@@ -96,7 +95,7 @@ func (osc *OSController) MPut(dirPath string) error {
 	return nil
 }
 
-func mPutWorker(osc *OSController, dirPath string, jobs chan models.Object, resultChan chan<- Result) {
+func mPutWorker(osc *OSController, dirPath string, jobs chan utils.Object, resultChan chan<- Result) {
 	for obj := range jobs {
 		ret := Result{
 			name: obj.Key,

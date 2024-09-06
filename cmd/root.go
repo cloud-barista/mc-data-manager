@@ -18,11 +18,12 @@ package cmd
 import (
 	"os"
 
-	"github.com/cloud-barista/mc-data-manager/models"
+	"github.com/cloud-barista/mc-data-manager/internal/auth"
+	"github.com/cloud-barista/mc-data-manager/internal/log"
 	"github.com/spf13/cobra"
 )
 
-var commandTask models.CommandTask
+var datamoldParams auth.DatamoldParams
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -31,6 +32,7 @@ var rootCmd = &cobra.Command{
 	Long: `It is a tool that builds an environment for verification of data migration technology and 
 generates test data necessary for data migration.`,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		log.LogFile()
 		return nil
 	},
 }

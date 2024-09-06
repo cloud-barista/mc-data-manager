@@ -16,67 +16,88 @@ limitations under the License.
 package auth
 
 import (
-	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/service/osc"
 	"github.com/sirupsen/logrus"
 )
 
-func ImportOSFunc(params *models.CommandTask) error {
+func ImportOSFunc(datamoldParams *DatamoldParams) error {
 	var OSC *osc.OSController
 	var err error
 	logrus.Infof("User Information")
-	OSC, err = GetOS(&params.TargetPoint)
+	if !datamoldParams.TaskTarget {
+		OSC, err = GetSrcOS(datamoldParams)
+	} else {
+		OSC, err = GetDstOS(datamoldParams)
+	}
+
 	if err != nil {
 		logrus.Errorf("OSController error importing into objectstorage : %v", err)
 		return err
 	}
 
 	logrus.Info("Launch OSController MPut")
-	if err := OSC.MPut(params.Directory); err != nil {
+	if err := OSC.MPut(datamoldParams.DstPath); err != nil {
 		logrus.Error("MPut error importing into objectstorage")
-		logrus.Infof("params : %+v", params.TargetPoint)
-
 		return err
 	}
-	logrus.Infof("successfully imported : %s", params.Directory)
+	logrus.Infof("successfully imported : %s", datamoldParams.DstPath)
 	return nil
 }
 
-func ExportOSFunc(params *models.CommandTask) error {
+func ExportOSFunc(datamoldParams *DatamoldParams) error {
 	var OSC *osc.OSController
 	var err error
 	logrus.Infof("User Information")
-	OSC, err = GetOS(&params.TargetPoint)
+	if !datamoldParams.TaskTarget {
+		OSC, err = GetSrcOS(datamoldParams)
+	} else {
+		OSC, err = GetDstOS(datamoldParams)
+	}
 	if err != nil {
-		logrus.Errorf("OSController error importing into objectstorage : %v", err)
+		logrus.Errorf("OSController error exporting into objectstorage : %v", err)
 		return err
 	}
 
 	logrus.Info("Launch OSController MGet")
-	if err := OSC.MGet(params.Directory); err != nil {
+	if err := OSC.MGet(datamoldParams.DstPath); err != nil {
 		logrus.Errorf("MGet error exporting into objectstorage : %v", err)
 		return err
 	}
-	logrus.Infof("successfully exported : %s", params.Directory)
+	logrus.Infof("successfully exported : %s", datamoldParams.DstPath)
 	return nil
 }
 
-func MigrationOSFunc(params *models.CommandTask) error {
+func MigrationOSFunc(datamoldParams *DatamoldParams) error {
 	var src *osc.OSController
 	var srcErr error
 	var dst *osc.OSController
 	var dstErr error
-	logrus.Infof("Source Information")
-	src, srcErr = GetOS(&params.TargetPoint)
-	if srcErr != nil {
-		logrus.Errorf("OSController error migration into objectstorage : %v", srcErr)
-		return srcErr
-	}
-	logrus.Infof("Target Information")
-	dst, dstErr = GetOS(&params.TargetPoint)
-	if dstErr != nil {
-		logrus.Errorf("OSController error migration into objectstorage : %v", dstErr)
-		return dstErr
+	if !datamoldParams.TaskTarget {
+		logrus.Infof("Source Information")
+		src, srcErr = GetSrcOS(datamoldParams)
+		if srcErr != nil {
+			logrus.Errorf("OSController error migration into objectstorage : %v", srcErr)
+			return srcErr
+		}
+		logrus.Infof("Target Information")
+		dst, dstErr = GetDstOS(datamoldParams)
+		if dstErr != nil {
+			logrus.Errorf("OSController error migration into objectstorage : %v", dstErr)
+			return dstErr
+		}
+	} else {
+		logrus.Infof("Source Information")
+		src, srcErr = GetDstOS(datamoldParams)
+		if srcErr != nil {
+			logrus.Errorf("OSController error migration into objectstorage : %v", srcErr)
+			return srcErr
+		}
+		logrus.Infof("Target Information")
+		dst, dstErr = GetSrcOS(datamoldParams)
+		if dstErr != nil {
+			logrus.Errorf("OSController error migration into objectstorage : %v", dstErr)
+			return dstErr
+		}
 	}
 
 	logrus.Info("Launch OSController Copy")
@@ -88,13 +109,17 @@ func MigrationOSFunc(params *models.CommandTask) error {
 	return nil
 }
 
-func DeleteOSFunc(params *models.CommandTask) error {
+func DeleteOSFunc(datamoldParams *DatamoldParams) error {
 	var OSC *osc.OSController
 	var err error
 	logrus.Infof("User Information")
-	OSC, err = GetOS(&params.TargetPoint)
+	if !datamoldParams.TaskTarget {
+		OSC, err = GetSrcOS(datamoldParams)
+	} else {
+		OSC, err = GetDstOS(datamoldParams)
+	}
 	if err != nil {
-		logrus.Errorf("OSController error importing into objectstorage : %v", err)
+		logrus.Errorf("OSController error deleting into objectstorage : %v", err)
 		return err
 	}
 

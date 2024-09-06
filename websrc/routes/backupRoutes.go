@@ -43,8 +43,8 @@ func BackupRoot(g *echo.Group) {
 }
 
 func BackupFromOnpremiseToObjectStorage(g *echo.Group) {
-	g.GET("/linux/aws", controllers.MigrationLinuxToS3GetHandler)
-	g.POST("/linux/aws", controllers.MigrationLinuxToS3PostHandler)
+	g.GET("/linux/s3", controllers.MigrationLinuxToS3GetHandler)
+	g.POST("/linux/s3", controllers.MigrationLinuxToS3PostHandler)
 
 	g.GET("/linux/gcp", controllers.MigrationLinuxToGCPGetHandler)
 	g.POST("/linux/gcp", controllers.MigrationLinuxToGCPPostHandler)
@@ -52,8 +52,8 @@ func BackupFromOnpremiseToObjectStorage(g *echo.Group) {
 	g.GET("/linux/ncp", controllers.MigrationLinuxToNCPGetHandler)
 	g.POST("/linux/ncp", controllers.MigrationLinuxToNCPPostHandler)
 
-	g.GET("/windows/aws", controllers.MigrationWindowsToS3GetHandler)
-	g.POST("/windows/aws", controllers.MigrationWindowsToS3PostHandler)
+	g.GET("/windows/s3", controllers.MigrationWindowsToS3GetHandler)
+	g.POST("/windows/s3", controllers.MigrationWindowsToS3PostHandler)
 
 	g.GET("/windows/gcp", controllers.MigrationWindowsToGCPGetHandler)
 	g.POST("/windows/gcp", controllers.MigrationWindowsToGCPPostHandler)
@@ -68,17 +68,17 @@ func BackupMySQL(g *echo.Group) {
 }
 
 func BackupFromS3Routes(g *echo.Group) {
-	g.GET("/aws/linux", controllers.MigrationS3ToLinuxGetHandler)
-	g.POST("/aws/linux", controllers.MigrationS3ToLinuxPostHandler)
+	g.GET("/s3/linux", controllers.MigrationS3ToLinuxGetHandler)
+	g.POST("/s3/linux", controllers.MigrationS3ToLinuxPostHandler)
 
-	g.GET("/aws/windows", controllers.MigrationS3ToWindowsGetHandler)
-	g.POST("/aws/windows", controllers.MigrationS3ToWindowsPostHandler)
+	g.GET("/s3/windows", controllers.MigrationS3ToWindowsGetHandler)
+	g.POST("/s3/windows", controllers.MigrationS3ToWindowsPostHandler)
 
-	g.GET("/aws/gcp", controllers.MigrationS3ToGCPGetHandler)
-	g.POST("/aws/gcp", controllers.MigrationS3ToGCPPostHandler)
+	g.GET("/s3/gcp", controllers.MigrationS3ToGCPGetHandler)
+	g.POST("/s3/gcp", controllers.MigrationS3ToGCPPostHandler)
 
-	g.GET("/aws/ncp", controllers.MigrationS3ToNCPGetHandler)
-	g.POST("/aws/ncp", controllers.MigrationS3ToNCPPostHandler)
+	g.GET("/s3/ncp", controllers.MigrationS3ToNCPGetHandler)
+	g.POST("/s3/ncp", controllers.MigrationS3ToNCPPostHandler)
 }
 
 func BackupFromGCPRoutes(g *echo.Group) {
@@ -88,8 +88,8 @@ func BackupFromGCPRoutes(g *echo.Group) {
 	g.GET("/gcp/windows", controllers.MigrationGCPToWindowsGetHandler)
 	g.POST("/gcp/windows", controllers.MigrationGCPToWindowsPostHandler)
 
-	g.GET("/gcp/aws", controllers.MigrationGCPToS3GetHandler)
-	g.POST("/gcp/aws", controllers.MigrationGCPToS3PostHandler)
+	g.GET("/gcp/s3", controllers.MigrationGCPToS3GetHandler)
+	g.POST("/gcp/s3", controllers.MigrationGCPToS3PostHandler)
 
 	g.GET("/gcp/ncp", controllers.MigrationGCPToNCPGetHandler)
 	g.POST("/gcp/ncp", controllers.MigrationGCPToNCPPostHandler)
@@ -102,8 +102,8 @@ func BackupFromNCPRoutes(g *echo.Group) {
 	g.GET("/ncp/windows", controllers.MigrationNCPToWindowsGetHandler)
 	g.POST("/ncp/windows", controllers.MigrationNCPToWindowsPostHandler)
 
-	g.GET("/ncp/aws", controllers.MigrationNCPToS3GetHandler)
-	g.POST("/ncp/aws", controllers.MigrationNCPToS3PostHandler)
+	g.GET("/ncp/s3", controllers.MigrationNCPToS3GetHandler)
+	g.POST("/ncp/s3", controllers.MigrationNCPToS3PostHandler)
 
 	g.GET("/ncp/gcp", controllers.MigrationNCPToGCPGetHandler)
 	g.POST("/ncp/gcp", controllers.MigrationNCPToGCPPostHandler)
