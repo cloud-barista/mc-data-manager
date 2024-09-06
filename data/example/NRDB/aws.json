@@ -1,0 +1,10 @@
+{
+    "operationId": "opt-00735",
+    "targetPoint": {
+        "profileName": "admin",
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "CheckServerJSON": true,
+        "SizeServerJSON": "1"
+    }
+}

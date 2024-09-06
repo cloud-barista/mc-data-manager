@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package main
+package aws
 
 import (
 	"context"
@@ -202,7 +202,7 @@ func main() {
 	defaultRegion := "ap-northeast-2"
 
 	fmt.Println("Creating CredentialsManager")
-	credentialsManager := cfg.NewFileCredentialsManager()
+	credentialsManager := cfg.NewProfileManager()
 
 	fmt.Println("Loading credentials")
 	// Load credentials for the specified profile and provider
