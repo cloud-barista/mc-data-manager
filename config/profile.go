@@ -1,55 +1,51 @@
 package config
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"sync"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/cloud-barista/mc-data-manager/models"
 )
 
-type Credentials = models.ProfileCredentials
-
-var mu sync.Mutex
-
-const (
-	// Define the constant path for the credentials file
-	CredentialsFilePath = "./data/var/run/mc-data-manager/profile/auth/auth.json"
-)
-
-// CredentialsManager interface definition
-type CredentialsManager interface {
-	LoadAllCredentials() (map[string]Credentials, error)
-	SaveAllCredentials(profiles map[string]Credentials) error
-	CreateProfile(profileName string, credentials Credentials) error
-	UpdateProfile(profileName string, credentials Credentials) error
+type ProfileManager interface {
+	LoadAllProfiles() (map[string]models.ProfileCredentials, error)
+	SaveAllProfiles(profiles map[string]models.ProfileCredentials) error
+	CreateProfile(profileName string, credentials models.ProfileCredentials) error
+	UpdateProfile(profileName string, credentials models.ProfileCredentials) error
 	DeleteProfile(profileName string) error
-	LoadCredentialsByProfile(profileName string, provider models.Provider) (interface{}, error)
+	LoadCredentialsByProfile(profileName string, provider string) (interface{}, error)
 }
 
-// FileCredentialsManager struct definition
-type FileCredentialsManager struct {
-	authFilePath string
+type FileProfileManager struct {
+	profileFilePath string
+	mu              sync.Mutex
 }
 
-// NewFileCredentialsManager constructor function
-func NewFileCredentialsManager() *FileCredentialsManager {
-	return &FileCredentialsManager{authFilePath: CredentialsFilePath}
+func NewProfileManager(profileFilePath ...string) *FileProfileManager {
+	var path string
+	if len(profileFilePath) > 0 && profileFilePath[0] != "" {
+		path = profileFilePath[0]
+	} else {
+		path = filepath.Join(".", "data", "var", "run", "data-manager", "profile", "profile.json")
+	}
+	return &FileProfileManager{profileFilePath: path}
 }
 
-// LoadAllCredentials loads all credentials from the auth.json file
-func (fcm *FileCredentialsManager) LoadAllCredentials() (map[string]Credentials, error) {
-	mu.Lock()
-	defer mu.Unlock()
+func NewProfileManagerDefault() *FileProfileManager {
+	defaultPath := filepath.Join(".", "data", "var", "run", "data-manager", "profile", "profile.json")
+	return &FileProfileManager{profileFilePath: defaultPath}
+}
 
-	file, err := os.Open(fcm.authFilePath)
+// R  profiles
+func (fpm *FileProfileManager) LoadAllProfiles() (map[string]models.ProfileCredentials, error) {
+	fpm.mu.Lock()
+	defer fpm.mu.Unlock()
+
+	file, err := os.Open(fpm.profileFilePath)
 	if err != nil {
 		return nil, err
 	}
@@ -61,42 +57,42 @@ func (fcm *FileCredentialsManager) LoadAllCredentials() (map[string]Credentials,
 	}
 
 	var profiles []struct {
-		ProfileName string      `json:"profileName"`
-		Credentials Credentials `json:"credentials"`
+		ProfileName string                    `json:"profileName"`
+		Credentials models.ProfileCredentials `json:"credentials"`
 	}
 
 	if err := json.Unmarshal(data, &profiles); err != nil {
 		return nil, err
 	}
 
-	credentialsMap := make(map[string]Credentials)
+	profileMap := make(map[string]models.ProfileCredentials)
 	for _, profile := range profiles {
-		credentialsMap[profile.ProfileName] = profile.Credentials
+		profileMap[profile.ProfileName] = profile.Credentials
 	}
 
-	return credentialsMap, nil
+	return profileMap, nil
 }
 
-// SaveAllCredentials saves all credentials to the auth.json file
-func (fcm *FileCredentialsManager) SaveAllCredentials(profiles map[string]Credentials) error {
-	mu.Lock()
-	defer mu.Unlock()
+// Save File with profiles
+func (fpm *FileProfileManager) SaveAllProfiles(profiles map[string]models.ProfileCredentials) error {
+	fpm.mu.Lock()
+	defer fpm.mu.Unlock()
 
-	file, err := os.Create(fcm.authFilePath)
+	file, err := os.Create(fpm.profileFilePath)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 
 	var profilesList []struct {
-		ProfileName string      `json:"profileName"`
-		Credentials Credentials `json:"credentials"`
+		ProfileName string                    `json:"profileName"`
+		Credentials models.ProfileCredentials `json:"credentials"`
 	}
 
 	for name, creds := range profiles {
 		profilesList = append(profilesList, struct {
-			ProfileName string      `json:"profileName"`
-			Credentials Credentials `json:"credentials"`
+			ProfileName string                    `json:"profileName"`
+			Credentials models.ProfileCredentials `json:"credentials"`
 		}{
 			ProfileName: name,
 			Credentials: creds,
@@ -112,11 +108,11 @@ func (fcm *FileCredentialsManager) SaveAllCredentials(profiles map[string]Creden
 	return err
 }
 
-// CreateProfile adds a new profile
-func (fcm *FileCredentialsManager) CreateProfile(profileName string, credentials Credentials) error {
-	mu.Lock()
-	defer mu.Unlock()
-	profiles, err := fcm.LoadAllCredentials()
+// C profile by name
+func (fpm *FileProfileManager) CreateProfile(profileName string, credentials models.ProfileCredentials) error {
+	fpm.mu.Lock()
+	defer fpm.mu.Unlock()
+	profiles, err := fpm.LoadAllProfiles()
 	if err != nil {
 		return err
 	}
@@ -126,14 +122,14 @@ func (fcm *FileCredentialsManager) CreateProfile(profileName string, credentials
 	}
 
 	profiles[profileName] = credentials
-	return fcm.SaveAllCredentials(profiles)
+	return fpm.SaveAllProfiles(profiles)
 }
 
-// UpdateProfile updates an existing profile
-func (fcm *FileCredentialsManager) UpdateProfile(profileName string, credentials Credentials) error {
-	mu.Lock()
-	defer mu.Unlock()
-	profiles, err := fcm.LoadAllCredentials()
+// U profile by name
+func (fpm *FileProfileManager) UpdateProfile(profileName string, credentials models.ProfileCredentials) error {
+	fpm.mu.Lock()
+	defer fpm.mu.Unlock()
+	profiles, err := fpm.LoadAllProfiles()
 	if err != nil {
 		return err
 	}
@@ -143,14 +139,14 @@ func (fcm *FileCredentialsManager) UpdateProfile(profileName string, credentials
 	}
 
 	profiles[profileName] = credentials
-	return fcm.SaveAllCredentials(profiles)
+	return fpm.SaveAllProfiles(profiles)
 }
 
-// DeleteProfile removes a profile
-func (fcm *FileCredentialsManager) DeleteProfile(profileName string) error {
-	mu.Lock()
-	defer mu.Unlock()
-	profiles, err := fcm.LoadAllCredentials()
+// D profile by name
+func (fpm *FileProfileManager) DeleteProfile(profileName string) error {
+	fpm.mu.Lock()
+	defer fpm.mu.Unlock()
+	profiles, err := fpm.LoadAllProfiles()
 	if err != nil {
 		return err
 	}
@@ -160,12 +156,12 @@ func (fcm *FileCredentialsManager) DeleteProfile(profileName string) error {
 	}
 
 	delete(profiles, profileName)
-	return fcm.SaveAllCredentials(profiles)
+	return fpm.SaveAllProfiles(profiles)
 }
 
-// LoadCredentialsByProfile loads credentials by profile name and provider
-func (fcm *FileCredentialsManager) LoadCredentialsByProfile(profileName string, provider string) (interface{}, error) {
-	profiles, err := fcm.LoadAllCredentials()
+// R profile by name
+func (fpm *FileProfileManager) LoadCredentialsByProfile(profileName string, provider string) (interface{}, error) {
+	profiles, err := fpm.LoadAllProfiles()
 	if err != nil {
 		return nil, err
 	}
@@ -183,57 +179,4 @@ func (fcm *FileCredentialsManager) LoadCredentialsByProfile(profileName string, 
 	default:
 		return nil, errors.New("unsupported provider")
 	}
-}
-
-// AWSClient wraps aws.Config and provides additional methods
-type AWSClient struct {
-	Config aws.Config
-}
-
-// NewAWSClient creates a new AWSClient
-func NewAWSClient(profileName string) (*AWSClient, error) {
-	fmt.Println("Creating CredentialsManager")
-	credentialsManager := NewFileCredentialsManager()
-
-	fmt.Println("Loading credentials")
-	creds, err := credentialsManager.LoadCredentialsByProfile(profileName, string(models.AWS))
-	if err != nil {
-		return nil, fmt.Errorf("Error loading credentials: %v", err)
-	}
-
-	fmt.Println("Casting credentials")
-	awsCreds, ok := creds.(models.AWSCredentials)
-	if !ok {
-		return nil, fmt.Errorf("Invalid credentials type: %v", creds)
-	}
-
-	fmt.Println("Creating AWS config")
-	return newAWSConfigure(awsCreds)
-}
-
-// newAWSConfig creates a new AWSClient with the given credentials
-func newAWSConfigure(params models.AWSCredentials) (*AWSClient, error) {
-	cfg, err := loadConfig(params)
-	if err != nil {
-		return nil, err
-	}
-	return &AWSClient{Config: cfg}, nil
-}
-
-// loadConfig loads the AWS configuration with the given credentials
-func loadConfig(params models.AWSCredentials) (aws.Config, error) {
-	return config.LoadDefaultConfig(context.TODO(),
-		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(params.AccessKey, params.SecretKey, "")),
-		config.WithRetryMaxAttempts(5),
-	)
-}
-
-// SetRegion sets the region in the AWS configuration
-func (client *AWSClient) SetRegion(region string) {
-	client.Config.Region = region
-}
-
-// GetConfig returns the current AWS configuration
-func (client *AWSClient) GetConfig() aws.Config {
-	return client.Config
 }

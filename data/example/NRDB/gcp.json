@@ -1,0 +1,10 @@
+{
+    "operationId": "opt-00735",
+    "targetPoint": {
+        "profileName": "admin",
+        "provider": "gcp",
+        "region": "asia-northeast2",
+        "CheckServerJSON": true,
+        "SizeServerJSON": "1"
+    }
+}
