@@ -17,22 +17,19 @@ package controllers
 
 import (
 	"net/http"
-	"os"
 	"time"
 
-	"github.com/cloud-barista/mc-data-manager/websrc/models"
+	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/labstack/echo/v4"
 )
 
 // MigrationDynamoDBToFirestorePostHandler godoc
 // @Summary Migrate data from DynamoDB to Firestore
 // @Description Migrate data stored in AWS DynamoDB to Google Cloud Firestore.
-// @Tags [Data Migration]
-// @Accept multipart/form-data
+// @Tags [Data Migration], [NRDBMS]
+// @Accept json
 // @Produce json
-// @Param AWSMigrationParams 	formData AWSMigrationParams	true  "Parameters required for Linux migration"
-// @Param GCPMigrationParams 	formData GCPMigrationParams	true  "Parameters required for GCP migration"
-// @Param gcpCredential			formData file				false "Parameters required to generate test data"
+// @Param RequestBody body MigrateTask	true	"Parameters required for migration"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /migration/dynamodb/firestore [post]
@@ -42,7 +39,7 @@ func MigrationDynamoDBToFirestorePostHandler(ctx echo.Context) error {
 
 	logger, logstrings := pageLogInit("migDNFS", "Export dynamoDB data to firestoreDB", start)
 
-	params := MigrationForm{}
+	params := MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -50,16 +47,7 @@ func MigrationDynamoDBToFirestorePostHandler(ctx echo.Context) error {
 		})
 	}
 
-	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
-	if !ok && params.GCPCredentialJson == "" {
-		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
-			Result: logstrings.String(),
-			Error:  nil,
-		})
-	}
-	defer os.RemoveAll(credTmpDir)
-
-	awsNRDB := getDynamoNRDBC(logger, start, "mig", params)
+	awsNRDB := getDynamoNRDBC(logger, start, "mig", params.SourcePoint)
 	if awsNRDB == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -67,7 +55,7 @@ func MigrationDynamoDBToFirestorePostHandler(ctx echo.Context) error {
 		})
 	}
 
-	gcpNRDB := getFirestoreNRDBC(logger, start, "mig", params, credFileName)
+	gcpNRDB := getFirestoreNRDBC(logger, start, "mig", params.TargetPoint)
 	if gcpNRDB == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -97,11 +85,10 @@ func MigrationDynamoDBToFirestorePostHandler(ctx echo.Context) error {
 // MigrationDynamoDBToMongoDBPostHandler godoc
 // @Summary Migrate data from DynamoDB to MongoDB
 // @Description Migrate data stored in AWS DynamoDB to Naver Cloud MongoDB.
-// @Tags [Data Migration]
+// @Tags [Data Migration], [NRDBMS]
 // @Accept json
 // @Produce json
-// @Param AWSMigrationParams 	body AWSMigrationParams 	true "Parameters required for AWS migration"
-// @Param MongoMigrationParams 	body MongoMigrationParams 	true "Parameters required for NCP migration"
+// @Param RequestBody body MigrateTask	true	"Parameters required for migration"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /migration/dynamodb/mongodb [post]
@@ -110,7 +97,8 @@ func MigrationDynamoDBToMongoDBPostHandler(ctx echo.Context) error {
 	start := time.Now()
 
 	logger, logstrings := pageLogInit("migDNMG", "Export dynamoDB data to mongoDB", start)
-	params := MigrationForm{}
+
+	params := MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -118,7 +106,7 @@ func MigrationDynamoDBToMongoDBPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	awsNRDB := getDynamoNRDBC(logger, start, "mig", params)
+	awsNRDB := getDynamoNRDBC(logger, start, "mig", params.SourcePoint)
 	if awsNRDB == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -126,7 +114,7 @@ func MigrationDynamoDBToMongoDBPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	ncpNRDB := getMongoNRDBC(logger, start, "mig", params)
+	ncpNRDB := getMongoNRDBC(logger, start, "mig", params.TargetPoint)
 	if ncpNRDB == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -156,12 +144,10 @@ func MigrationDynamoDBToMongoDBPostHandler(ctx echo.Context) error {
 // MigrationFirestoreToDynamoDBPostHandler godoc
 // @Summary Migrate data from Firestore to DynamoDB
 // @Description Migrate data stored in Google Cloud Firestore to AWS DynamoDB.
-// @Tags [Data Migration]
-// @Accept multipart/form-data
+// @Tags [Data Migration], [NRDBMS]
+// @Accept json
 // @Produce json
-// @Param GCPMigrationParams	formData GCPMigrationParams true  "Parameters required for GCP migration"
-// @Param AWSMigrationParams 	formData AWSMigrationParams true  "Parameters required for AWS migration"
-// @Param gcpCredential			formData file 				false "Parameters required to generate test data"
+// @Param RequestBody body MigrateTask	true	"Parameters required for migration"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /migration/firestore/dynamodb [post]
@@ -171,7 +157,7 @@ func MigrationFirestoreToDynamoDBPostHandler(ctx echo.Context) error {
 
 	logger, logstrings := pageLogInit("migFSDN", "Export firestoreDB data to dynamoDB", start)
 
-	params := MigrationForm{}
+	params := MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -179,16 +165,7 @@ func MigrationFirestoreToDynamoDBPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
-	if !ok && params.GCPCredentialJson == "" {
-		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
-			Result: logstrings.String(),
-			Error:  nil,
-		})
-	}
-	defer os.RemoveAll(credTmpDir)
-
-	gcpNRDB := getFirestoreNRDBC(logger, start, "mig", params, credFileName)
+	gcpNRDB := getFirestoreNRDBC(logger, start, "mig", params.SourcePoint)
 	if gcpNRDB == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -196,7 +173,7 @@ func MigrationFirestoreToDynamoDBPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	awsNRDB := getDynamoNRDBC(logger, start, "mig", params)
+	awsNRDB := getDynamoNRDBC(logger, start, "mig", params.TargetPoint)
 	if awsNRDB == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -226,12 +203,10 @@ func MigrationFirestoreToDynamoDBPostHandler(ctx echo.Context) error {
 // MigrationFirestoreToMongoDBPostHandler godoc
 // @Summary Migrate data from Firestore to MongoDB
 // @Description Migrate data stored in Google Cloud Firestore to Naver Cloud MongoDB.
-// @Tags [Data Migration]
-// @Accept multipart/form-data
+// @Tags [Data Migration], [NRDBMS]
+// @Accept json
 // @Produce json
-// @Param GCPMigrationParams 	formData GCPMigrationParams		true  "Parameters required for GCP migration"
-// @Param MongoMigrationParams 	formData MongoMigrationParams 	true  "Parameters required for NCP migration"
-// @Param gcpCredential			formData file				 	false "Parameters required to generate test data"
+// @Param RequestBody body MigrateTask	true	"Parameters required for migration"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /migration/firestore/mongodb [post]
@@ -241,7 +216,7 @@ func MigrationFirestoreToMongoDBPostHandler(ctx echo.Context) error {
 
 	logger, logstrings := pageLogInit("migFSMG", "Export firestoreDB data to mongoDB", start)
 
-	params := MigrationForm{}
+	params := MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -249,16 +224,7 @@ func MigrationFirestoreToMongoDBPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
-	if !ok && params.GCPCredentialJson == "" {
-		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
-			Result: logstrings.String(),
-			Error:  nil,
-		})
-	}
-	defer os.RemoveAll(credTmpDir)
-
-	gcpNRDB := getFirestoreNRDBC(logger, start, "mig", params, credFileName)
+	gcpNRDB := getFirestoreNRDBC(logger, start, "mig", params.SourcePoint)
 	if gcpNRDB == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -266,7 +232,7 @@ func MigrationFirestoreToMongoDBPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	ncpNRDB := getMongoNRDBC(logger, start, "mig", params)
+	ncpNRDB := getMongoNRDBC(logger, start, "mig", params.TargetPoint)
 	if ncpNRDB == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -296,11 +262,10 @@ func MigrationFirestoreToMongoDBPostHandler(ctx echo.Context) error {
 // MigrationMongoDBToDynamoDBPostHandler godoc
 // @Summary Migrate data from MongoDB to DynamoDB
 // @Description Migrate data stored in Naver Cloud MongoDB to AWS DynamoDB.
-// @Tags [Data Migration]
+// @Tags [Data Migration], [NRDBMS]
 // @Accept json
 // @Produce json
-// @Param MongoMigrationParams formData MongoMigrationParams true "Parameters required for NCP migration"
-// @Param AWSMigrationParams formData AWSMigrationParams true "Parameters required for AWS migration"
+// @Param RequestBody body MigrateTask	true	"Parameters required for migration"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /migration/mongodb/dynamodb [post]
@@ -310,7 +275,7 @@ func MigrationMongoDBToDynamoDBPostHandler(ctx echo.Context) error {
 
 	logger, logstrings := pageLogInit("migMGDN", "Export mongoDB data to dynamoDB", start)
 
-	params := MigrationForm{}
+	params := MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -318,7 +283,7 @@ func MigrationMongoDBToDynamoDBPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	ncpNRDB := getMongoNRDBC(logger, start, "mig", params)
+	ncpNRDB := getMongoNRDBC(logger, start, "mig", params.SourcePoint)
 	if ncpNRDB == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -326,7 +291,7 @@ func MigrationMongoDBToDynamoDBPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	awsNRDB := getDynamoNRDBC(logger, start, "mig", params)
+	awsNRDB := getDynamoNRDBC(logger, start, "mig", params.TargetPoint)
 	if awsNRDB == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -356,12 +321,10 @@ func MigrationMongoDBToDynamoDBPostHandler(ctx echo.Context) error {
 // MigrationMongoDBToFirestorePostHandler godoc
 // @Summary Migrate data from MongoDB to Firestore
 // @Description Migrate data stored in Naver Cloud MongoDB to Google Cloud Firestore.
-// @Tags [Data Migration]
-// @Accept multipart/form-data
+// @Tags [Data Migration], [NRDBMS]
+// @Accept json
 // @Produce json
-// @Param MongoMigrationParams 	formData MongoMigrationParams 	true  "Parameters required for NCP migration"
-// @Param GCPMigrationParams 	formData GCPMigrationParams 	true  "Parameters required for GCP migration"
-// @Param gcpCredential			formData file 					false "Parameters required to generate test data"
+// @Param RequestBody body MigrateTask	true	"Parameters required for migration"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /migration/mongodb/firestore [post]
@@ -371,7 +334,7 @@ func MigrationMongoDBToFirestorePostHandler(ctx echo.Context) error {
 
 	logger, logstrings := pageLogInit("migMGFS", "Export mongoDB data to firestoreDB", start)
 
-	params := MigrationForm{}
+	params := MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -379,25 +342,16 @@ func MigrationMongoDBToFirestorePostHandler(ctx echo.Context) error {
 		})
 	}
 
-	credTmpDir, credFileName, ok := gcpCreateCredFile(logger, start, ctx)
-	if !ok && params.GCPCredentialJson == "" {
-		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
-			Result: logstrings.String(),
-			Error:  nil,
-		})
-	}
-	defer os.RemoveAll(credTmpDir)
-
-	gcpNRDB := getFirestoreNRDBC(logger, start, "mig", params, credFileName)
-	if gcpNRDB == nil {
-		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
-			Result: logstrings.String(),
-			Error:  nil,
-		})
-	}
-
-	ncpNRDB := getMongoNRDBC(logger, start, "mig", params)
+	ncpNRDB := getMongoNRDBC(logger, start, "mig", params.SourcePoint)
 	if ncpNRDB == nil {
+		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
+			Result: logstrings.String(),
+			Error:  nil,
+		})
+	}
+
+	gcpNRDB := getFirestoreNRDBC(logger, start, "mig", params.TargetPoint)
+	if gcpNRDB == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,

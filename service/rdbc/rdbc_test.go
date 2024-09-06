@@ -20,18 +20,18 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/pkg/rdbms/mysql"
-	"github.com/cloud-barista/mc-data-manager/pkg/utils"
 	"github.com/cloud-barista/mc-data-manager/service/rdbc"
 )
 
 func TestMain(m *testing.M) {
 	// aws example
-	// 	RDBCInfo(utils.AWS,"admin","datamoldPassword","127.0.0.1","3306")
+	// 	RDBCInfo(models.AWS,"admin","datamoldPassword","127.0.0.1","3306")
 	// gcp example
-	// 	RDBCInfo(utils.GCP,"root","datamoldPassword","127.0.0.1","3306")
+	// 	RDBCInfo(models.GCP,"root","datamoldPassword","127.0.0.1","3306")
 	// ncp example
-	// 	RDBCInfo(utils.NCP,"root","datamoldPassword","127.0.0.1","3306")
+	// 	RDBCInfo(models.NCP,"root","datamoldPassword","127.0.0.1","3306")
 	Srdbc := RDBCInfo("your-source-provider", "your-source-mysql-username", "your-source-mysql-password", "your-source-mysql-host", "your-source-mysql-port")
 	Drdbc := RDBCInfo("your-target-provider", "your-target-mysql-username", "your-target-mysql-password", "your-target-mysql-host", "your-target-mysql-port")
 
@@ -52,7 +52,7 @@ func TestMain(m *testing.M) {
 	}
 }
 
-func RDBCInfo(providerType utils.Provider, username, password, host, port string) *rdbc.RDBController {
+func RDBCInfo(providerType models.Provider, username, password, host, port string) *rdbc.RDBController {
 	sqlDB, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", username, password, host, port))
 	if err != nil {
 		panic(err)

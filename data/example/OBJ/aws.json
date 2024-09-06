@@ -1,0 +1,11 @@
+{
+    "operationId": "opt-00735",
+    "targetPoint": {
+        "profileName": "admin",
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "bucket": "mc-data-manager",
+        "CheckServerJSON": true,
+        "SizeServerJSON": "1"
+    }
+}

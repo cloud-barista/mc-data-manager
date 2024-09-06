@@ -17,25 +17,8 @@ package utils
 
 import (
 	"os"
-	"time"
-)
 
-type Object struct {
-	ChecksumAlgorithm []string
-	ETag              string
-	Key               string
-	LastModified      time.Time
-	Size              int64
-	StorageClass      string
-}
-
-type Provider string
-
-const (
-	AWS Provider = "aws"
-	GCP Provider = "gcp"
-	NCP Provider = "ncp"
-	OPM Provider = "on-premise"
+	"github.com/cloud-barista/mc-data-manager/models"
 )
 
 // Distinguish between directory and file or directory
@@ -61,6 +44,30 @@ func IsDir(path string) error {
 func FileExists(filePath string) bool {
 	if fi, err := os.Stat(filePath); os.IsExist(err) {
 		return !fi.IsDir()
+	}
+	return false
+}
+
+func IsValidStatus(s models.Status) bool {
+	switch s {
+	case models.StatusActive, models.StatusInactive, models.StatusPending, models.StatusFailed, models.StatusCompleted:
+		return true
+	}
+	return false
+}
+
+func IsValidServiceType(s models.CloudServiceType) bool {
+	switch s {
+	case models.ComputeService, models.ObejectStorage, models.RDBMS, models.NRDBMS:
+		return true
+	}
+	return false
+}
+
+func IsValidTaskType(s models.TaskType) bool {
+	switch s {
+	case models.Generate, models.Migrate, models.Backup, models.Restore:
+		return true
 	}
 	return false
 }
