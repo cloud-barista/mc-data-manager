@@ -121,7 +121,6 @@ func getS3OSC(logger *logrus.Logger, startTime time.Time, jobType string, params
 	var err error
 	var s3c *s3.Client
 	var awsOSC *osc.OSController
-	logger.Infof("gmaraps : %v", gparam)
 	logger.Info("Get S3 Client")
 	credentailManger := config.NewProfileManager()
 	creds, err := credentailManger.LoadCredentialsByProfile(gparam.ProfileName, gparam.Provider)
@@ -591,14 +590,41 @@ func getFileData(jobtype string, ctx echo.Context) interface{} {
 	}
 }
 
+// Bind onetime
 func getDataWithBind(logger *logrus.Logger, startTime time.Time, ctx echo.Context, params interface{}) bool {
 	if err := ctx.Bind(params); err != nil {
 		end := time.Now()
 		logger.Error("Failed to bind form data")
+		logger.Infof("params : %+v", ctx.Request().Body)
 		logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
 		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
 		return false
 	}
+	return true
+}
+
+// For Rebind
+func getDataWithReBind(logger *logrus.Logger, startTime time.Time, ctx echo.Context, params interface{}) bool {
+	bodyBytes, err := io.ReadAll(ctx.Request().Body)
+	if err != nil {
+		logger.Error("Failed to read request body")
+		return false
+	}
+
+	logger.Infof("Request Body: %s", string(bodyBytes))
+
+	ctx.Request().Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+
+	if err := ctx.Bind(params); err != nil {
+		end := time.Now()
+		logger.Error("Failed to bind form data")
+		logger.Infof("Params: %+v", string(bodyBytes))
+		logger.Infof("End time: %s", end.Format("2006-01-02T15:04:05-07:00"))
+		logger.Infof("Elapsed time: %s", end.Sub(startTime).String())
+		return false
+	}
+
+	ctx.Request().Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 	return true
 }
 

@@ -138,6 +138,9 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 	migrationGroup := e.Group("/migration")
 	routes.MigrationRoutes(migrationGroup)
 
+	restoreGroup := e.Group("/restore")
+	routes.RestoreRoutes(restoreGroup)
+
 	// selfEndpoint := os.Getenv("SELF_ENDPOINT")
 	selfEndpoint := "localhost" + ":" + port
 	website := " http://" + selfEndpoint

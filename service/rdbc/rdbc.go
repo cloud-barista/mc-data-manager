@@ -78,6 +78,7 @@ func New(rdb RDBMS, opts ...Option) (*RDBController, error) {
 func (rdb *RDBController) ListDB(dst *[]string) error {
 	err := rdb.client.ListDB(dst)
 	if err != nil {
+		logrus.Info("RDB", *dst)
 		return err
 	}
 	return nil
@@ -155,6 +156,7 @@ func (rdb *RDBController) Copy(dst *RDBController) error {
 func (rdb *RDBController) Get(dbName string, sql *string) error {
 	var sqlTemp string
 	if err := rdb.client.ShowCreateDBSql(dbName, &sqlTemp); err != nil {
+		logrus.Error("ERR DB")
 		return err
 	}
 	sqlWrite(sql, sqlTemp)
@@ -162,6 +164,8 @@ func (rdb *RDBController) Get(dbName string, sql *string) error {
 
 	var tableList []string
 	if err := rdb.client.ListTable(dbName, &tableList); err != nil {
+		logrus.Error("ERR List TB")
+
 		return err
 	}
 
@@ -169,6 +173,8 @@ func (rdb *RDBController) Get(dbName string, sql *string) error {
 		sqlWrite(sql, fmt.Sprintf("DROP TABLE IF EXISTS %s;", table))
 
 		if err := rdb.client.ShowCreateTableSql(dbName, table, &sqlTemp); err != nil {
+			logrus.Error("ERR Creatte TB")
+
 			return err
 		}
 		sqlWrite(sql, sqlTemp)
@@ -177,6 +183,7 @@ func (rdb *RDBController) Get(dbName string, sql *string) error {
 	for _, table := range tableList {
 		var insertData []string
 		if err := rdb.client.GetInsert(dbName, table, &insertData); err != nil {
+			logrus.Error("Insert quer err")
 			return err
 		}
 

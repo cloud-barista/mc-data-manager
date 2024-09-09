@@ -200,7 +200,13 @@ func (d *MysqlDBMS) GetInsert(dbName, tableName string, insertSql *[]string) err
 		columns = append(columns, columnName)
 	}
 
-	selectQuery := "SELECT " + strings.Join(columns, ", ") + " FROM " + tableName
+	tableName = escapeColumnName(tableName)
+	escapedColumns := make([]string, len(columns))
+	for i, column := range columns {
+		escapedColumns[i] = escapeColumnName(column)
+	}
+
+	selectQuery := "SELECT " + strings.Join(escapedColumns, ", ") + " FROM " + tableName
 	selRows, err := d.db.Query(selectQuery)
 	if err != nil {
 		return err
@@ -218,6 +224,7 @@ func (d *MysqlDBMS) GetInsert(dbName, tableName string, insertSql *[]string) err
 
 		err := selRows.Scan(valuePtrs...)
 		if err != nil {
+
 			return err
 		}
 
@@ -231,10 +238,7 @@ func (d *MysqlDBMS) GetInsert(dbName, tableName string, insertSql *[]string) err
 
 	for _, entry := range data {
 		values := []string{}
-		escapedColumns := []string{}
 		for _, column := range columns {
-			escapedColumn := escapeColumnName(column)
-			escapedColumns = append(escapedColumns, escapedColumn)
 			val := entry[column]
 			if val.Valid {
 				escapedValue := ReplaceEscapeString(val.String)

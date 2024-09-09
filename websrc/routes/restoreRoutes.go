@@ -20,32 +20,32 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func BackupRoutes(g *echo.Group) {
-	// Backup URL
-	BackupRoot(g)
-	// Backup From On-premise (Linux, Windows) to Object Storage
-	BackupFromOnpremiseToObjectStorage(g)
+func RestoreRoutes(g *echo.Group) {
+	// RestoreURL
+	RestoreRoot(g)
+	// RestoreFrom On-premise (Linux, Windows) to Object Storage
+	RestoreFromOnpremiseToObjectStorage(g)
 
-	// Backup OBJ storage to linux
-	BackupObjectStorage(g)
-	// Backup MySQL to linux
-	BackupRDB(g)
-	BackupNRDB(g)
+	// RestoreOBJ storage to linux
+	RestoreObjectStorage(g)
+	// RestoreMySQL to linux
+	RestoreRDB(g)
+	RestoreNRDB(g)
 
-	// Backup From Object Storage to Other Object Storage
-	BackupFromS3Routes(g)
-	BackupFromGCPRoutes(g)
-	BackupFromNCPRoutes(g)
+	// RestoreFrom Object Storage to Other Object Storage
+	RestoreFromS3Routes(g)
+	RestoreFromGCPRoutes(g)
+	RestoreFromNCPRoutes(g)
 
-	// Backup No-SQL to the other No-SQL
-	BackupNoSQLRoutes(g)
+	// RestoreNo-SQL to the other No-SQL
+	RestoreNoSQLRoutes(g)
 }
 
-func BackupRoot(g *echo.Group) {
-	g.GET("", controllers.BackupHandler)
+func RestoreRoot(g *echo.Group) {
+	// g.GET("", controllers.RestoreHandler)
 }
 
-func BackupFromOnpremiseToObjectStorage(g *echo.Group) {
+func RestoreFromOnpremiseToObjectStorage(g *echo.Group) {
 	g.GET("/linux/aws", controllers.MigrationLinuxToS3GetHandler)
 	g.POST("/linux/aws", controllers.MigrationLinuxToS3PostHandler)
 
@@ -65,21 +65,21 @@ func BackupFromOnpremiseToObjectStorage(g *echo.Group) {
 	g.POST("/windows/ncp", controllers.MigrationWindowsToNCPPostHandler)
 }
 
-func BackupObjectStorage(g *echo.Group) {
-	// g.GET("/objectstorage", controllers.BackupOSGetHandler)
-	g.POST("/objectstorage", controllers.BackupOSPostHandler)
+func RestoreObjectStorage(g *echo.Group) {
+	// g.GET("/objectstorage", controllers.RestoreOSGetHandler)
+	g.POST("/objectstorage", controllers.RestoreOSPostHandler)
 }
-func BackupRDB(g *echo.Group) {
-	// g.GET("/rdb", controllers.BackupRDBGetHandler)
-	g.POST("/rdb", controllers.BackupRDBPostHandler)
-}
-
-func BackupNRDB(g *echo.Group) {
-	// g.GET("/nrdb", controllers.BackupNRDBGetHandler)
-	g.POST("/nrdb", controllers.BackupNRDBPostHandler)
+func RestoreRDB(g *echo.Group) {
+	// g.GET("/rdb", controllers.RestoreRDBGetHandler)
+	g.POST("/rdb", controllers.RestoreRDBPostHandler)
 }
 
-func BackupFromS3Routes(g *echo.Group) {
+func RestoreNRDB(g *echo.Group) {
+	// g.GET("/nrdb", controllers.RestoreNRDBGetHandler)
+	g.POST("/nrdb", controllers.RestoreNRDBPostHandler)
+}
+
+func RestoreFromS3Routes(g *echo.Group) {
 	g.GET("/aws/linux", controllers.MigrationS3ToLinuxGetHandler)
 	g.POST("/aws/linux", controllers.MigrationS3ToLinuxPostHandler)
 
@@ -93,7 +93,7 @@ func BackupFromS3Routes(g *echo.Group) {
 	g.POST("/aws/ncp", controllers.MigrationS3ToNCPPostHandler)
 }
 
-func BackupFromGCPRoutes(g *echo.Group) {
+func RestoreFromGCPRoutes(g *echo.Group) {
 	g.GET("/gcp/linux", controllers.MigrationGCPToLinuxGetHandler)
 	g.POST("/gcp/linux", controllers.MigrationGCPToLinuxPostHandler)
 
@@ -107,7 +107,7 @@ func BackupFromGCPRoutes(g *echo.Group) {
 	g.POST("/gcp/ncp", controllers.MigrationGCPToNCPPostHandler)
 }
 
-func BackupFromNCPRoutes(g *echo.Group) {
+func RestoreFromNCPRoutes(g *echo.Group) {
 	g.GET("/ncp/linux", controllers.MigrationNCPToLinuxGetHandler)
 	g.POST("/ncp/linux", controllers.MigrationNCPToLinuxPostHandler)
 
@@ -121,7 +121,7 @@ func BackupFromNCPRoutes(g *echo.Group) {
 	g.POST("/ncp/gcp", controllers.MigrationNCPToGCPPostHandler)
 }
 
-func BackupNoSQLRoutes(g *echo.Group) {
+func RestoreNoSQLRoutes(g *echo.Group) {
 	g.GET("/dynamodb/firestore", controllers.MigrationDynamoDBToFirestoreGetHandler)
 	g.POST("/dynamodb/firestore", controllers.MigrationDynamoDBToFirestorePostHandler)
 
