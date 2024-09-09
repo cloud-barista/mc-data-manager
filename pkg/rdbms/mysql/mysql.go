@@ -29,12 +29,29 @@ import (
 
 // mysqlDBMS struct
 type MysqlDBMS struct {
-	provider models.Provider
-	db       *sql.DB
-	ctx      context.Context
+	provider        models.Provider
+	db              *sql.DB
+	tartgetProvider models.Provider
+	ctx             context.Context
 }
 
 type MysqlDBOption func(*MysqlDBMS)
+
+func (d *MysqlDBMS) GetProvdier() models.Provider {
+	return d.provider
+}
+
+func (d *MysqlDBMS) SetProvdier(provider models.Provider) {
+	d.provider = provider
+}
+
+func (d *MysqlDBMS) GetTargetProvdier() models.Provider {
+	return d.tartgetProvider
+}
+
+func (d *MysqlDBMS) SetTargetProvdier(provider models.Provider) {
+	d.tartgetProvider = provider
+}
 
 func New(provider models.Provider, sqlDB *sql.DB, opts ...MysqlDBOption) *MysqlDBMS {
 	dms := &MysqlDBMS{
@@ -143,6 +160,12 @@ func (d *MysqlDBMS) ShowCreateDBSql(dbName string, dbCreateSql *string) error {
 	*dbCreateSql = addCollateIfMissing(*dbCreateSql)
 	*dbCreateSql = EnsureCharsetAndCollate(*dbCreateSql, extractCharacterSet(*dbCreateSql), extractCollation(*dbCreateSql))
 
+	// If the target provider is NCP, modify the SQL to use NCP's specific procedure
+	if d.tartgetProvider == models.NCP {
+		dbName, charSet, collate := extractDatabaseInfo(*dbCreateSql)
+		*dbCreateSql = fmt.Sprintf("CALL sys.ncp_create_db('%s', '%s', '%s');", dbName, charSet, collate)
+	}
+
 	return nil
 }
 
@@ -154,6 +177,8 @@ func (d *MysqlDBMS) ShowCreateTableSql(dbName, tableName string, tableCreateSql 
 	if err := d.db.QueryRow(fmt.Sprintf("SHOW CREATE TABLE %s;", tableName)).Scan(&tableName, tableCreateSql); err != nil {
 		return err
 	}
+	*tableCreateSql = removeSequenceOption(*tableCreateSql)
+	*tableCreateSql = adjustColumnsToTimestamp(*tableCreateSql)
 	*tableCreateSql = ReplaceCharsetAndCollate(*tableCreateSql)
 	return nil
 }
@@ -182,10 +207,10 @@ func (d *MysqlDBMS) GetInsert(dbName, tableName string, insertSql *[]string) err
 	}
 	defer selRows.Close()
 
-	data := []map[string]string{}
+	data := []map[string]sql.NullString{}
 
 	for selRows.Next() {
-		values := make([]string, len(columns))
+		values := make([]sql.NullString, len(columns))
 		valuePtrs := make([]interface{}, len(columns))
 		for i := range columns {
 			valuePtrs[i] = &values[i]
@@ -196,10 +221,9 @@ func (d *MysqlDBMS) GetInsert(dbName, tableName string, insertSql *[]string) err
 			return err
 		}
 
-		entry := make(map[string]string)
+		entry := make(map[string]sql.NullString)
 		for i, column := range columns {
-			val := values[i]
-			entry[column] = val
+			entry[column] = values[i]
 		}
 
 		data = append(data, entry)
@@ -207,11 +231,20 @@ func (d *MysqlDBMS) GetInsert(dbName, tableName string, insertSql *[]string) err
 
 	for _, entry := range data {
 		values := []string{}
+		escapedColumns := []string{}
 		for _, column := range columns {
-			values = append(values, fmt.Sprintf("'%v'", entry[column]))
+			escapedColumn := escapeColumnName(column)
+			escapedColumns = append(escapedColumns, escapedColumn)
+			val := entry[column]
+			if val.Valid {
+				escapedValue := ReplaceEscapeString(val.String)
+				values = append(values, fmt.Sprintf("'%v'", escapedValue))
+			} else {
+				values = append(values, "NULL")
+			}
 		}
 
-		insertStatement := fmt.Sprintf("INSERT INTO %s (%s) VALUES (%s);", tableName, strings.Join(columns, ", "), strings.Join(values, ", "))
+		insertStatement := fmt.Sprintf("INSERT INTO %s (%s) VALUES (%s);", tableName, strings.Join(escapedColumns, ", "), strings.Join(values, ", "))
 		*insertSql = append(*insertSql, insertStatement)
 	}
 
@@ -245,6 +278,24 @@ func ReplaceCharsetAndCollate(sql string) string {
 	sql = reCollate.ReplaceAllString(sql, "COLLATE=utf8mb4_general_ci")
 
 	return sql
+}
+
+func ReplaceEscapeString(input string) string {
+	return strings.ReplaceAll(input, "'", "''")
+}
+
+func adjustColumnsToTimestamp(sql string) string {
+	// Use a regular expression to find all columns that use DEFAULT current_timestamp()
+	re := regexp.MustCompile("`[^`]+`\\s+[^,]+DEFAULT\\s+current_timestamp\\(\\)")
+
+	// Replace these columns with TIMESTAMP DEFAULT current_timestamp()
+	modifiedSQL := re.ReplaceAllStringFunc(sql, func(match string) string {
+		// Retain the column name and change the rest of the definition to TIMESTAMP
+		columnName := strings.Split(match, " ")[0] // The first element is the column name
+		return fmt.Sprintf("%s TIMESTAMP DEFAULT current_timestamp()", columnName)
+	})
+
+	return modifiedSQL
 }
 
 // Extract database information
@@ -283,4 +334,14 @@ func extractCollation(sql string) string {
 		return match[1]
 	}
 	return ""
+}
+
+// remove Sequence
+func removeSequenceOption(sql string) string {
+	return strings.Replace(sql, " SEQUENCE=1", "", -1)
+}
+
+// escape Reserve Word
+func escapeColumnName(columnName string) string {
+	return fmt.Sprintf("`%s`", columnName)
 }
