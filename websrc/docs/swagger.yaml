@@ -16,6 +16,15 @@ definitions:
       targetPoint:
         $ref: '#/definitions/models.ProviderConfig'
     type: object
+  models.BackupTask:
+    properties:
+      operationId:
+        type: string
+      sourcePoint:
+        $ref: '#/definitions/models.ProviderConfig'
+      targetPoint:
+        $ref: '#/definitions/models.ProviderConfig'
+    type: object
   models.BasicResponse:
     properties:
       Error:
@@ -133,6 +142,60 @@ info:
   title: MC-Data-Manager REST API
   version: latest
 paths:
+  /backup/mysql:
+    post:
+      consumes:
+      - application/json
+      description: Export data from a MySQL database to SQL files.
+      parameters:
+      - description: Parameters required for backup
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.BackupTask'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully backup data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Export data from MySQL
+      tags:
+      - '[Data Export]'
+      - '[RDBMS]'
+  /backup/objectstorage:
+    post:
+      consumes:
+      - application/json
+      description: Export data from a objectstorage  to files.
+      parameters:
+      - description: Parameters required for backup
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.BackupTask'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully backup data
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Export data from objectstorage
+      tags:
+      - '[Data Export]'
+      - '[Object Storage]'
   /generate/aws:
     post:
       consumes:

@@ -55,7 +55,7 @@ func MigrationLinuxToS3PostHandler(ctx echo.Context) error {
 		})
 	}
 
-	awsOSC := getS3OSC(logger, start, "mig", params.SourcePoint)
+	awsOSC := getS3OSC(logger, start, "mig", params.TargetPoint)
 	if awsOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -63,7 +63,7 @@ func MigrationLinuxToS3PostHandler(ctx echo.Context) error {
 		})
 	}
 
-	if !oscImport(logger, start, "s3", awsOSC, params.TargetPoint.Path) {
+	if !oscImport(logger, start, "s3", awsOSC, params.SourcePoint.Path) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -112,7 +112,7 @@ func MigrationLinuxToGCPPostHandler(ctx echo.Context) error {
 
 	}
 
-	gcpOSC := getGCPCOSC(logger, start, "mig", params.SourcePoint)
+	gcpOSC := getGCPCOSC(logger, start, "mig", params.TargetPoint)
 	if gcpOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -121,7 +121,7 @@ func MigrationLinuxToGCPPostHandler(ctx echo.Context) error {
 
 	}
 
-	if !oscImport(logger, start, "gcp", gcpOSC, params.TargetPoint.Path) {
+	if !oscImport(logger, start, "gcp", gcpOSC, params.SourcePoint.Path) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -171,7 +171,7 @@ func MigrationLinuxToNCPPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	ncpOSC := getS3COSC(logger, start, "mig", params.SourcePoint)
+	ncpOSC := getS3COSC(logger, start, "mig", params.TargetPoint)
 	if ncpOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -179,7 +179,7 @@ func MigrationLinuxToNCPPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	if !oscImport(logger, start, "ncp", ncpOSC, params.TargetPoint.Path) {
+	if !oscImport(logger, start, "ncp", ncpOSC, params.SourcePoint.Path) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -229,7 +229,7 @@ func MigrationWindowsToS3PostHandler(ctx echo.Context) error {
 
 	}
 
-	awsOSC := getS3OSC(logger, start, "mig", params.SourcePoint)
+	awsOSC := getS3OSC(logger, start, "mig", params.TargetPoint)
 	if awsOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -238,7 +238,7 @@ func MigrationWindowsToS3PostHandler(ctx echo.Context) error {
 
 	}
 
-	if !oscImport(logger, start, "s3", awsOSC, params.TargetPoint.Path) {
+	if !oscImport(logger, start, "s3", awsOSC, params.SourcePoint.Path) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -286,7 +286,7 @@ func MigrationWindowsToGCPPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	gcpOSC := getGCPCOSC(logger, start, "mig", params.SourcePoint)
+	gcpOSC := getGCPCOSC(logger, start, "mig", params.TargetPoint)
 	if gcpOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -294,7 +294,7 @@ func MigrationWindowsToGCPPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	if !oscImport(logger, start, "gcp", gcpOSC, params.TargetPoint.Path) {
+	if !oscImport(logger, start, "gcp", gcpOSC, params.SourcePoint.Path) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -342,7 +342,7 @@ func MigrationWindowsToNCPPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	ncpOSC := getS3COSC(logger, start, "mig", params.SourcePoint)
+	ncpOSC := getS3COSC(logger, start, "mig", params.TargetPoint)
 	if ncpOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -350,7 +350,7 @@ func MigrationWindowsToNCPPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	if !oscImport(logger, start, "ncp", ncpOSC, params.TargetPoint.Path) {
+	if !oscImport(logger, start, "ncp", ncpOSC, params.SourcePoint.Path) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
