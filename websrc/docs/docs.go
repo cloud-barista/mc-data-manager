@@ -23,7 +23,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/backup/mysql": {
+        "/backup/nrdb": {
             "post": {
                 "description": "Export data from a MySQL database to SQL files.",
                 "consumes": [
@@ -78,6 +78,47 @@ const docTemplate = `{
                     "[Object Storage]"
                 ],
                 "summary": "Export data from objectstorage",
+                "parameters": [
+                    {
+                        "description": "Parameters required for backup",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.BackupTask"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully backup data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/backup/rdb": {
+            "post": {
+                "description": "Export data from a MySQL database to SQL files.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Export]",
+                    "[RDBMS]"
+                ],
+                "summary": "Export data from MySQL",
                 "parameters": [
                     {
                         "description": "Parameters required for backup",
@@ -1610,6 +1651,129 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/restore/nrdb": {
+            "post": {
+                "description": "Import data from a MySQL database to SQL files.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Import]",
+                    "[RDBMS]"
+                ],
+                "summary": "Import data from MySQL",
+                "parameters": [
+                    {
+                        "description": "Parameters required for Restore",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RestoreTask"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully Restore data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/restore/objectstorage": {
+            "post": {
+                "description": "Import data from a objectstorage  to files.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Import]",
+                    "[Object Storage]"
+                ],
+                "summary": "Import data from objectstorage",
+                "parameters": [
+                    {
+                        "description": "Parameters required for Restore",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RestoreTask"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully Restore data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/restore/rdb": {
+            "post": {
+                "description": "Import data from a MySQL database to SQL files.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Data Import]",
+                    "[RDBMS]"
+                ],
+                "summary": "Import data from MySQL",
+                "parameters": [
+                    {
+                        "description": "Parameters required for Restore",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RestoreTask"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully Restore data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1808,6 +1972,20 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "models.RestoreTask": {
+            "type": "object",
+            "properties": {
+                "operationId": {
+                    "type": "string"
+                },
+                "sourcePoint": {
+                    "$ref": "#/definitions/models.ProviderConfig"
+                },
+                "targetPoint": {
+                    "$ref": "#/definitions/models.ProviderConfig"
                 }
             }
         }
