@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/sirupsen/logrus"
 )
 
@@ -33,6 +34,10 @@ const (
 //
 // Configure the interface to make it easier for other DBs to apply in the future
 type RDBMS interface {
+	GetProvdier() models.Provider
+	SetProvdier(provider models.Provider)
+	GetTargetProvdier() models.Provider
+	SetTargetProvdier(provider models.Provider)
 	Exec(query string) error
 	ListDB(dst *[]string) error
 	DeleteDB(dbName string) error
@@ -131,6 +136,7 @@ func (rdb *RDBController) Copy(dst *RDBController) error {
 
 	for _, db := range dbList {
 		sql = ""
+		rdb.client.SetTargetProvdier(dst.client.GetProvdier())
 		if err := rdb.Get(db, &sql); err != nil {
 			rdb.logWrite("Error", "Get error", err)
 			return err
