@@ -3,7 +3,9 @@ package models
 type OperationParams struct {
 	OperationId string `json:"operationId" form:"operationId"`
 }
-
+type TagParams struct {
+	Tag []string `json:"tag,omitempty"`
+}
 type TaskMeta struct {
 	ServiceType CloudServiceType `json:"serviceType"`
 	TaskType    TaskType         `json:"taskType" `
@@ -12,27 +14,43 @@ type TaskMeta struct {
 	Description string           `json:"description,omitempty"`
 }
 
+type BasicTask struct {
+	TaskMeta `json:"meta,omitempty" swaggerignore:"true"`
+	Status   `json:"status,omitempty" swaggerignore:"true"`
+}
+
 type Task struct {
 	OperationParams
-	TaskMeta `json:"meta,omitempty" swaggerignore:"true"`
-	Status   `json:"status,omitempty" swaggerignore:"true"` // active, inactive, etc.
+	TagParams
+	BasicTask
+}
+
+type BasicFlow struct {
+	FlowID   string        `json:"FlowID,omitempty"`
+	FlowName string        `json:"FlowName"`
+	Tasks    []interface{} `json:"tasks"`
+	Status   Status        `json:"status"`
 }
 
 type Flow struct {
 	OperationParams
-	FlowID   string        `json:"flowId,omitempty"`
-	FlowName string        `json:"flowName"`
-	Tasks    []interface{} `json:"tasks"`  // List of tasks in the flow
-	Status   Status        `json:"status"` // active, inactive, etc.
+	BasicFlow
+}
+
+type BasicSchedule struct {
+	ScheduleID   string        `json:"ScheduleID,omitempty"`
+	ScheduleName string        `json:"ScheduleName"`
+	Tasks        []interface{} `json:"tasks"`
+	Cron         string        `json:"cron"`
+	TimeZone     string        `json:"tz"`
+
+	Status Status `json:"status"`
 }
 
 type Schedule struct {
 	OperationParams
-	ScheduleID string `json:"scheduleId,omitempty"`
-	FlowID     string `json:"flowId,omitempty"` // Optional, if scheduling a flow
-	TaskID     string `json:"taskId,omitempty"` // Optional, if scheduling a task
-	Cron       string `json:"cron"`             // Cron expression for scheduling
-	Status     Status `json:"status"`           // active, inactive, etc.
+	TagParams
+	BasicSchedule
 }
 
 type GenarateTask struct {
@@ -53,16 +71,25 @@ type GenTaskTarget struct {
 	ProviderConfig
 	GenFileParams
 }
-
-type DataTask struct {
-	Task
+type BasicDataTask struct {
+	BasicTask
+	Directory   string         `json:"Directory,omitempty" swaggerignore:"true"`
 	SourcePoint ProviderConfig `json:"sourcePoint,omitempty"`
 	TargetPoint ProviderConfig `json:"targetPoint,omitempty"`
+}
+type DataTask struct {
+	OperationParams
+	BasicDataTask
 }
 type MigrateTask struct {
 	DataTask
 }
 
+type BasicBackupTask struct {
+	BasicTask
+	SourcePoint ProviderConfig `json:"sourcePoint,omitempty"`
+	TargetPoint ProviderConfig `json:"targetPoint,omitempty"`
+}
 type BackupTask struct {
 	DataTask
 }

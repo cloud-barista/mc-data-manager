@@ -4,6 +4,10 @@ definitions:
     properties:
       operationId:
         type: string
+      tag:
+        items:
+          type: string
+        type: array
       targetPoint:
         $ref: '#/definitions/models.GenTaskTarget'
     type: object
@@ -138,6 +142,51 @@ definitions:
         $ref: '#/definitions/models.ProviderConfig'
       targetPoint:
         $ref: '#/definitions/models.ProviderConfig'
+    type: object
+  models.Schedule:
+    properties:
+      cron:
+        type: string
+      operationId:
+        type: string
+      status:
+        $ref: '#/definitions/models.Status'
+      tag:
+        items:
+          type: string
+        type: array
+      taskId:
+        type: string
+      taskName:
+        type: string
+      tasks:
+        items: {}
+        type: array
+      tz:
+        type: string
+    type: object
+  models.Status:
+    enum:
+    - active
+    - inactive
+    - pending
+    - completed
+    - failed
+    type: string
+    x-enum-varnames:
+    - StatusActive
+    - StatusInactive
+    - StatusPending
+    - StatusCompleted
+    - StatusFailed
+  models.Task:
+    properties:
+      operationId:
+        type: string
+      tag:
+        items:
+          type: string
+        type: array
     type: object
 info:
   contact:
@@ -1301,4 +1350,127 @@ paths:
       tags:
       - '[Data Import]'
       - '[RDBMS]'
+  /task:
+    get:
+      description: Retrieve a list of all Tasks in the system.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved all Tasks
+          schema:
+            items:
+              $ref: '#/definitions/models.Task'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Get all Tasks
+      tags:
+      - '[Task]'
+    post:
+      consumes:
+      - application/json
+      description: Create a new Task and store it in the system.
+      parameters:
+      - description: Parameters required for creating a Task
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.Schedule'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully created a Task
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Create a new Task
+      tags:
+      - '[Task]'
+  /task/{id}:
+    delete:
+      description: Delete an existing Task using its ID.
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted the Task
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "404":
+          description: Task not found
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Delete a Task
+      tags:
+      - '[Task]'
+    get:
+      description: Get the details of a Task using its ID.
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved a Task
+          schema:
+            $ref: '#/definitions/models.Task'
+        "404":
+          description: Task not found
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Get a Task by ID
+      tags:
+      - '[Task]'
+    put:
+      consumes:
+      - application/json
+      description: Update the details of an existing Task using its ID.
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Parameters required for updating a Task
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.Schedule'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated the Task
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "404":
+          description: Task not found
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Update an existing Task
+      tags:
+      - '[Task]'
 swagger: "2.0"
