@@ -15,8 +15,14 @@ limitations under the License.
 */
 package main
 
-import "github.com/cloud-barista/mc-data-manager/cmd"
+import (
+	"github.com/cloud-barista/mc-data-manager/cmd"
+	log "github.com/cloud-barista/mc-data-manager/internal/zerolog"
+)
 
 func main() {
+	log.Info("Data Manager", "Startup", "Is starting")
 	cmd.Execute()
+	log.Info("Data Manager", "Shutdown", "Is shutting down")
+
 }

@@ -16,9 +16,10 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/cloud-barista/mc-data-manager/internal/log"
+	log "github.com/cloud-barista/mc-data-manager/internal/zerolog"
+	"github.com/rs/zerolog"
+
 	dmsv "github.com/cloud-barista/mc-data-manager/websrc/serve"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -31,8 +32,7 @@ var serverCmd = &cobra.Command{
 	Short: "Start Web Server",
 	Long:  `Start Web Server`,
 	Run: func(cmd *cobra.Command, args []string) {
-		logrus.SetFormatter(&log.CustomTextFormatter{CmdName: "server", JobName: "web server"})
-		logrus.Info("Start Web Server")
+		log.GetInstance().NewLogEntry().WithCmdName("server").WithJobName("web Server").WithLevel(zerolog.InfoLevel).WithMessage("Start Web Server")
 		dmsv.Run(dmsv.InitServer(listenPort, allowIP...), listenPort)
 	},
 }
