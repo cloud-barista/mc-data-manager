@@ -28,7 +28,7 @@ services:
       - "3300:3300"
     restart : always
     volumes:
-      - ./log:/app/log/
+      - ./data:/app/data/
       - /etc/localtime:/etc/localtime:ro
     env_file:
       - .env
@@ -47,8 +47,8 @@ services:
     # deploy:
     #   resources:
     #     limits:
-    #       cpus: "0.50"      # Capacity CPU : 0.5 (50% of a single CPU core)
-    #       memory: "512M"    # Capacity Mem : 512MB
+    #       cpus: "2.0"      # Capacity CPU : 2.0 (100% of a Dual CPU core)
+    #       memory: "1024M"    # Capacity Mem : 1024MB
     #     reservations:
-    #       cpus: "0.25"      # allocated CPU: 0.25 (25% of a single CPU core)
-    #       memory: "256M"    # allocated Mem: 256MB
+    #       cpus: "0.5"      # allocated CPU: 0.25 (25% of a single CPU core)
+    #       memory: "512M"    # allocated Mem: 256MB
