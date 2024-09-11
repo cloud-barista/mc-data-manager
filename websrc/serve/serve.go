@@ -23,6 +23,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/cloud-barista/mc-data-manager/service/task"
 	"github.com/cloud-barista/mc-data-manager/websrc/controllers"
 	"github.com/cloud-barista/mc-data-manager/websrc/routes"
 
@@ -124,6 +125,9 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 	}
 	e.Renderer = renderer
 
+	// go cron
+	scheduleManager := task.InitFileScheduleManager()
+
 	// Route for system management
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
@@ -141,7 +145,9 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 	restoreGroup := e.Group("/restore")
 	routes.RestoreRoutes(restoreGroup)
 
-	// selfEndpoint := os.Getenv("SELF_ENDPOINT")
+	taskGroup := e.Group("/task")
+	routes.TaskRoutes(taskGroup, scheduleManager)
+
 	selfEndpoint := "localhost" + ":" + port
 	website := " http://" + selfEndpoint
 	apidashboard := " http://" + selfEndpoint + "/swagger/index.html"

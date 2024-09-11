@@ -1767,6 +1767,192 @@
                     }
                 }
             }
+        },
+        "/task": {
+            "get": {
+                "description": "Retrieve a list of all Tasks in the system.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Task]"
+                ],
+                "summary": "Get all Tasks",
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved all Tasks",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Task"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new Task and store it in the system.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Task]"
+                ],
+                "summary": "Create a new Task",
+                "parameters": [
+                    {
+                        "description": "Parameters required for creating a Task",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Schedule"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully created a Task",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/task/{id}": {
+            "get": {
+                "description": "Get the details of a Task using its ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Task]"
+                ],
+                "summary": "Get a Task by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Task ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved a Task",
+                        "schema": {
+                            "$ref": "#/definitions/models.Task"
+                        }
+                    },
+                    "404": {
+                        "description": "Task not found",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update the details of an existing Task using its ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Task]"
+                ],
+                "summary": "Update an existing Task",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Task ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Parameters required for updating a Task",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Schedule"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully updated the Task",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Task not found",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete an existing Task using its ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Task]"
+                ],
+                "summary": "Delete a Task",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Task ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully deleted the Task",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Task not found",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1775,6 +1961,12 @@
             "properties": {
                 "operationId": {
                     "type": "string"
+                },
+                "tag": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "targetPoint": {
                     "$ref": "#/definitions/models.GenTaskTarget"
@@ -1817,6 +2009,20 @@
                 },
                 "Result": {
                     "type": "string"
+                }
+            }
+        },
+        "models.DataTask": {
+            "type": "object",
+            "properties": {
+                "operationId": {
+                    "type": "string"
+                },
+                "sourcePoint": {
+                    "$ref": "#/definitions/models.ProviderConfig"
+                },
+                "targetPoint": {
+                    "$ref": "#/definitions/models.ProviderConfig"
                 }
             }
         },
@@ -1979,6 +2185,72 @@
                 },
                 "targetPoint": {
                     "$ref": "#/definitions/models.ProviderConfig"
+                }
+            }
+        },
+        "models.Schedule": {
+            "type": "object",
+            "properties": {
+                "ScheduleID": {
+                    "type": "string"
+                },
+                "ScheduleName": {
+                    "type": "string"
+                },
+                "cron": {
+                    "type": "string"
+                },
+                "operationId": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/models.Status"
+                },
+                "tag": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "tasks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.DataTask"
+                    }
+                },
+                "tz": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Status": {
+            "type": "string",
+            "enum": [
+                "active",
+                "inactive",
+                "pending",
+                "completed",
+                "failed"
+            ],
+            "x-enum-varnames": [
+                "StatusActive",
+                "StatusInactive",
+                "StatusPending",
+                "StatusCompleted",
+                "StatusFailed"
+            ]
+        },
+        "models.Task": {
+            "type": "object",
+            "properties": {
+                "operationId": {
+                    "type": "string"
+                },
+                "tag": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         }

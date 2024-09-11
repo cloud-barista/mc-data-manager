@@ -16,7 +16,9 @@ limitations under the License.
 package utils
 
 import (
+	"fmt"
 	"os"
+	"time"
 
 	"github.com/cloud-barista/mc-data-manager/models"
 )
@@ -48,6 +50,7 @@ func FileExists(filePath string) bool {
 	return false
 }
 
+// Enum Validation
 func IsValidStatus(s models.Status) bool {
 	switch s {
 	case models.StatusActive, models.StatusInactive, models.StatusPending, models.StatusFailed, models.StatusCompleted:
@@ -70,4 +73,17 @@ func IsValidTaskType(s models.TaskType) bool {
 		return true
 	}
 	return false
+}
+
+// GEN ID
+func GenerateTaskID(opId string, index int) string {
+	return fmt.Sprintf("%s-task-%d-%s", opId, index, time.Now().Format("20060102-150405"))
+}
+
+func GenerateFlowID(opId string) string {
+	return fmt.Sprintf("%s-flow-%s", opId, time.Now().Format("20060102-150405"))
+}
+
+func GenerateScheduleID(opId string) string {
+	return fmt.Sprintf("%s-schedule-%s", opId, time.Now().Format("20060102-150405"))
 }

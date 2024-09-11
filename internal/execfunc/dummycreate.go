@@ -34,6 +34,15 @@ func DummyCreate(params models.CommandTask) error {
 		}
 		logrus.Infof("successfully generated sql : %s", params.DummyPath)
 	}
+	logrus.Info("start Serversql generation Boolean? :", (cast.ToInt(params.SizeServerSQL) != 0))
+	if cast.ToInt(params.SizeServerSQL) != 0 {
+		logrus.Info("start Serversql generation")
+		if err := structured.GenerateRandomSQLWithServer(params.DummyPath, cast.ToInt(params.SizeServerSQL)); err != nil {
+			logrus.Error("failed to generate sql")
+			return err
+		}
+		logrus.Infof("successfully generated sql : %s", params.DummyPath)
+	}
 
 	if cast.ToInt(params.SizeCSV) != 0 {
 		logrus.Info("start csv generation")
