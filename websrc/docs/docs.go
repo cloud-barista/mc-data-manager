@@ -2019,6 +2019,20 @@ const docTemplate = `{
                 }
             }
         },
+        "models.DataTask": {
+            "type": "object",
+            "properties": {
+                "operationId": {
+                    "type": "string"
+                },
+                "sourcePoint": {
+                    "$ref": "#/definitions/models.ProviderConfig"
+                },
+                "targetPoint": {
+                    "$ref": "#/definitions/models.ProviderConfig"
+                }
+            }
+        },
         "models.GenTaskTarget": {
             "type": "object",
             "properties": {
@@ -2184,6 +2198,12 @@ const docTemplate = `{
         "models.Schedule": {
             "type": "object",
             "properties": {
+                "ScheduleID": {
+                    "type": "string"
+                },
+                "ScheduleName": {
+                    "type": "string"
+                },
                 "cron": {
                     "type": "string"
                 },
@@ -2199,15 +2219,11 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
-                "taskId": {
-                    "type": "string"
-                },
-                "taskName": {
-                    "type": "string"
-                },
                 "tasks": {
                     "type": "array",
-                    "items": {}
+                    "items": {
+                        "$ref": "#/definitions/models.DataTask"
+                    }
                 },
                 "tz": {
                     "type": "string"

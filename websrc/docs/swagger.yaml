@@ -36,6 +36,15 @@ definitions:
       Result:
         type: string
     type: object
+  models.DataTask:
+    properties:
+      operationId:
+        type: string
+      sourcePoint:
+        $ref: '#/definitions/models.ProviderConfig'
+      targetPoint:
+        $ref: '#/definitions/models.ProviderConfig'
+    type: object
   models.GenTaskTarget:
     properties:
       bucket:
@@ -145,6 +154,10 @@ definitions:
     type: object
   models.Schedule:
     properties:
+      ScheduleID:
+        type: string
+      ScheduleName:
+        type: string
       cron:
         type: string
       operationId:
@@ -155,12 +168,9 @@ definitions:
         items:
           type: string
         type: array
-      taskId:
-        type: string
-      taskName:
-        type: string
       tasks:
-        items: {}
+        items:
+          $ref: '#/definitions/models.DataTask'
         type: array
       tz:
         type: string
