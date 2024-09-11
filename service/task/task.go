@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/cloud-barista/mc-data-manager/internal/auth"
-	zlog "github.com/cloud-barista/mc-data-manager/internal/zerolog"
+	"github.com/cloud-barista/mc-data-manager/internal/execfunc"
 	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/pkg/utils"
 	"github.com/cloud-barista/mc-data-manager/service/nrdbc"
@@ -202,40 +202,10 @@ func (m *FileScheduleManager) CreateSchedule(schedule models.Schedule) error {
 	}
 
 	schedule.ScheduleID = utils.GenerateScheduleID(schedule.OperationId)
-	flow := models.Flow{
-		OperationParams: schedule.OperationParams,
-		BasicFlow: models.BasicFlow{
-			FlowID:   utils.GenerateFlowID(schedule.OperationId),
-			FlowName: schedule.ScheduleName,
-			Tasks:    schedule.Tasks,
-			Status:   schedule.Status,
-		},
-	}
 
-	m.flows = append(m.flows, flow)
 	for i, task := range schedule.Tasks {
-		// Attempt to convert the task from map[string]interface{} to models.DataTask
-		taskMap, ok := task.(map[string]interface{})
-		if !ok {
-			zlog.Error("Schedule", "CREATE", "Task is not a valid map structure", task)
-			return errors.New("[Task object type mismatch]")
-		}
-
-		// Marshal and then unmarshal to convert map[string]interface{} to models.DataTask
-		taskBytes, err := json.Marshal(taskMap)
-		if err != nil {
-			zlog.Error("Schedule", "CREATE", "Failed to marshal task", taskMap)
-			return fmt.Errorf("failed to marshal task: %v", err)
-		}
-
-		var taskObj models.DataTask
-		if err := json.Unmarshal(taskBytes, &taskObj); err != nil {
-			zlog.Error("Schedule", "CREATE", "Failed to unmarshal task", taskMap)
-			return fmt.Errorf("failed to unmarshal task: %v", err)
-		}
-
-		taskObj.TaskMeta.TaskID = utils.GenerateTaskID(schedule.OperationId, i)
-		m.tasks = append(m.tasks, taskObj)
+		task.TaskMeta.TaskID = utils.GenerateTaskID(schedule.OperationId, i)
+		m.tasks = append(m.tasks, task)
 	}
 
 	m.schedules = append(m.schedules, schedule)
@@ -295,40 +265,14 @@ func (m *FileScheduleManager) UpdateSchedule(id string, updatedSchedule models.S
 			updatedSchedule.ScheduleID = schedule.ScheduleID
 			m.schedules[i] = updatedSchedule
 
-			for j, flow := range m.flows {
-				if flow.OperationId == schedule.OperationId {
-					m.flows[j] = models.Flow{
-						OperationParams: updatedSchedule.OperationParams,
-						BasicFlow: models.BasicFlow{
-							FlowID:   flow.FlowID,
-							FlowName: updatedSchedule.ScheduleName,
-							Tasks:    updatedSchedule.Tasks,
-							Status:   updatedSchedule.Status,
-						},
-					}
-					break
-				}
-			}
 			// Clear the existing tasks associated with this schedule
 			m.tasks = []models.DataTask{}
 
 			// Iterate over the tasks and unmarshal them into DataTask objects
 			for j, task := range updatedSchedule.Tasks {
-				// Marshal the task interface to JSON
-				taskJSON, err := json.Marshal(task)
-				if err != nil {
-					return fmt.Errorf("failed to marshal task: %v", err)
-				}
-
-				// Unmarshal the JSON into a DataTask struct
-				var taskObj models.DataTask
-				if err := json.Unmarshal(taskJSON, &taskObj); err != nil {
-					return fmt.Errorf("failed to unmarshal task: %v", err)
-				}
-
 				// Assign a new TaskID to each task
-				taskObj.TaskMeta.TaskID = utils.GenerateTaskID(schedule.ScheduleID, j)
-				m.tasks = append(m.tasks, taskObj)
+				task.TaskMeta.TaskID = utils.GenerateTaskID(schedule.ScheduleID, j)
+				m.tasks = append(m.tasks, task)
 			}
 
 			// Re-register the updated schedule with gocron
@@ -379,18 +323,11 @@ func (m *FileScheduleManager) DeleteSchedule(id string) error {
 }
 
 // runTasks executes the tasks associated with a schedule.
-func (m *FileScheduleManager) RunTasks(tasks []interface{}) {
+func (m *FileScheduleManager) RunTasks(tasks []models.DataTask) {
 	for _, task := range tasks {
-		// Convert the task to a generic map or any other suitable type
-		params, ok := task.(models.DataTask)
-		if !ok {
-			fmt.Printf("Error: Task conversion failed for task: %+v\n", task)
-			continue
-		}
-
 		// Call the handleTask function to process the task
-		params.Status = handleTask(params.ServiceType, params.TaskType, task)
-		m.updateTaskStatus(params)
+		task.Status = handleTask(task.ServiceType, task.TaskType, task)
+		m.updateTaskStatus(task)
 
 	}
 	err := m.saveToFile()
@@ -400,20 +337,16 @@ func (m *FileScheduleManager) RunTasks(tasks []interface{}) {
 }
 
 // handleTask is a function that processes a task based on its ServiceType and TaskType.
-func handleTask(serviceType models.CloudServiceType, taskType models.TaskType, tParams interface{}) models.Status {
+func handleTask(serviceType models.CloudServiceType, taskType models.TaskType, params models.DataTask) models.Status {
 
 	var taskStatus models.Status
-
-	params, ok := tParams.(models.DataTask)
-	if !ok {
-		fmt.Printf("Error: Task conversion failed for task: %+v\n", params)
-		return models.StatusFailed
-	}
 
 	switch serviceType {
 
 	case "objectStorage":
 		switch taskType {
+		case "generate":
+			taskStatus = handleGenTest(params)
 		case "migrate":
 			taskStatus = handleObjectStorageMigrateTask(params)
 		case "backup":
@@ -426,6 +359,8 @@ func handleTask(serviceType models.CloudServiceType, taskType models.TaskType, t
 		}
 	case "rdbms":
 		switch taskType {
+		case "generate":
+			taskStatus = handleGenTest(params)
 		case "migrate":
 			taskStatus = handleRDBMSMigrateTask(params)
 		case "backup":
@@ -439,6 +374,8 @@ func handleTask(serviceType models.CloudServiceType, taskType models.TaskType, t
 		}
 	case "nrdbms":
 		switch taskType {
+		case "generate":
+			taskStatus = handleGenTest(params)
 		case "migrate":
 			taskStatus = handleNRDBMSMigrateTask(params)
 		case "backup":
@@ -457,6 +394,16 @@ func handleTask(serviceType models.CloudServiceType, taskType models.TaskType, t
 	}
 
 	return taskStatus
+}
+
+func handleGenTest(params models.DataTask) models.Status {
+	logrus.Infof("Handling object storage Gen task")
+	_ = params
+	var cParams models.CommandTask
+	cParams.SizeServerSQL = "1"
+	cParams.DummyPath = "./tmp/Schedule/dummy"
+	execfunc.DummyCreate(cParams)
+	return models.StatusCompleted
 }
 
 func handleObjectStorageMigrateTask(params models.DataTask) models.Status {
@@ -505,7 +452,7 @@ func handleObjectStorageBackupTask(params models.DataTask) models.Status {
 		logrus.Errorf("MGet error exporting into objectstorage : %v", err)
 		return models.StatusFailed
 	}
-	logrus.Infof("successfully exported : %s", params.Directory)
+	logrus.Infof("successfully backup : %s", params.Directory)
 	return models.StatusCompleted
 }
 
@@ -522,10 +469,10 @@ func handleObjectStorageRestoreTask(params models.DataTask) models.Status {
 
 	logrus.Info("Launch OSController MGet")
 	if err := OSC.MPut(params.SourcePoint.Path); err != nil {
-		logrus.Errorf("MGet error exporting into objectstorage : %v", err)
+		logrus.Errorf("MPut error importing into objectstorage : %v", err)
 		return models.StatusFailed
 	}
-	logrus.Infof("successfully exported : %s", params.Directory)
+	logrus.Infof("successfully restore : %s", params.Directory)
 	return models.StatusCompleted
 }
 
@@ -605,7 +552,7 @@ func handleRDBMSBackupTask(params models.DataTask) models.Status {
 		logrus.Infof("successfully exported : %s", file.Name())
 		file.Close()
 	}
-	logrus.Infof("successfully exported : %s", params.Directory)
+	logrus.Infof("successfully backup : %s", params.Directory)
 	return models.StatusCompleted
 
 }
@@ -649,7 +596,7 @@ func handleRDBMSRestoreTask(params models.DataTask) models.Status {
 		}
 		logrus.Infof("Import success: %s", sqlPath)
 	}
-	logrus.Infof("successfully imported : %s", params.Directory)
+	logrus.Infof("successfully restore : %s", params.Directory)
 	return models.StatusCompleted
 
 }
@@ -692,15 +639,21 @@ func handleNRDBMSBackupTask(params models.DataTask) models.Status {
 		logrus.Errorf("NRDBController error importing into nrdbms : %v", err)
 		return models.StatusFailed
 	}
-	if err != nil {
-		logrus.Errorf("NRDBController error exporting into rdbms : %v", err)
-		return models.StatusFailed
-	}
 
 	tableList, err := NRDBC.ListTables()
 	if err != nil {
-		logrus.Errorf("ListTables error : %v", err)
+		logrus.Infof("ListTables error : %v", err)
 		return models.StatusFailed
+	}
+
+	if !utils.FileExists(params.Directory) {
+		logrus.Infof("directory does not exist")
+		logrus.Infof("Make Directory")
+		err = os.MkdirAll(params.Directory, 0755)
+		if err != nil {
+			logrus.Infof("Make Failed 0755 : %s", params.Directory)
+			return models.StatusFailed
+		}
 	}
 
 	var dstData []map[string]interface{}
@@ -726,9 +679,9 @@ func handleNRDBMSBackupTask(params models.DataTask) models.Status {
 			logrus.Errorf("data encoding error : %v", err)
 			return models.StatusFailed
 		}
-		logrus.Infof("successfully exported : %s", file.Name())
+		logrus.Infof("successfully create File : %s", file.Name())
 	}
-	logrus.Infof("successfully exported : %s", params.Directory)
+	logrus.Infof("successfully backup to : %s", params.Directory)
 	return models.StatusCompleted
 
 }
@@ -783,7 +736,7 @@ func handleNRDBMSRestoreTask(params models.DataTask) models.Status {
 			logrus.Error("Put error importing into nrdbms")
 			return models.StatusFailed
 		}
-		logrus.Infof("successfully imported : %s", params.Directory)
+		logrus.Infof("successfully Restore : %s", params.Directory)
 	}
 	return models.StatusCompleted
 

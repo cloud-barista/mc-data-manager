@@ -26,10 +26,10 @@ type Task struct {
 }
 
 type BasicFlow struct {
-	FlowID   string        `json:"FlowID,omitempty"`
-	FlowName string        `json:"FlowName"`
-	Tasks    []interface{} `json:"tasks"`
-	Status   Status        `json:"status"`
+	FlowID   string     `json:"FlowID,omitempty"`
+	FlowName string     `json:"FlowName"`
+	Tasks    []DataTask `json:"tasks"`
+	Status   Status     `json:"status"`
 }
 
 type Flow struct {
@@ -38,11 +38,11 @@ type Flow struct {
 }
 
 type BasicSchedule struct {
-	ScheduleID   string        `json:"ScheduleID,omitempty"`
-	ScheduleName string        `json:"ScheduleName"`
-	Tasks        []interface{} `json:"tasks"`
-	Cron         string        `json:"cron"`
-	TimeZone     string        `json:"tz"`
+	ScheduleID   string     `json:"ScheduleID,omitempty"`
+	ScheduleName string     `json:"ScheduleName"`
+	Tasks        []DataTask `json:"tasks"`
+	Cron         string     `json:"cron"`
+	TimeZone     string     `json:"tz"`
 
 	Status Status `json:"status"`
 }

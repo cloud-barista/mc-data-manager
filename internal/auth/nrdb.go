@@ -89,10 +89,6 @@ func ExportNRDMFunc(params *models.CommandTask) error {
 		logrus.Errorf("NRDBController error importing into nrdbms : %v", err)
 		return err
 	}
-	if err != nil {
-		logrus.Errorf("NRDBController error exporting into rdbms : %v", err)
-		return err
-	}
 
 	tableList, err := NRDBC.ListTables()
 	if err != nil {
