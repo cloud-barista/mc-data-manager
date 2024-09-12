@@ -368,226 +368,164 @@
         "databaseId": "",
         "projectId": ""
       }
+    },
+    {
+      "operationId": "",
+      "meta": {
+        "serviceType": "nrdbms",
+        "taskType": "backup",
+        "taskId": "operationID-XXX-task-0-20240912-132510"
+      },
+      "Directory": "./tmp/schedule/dummy/NRDB/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "operationId": "",
+      "meta": {
+        "serviceType": "nrdbms",
+        "taskType": "backup",
+        "taskId": "operationID-Nrdb-backup-gcp-task-0-20240912-132910"
+      },
+      "Directory": "./tmp/schedule/dummy/NRDB/gcp",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "gcp",
+        "region": "asia-northeast2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "operationId": "",
+      "meta": {
+        "serviceType": "nrdbms",
+        "taskType": "backup",
+        "taskId": "operationID-Nrdb-backup-gcp-task-0-20240912-133025"
+      },
+      "Directory": "./tmp/schedule/dummy/NRDB/gcp",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "gcp",
+        "region": "asia-northeast2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "operationId": "",
+      "meta": {
+        "serviceType": "nrdbms",
+        "taskType": "backup",
+        "taskId": "operationID-Nrdb-backup-gcp-task-0-20240912-133102"
+      },
+      "Directory": "./tmp/schedule/dummy/NRDB/gcp",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "gcp",
+        "region": "asia-northeast2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
     }
   ],
   "flows": [],
-  "schedules": [
-    {
-      "operationId": "operation-001",
-      "tag": [
-        "gen",
-        "minutely"
-      ],
-      "ScheduleID": "operation-001-schedule-20240911-180002",
-      "ScheduleName": "",
-      "tasks": [
-        {
-          "operationId": "",
-          "meta": {
-            "serviceType": "nrdbms",
-            "taskType": "generate",
-            "taskId": "task-1",
-            "taskName": "Database Gen Task",
-            "description": "Gen the main database"
-          },
-          "Directory": "./tmp/backup/dir",
-          "sourcePoint": {
-            "provider": "",
-            "region": "",
-            "profileName": "admin",
-            "path": "./tmp/source/db",
-            "bucket": "",
-            "endpoint": "",
-            "host": "",
-            "port": "",
-            "username": "",
-            "password": "",
-            "databaseName": "",
-            "databaseId": "",
-            "projectId": ""
-          },
-          "targetPoint": {
-            "provider": "",
-            "region": "",
-            "profileName": "default",
-            "path": "./tmp/backup/db",
-            "bucket": "",
-            "endpoint": "",
-            "host": "",
-            "port": "",
-            "username": "",
-            "password": "",
-            "databaseName": "",
-            "databaseId": "",
-            "projectId": ""
-          }
-        }
-      ],
-      "cron": "* * * * *",
-      "tz": "Asia/Seoul",
-      "status": "active"
-    },
-    {
-      "operationId": "operation-18542",
-      "tag": [
-        "backup",
-        "a minute"
-      ],
-      "ScheduleID": "operation-18542-schedule-20240911-180022",
-      "ScheduleName": "",
-      "tasks": [
-        {
-          "operationId": "",
-          "meta": {
-            "serviceType": "nrdbms",
-            "taskType": "backup",
-            "taskName": "Database Backup Task",
-            "description": "Backup the main database"
-          },
-          "Directory": "./tmp/schedule/dummy/NRDB/aws",
-          "sourcePoint": {
-            "provider": "",
-            "region": "",
-            "profileName": "",
-            "path": "",
-            "bucket": "",
-            "endpoint": "",
-            "host": "",
-            "port": "",
-            "username": "",
-            "password": "",
-            "databaseName": "",
-            "databaseId": "",
-            "projectId": ""
-          },
-          "targetPoint": {
-            "provider": "aws",
-            "region": "ap-northeast-2",
-            "profileName": "admin",
-            "path": "",
-            "bucket": "",
-            "endpoint": "",
-            "host": "",
-            "port": "",
-            "username": "",
-            "password": "",
-            "databaseName": "",
-            "databaseId": "",
-            "projectId": ""
-          }
-        }
-      ],
-      "cron": "* * * * *",
-      "tz": "Asia/Seoul",
-      "status": "active"
-    },
-    {
-      "operationId": "operation-18542",
-      "tag": [
-        "backup",
-        "a minute"
-      ],
-      "ScheduleID": "operation-18542-schedule-20240911-180024",
-      "ScheduleName": "",
-      "tasks": [
-        {
-          "operationId": "",
-          "meta": {
-            "serviceType": "nrdbms",
-            "taskType": "backup",
-            "taskName": "Database Backup Task",
-            "description": "Backup the main database"
-          },
-          "Directory": "./tmp/schedule/dummy/NRDB/gcp",
-          "sourcePoint": {
-            "provider": "",
-            "region": "",
-            "profileName": "",
-            "path": "",
-            "bucket": "",
-            "endpoint": "",
-            "host": "",
-            "port": "",
-            "username": "",
-            "password": "",
-            "databaseName": "",
-            "databaseId": "",
-            "projectId": ""
-          },
-          "targetPoint": {
-            "provider": "gcp",
-            "region": "asia-northeast2",
-            "profileName": "admin",
-            "path": "",
-            "bucket": "",
-            "endpoint": "",
-            "host": "",
-            "port": "",
-            "username": "",
-            "password": "",
-            "databaseName": "",
-            "databaseId": "",
-            "projectId": ""
-          }
-        }
-      ],
-      "cron": "* * * * *",
-      "tz": "Asia/Seoul",
-      "status": "active"
-    },
-    {
-      "operationId": "operation-18542",
-      "tag": [
-        "backup",
-        "a minute"
-      ],
-      "ScheduleID": "operation-18542-schedule-20240911-180026",
-      "ScheduleName": "",
-      "tasks": [
-        {
-          "operationId": "",
-          "meta": {
-            "serviceType": "nrdbms",
-            "taskType": "backup",
-            "taskName": "Database Backup Task",
-            "description": "Backup the main database"
-          },
-          "Directory": "./tmp/schedule/dummy/NRDB/ncp",
-          "sourcePoint": {
-            "provider": "",
-            "region": "",
-            "profileName": "",
-            "path": "",
-            "bucket": "",
-            "endpoint": "",
-            "host": "",
-            "port": "",
-            "username": "",
-            "password": "",
-            "databaseName": "",
-            "databaseId": "",
-            "projectId": ""
-          },
-          "targetPoint": {
-            "provider": "ncp",
-            "region": "kr",
-            "profileName": "admin",
-            "path": "",
-            "bucket": "",
-            "endpoint": "",
-            "host": "p4spq.pub-vpc.mg.naverncp.com",
-            "port": "17017",
-            "username": "manager",
-            "password": "N@mutech7^^7",
-            "databaseName": "spero",
-            "databaseId": "",
-            "projectId": ""
-          }
-        }
-      ],
-      "cron": "* * * * *",
-      "tz": "Asia/Seoul",
-      "status": "active"
-    }
-  ]
+  "schedules": []
 }
