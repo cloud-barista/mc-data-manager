@@ -595,9 +595,9 @@ func getDataWithBind(logger *zerolog.Logger, startTime time.Time, ctx echo.Conte
 	if err := ctx.Bind(params); err != nil {
 		end := time.Now()
 		logger.Error().Msg("Failed to bind form data")
-		logger.Info().Interface("params", ctx.Request().Body).Msg("")
-		logger.Info().Str("End time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
-		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
+		logger.Error().Interface("params", ctx.Request().Body).Msg("")
+		logger.Error().Str("End time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Error().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return false
 	}
 	return true
@@ -612,16 +612,17 @@ func getDataWithReBind(logger *zerolog.Logger, startTime time.Time, ctx echo.Con
 		return false
 	}
 
-	logger.Info().Str("Request Body", string(bodyBytes)).Msg("")
+	logger.Info().Msgf("%+v", string(bodyBytes))
 
 	ctx.Request().Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
 	if err := ctx.Bind(params); err != nil {
 		end := time.Now()
+		logger.Error().Err(err)
 		logger.Error().Msg("Failed to bind form data")
-		logger.Info().Interface("Params", string(bodyBytes)).Msg("")
-		logger.Info().Str("End time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
-		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
+		logger.Error().Interface("Params", string(bodyBytes)).Msg("")
+		logger.Error().Str("End time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Error().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return false
 	}
 
@@ -637,8 +638,8 @@ func gcpCreateCredFile(logger *zerolog.Logger, startTime time.Time, ctx echo.Con
 	if err != nil {
 		end := time.Now()
 		logger.Error().Err(err).Msg("Get CredentialFile error")
-		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
-		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
+		logger.Error().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Error().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return "", "", false
 	}
 
@@ -646,8 +647,8 @@ func gcpCreateCredFile(logger *zerolog.Logger, startTime time.Time, ctx echo.Con
 	if err != nil {
 		end := time.Now()
 		logger.Error().Err(err).Msg("Get CredentialFile error")
-		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
-		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
+		logger.Error().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Error().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return "", "", false
 	}
 
@@ -657,8 +658,8 @@ func gcpCreateCredFile(logger *zerolog.Logger, startTime time.Time, ctx echo.Con
 	if err != nil {
 		end := time.Now()
 		logger.Error().Err(err).Msg("Get CredentialFile error")
-		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
-		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
+		logger.Error().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Error().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return "", "", false
 	}
 	defer gcpCredentialFile.Close()
@@ -667,8 +668,8 @@ func gcpCreateCredFile(logger *zerolog.Logger, startTime time.Time, ctx echo.Con
 	if err != nil {
 		end := time.Now()
 		logger.Error().Err(err).Msg("File create error")
-		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
-		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
+		logger.Error().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Error().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return "", "", false
 	}
 	defer dst.Close()
@@ -676,8 +677,8 @@ func gcpCreateCredFile(logger *zerolog.Logger, startTime time.Time, ctx echo.Con
 	if _, err = io.Copy(dst, gcpCredentialFile); err != nil {
 		end := time.Now()
 		logger.Error().Err(err).Msg("File copy error")
-		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
-		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
+		logger.Error().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Error().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return "", "", false
 	}
 

@@ -47,10 +47,14 @@ func Init() {
 		log.Error().Err(err).Msg("Failed to get executable path")
 		log.Info().Msg("Using Default Config")
 	}
-	viper.AddConfigPath(filepath.Join(execPath, "../../data/var/run/data-manager/config"))
-	viper.AddConfigPath(filepath.Join(execPath, "/data/var/run/data-manager/config"))
-	viper.AddConfigPath(filepath.Join(execPath, "./"))
-	viper.AddConfigPath(filepath.Join(execPath, "./config/"))
+	execDir := filepath.Dir(execPath)
+	log.Info().Msgf("Executable directory: %s", execDir)
+
+	log.Info().Msg(execPath)
+	viper.AddConfigPath(filepath.Join(execDir, "../../data/var/run/data-manager/config"))
+	viper.AddConfigPath(filepath.Join(execDir, "./data/var/run/data-manager/config"))
+	viper.AddConfigPath(filepath.Join(execDir, "./"))
+	viper.AddConfigPath(filepath.Join(execDir, "./config/"))
 	viper.SetConfigName("config")
 
 	err = viper.ReadInConfig()
