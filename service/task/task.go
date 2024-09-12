@@ -19,7 +19,7 @@ import (
 	"github.com/cloud-barista/mc-data-manager/service/osc"
 	"github.com/cloud-barista/mc-data-manager/service/rdbc"
 	"github.com/go-co-op/gocron"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 var (
@@ -51,7 +51,7 @@ func InitFileScheduleManager() *FileScheduleManager {
 		}
 
 		if err := managerInstance.loadFromFile(); err != nil {
-			logrus.Errorf("Failed to load tasks from file: %v", err)
+			log.Error().Err(err).Msg("Failed to load tasks from file")
 			managerInstance = nil
 			return
 		}
@@ -60,7 +60,7 @@ func InitFileScheduleManager() *FileScheduleManager {
 	})
 
 	if managerInstance == nil {
-		logrus.Error("FileScheduleManager initialization failed")
+		log.Error().Msg("FileScheduleManager initialization failed")
 	}
 	return managerInstance
 }
@@ -83,7 +83,7 @@ func (m *FileScheduleManager) loadFromFile() error {
 	file, err := os.Open(m.filename)
 	if err != nil {
 		if os.IsNotExist(err) {
-			logrus.Warnf("Task file %s does not exist, skipping load", m.filename)
+			log.Warn().Str("filename", m.filename).Msg("Task file does not exist, skipping load")
 			return nil
 		}
 		return fmt.Errorf("failed to open task file %s: %w", m.filename, err)
@@ -99,7 +99,7 @@ func (m *FileScheduleManager) loadFromFile() error {
 
 	err = decoder.Decode(&data)
 	if err != nil {
-		logrus.Errorf("Failed to decode task file %s: %v. Saving corrupted file as task_err.json and skipping load.", m.filename, err)
+		log.Error().Err(err).Str("filename", m.filename).Msg("Failed to decode task file. Saving corrupted file as task_err.json and skipping load.")
 
 		// Create a backup of the corrupted file as task_err.json
 		err = backupAndRemoveCorruptedFile(m.filename)
@@ -121,7 +121,7 @@ func (m *FileScheduleManager) loadFromFile() error {
 		}
 	}
 
-	logrus.Infof("Successfully loaded and scheduled %d tasks from %s", len(m.schedules), m.filename)
+	log.Info().Int("tasks", len(m.schedules)).Str("filename", m.filename).Msg("Successfully loaded and scheduled tasks")
 	return nil
 }
 
@@ -332,7 +332,7 @@ func (m *FileScheduleManager) RunTasks(tasks []models.DataTask) {
 	}
 	err := m.saveToFile()
 	if err != nil {
-		fmt.Printf("Error saving tasks to file: %v\n", err)
+		log.Error().Err(err).Msg("Error saving tasks to file")
 	}
 }
 
@@ -354,7 +354,7 @@ func handleTask(serviceType models.CloudServiceType, taskType models.TaskType, p
 		case "restore":
 			taskStatus = handleObjectStorageRestoreTask(params)
 		default:
-			fmt.Printf("Error: Unknown TaskType: %s for ServiceType: %s\n", taskType, serviceType)
+			log.Error().Msgf("Error: Unknown TaskType: %s for ServiceType: %s\n", taskType, serviceType)
 			taskStatus = models.StatusFailed
 		}
 	case "rdbms":
@@ -368,7 +368,7 @@ func handleTask(serviceType models.CloudServiceType, taskType models.TaskType, p
 		case "restore":
 			taskStatus = handleRDBMSRestoreTask(params)
 		default:
-			fmt.Printf("Error: Unknown TaskType: %s for ServiceType: %s\n", taskType, serviceType)
+			log.Error().Msgf("Error: Unknown TaskType: %s for ServiceType: %s\n", taskType, serviceType)
 			taskStatus = models.StatusFailed
 
 		}
@@ -383,12 +383,12 @@ func handleTask(serviceType models.CloudServiceType, taskType models.TaskType, p
 		case "restore":
 			taskStatus = handleNRDBMSRestoreTask(params)
 		default:
-			fmt.Printf("Error: Unknown TaskType: %s for ServiceType: %s\n", taskType, serviceType)
+			log.Error().Msgf("Error: Unknown TaskType: %s for ServiceType: %s\n", taskType, serviceType)
 			taskStatus = models.StatusFailed
 
 		}
 	default:
-		fmt.Printf("Error: Unknown ServiceType: %s\n", serviceType)
+		log.Error().Msgf("Error: Unknown ServiceType: %s\n", serviceType)
 		taskStatus = models.StatusFailed
 
 	}
@@ -397,7 +397,7 @@ func handleTask(serviceType models.CloudServiceType, taskType models.TaskType, p
 }
 
 func handleGenTest(params models.DataTask) models.Status {
-	logrus.Infof("Handling object storage Gen task")
+	log.Info().Msg("Handling object storage Gen task")
 	_ = params
 	var cParams models.CommandTask
 	cParams.SizeServerSQL = "1"
@@ -405,166 +405,165 @@ func handleGenTest(params models.DataTask) models.Status {
 	execfunc.DummyCreate(cParams)
 	return models.StatusCompleted
 }
-
 func handleObjectStorageMigrateTask(params models.DataTask) models.Status {
-	fmt.Println("Handling object storage migrate task")
+	log.Info().Msg("Handling object storage migrate task")
 
 	var src *osc.OSController
 	var srcErr error
 	var dst *osc.OSController
 	var dstErr error
 
-	logrus.Infof("Source Information")
+	log.Info().Msg("Source Information")
 	src, srcErr = auth.GetOS(&params.SourcePoint)
 	if srcErr != nil {
-		logrus.Errorf("OSController error migration into objectstorage : %v", srcErr)
+		log.Error().Err(srcErr).Msg("OSController error migration into object storage")
 		return models.StatusFailed
 	}
-	logrus.Infof("Target Information")
+	log.Info().Msg("Target Information")
 	dst, dstErr = auth.GetOS(&params.TargetPoint)
 	if dstErr != nil {
-		logrus.Errorf("OSController error migration into objectstorage : %v", dstErr)
+		log.Error().Err(dstErr).Msg("OSController error migration into object storage")
 		return models.StatusFailed
 	}
 
-	logrus.Info("Launch OSController Copy")
+	log.Info().Msg("Launch OSController Copy")
 	if err := src.Copy(dst); err != nil {
-		logrus.Errorf("Copy error copying into objectstorage : %v", err)
+		log.Error().Err(err).Msg("Copy error copying into object storage")
 		return models.StatusFailed
 	}
-	logrus.Info("successfully migrationed")
+	log.Info().Msg("Successfully migrated")
 	return models.StatusCompleted
 }
 
 func handleObjectStorageBackupTask(params models.DataTask) models.Status {
-	fmt.Println("Handling object storage backup task")
+	log.Info().Msg("Handling object storage backup task")
 	var OSC *osc.OSController
 	var err error
-	logrus.Infof("User Information")
+	log.Info().Msg("User Information")
 	OSC, err = auth.GetOS(&params.TargetPoint)
 	if err != nil {
-		logrus.Errorf("OSController error importing into objectstorage : %v", err)
+		log.Error().Err(err).Msg("OSController error importing into objectstorage ")
 		return models.StatusFailed
 	}
 
-	logrus.Info("Launch OSController MGet")
+	log.Info().Msg("Launch OSController MGet")
 	if err := OSC.MGet(params.Directory); err != nil {
-		logrus.Errorf("MGet error exporting into objectstorage : %v", err)
+		log.Error().Err(err).Msg("MGet error exporting into objectstorage ")
 		return models.StatusFailed
 	}
-	logrus.Infof("successfully backup : %s", params.Directory)
+	log.Info().Msgf("successfully backup : %s", params.Directory)
 	return models.StatusCompleted
 }
 
 func handleObjectStorageRestoreTask(params models.DataTask) models.Status {
-	fmt.Println("Handling object storage restore task")
+	log.Info().Msg("Handling object storage restore task")
 	var OSC *osc.OSController
 	var err error
-	logrus.Infof("User Information")
+	log.Info().Msg("User Information")
 	OSC, err = auth.GetOS(&params.TargetPoint)
 	if err != nil {
-		logrus.Errorf("OSController error importing into objectstorage : %v", err)
+		log.Error().Err(err).Msg("OSController error importing into objectstorage ")
 		return models.StatusFailed
 	}
 
-	logrus.Info("Launch OSController MGet")
+	log.Info().Msg("Launch OSController MGet")
 	if err := OSC.MPut(params.SourcePoint.Path); err != nil {
-		logrus.Errorf("MPut error importing into objectstorage : %v", err)
+		log.Error().Err(err).Msg("MPut error importing into objectstorage ")
 		return models.StatusFailed
 	}
-	logrus.Infof("successfully restore : %s", params.Directory)
+	log.Info().Msgf("successfully restore : %s", params.Directory)
 	return models.StatusCompleted
 }
 
 func handleRDBMSMigrateTask(params models.DataTask) models.Status {
-	fmt.Println("Handling RDBMS migrate task")
+	log.Info().Msg("Handling RDBMS migrate task")
 	var srcRDBC *rdbc.RDBController
 	var srcErr error
 	var dstRDBC *rdbc.RDBController
 	var dstErr error
-	logrus.Infof("Source Information")
+	log.Info().Msg("Source Information")
 	srcRDBC, srcErr = auth.GetRDMS(&params.SourcePoint)
 	if srcErr != nil {
-		logrus.Errorf("RDBController error migration into rdbms : %v", srcErr)
+		log.Error().Err(srcErr).Msg("RDBController error migration into rdbms ")
 		return models.StatusFailed
 	}
-	logrus.Infof("Target Information")
+	log.Info().Msg("Target Information")
 	dstRDBC, dstErr = auth.GetRDMS(&params.TargetPoint)
 	if dstErr != nil {
-		logrus.Errorf("RDBController error migration into rdbms : %v", dstErr)
+		log.Error().Err(dstErr).Msg("RDBController error migration into rdbms ")
 		return models.StatusFailed
 	}
 
-	logrus.Info("Launch RDBController Copy")
+	log.Info().Msg("Launch RDBController Copy")
 	if err := srcRDBC.Copy(dstRDBC); err != nil {
-		logrus.Errorf("Copy error copying into rdbms : %v", err)
+		log.Error().Err(err).Msg("Copy error copying into rdbms ")
 		return models.StatusFailed
 	}
-	logrus.Info("successfully migrationed")
+	log.Info().Msg("successfully migrationed")
 	return models.StatusCompleted
 
 }
 
 func handleRDBMSBackupTask(params models.DataTask) models.Status {
-	fmt.Println("Handling RDBMS backup task")
+	log.Info().Msg("Handling RDBMS backup task")
 	var RDBC *rdbc.RDBController
 	var err error
-	logrus.Infof("User Information")
+	log.Info().Msg("User Information")
 	RDBC, err = auth.GetRDMS(&params.TargetPoint)
 	if err != nil {
-		logrus.Errorf("RDBController error importing into rdbms : %v", err)
+		log.Error().Err(err).Msg("RDBController error importing into rdbms ")
 		return models.StatusFailed
 	}
 
 	err = os.MkdirAll(params.Directory, 0755)
 	if err != nil {
-		logrus.Errorf("MkdirAll error : %v", err)
+		log.Error().Err(err).Msg("MkdirAll error ")
 		return models.StatusFailed
 	}
 
 	dbList := []string{}
 	if err := RDBC.ListDB(&dbList); err != nil {
-		logrus.Errorf("ListDB error : %v", err)
+		log.Error().Err(err).Msg("ListDB error ")
 		return models.StatusFailed
 	}
 
 	var sqlData string
 	for _, db := range dbList {
 		sqlData = ""
-		logrus.Infof("Export start: %s", db)
+		log.Info().Msgf("Export start: %s", db)
 		if err := RDBC.Get(db, &sqlData); err != nil {
-			logrus.Errorf("Get error : %v", err)
+			log.Error().Err(err).Msg("Get error ")
 			return models.StatusFailed
 		}
 
 		file, err := os.Create(filepath.Join(params.Directory, fmt.Sprintf("%s.sql", db)))
 		if err != nil {
-			logrus.Errorf("File create error : %v", err)
+			log.Error().Err(err).Msg("File create error ")
 			return models.StatusFailed
 		}
 		defer file.Close()
 
 		_, err = file.WriteString(sqlData)
 		if err != nil {
-			logrus.Errorf("File write error : %v", err)
+			log.Error().Err(err).Msg("File write error ")
 			return models.StatusFailed
 		}
-		logrus.Infof("successfully exported : %s", file.Name())
+		log.Info().Msgf("successfully exported : %s", file.Name())
 		file.Close()
 	}
-	logrus.Infof("successfully backup : %s", params.Directory)
+	log.Info().Msgf("successfully backup : %s", params.Directory)
 	return models.StatusCompleted
 
 }
 
 func handleRDBMSRestoreTask(params models.DataTask) models.Status {
-	fmt.Println("Handling RDBMS restore task")
+	log.Info().Msg("Handling RDBMS restore task")
 	var RDBC *rdbc.RDBController
 	var err error
-	logrus.Infof("User Information")
+	log.Info().Msg("User Information")
 	RDBC, err = auth.GetRDMS(&params.TargetPoint)
 	if err != nil {
-		logrus.Errorf("RDBController error importing into rdbms : %v", err)
+		log.Error().Err(err).Msg("RDBController error importing into rdbms ")
 		return models.StatusFailed
 	}
 
@@ -579,96 +578,96 @@ func handleRDBMSRestoreTask(params models.DataTask) models.Status {
 		return nil
 	})
 	if err != nil {
-		logrus.Errorf("Walk error : %v", err)
+		log.Error().Err(err).Msg("Walk error ")
 		return models.StatusFailed
 	}
 
 	for _, sqlPath := range sqlList {
 		data, err := os.ReadFile(sqlPath)
 		if err != nil {
-			logrus.Errorf("ReadFile error : %v", err)
+			log.Error().Err(err).Msg("ReadFile error ")
 			return models.StatusFailed
 		}
-		logrus.Infof("Import start: %s", sqlPath)
+		log.Info().Msgf("Import start: %s", sqlPath)
 		if err := RDBC.Put(string(data)); err != nil {
-			logrus.Error("Put error importing into rdbms")
+			log.Error().Msg("Put error importing into rdbms")
 			return models.StatusFailed
 		}
-		logrus.Infof("Import success: %s", sqlPath)
+		log.Info().Msgf("Import success: %s", sqlPath)
 	}
-	logrus.Infof("successfully restore : %s", params.Directory)
+	log.Info().Msgf("successfully restore : %s", params.Directory)
 	return models.StatusCompleted
 
 }
 
 func handleNRDBMSMigrateTask(params models.DataTask) models.Status {
-	fmt.Println("Handling NRDBMS migrate task")
+	log.Info().Msg("Handling NRDBMS migrate task")
 	var srcNRDBC *nrdbc.NRDBController
 	var srcErr error
 	var dstNRDBC *nrdbc.NRDBController
 	var dstErr error
-	logrus.Infof("Source Information")
+	log.Info().Msg("Source Information")
 	srcNRDBC, srcErr = auth.GetNRDMS(&params.SourcePoint)
 	if srcErr != nil {
-		logrus.Errorf("NRDBController error migration into nrdbms : %v", srcErr)
+		log.Error().Err(srcErr).Msg("NRDBController error migration into nrdbms ")
 		return models.StatusFailed
 	}
-	logrus.Infof("Target Information")
+	log.Info().Msg("Target Information")
 	dstNRDBC, dstErr = auth.GetNRDMS(&params.TargetPoint)
 	if dstErr != nil {
-		logrus.Errorf("NRDBController error migration into nrdbms : %v", dstErr)
+		log.Error().Err(dstErr).Msg("NRDBController error migration into nrdbms ")
 		return models.StatusFailed
 	}
 
-	logrus.Info("Launch NRDBController Copy")
+	log.Info().Msg("Launch NRDBController Copy")
 	if err := srcNRDBC.Copy(dstNRDBC); err != nil {
-		logrus.Errorf("Copy error copying into nrdbms : %v", err)
+		log.Error().Err(err).Msg("Copy error copying into nrdbms ")
 		return models.StatusFailed
 	}
-	logrus.Info("successfully migrationed")
+	log.Info().Msg("successfully migrationed")
 	return models.StatusCompleted
 
 }
 
 func handleNRDBMSBackupTask(params models.DataTask) models.Status {
-	fmt.Println("Handling NRDBMS backup task")
+	log.Info().Msg("Handling NRDBMS backup task")
 	var NRDBC *nrdbc.NRDBController
 	var err error
 	NRDBC, err = auth.GetNRDMS(&params.TargetPoint)
 	if err != nil {
-		logrus.Errorf("NRDBController error importing into nrdbms : %v", err)
+		log.Error().Err(err).Msg("NRDBController error importing into nrdbms ")
 		return models.StatusFailed
 	}
 
 	tableList, err := NRDBC.ListTables()
 	if err != nil {
-		logrus.Infof("ListTables error : %v", err)
+		log.Info().Msgf("ListTables error : %v", err)
 		return models.StatusFailed
 	}
 
 	if !utils.FileExists(params.Directory) {
-		logrus.Infof("directory does not exist")
-		logrus.Infof("Make Directory")
+		log.Info().Msg("directory does not exist")
+		log.Info().Msg("Make Directory")
 		err = os.MkdirAll(params.Directory, 0755)
 		if err != nil {
-			logrus.Infof("Make Failed 0755 : %s", params.Directory)
+			log.Info().Msgf("Make Failed 0755 : %s", params.Directory)
 			return models.StatusFailed
 		}
 	}
 
 	var dstData []map[string]interface{}
 	for _, table := range tableList {
-		logrus.Infof("Export start: %s", table)
+		log.Info().Msgf("Export start: %s", table)
 		dstData = []map[string]interface{}{}
 
 		if err := NRDBC.Get(table, &dstData); err != nil {
-			logrus.Errorf("Get error : %v", err)
+			log.Error().Err(err).Msg("Get error ")
 			return models.StatusFailed
 		}
 
 		file, err := os.Create(filepath.Join(params.Directory, fmt.Sprintf("%s.json", table)))
 		if err != nil {
-			logrus.Errorf("File create error : %v", err)
+			log.Error().Err(err).Msg("File create error ")
 			return models.StatusFailed
 		}
 		defer file.Close()
@@ -676,23 +675,23 @@ func handleNRDBMSBackupTask(params models.DataTask) models.Status {
 		encoder := json.NewEncoder(file)
 		encoder.SetIndent("", "    ")
 		if err := encoder.Encode(dstData); err != nil {
-			logrus.Errorf("data encoding error : %v", err)
+			log.Error().Err(err).Msg("data encoding error ")
 			return models.StatusFailed
 		}
-		logrus.Infof("successfully create File : %s", file.Name())
+		log.Info().Msgf("successfully create File : %s", file.Name())
 	}
-	logrus.Infof("successfully backup to : %s", params.Directory)
+	log.Info().Msgf("successfully backup to : %s", params.Directory)
 	return models.StatusCompleted
 
 }
 
 func handleNRDBMSRestoreTask(params models.DataTask) models.Status {
-	fmt.Println("Handling NRDBMS restore task")
+	log.Info().Msg("Handling NRDBMS restore task")
 	var NRDBC *nrdbc.NRDBController
 	var err error
 	NRDBC, err = auth.GetNRDMS(&params.TargetPoint)
 	if err != nil {
-		logrus.Errorf("NRDBController error importing into nrdbms : %v", err)
+		log.Error().Err(err).Msg("NRDBController error importing into nrdbms ")
 		return models.StatusFailed
 	}
 
@@ -708,7 +707,7 @@ func handleNRDBMSRestoreTask(params models.DataTask) models.Status {
 	})
 
 	if err != nil {
-		logrus.Errorf("Walk error : %v", err)
+		log.Error().Err(err).Msg("Walk error ")
 		return models.StatusFailed
 	}
 
@@ -718,25 +717,25 @@ func handleNRDBMSRestoreTask(params models.DataTask) models.Status {
 
 		file, err := os.Open(jsonFile)
 		if err != nil {
-			logrus.Errorf("file open error : %v", err)
+			log.Error().Err(err).Msg("file open error ")
 			return models.StatusFailed
 		}
 		defer file.Close()
 
 		if err := json.NewDecoder(file).Decode(&srcData); err != nil {
-			logrus.Errorf("file decoding error : %v", err)
+			log.Error().Err(err).Msg("file decoding error ")
 			return models.StatusFailed
 		}
 
 		fileName := filepath.Base(jsonFile)
 		tableName := fileName[:len(fileName)-len(filepath.Ext(fileName))]
 
-		logrus.Infof("Import start: %s", fileName)
+		log.Info().Msgf("Import start: %s", fileName)
 		if err := NRDBC.Put(tableName, &srcData); err != nil {
-			logrus.Error("Put error importing into nrdbms")
+			log.Error().Msg("Put error importing into nrdbms")
 			return models.StatusFailed
 		}
-		logrus.Infof("successfully Restore : %s", params.Directory)
+		log.Info().Msgf("successfully Restore : %s", params.Directory)
 	}
 	return models.StatusCompleted
 

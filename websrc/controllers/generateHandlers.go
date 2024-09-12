@@ -16,7 +16,6 @@ limitations under the License.
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -92,7 +91,6 @@ func GenerateWindowsPostHandler(ctx echo.Context) error {
 	logger, logstrings := pageLogInit("genwindows", "Create dummy data in windows", start)
 
 	if !osCheck(logger, start, "windows") {
-		fmt.Println("test")
 		return ctx.JSON(http.StatusBadRequest, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -389,15 +387,15 @@ func GenerateMySQLPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	logger.Info("Start Import with mysql")
+	logger.Info().Msg("Start Import with mysql")
 	for _, sql := range sqlList {
-		logger.Infof("Read sql file : %s", sql)
+		logger.Info().Str("file", sql).Msg("Read sql file")
 		data, err := os.ReadFile(sql)
 		if err != nil {
 			end := time.Now()
-			logger.Errorf("os ReadFile failed : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
+			logger.Error().Err(err).Msg("os ReadFile failed")
+			logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+			logger.Info().Str("Elapsed time", end.Sub(start).String()).Msg("")
 			return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 				Result: logstrings.String(),
 				Error:  nil,
@@ -405,18 +403,18 @@ func GenerateMySQLPostHandler(ctx echo.Context) error {
 
 		}
 
-		logger.Infof("Put start : %s", filepath.Base(sql))
+		logger.Info().Str("file", filepath.Base(sql)).Msg("Put start")
 		if err := rdbc.Put(string(data)); err != nil {
 			end := time.Now()
-			logger.Errorf("RDBController import failed : %v", err)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(start).String())
+			logger.Error().Err(err).Msg("RDBController import failed")
+			logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+			logger.Info().Str("Elapsed time", end.Sub(start).String()).Msg("")
 			return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 				Result: logstrings.String(),
 				Error:  nil,
 			})
 		}
-		logger.Infof("sql put success : %s", filepath.Base(sql))
+		logger.Info().Str("file", filepath.Base(sql)).Msg("sql put success")
 	}
 
 	jobEnd(logger, "Dummy creation and import successful with mysql", start)

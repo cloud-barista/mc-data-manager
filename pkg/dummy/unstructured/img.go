@@ -23,7 +23,7 @@ import (
 
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/cloud-barista/mc-data-manager/pkg/utils"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 type ImageType string
@@ -35,7 +35,7 @@ type ImageType string
 func GenerateRandomPNGImage(dummyDir string, capacitySize int) error {
 	dummyDir = filepath.Join(dummyDir, "png")
 	if err := utils.IsDir(dummyDir); err != nil {
-		logrus.Errorf("IsDir function error : %v", err)
+		log.Error().Msgf("IsDir function error : %v", err)
 		return err
 	}
 
@@ -65,7 +65,7 @@ func GenerateRandomPNGImage(dummyDir string, capacitySize int) error {
 
 	for ret := range resultChan {
 		if ret != nil {
-			logrus.Errorf("result error : %v", ret)
+			log.Error().Msgf("result error : %v", ret)
 			return ret
 		}
 	}
@@ -85,7 +85,7 @@ func randomImageWorker(countNum chan int, dirPath string, resultChan chan<- erro
 		if _, err := file.Write(gofakeit.ImagePng(500, 500)); err != nil {
 			resultChan <- err
 		}
-		logrus.Infof("Creation success: %v", file.Name())
+		log.Info().Msgf("Creation success: %v", file.Name())
 
 		file.Close()
 	}

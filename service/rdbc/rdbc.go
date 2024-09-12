@@ -21,7 +21,8 @@ import (
 	"strings"
 
 	"github.com/cloud-barista/mc-data-manager/models"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 type EngineType string
@@ -50,12 +51,12 @@ type RDBMS interface {
 type RDBController struct {
 	client RDBMS
 
-	logger *logrus.Logger
+	logger *zerolog.Logger
 }
 
 type Option func(*RDBController)
 
-func WithLogger(logger *logrus.Logger) Option {
+func WithLogger(logger *zerolog.Logger) Option {
 	return func(r *RDBController) {
 		r.logger = logger
 	}
@@ -78,7 +79,7 @@ func New(rdb RDBMS, opts ...Option) (*RDBController, error) {
 func (rdb *RDBController) ListDB(dst *[]string) error {
 	err := rdb.client.ListDB(dst)
 	if err != nil {
-		logrus.Info("RDB", *dst)
+		log.Info().Msgf("RDB", *dst)
 		return err
 	}
 	return nil
@@ -101,7 +102,7 @@ func (rdb *RDBController) Put(sql string) error {
 			err = rdb.client.Exec(line)
 			if err != nil {
 				rdb.client.Exec("ROLLBACK")
-				rdb.logger.Errorf("err Line : %+v", line)
+				rdb.logger.Error().Msgf("err Line : %+v", line)
 				rdb.logWrite("Error", "sql exec error", err)
 				return err
 			}
@@ -119,7 +120,7 @@ func (rdb *RDBController) Put(sql string) error {
 func (rdb *RDBController) PutDoc(sql string) error {
 	err := rdb.client.Exec(sql)
 	if err != nil {
-		rdb.logger.Errorf("err SQL : %+v", sql)
+		rdb.logger.Error().Msgf("err SQL : %+v", sql)
 		rdb.logWrite("Error", "sql exec error", err)
 		return err
 	}
@@ -156,7 +157,7 @@ func (rdb *RDBController) Copy(dst *RDBController) error {
 func (rdb *RDBController) Get(dbName string, sql *string) error {
 	var sqlTemp string
 	if err := rdb.client.ShowCreateDBSql(dbName, &sqlTemp); err != nil {
-		logrus.Error("ERR DB")
+		log.Error().Msgf("ERR DB")
 		return err
 	}
 	sqlWrite(sql, sqlTemp)
@@ -164,7 +165,7 @@ func (rdb *RDBController) Get(dbName string, sql *string) error {
 
 	var tableList []string
 	if err := rdb.client.ListTable(dbName, &tableList); err != nil {
-		logrus.Error("ERR List TB")
+		log.Error().Msgf("ERR List TB")
 
 		return err
 	}
@@ -173,7 +174,7 @@ func (rdb *RDBController) Get(dbName string, sql *string) error {
 		sqlWrite(sql, fmt.Sprintf("DROP TABLE IF EXISTS %s;", table))
 
 		if err := rdb.client.ShowCreateTableSql(dbName, table, &sqlTemp); err != nil {
-			logrus.Error("ERR Creatte TB")
+			log.Error().Msgf("ERR Creatte TB")
 
 			return err
 		}
@@ -183,7 +184,7 @@ func (rdb *RDBController) Get(dbName string, sql *string) error {
 	for _, table := range tableList {
 		var insertData []string
 		if err := rdb.client.GetInsert(dbName, table, &insertData); err != nil {
-			logrus.Error("Insert quer err")
+			log.Error().Msgf("Insert quer err")
 			return err
 		}
 
@@ -226,9 +227,9 @@ func (rdbc *RDBController) logWrite(logLevel, msg string, err error) {
 	if rdbc.logger != nil {
 		switch logLevel {
 		case "Info":
-			rdbc.logger.Info(msg)
+			rdbc.logger.Info().Msg(msg)
 		case "Error":
-			rdbc.logger.Errorf("%s : %v", msg, err)
+			rdbc.logger.Error().Msgf("%s : %v", msg, err)
 		}
 	}
 }

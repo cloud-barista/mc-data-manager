@@ -175,12 +175,12 @@ func MigrationNCPToS3PostHandler(ctx echo.Context) error {
 		})
 	}
 
-	logger.Infof("Start migration of NCP Object Storage to AWS S3")
+	logger.Info().Msgf("Start migration of NCP Object Storage to AWS S3")
 	if err := ncpOSC.Copy(awsOSC); err != nil {
 		end := time.Now()
-		logger.Errorf("OSController migration failed : %v", err)
-		logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(start).String())
+		logger.Error().Msgf("OSController migration failed : %v", err)
+		logger.Info().Msgf("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+		logger.Info().Msgf("Elapsed time : %s", end.Sub(start).String())
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -237,12 +237,12 @@ func MigrationNCPToGCPPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	logger.Infof("Start migration of NCP Object Storage to GCP Cloud Storage")
+	logger.Info().Msgf("Start migration of NCP Object Storage to GCP Cloud Storage")
 	if err := ncpOSC.Copy(gcpOSC); err != nil {
 		end := time.Now()
-		logger.Errorf("OSController migration failed : %v", err)
-		logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(start).String())
+		logger.Error().Msgf("OSController migration failed : %v", err)
+		logger.Info().Msgf("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
+		logger.Info().Msgf("Elapsed time : %s", end.Sub(start).String())
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,

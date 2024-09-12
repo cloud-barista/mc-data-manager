@@ -18,7 +18,7 @@ package nrdbc
 import (
 	"fmt"
 
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 type NRDBMS interface {
@@ -32,12 +32,12 @@ type NRDBMS interface {
 type NRDBController struct {
 	client NRDBMS
 
-	logger *logrus.Logger
+	logger *zerolog.Logger
 }
 
 type Option func(*NRDBController)
 
-func WithLogger(logger *logrus.Logger) Option {
+func WithLogger(logger *zerolog.Logger) Option {
 	return func(n *NRDBController) {
 		n.logger = logger
 	}
@@ -47,7 +47,6 @@ func New(nrdb NRDBMS, opts ...Option) (*NRDBController, error) {
 	nrdbc := &NRDBController{
 		client: nrdb,
 	}
-
 	for _, opt := range opts {
 		opt(nrdbc)
 	}
@@ -153,9 +152,9 @@ func (nrdbc *NRDBController) logWrite(logLevel, msg string, err error) {
 	if nrdbc.logger != nil {
 		switch logLevel {
 		case "Info":
-			nrdbc.logger.Info(msg)
+			nrdbc.logger.Info().Msg(msg)
 		case "Error":
-			nrdbc.logger.Errorf("%s : %v", msg, err)
+			nrdbc.logger.Error().Msgf("%s : %v", msg, err)
 		}
 	}
 }

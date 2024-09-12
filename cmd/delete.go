@@ -18,8 +18,7 @@ package cmd
 import (
 	"os"
 
-	"github.com/cloud-barista/mc-data-manager/internal/log"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
@@ -35,14 +34,14 @@ var deleteLocalCmd = &cobra.Command{
 	Use: "local",
 
 	Run: func(cmd *cobra.Command, args []string) {
-		logrus.SetFormatter(&log.CustomTextFormatter{CmdName: "delete"})
-		logrus.WithFields(logrus.Fields{"jobName": "local delete"}).Info("start deleting local data")
+		// logrus.SetFormatter(&log.CustomTextFormatter{CmdName: "delete"})
+		log.Info().Msg("start deleting local data")
 
 		if err := os.RemoveAll(commandTask.Directory); err != nil {
-			logrus.WithFields(logrus.Fields{"jobName": "local delete"}).Errorf("failed to delete local : %v", err)
+			log.Error().Str("jobName", "local delete").Msgf("failed to delete local : %v", err)
 			return
 		}
-		logrus.Infof("successfully deleted : %s\n", commandTask.Directory)
+		log.Info().Msgf("successfully deleted : %s\n", commandTask.Directory)
 
 	},
 }

@@ -17,8 +17,18 @@ package main
 
 import (
 	"github.com/cloud-barista/mc-data-manager/cmd"
+	"github.com/cloud-barista/mc-data-manager/config"
+	"github.com/cloud-barista/mc-data-manager/pkg/logger"
+	"github.com/rs/zerolog/log"
 )
 
 func main() {
 	cmd.Execute()
+}
+
+func init() {
+	config.Init()
+	loggerConfig := logger.Config{LogConfig: config.Settings.Logger}
+	logger := logger.NewLogger(loggerConfig)
+	log.Logger = *logger
 }

@@ -2,13 +2,13 @@ package aws
 
 import (
 	"fmt"
+	"log"
 	"path/filepath"
 	"runtime"
 	"testing"
 
 	cfg "github.com/cloud-barista/mc-data-manager/config"
 	"github.com/cloud-barista/mc-data-manager/models"
-	"github.com/sirupsen/logrus"
 )
 
 func TestMain(m *testing.M) {
@@ -16,7 +16,7 @@ func TestMain(m *testing.M) {
 
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
-		logrus.Fatalf("Failed to get current file path")
+		log.Fatal().MsgF("Failed to get current file path")
 	}
 	rootDir := filepath.Join(filepath.Dir(filename), "../../..")
 

@@ -17,8 +17,7 @@ package cmd
 
 import (
 	"github.com/cloud-barista/mc-data-manager/internal/execfunc"
-	"github.com/cloud-barista/mc-data-manager/internal/log"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
@@ -28,9 +27,8 @@ var testCmd = &cobra.Command{
 	Short: "test-command",
 	Long:  `test-command`,
 	Run: func(_ *cobra.Command, _ []string) {
-		logrus.SetFormatter(&log.CustomTextFormatter{CmdName: "test", JobName: "test dummy create"})
 		if err := execfunc.DummyCreate(commandTask); err != nil {
-			logrus.Errorf("test dummy create failed : %v", err)
+			log.Error().Msgf("test dummy create failed : %v", err)
 		}
 	},
 }

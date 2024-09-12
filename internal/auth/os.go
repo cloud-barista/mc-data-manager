@@ -18,46 +18,46 @@ package auth
 import (
 	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/service/osc"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 func ImportOSFunc(params *models.CommandTask) error {
 	var OSC *osc.OSController
 	var err error
-	logrus.Infof("User Information")
+	log.Info().Msgf("User Information")
 	OSC, err = GetOS(&params.TargetPoint)
 	if err != nil {
-		logrus.Errorf("OSController error importing into objectstorage : %v", err)
+		log.Error().Msgf("OSController error importing into objectstorage : %v", err)
 		return err
 	}
 
-	logrus.Info("Launch OSController MPut")
+	log.Info().Msgf("Launch OSController MPut")
 	if err := OSC.MPut(params.Directory); err != nil {
-		logrus.Error("MPut error importing into objectstorage")
-		logrus.Infof("params : %+v", params.TargetPoint)
+		log.Error().Msgf("MPut error importing into objectstorage")
+		log.Info().Msgf("params : %+v", params.TargetPoint)
 
 		return err
 	}
-	logrus.Infof("successfully imported : %s", params.Directory)
+	log.Info().Msgf("successfully imported : %s", params.Directory)
 	return nil
 }
 
 func ExportOSFunc(params *models.CommandTask) error {
 	var OSC *osc.OSController
 	var err error
-	logrus.Infof("User Information")
+	log.Info().Msgf("User Information")
 	OSC, err = GetOS(&params.TargetPoint)
 	if err != nil {
-		logrus.Errorf("OSController error importing into objectstorage : %v", err)
+		log.Error().Msgf("OSController error importing into objectstorage : %v", err)
 		return err
 	}
 
-	logrus.Info("Launch OSController MGet")
+	log.Info().Msgf("Launch OSController MGet")
 	if err := OSC.MGet(params.Directory); err != nil {
-		logrus.Errorf("MGet error exporting into objectstorage : %v", err)
+		log.Error().Msgf("MGet error exporting into objectstorage : %v", err)
 		return err
 	}
-	logrus.Infof("successfully exported : %s", params.Directory)
+	log.Info().Msgf("successfully exported : %s", params.Directory)
 	return nil
 }
 
@@ -66,44 +66,44 @@ func MigrationOSFunc(params *models.CommandTask) error {
 	var srcErr error
 	var dst *osc.OSController
 	var dstErr error
-	logrus.Infof("Source Information")
+	log.Info().Msgf("Source Information")
 	src, srcErr = GetOS(&params.TargetPoint)
 	if srcErr != nil {
-		logrus.Errorf("OSController error migration into objectstorage : %v", srcErr)
+		log.Error().Msgf("OSController error migration into objectstorage : %v", srcErr)
 		return srcErr
 	}
-	logrus.Infof("Target Information")
+	log.Info().Msgf("Target Information")
 	dst, dstErr = GetOS(&params.TargetPoint)
 	if dstErr != nil {
-		logrus.Errorf("OSController error migration into objectstorage : %v", dstErr)
+		log.Error().Msgf("OSController error migration into objectstorage : %v", dstErr)
 		return dstErr
 	}
 
-	logrus.Info("Launch OSController Copy")
+	log.Info().Msgf("Launch OSController Copy")
 	if err := src.Copy(dst); err != nil {
-		logrus.Errorf("Copy error copying into objectstorage : %v", err)
+		log.Error().Msgf("Copy error copying into objectstorage : %v", err)
 		return err
 	}
-	logrus.Info("successfully migrationed")
+	log.Info().Msgf("successfully migrationed")
 	return nil
 }
 
 func DeleteOSFunc(params *models.CommandTask) error {
 	var OSC *osc.OSController
 	var err error
-	logrus.Infof("User Information")
+	log.Info().Msgf("User Information")
 	OSC, err = GetOS(&params.TargetPoint)
 	if err != nil {
-		logrus.Errorf("OSController error importing into objectstorage : %v", err)
+		log.Error().Msgf("OSController error importing into objectstorage : %v", err)
 		return err
 	}
 
-	logrus.Info("Launch OSController Delete")
+	log.Info().Msgf("Launch OSController Delete")
 	if err := OSC.DeleteBucket(); err != nil {
-		logrus.Errorf("Delete error deleting into objectstorage : %v", err)
+		log.Error().Msgf("Delete error deleting into objectstorage : %v", err)
 		return err
 	}
-	logrus.Info("successfully deleted")
+	log.Info().Msgf("successfully deleted")
 
 	return nil
 }

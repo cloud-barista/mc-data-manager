@@ -39,7 +39,7 @@ func MainGetHandler(ctx echo.Context) error {
 func GenerateLinuxGetHandler(ctx echo.Context) error {
 
 	logger := getLogger("genlinux")
-	logger.Info("genlinux get page accessed")
+	logger.Info().Msg("genlinux get page accessed")
 
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Generate-Linux",
@@ -53,7 +53,7 @@ func GenerateWindowsGetHandler(ctx echo.Context) error {
 	// tmpPath := filepath.Join(os.TempDir(), "dummy")
 
 	logger := getLogger("genwindows")
-	logger.Info("genwindows get page accessed")
+	logger.Info().Msg("genwindows get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Generate-Windows",
 		OS:      runtime.GOOS,
@@ -64,7 +64,7 @@ func GenerateWindowsGetHandler(ctx echo.Context) error {
 func GenerateS3GetHandler(ctx echo.Context) error {
 
 	logger := getLogger("genS3")
-	logger.Info("genS3 get page accessed")
+	logger.Info().Msg("genS3 get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Generate-S3",
 		OS:      runtime.GOOS,
@@ -75,7 +75,7 @@ func GenerateS3GetHandler(ctx echo.Context) error {
 
 func GenerateGCPGetHandler(ctx echo.Context) error {
 	logger := getLogger("genGCP")
-	logger.Info("genGCP get page accessed")
+	logger.Info().Msg("genGCP get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Generate-GCP",
 		OS:      runtime.GOOS,
@@ -87,7 +87,7 @@ func GenerateGCPGetHandler(ctx echo.Context) error {
 func GenerateNCPGetHandler(ctx echo.Context) error {
 
 	logger := getLogger("genNCP")
-	logger.Info("genNCP get page accessed")
+	logger.Info().Msg("genNCP get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Generate-NCP",
 		OS:      runtime.GOOS,
@@ -99,7 +99,7 @@ func GenerateNCPGetHandler(ctx echo.Context) error {
 func GenerateMySQLGetHandler(ctx echo.Context) error {
 
 	logger := getLogger("genmysql")
-	logger.Info("genmysql get page accessed")
+	logger.Info().Msg("genmysql get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Generate-MySQL",
 		OS:      runtime.GOOS,
@@ -109,7 +109,7 @@ func GenerateMySQLGetHandler(ctx echo.Context) error {
 
 func GenerateDynamoDBGetHandler(ctx echo.Context) error {
 	logger := getLogger("gendynamodb")
-	logger.Info("gendynamodb get page accessed")
+	logger.Info().Msg("gendynamodb get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Generate-DynamoDB",
 		OS:      runtime.GOOS,
@@ -120,7 +120,7 @@ func GenerateDynamoDBGetHandler(ctx echo.Context) error {
 
 func GenerateFirestoreGetHandler(ctx echo.Context) error {
 	logger := getLogger("genfirestore")
-	logger.Info("genfirestore get page accessed")
+	logger.Info().Msg("genfirestore get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Generate-Firestore",
 		OS:      runtime.GOOS,
@@ -131,7 +131,7 @@ func GenerateFirestoreGetHandler(ctx echo.Context) error {
 
 func GenerateMongoDBGetHandler(ctx echo.Context) error {
 	logger := getLogger("genfirestore")
-	logger.Info("genmongodb get page accessed")
+	logger.Info().Msg("genmongodb get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Generate-MongoDB",
 		OS:      runtime.GOOS,
@@ -145,7 +145,7 @@ func GenerateMongoDBGetHandler(ctx echo.Context) error {
 
 func BackupHandler(ctx echo.Context) error {
 	logger := getLogger("backup")
-	logger.Info("backup get page accessed")
+	logger.Info().Msg("backup get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Backup",
 		Regions: GetAWSRegions(),
@@ -161,7 +161,7 @@ func BackupHandler(ctx echo.Context) error {
 
 func MigrationLinuxToS3GetHandler(ctx echo.Context) error {
 	logger := getLogger("miglins3")
-	logger.Info("miglinux get page accessed")
+	logger.Info().Msg("miglinux get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-Linux-S3",
 		Regions: GetAWSRegions(),
@@ -172,7 +172,7 @@ func MigrationLinuxToS3GetHandler(ctx echo.Context) error {
 
 func MigrationLinuxToGCPGetHandler(ctx echo.Context) error {
 	logger := getLogger("miglingcp")
-	logger.Info("miglingcp get page accessed")
+	logger.Info().Msg("miglingcp get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-Linux-GCP",
 		Regions: GetGCPRegions(),
@@ -184,7 +184,7 @@ func MigrationLinuxToGCPGetHandler(ctx echo.Context) error {
 func MigrationLinuxToNCPGetHandler(ctx echo.Context) error {
 
 	logger := getLogger("miglinncp")
-	logger.Info("miglinncp get page accessed")
+	logger.Info().Msg("miglinncp get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-Linux-NCP",
 		Regions: GetNCPRegions(),
@@ -198,7 +198,7 @@ func MigrationLinuxToNCPGetHandler(ctx echo.Context) error {
 func MigrationWindowsToS3GetHandler(ctx echo.Context) error {
 	tmpPath := filepath.Join(os.TempDir(), "dummy")
 	logger := getLogger("migwins3")
-	logger.Info("migwins3 get page accessed")
+	logger.Info().Msg("migwins3 get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-Windows-S3",
 		Regions: GetAWSRegions(),
@@ -212,7 +212,7 @@ func MigrationWindowsToS3GetHandler(ctx echo.Context) error {
 func MigrationWindowsToGCPGetHandler(ctx echo.Context) error {
 	tmpPath := filepath.Join(os.TempDir(), "dummy")
 	logger := getLogger("migwingcp")
-	logger.Info("migwingcp get page accessed")
+	logger.Info().Msg("migwingcp get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-Windows-GCP",
 		Regions: GetGCPRegions(),
@@ -226,7 +226,7 @@ func MigrationWindowsToNCPGetHandler(ctx echo.Context) error {
 	tmpPath := filepath.Join(os.TempDir(), "dummy")
 
 	logger := getLogger("migwinncp")
-	logger.Info("migwinncp get page accessed")
+	logger.Info().Msg("migwinncp get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-Windows-NCP",
 		Regions: GetNCPRegions(),
@@ -241,7 +241,7 @@ func MigrationWindowsToNCPGetHandler(ctx echo.Context) error {
 func MigrationMySQLGetHandler(ctx echo.Context) error {
 
 	logger := getLogger("migmysql")
-	logger.Info("migmysql get page accessed")
+	logger.Info().Msg("migmysql get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-MySQL",
 		Error:   nil,
@@ -255,7 +255,7 @@ func MigrationMySQLGetHandler(ctx echo.Context) error {
 func MigrationS3ToLinuxGetHandler(ctx echo.Context) error {
 
 	logger := getLogger("migs3lin")
-	logger.Info("migs3lin get page accessed")
+	logger.Info().Msg("migs3lin get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-S3-Linux",
 		Regions: GetAWSRegions(),
@@ -268,7 +268,7 @@ func MigrationS3ToWindowsGetHandler(ctx echo.Context) error {
 	tmpPath := filepath.Join(os.TempDir(), "dummy")
 
 	logger := getLogger("migs3win")
-	logger.Info("migs3win get page accessed")
+	logger.Info().Msg("migs3win get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-S3-Windows",
 		Regions: GetAWSRegions(),
@@ -281,7 +281,7 @@ func MigrationS3ToWindowsGetHandler(ctx echo.Context) error {
 func MigrationS3ToGCPGetHandler(ctx echo.Context) error {
 
 	logger := getLogger("migs3gcp")
-	logger.Info("migs3gcp get page accessed")
+	logger.Info().Msg("migs3gcp get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content:    "Migration-S3-GCP",
 		AWSRegions: GetAWSRegions(),
@@ -294,7 +294,7 @@ func MigrationS3ToGCPGetHandler(ctx echo.Context) error {
 func MigrationS3ToNCPGetHandler(ctx echo.Context) error {
 
 	logger := getLogger("migs3ncp")
-	logger.Info("migs3ncp get page accessed")
+	logger.Info().Msg("migs3ncp get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content:    "Migration-S3-NCP",
 		AWSRegions: GetAWSRegions(),
@@ -310,7 +310,7 @@ func MigrationS3ToNCPGetHandler(ctx echo.Context) error {
 func MigrationGCPToLinuxGetHandler(ctx echo.Context) error {
 
 	logger := getLogger("miggcplin")
-	logger.Info("miggcplin get page accessed")
+	logger.Info().Msg("miggcplin get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-GCP-Linux",
 		OS:      runtime.GOOS,
@@ -323,7 +323,7 @@ func MigrationGCPToWindowsGetHandler(ctx echo.Context) error {
 	tmpPath := filepath.Join(os.TempDir(), "dummy")
 
 	logger := getLogger("miggcpwin")
-	logger.Info("miggcpwin get page accessed")
+	logger.Info().Msg("miggcpwin get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-GCP-Windows",
 		OS:      runtime.GOOS,
@@ -347,7 +347,7 @@ func MigrationGCPToS3GetHandler(ctx echo.Context) error {
 func MigrationGCPToNCPGetHandler(ctx echo.Context) error {
 
 	logger := getLogger("miggcpncp")
-	logger.Info("miggcpncp get page accessed")
+	logger.Info().Msg("miggcpncp get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content:    "Migration-GCP-NCP",
 		OS:         runtime.GOOS,
@@ -363,7 +363,7 @@ func MigrationGCPToNCPGetHandler(ctx echo.Context) error {
 func MigrationNCPToLinuxGetHandler(ctx echo.Context) error {
 
 	logger := getLogger("migncplin")
-	logger.Info("migncplin get page accessed")
+	logger.Info().Msg("migncplin get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-NCP-Linux",
 		Regions: GetNCPRegions(),
@@ -376,7 +376,7 @@ func MigrationNCPToWindowsGetHandler(ctx echo.Context) error {
 	tmpPath := filepath.Join(os.TempDir(), "dummy")
 
 	logger := getLogger("migncpwin")
-	logger.Info("migncpwin get page accessed")
+	logger.Info().Msg("migncpwin get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-NCP-Windows",
 		Regions: GetNCPRegions(),
@@ -389,7 +389,7 @@ func MigrationNCPToWindowsGetHandler(ctx echo.Context) error {
 func MigrationNCPToS3GetHandler(ctx echo.Context) error {
 
 	logger := getLogger("migncps3")
-	logger.Info("migncps3 get page accessed")
+	logger.Info().Msg("migncps3 get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content:    "Migration-NCP-S3",
 		NCPRegions: GetNCPRegions(),
@@ -402,7 +402,7 @@ func MigrationNCPToS3GetHandler(ctx echo.Context) error {
 func MigrationNCPToGCPGetHandler(ctx echo.Context) error {
 
 	logger := getLogger("migncpgcp")
-	logger.Info("migncpgcp get page accessed")
+	logger.Info().Msg("migncpgcp get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content:    "Migration-NCP-GCP",
 		NCPRegions: GetNCPRegions(),
@@ -418,7 +418,7 @@ func MigrationNCPToGCPGetHandler(ctx echo.Context) error {
 func MigrationDynamoDBToFirestoreGetHandler(ctx echo.Context) error {
 
 	logger := getLogger("migDNFS")
-	logger.Info("migDNFS get page accessed")
+	logger.Info().Msg("migDNFS get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content:    "Migration-DynamoDB-Firestore",
 		AWSRegions: GetAWSRegions(),
@@ -431,7 +431,7 @@ func MigrationDynamoDBToFirestoreGetHandler(ctx echo.Context) error {
 func MigrationDynamoDBToMongoDBGetHandler(ctx echo.Context) error {
 
 	logger := getLogger("migDNMG")
-	logger.Info("migDNMG get page accessed")
+	logger.Info().Msg("migDNMG get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-DynamoDB-MongoDB",
 		Regions: GetAWSRegions(),
@@ -446,7 +446,7 @@ func MigrationDynamoDBToMongoDBGetHandler(ctx echo.Context) error {
 func MigrationFirestoreToDynamoDBGetHandler(ctx echo.Context) error {
 
 	logger := getLogger("migFSDN")
-	logger.Info("migFSDN get page accessed")
+	logger.Info().Msg("migFSDN get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content:    "Migration-Firestore-DynamoDB",
 		AWSRegions: GetAWSRegions(),
@@ -459,7 +459,7 @@ func MigrationFirestoreToDynamoDBGetHandler(ctx echo.Context) error {
 func MigrationFirestoreToMongoDBGetHandler(ctx echo.Context) error {
 
 	logger := getLogger("migFSMG")
-	logger.Info("migFSMG get page accessed")
+	logger.Info().Msg("migFSMG get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-Firestore-MongoDB",
 		Regions: GetGCPRegions(),
@@ -474,7 +474,7 @@ func MigrationFirestoreToMongoDBGetHandler(ctx echo.Context) error {
 func MigrationMongoDBToDynamoDBGetHandler(ctx echo.Context) error {
 
 	logger := getLogger("migMGDN")
-	logger.Info("migMGDN get page accessed")
+	logger.Info().Msg("migMGDN get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-MongoDB-DynamoDB",
 		Regions: GetAWSRegions(),
@@ -486,7 +486,7 @@ func MigrationMongoDBToDynamoDBGetHandler(ctx echo.Context) error {
 func MigrationMongoDBToFirestoreGetHandler(ctx echo.Context) error {
 
 	logger := getLogger("migMGFS")
-	logger.Info("migMGFS get page accessed")
+	logger.Info().Msg("migMGFS get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-MongoDB-Firestore",
 		Regions: GetGCPRegions(),

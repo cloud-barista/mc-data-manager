@@ -27,7 +27,6 @@ import (
 	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/service/nrdbc"
 	"github.com/labstack/echo/v4"
-	"github.com/sirupsen/logrus"
 )
 
 // BackupOSPostHandler godoc
@@ -60,7 +59,7 @@ func BackupOSPostHandler(ctx echo.Context) error {
 	case string(models.GCP):
 		return MigrationGCPToLinuxPostHandler(ctx)
 	default:
-		logger.Errorf("Unsupported provider: %v", params.SourcePoint.Provider)
+		logger.Error().Str("provider", params.SourcePoint.Provider).Msg("Unsupported provider")
 		errorMsg := fmt.Sprintf("unsupported provider: %v", params.SourcePoint.Provider)
 		return ctx.JSON(http.StatusBadRequest, models.BasicResponse{
 			Result: logstrings.String(),
@@ -69,7 +68,7 @@ func BackupOSPostHandler(ctx echo.Context) error {
 	}
 }
 
-// BackupMySQLPostHandler godoc
+// BackupRDBPostHandler godoc
 //
 //	@Summary		Export data from MySQL
 //	@Description	Export data from a MySQL database to SQL files.
@@ -145,7 +144,7 @@ func BackupRDBPostHandler(ctx echo.Context) error {
 				Error:  nil,
 			})
 		}
-		logrus.Infof("successfully exported : %s", file.Name())
+		logger.Info().Str("file", file.Name()).Msg("Successfully exported")
 		file.Close()
 	}
 
@@ -157,7 +156,7 @@ func BackupRDBPostHandler(ctx echo.Context) error {
 
 }
 
-// BackupMySQLPostHandler godoc
+// BackupNRDBPostHandler godoc
 //
 //	@Summary		Export data from MySQL
 //	@Description	Export data from a MySQL database to SQL files.
@@ -210,17 +209,17 @@ func BackupNRDBPostHandler(ctx echo.Context) error {
 
 	var dstData []map[string]interface{}
 	for _, table := range tableList {
-		logrus.Infof("Export start: %s", table)
+		logger.Info().Str("table", table).Msg("Export start")
 		dstData = []map[string]interface{}{}
 
 		if err := NRDBC.Get(table, &dstData); err != nil {
-			logrus.Errorf("Get error : %v", err)
+			logger.Error().Err(err).Msg("Get error")
 			return err
 		}
 
 		file, err := os.Create(filepath.Join(params.TargetPoint.Path, fmt.Sprintf("%s.json", table)))
 		if err != nil {
-			logrus.Errorf("File create error : %v", err)
+			logger.Error().Err(err).Msg("File create error")
 			return err
 		}
 		defer file.Close()
@@ -228,13 +227,13 @@ func BackupNRDBPostHandler(ctx echo.Context) error {
 		encoder := json.NewEncoder(file)
 		encoder.SetIndent("", "    ")
 		if err := encoder.Encode(dstData); err != nil {
-			logrus.Errorf("data encoding error : %v", err)
+			logger.Error().Err(err).Msg("Data encoding error")
 			return err
 		}
-		logrus.Infof("successfully exported : %s", file.Name())
+		logger.Info().Str("file", file.Name()).Msg("Successfully exported")
 	}
 
-	jobEnd(logger, "Successfully exported data from mysql", start)
+	jobEnd(logger, "Successfully exported data from NRDB", start)
 	return ctx.JSON(http.StatusOK, models.BasicResponse{
 		Result: logstrings.String(),
 		Error:  nil,

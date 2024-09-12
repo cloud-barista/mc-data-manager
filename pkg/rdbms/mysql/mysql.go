@@ -22,9 +22,9 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/cloud-barista/mc-data-manager/internal/log"
 	"github.com/cloud-barista/mc-data-manager/models"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/rs/zerolog/log"
 )
 
 // mysqlDBMS struct
@@ -72,8 +72,9 @@ func (d *MysqlDBMS) Exec(query string) error {
 
 	_, err := d.db.Exec(query)
 	if err != nil {
-		log.Error(query)
+		log.Error().Err(err).Str("query", query).Msg("Failed to execute SQL query")
 	}
+	log.Info().Str("query", query).Msg("SQL query executed successfully")
 	return err
 }
 
