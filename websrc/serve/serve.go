@@ -25,7 +25,9 @@ import (
 
 	"github.com/cloud-barista/mc-data-manager/service/task"
 	"github.com/cloud-barista/mc-data-manager/websrc/controllers"
+	"github.com/cloud-barista/mc-data-manager/websrc/middlewares"
 	"github.com/cloud-barista/mc-data-manager/websrc/routes"
+	"github.com/rs/zerolog/log"
 
 	// REST API (echo)
 	"github.com/labstack/echo/v4"
@@ -108,15 +110,17 @@ func TrustedProxiesMiddleware(trustedProxies []string) echo.MiddlewareFunc {
 func InitServer(port string, addIP ...string) *echo.Echo {
 	e := echo.New()
 
-	// Middleware
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
-
 	e.HideBanner = true
 
 	allowIP := []string{"127.0.0.1", "::1"}
 	allowIP = append(allowIP, addIP...)
+
+	// Middleware
 	e.Use(TrustedProxiesMiddleware(allowIP))
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+	// Custom middleware for tracing
+	e.Use(middlewares.TracingMiddleware)
 
 	e.Static("/res", "./web")
 	e.File("/favicon.ico", "./web/assets/favicon.ico")
@@ -152,13 +156,13 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 	website := " http://" + selfEndpoint
 	apidashboard := " http://" + selfEndpoint + "/swagger/index.html"
 
-	fmt.Println("Data Manager Web UI is available at")
-	fmt.Printf(noticeColor, website)
-	fmt.Println("\n ")
+	log.Info().Msgf("Data Manager Web UI is available at")
+	log.Info().Msgf(noticeColor, website)
+	log.Info().Msgf("\n ")
 
-	fmt.Println("Swagger UI (REST API Document) is available at")
-	fmt.Printf(noticeColor, apidashboard)
-	fmt.Println("\n ")
+	log.Info().Msgf("Swagger UI (REST API Document) is available at")
+	log.Info().Msgf(noticeColor, apidashboard)
+	log.Info().Msgf("\n ")
 
 	return e
 }

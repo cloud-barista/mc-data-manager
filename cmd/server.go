@@ -16,9 +16,6 @@ limitations under the License.
 package cmd
 
 import (
-	log "github.com/cloud-barista/mc-data-manager/internal/zerolog"
-	"github.com/rs/zerolog"
-
 	dmsv "github.com/cloud-barista/mc-data-manager/websrc/serve"
 	"github.com/spf13/cobra"
 )
@@ -32,7 +29,6 @@ var serverCmd = &cobra.Command{
 	Short: "Start Web Server",
 	Long:  `Start Web Server`,
 	Run: func(cmd *cobra.Command, args []string) {
-		log.GetInstance().NewLogEntry().WithCmdName("server").WithJobName("web Server").WithLevel(zerolog.InfoLevel).WithMessage("Start Web Server")
 		dmsv.Run(dmsv.InitServer(listenPort, allowIP...), listenPort)
 	},
 }

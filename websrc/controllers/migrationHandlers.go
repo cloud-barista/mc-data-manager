@@ -407,10 +407,6 @@ func MigrationMySQLPostHandler(ctx echo.Context) error {
 	}
 
 	if err := srdbc.Copy(trdbc); err != nil {
-		end := time.Now()
-		logger.Errorf("RDBController copy failed : %v", err)
-		logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(start).String())
 		return ctx.JSON(http.StatusOK, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,

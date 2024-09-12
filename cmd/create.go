@@ -17,8 +17,7 @@ package cmd
 
 import (
 	"github.com/cloud-barista/mc-data-manager/internal/execfunc"
-	"github.com/cloud-barista/mc-data-manager/internal/log"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
@@ -36,9 +35,8 @@ Semi-structured data: json, xml
 
 You must enter the data size in GB.`,
 	Run: func(_ *cobra.Command, _ []string) {
-		logrus.SetFormatter(&log.CustomTextFormatter{CmdName: "create", JobName: "dummy create"})
 		if err := execfunc.DummyCreate(commandTask); err != nil {
-			logrus.Errorf("dummy create failed : %v", err)
+			log.Error().Str("CmdName", "create").Str("JobName", "dummy create").Msgf("dummy create failed : %v", err)
 		}
 	},
 }

@@ -21,111 +21,111 @@ import (
 	"github.com/cloud-barista/mc-data-manager/pkg/dummy/semistructured"
 	"github.com/cloud-barista/mc-data-manager/pkg/dummy/structured"
 	"github.com/cloud-barista/mc-data-manager/pkg/dummy/unstructured"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cast"
-
-	"github.com/sirupsen/logrus"
 )
 
-func genData(params GenFileParams, logger *logrus.Logger) error {
-	logger.Info("Let's getnetate")
+func genData(params GenFileParams, logger *zerolog.Logger) error {
+	logger.Info().Msg("Let's generate")
 
 	if params.CheckSQL {
-		logger.Info("Start creating sql dummy")
+		logger.Info().Msg("Start creating SQL dummy")
 		sql, _ := strconv.Atoi(params.SizeSQL)
 		if err := structured.GenerateRandomSQL(params.DummyPath, sql); err != nil {
-			logger.Info("Failed to create sql dummy")
+			logger.Error().Err(err).Msg("Failed to create SQL dummy")
 			return err
 		}
-		logger.Info("Successfully generated sql dummy")
+		logger.Info().Msg("Successfully generated SQL dummy")
 	}
+
 	if cast.ToBool(params.CheckCSV) {
-		logger.Info("Start creating csv dummy")
+		logger.Info().Msg("Start creating CSV dummy")
 		csv, _ := strconv.Atoi(params.SizeCSV)
 		if err := structured.GenerateRandomCSV(params.DummyPath, csv); err != nil {
-			logger.Info("Failed to create csv dummy")
+			logger.Error().Err(err).Msg("Failed to create CSV dummy")
 			return err
 		}
-		logger.Info("Successfully generated csv dummy")
+		logger.Info().Msg("Successfully generated CSV dummy")
 	}
 
 	if params.CheckTXT {
-		logger.Info("Start creating txt dummy")
+		logger.Info().Msg("Start creating TXT dummy")
 		txt, _ := strconv.Atoi(params.SizeTXT)
 		if err := unstructured.GenerateRandomTXT(params.DummyPath, txt); err != nil {
-			logger.Info("Failed to create txt dummy")
+			logger.Error().Err(err).Msg("Failed to create TXT dummy")
 			return err
 		}
-		logger.Info("Successfully generated txt dummy")
+		logger.Info().Msg("Successfully generated TXT dummy")
 	}
 
 	if params.CheckPNG {
-		logger.Info("Start creating png dummy")
+		logger.Info().Msg("Start creating PNG dummy")
 		png, _ := strconv.Atoi(params.SizePNG)
 		if err := unstructured.GenerateRandomPNGImage(params.DummyPath, png); err != nil {
-			logger.Info("Failed to create png dummy")
+			logger.Error().Err(err).Msg("Failed to create PNG dummy")
 			return err
 		}
-		logger.Info("Successfully generated png dummy")
+		logger.Info().Msg("Successfully generated PNG dummy")
 	}
 
 	if params.CheckGIF {
-		logger.Info("Start creating gif dummy")
+		logger.Info().Msg("Start creating GIF dummy")
 		gif, _ := strconv.Atoi(params.SizeGIF)
 		if err := unstructured.GenerateRandomGIF(params.DummyPath, gif); err != nil {
-			logger.Info("Failed to create gif dummy")
+			logger.Error().Err(err).Msg("Failed to create GIF dummy")
 			return err
 		}
-		logger.Info("Successfully generated gif dummy")
+		logger.Info().Msg("Successfully generated GIF dummy")
 	}
 
 	if params.CheckZIP {
-		logger.Info("Start creating a pile of zip files that compressed txt")
+		logger.Info().Msg("Start creating a pile of ZIP files that compress TXT")
 		zip, _ := strconv.Atoi(params.SizeZIP)
 		if err := unstructured.GenerateRandomZIP(params.DummyPath, zip); err != nil {
-			logger.Info("Failed to create zip file dummy compressed txt")
+			logger.Error().Err(err).Msg("Failed to create ZIP file dummy compressed TXT")
 			return err
 		}
-		logger.Info("Successfully created zip file dummy compressed txt")
+		logger.Info().Msg("Successfully created ZIP file dummy compressed TXT")
 	}
 
 	if params.CheckJSON {
-		logger.Info("Start creating json dummy")
+		logger.Info().Msg("Start creating JSON dummy")
 		json, _ := strconv.Atoi(params.SizeJSON)
 		if err := semistructured.GenerateRandomJSON(params.DummyPath, json); err != nil {
-			logger.Info("Failed to create json dummy")
+			logger.Error().Err(err).Msg("Failed to create JSON dummy")
 			return err
 		}
-		logger.Info("Successfully generated json dummy")
+		logger.Info().Msg("Successfully generated JSON dummy")
 	}
 
 	if params.CheckXML {
-		logger.Info("Start creating xml dummy")
+		logger.Info().Msg("Start creating XML dummy")
 		xml, _ := strconv.Atoi(params.SizeXML)
 		if err := semistructured.GenerateRandomXML(params.DummyPath, xml); err != nil {
-			logger.Info("Failed to create xml dummy")
+			logger.Error().Err(err).Msg("Failed to create XML dummy")
 			return err
 		}
-		logger.Info("Successfully generated xml dummy")
+		logger.Info().Msg("Successfully generated XML dummy")
 	}
 
 	if params.CheckServerJSON {
-		logger.Info("Start creating json dummy")
+		logger.Info().Msg("Start creating JSON dummy")
 		json, _ := strconv.Atoi(params.SizeServerJSON)
 		if err := semistructured.GenerateRandomJSONWithServer(params.DummyPath, json); err != nil {
-			logger.Info("Failed to create json dummy")
+			logger.Error().Err(err).Msg("Failed to create JSON dummy")
 			return err
 		}
-		logger.Info("Successfully generated json dummy")
+		logger.Info().Msg("Successfully generated JSON dummy")
 	}
 
 	if params.CheckServerSQL {
-		logger.Info("Start creating sql dummy")
+		logger.Info().Msg("Start creating SQL dummy")
 		sql, _ := strconv.Atoi(params.SizeServerSQL)
 		if err := structured.GenerateRandomSQLWithServer(params.DummyPath, sql); err != nil {
-			logger.Info("Failed to create sql dummy")
+			logger.Error().Err(err).Msg("Failed to create SQL dummy")
 			return err
 		}
-		logger.Info("Successfully generated sql dummy")
+		logger.Info().Msg("Successfully generated SQL dummy")
 	}
 
 	return nil

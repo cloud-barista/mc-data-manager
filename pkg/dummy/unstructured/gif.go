@@ -29,7 +29,7 @@ import (
 	"time"
 
 	"github.com/cloud-barista/mc-data-manager/pkg/utils"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 // GIF generation function using gofakeit
@@ -39,23 +39,23 @@ import (
 func GenerateRandomGIF(dummyDir string, capacitySize int) error {
 	dummyDir = filepath.Join(dummyDir, "gif")
 	if err := utils.IsDir(dummyDir); err != nil {
-		logrus.Errorf("IsDir function error : %v", err)
+		log.Error().Msgf("IsDir function error : %v", err)
 		return err
 	}
 
 	tempPath := filepath.Join(dummyDir, "tmpImg")
 	if err := os.MkdirAll(tempPath, 0755); err != nil {
-		logrus.Errorf("MkdirAll function error : %v", err)
+		log.Error().Msgf("MkdirAll function error : %v", err)
 		return err
 	}
 	defer os.RemoveAll(tempPath)
 
-	logrus.Info("start png generation")
+	log.Info().Msgf("start png generation")
 	if err := GenerateRandomPNGImage(tempPath, 1); err != nil {
-		logrus.Error("failed to generate png")
+		log.Error().Msgf("failed to generate png")
 		return err
 	}
-	logrus.Info("successfully generated png")
+	log.Info().Msgf("successfully generated png")
 
 	var files []string
 	size := capacitySize * 34 * 10
@@ -73,7 +73,7 @@ func GenerateRandomGIF(dummyDir string, capacitySize int) error {
 	})
 
 	if err != nil {
-		logrus.Errorf("Walk function error : %v", err)
+		log.Error().Msgf("Walk function error : %v", err)
 		return err
 	}
 
@@ -81,14 +81,14 @@ func GenerateRandomGIF(dummyDir string, capacitySize int) error {
 	for _, imgName := range files {
 		imgFile, err := os.Open(imgName)
 		if err != nil {
-			logrus.Errorf("file open error : %v", err)
+			log.Error().Msgf("file open error : %v", err)
 			return err
 		}
 		defer imgFile.Close()
 
 		img, err := png.Decode(imgFile)
 		if err != nil {
-			logrus.Errorf("file decoding error : %v", err)
+			log.Error().Msgf("file decoding error : %v", err)
 			return err
 		}
 		imgList = append(imgList, img)
@@ -118,7 +118,7 @@ func GenerateRandomGIF(dummyDir string, capacitySize int) error {
 
 	for err := range resultChan {
 		if err != nil {
-			logrus.Errorf("result error : %v", err)
+			log.Error().Msgf("result error : %v", err)
 			return err
 		}
 	}
@@ -158,7 +158,7 @@ func randomGIFWorker(imgList []image.Image, countNum chan int, tmpDir string, re
 
 		err = gif.EncodeAll(gifFile, gifImage)
 		if err == nil {
-			logrus.Infof("Creation success: %v", gifFile.Name())
+			log.Info().Msgf("Creation success: %v", gifFile.Name())
 		}
 
 		if cerr := gifFile.Close(); cerr != nil {

@@ -25,18 +25,17 @@ import (
 
 // MigrationGCPToLinuxPostHandler godoc
 //
-//	@Summary		Migrate data from GCP to Linux
-//	@Description	Migrate data stored in GCP Cloud Storage to a Linux-based system.
-//	@Tags			[Data Migration]
-//	@Accept			json
-//	@Produce		json
-//	@Param			RequestBody		body	MigrateTask	true	"Parameters required for migration"
-//	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
-//	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
-//	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/migration/gcp/linux [post]
+//	@Summary        Migrate data from GCP to Linux
+//	@Description    Migrate data stored in GCP Cloud Storage to a Linux-based system.
+//	@Tags            [Data Migration]
+//	@Accept            json
+//	@Produce        json
+//	@Param            RequestBody        body    MigrateTask    true    "Parameters required for migration"
+//	@Success        200            {object}    models.BasicResponse    "Successfully migrated data"
+//	@Failure        400            {object}    models.BasicResponse    "Invalid Request"
+//	@Failure        500            {object}    models.BasicResponse    "Internal Server Error"
+//	@Router            /migration/gcp/linux [post]
 func MigrationGCPToLinuxPostHandler(ctx echo.Context) error {
-
 	start := time.Now()
 
 	logger, logstrings := pageLogInit("miggcplin", "Export gcp data to windows", start)
@@ -81,18 +80,17 @@ func MigrationGCPToLinuxPostHandler(ctx echo.Context) error {
 
 // MigrationGCPToWindowsPostHandler godoc
 //
-//	@Summary		Migrate data from GCP to Windows
-//	@Description	Migrate data stored in GCP Cloud Storage to a Windows-based system.
-//	@Tags			[Data Migration]
-//	@Accept			json
-//	@Produce		json
-//	@Param			RequestBody		body	MigrateTask	true	"Parameters required for migration"
-//	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
-//	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
-//	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/migration/gcp/windows [post]
+//	@Summary        Migrate data from GCP to Windows
+//	@Description    Migrate data stored in GCP Cloud Storage to a Windows-based system.
+//	@Tags            [Data Migration]
+//	@Accept            json
+//	@Produce        json
+//	@Param            RequestBody        body    MigrateTask    true    "Parameters required for migration"
+//	@Success        200            {object}    models.BasicResponse    "Successfully migrated data"
+//	@Failure        400            {object}    models.BasicResponse    "Invalid Request"
+//	@Failure        500            {object}    models.BasicResponse    "Internal Server Error"
+//	@Router            /migration/gcp/windows [post]
 func MigrationGCPToWindowsPostHandler(ctx echo.Context) error {
-
 	start := time.Now()
 
 	logger, logstrings := pageLogInit("miggcpwin", "Export gcp data to windows", start)
@@ -137,17 +135,16 @@ func MigrationGCPToWindowsPostHandler(ctx echo.Context) error {
 
 // MigrationGCPToS3PostHandler godoc
 //
-//	@Summary		Migrate data from GCP to AWS S3
-//	@Description	Migrate data stored in GCP Cloud Storage to AWS S3.
-//	@Tags			[Data Migration], [Object Storage]
-//	@Accept			json
-//	@Produce		json
-//	@Param			RequestBody		body	MigrateTask	true	"Parameters required for migration"
-//	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
-//	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/migration/gcp/aws [post]
+//	@Summary        Migrate data from GCP to AWS S3
+//	@Description    Migrate data stored in GCP Cloud Storage to AWS S3.
+//	@Tags            [Data Migration], [Object Storage]
+//	@Accept            json
+//	@Produce        json
+//	@Param            RequestBody        body    MigrateTask    true    "Parameters required for migration"
+//	@Success        200            {object}    models.BasicResponse    "Successfully migrated data"
+//	@Failure        500            {object}    models.BasicResponse    "Internal Server Error"
+//	@Router            /migration/gcp/aws [post]
 func MigrationGCPToS3PostHandler(ctx echo.Context) error {
-
 	start := time.Now()
 
 	logger, logstrings := pageLogInit("genlinux", "Export gcp data to s3", start)
@@ -176,12 +173,12 @@ func MigrationGCPToS3PostHandler(ctx echo.Context) error {
 		})
 	}
 
-	logger.Infof("Start migration of GCP Cloud Storage to AWS S3")
+	logger.Info().Msg("Start migration of GCP Cloud Storage to AWS S3")
 	if err := gcpOSC.Copy(awsOSC); err != nil {
 		end := time.Now()
-		logger.Errorf("OSController migration failed : %v", err)
-		logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(start).String())
+		logger.Error().Err(err).Msg("OSController migration failed")
+		logger.Info().Str("End time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(start).String()).Msg("")
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -198,17 +195,16 @@ func MigrationGCPToS3PostHandler(ctx echo.Context) error {
 
 // MigrationGCPToNCPPostHandler godoc
 //
-//	@Summary		Migrate data from GCP to NCP Object Storage
-//	@Description	Migrate data stored in GCP Cloud Storage to NCP Object Storage.
-//	@Tags			[Data Migration], [Object Storage]
-//	@Accept			json
-//	@Produce		json
-//	@Param			RequestBody		body	MigrateTask	true	"Parameters required for migration"
-//	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
-//	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/migration/gcp/ncp [post]
+//	@Summary        Migrate data from GCP to NCP Object Storage
+//	@Description    Migrate data stored in GCP Cloud Storage to NCP Object Storage.
+//	@Tags            [Data Migration], [Object Storage]
+//	@Accept            json
+//	@Produce        json
+//	@Param            RequestBody        body    MigrateTask    true    "Parameters required for migration"
+//	@Success        200            {object}    models.BasicResponse    "Successfully migrated data"
+//	@Failure        500            {object}    models.BasicResponse    "Internal Server Error"
+//	@Router            /migration/gcp/ncp [post]
 func MigrationGCPToNCPPostHandler(ctx echo.Context) error {
-
 	start := time.Now()
 
 	logger, logstrings := pageLogInit("miggcpncp", "Export gcp data to ncp objectstorage", start)
@@ -237,12 +233,12 @@ func MigrationGCPToNCPPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	logger.Infof("Start migration of GCP Cloud Storage to NCP Object Storage")
+	logger.Info().Msg("Start migration of GCP Cloud Storage to NCP Object Storage")
 	if err := gcpOSC.Copy(ncpOSC); err != nil {
 		end := time.Now()
-		logger.Errorf("OSController migration failed : %v", err)
-		logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(start).String())
+		logger.Error().Err(err).Msg("OSController migration failed")
+		logger.Info().Str("End time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(start).String()).Msg("")
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,

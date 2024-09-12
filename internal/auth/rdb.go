@@ -23,16 +23,16 @@ import (
 
 	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/service/rdbc"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 func ImportRDMFunc(datamoldParams *models.CommandTask) error {
 	var RDBC *rdbc.RDBController
 	var err error
-	logrus.Infof("User Information")
+	log.Info().Msgf("User Information")
 	RDBC, err = GetRDMS(&datamoldParams.TargetPoint)
 	if err != nil {
-		logrus.Errorf("RDBController error importing into rdbms : %v", err)
+		log.Error().Msgf("RDBController error importing into rdbms : %v", err)
 		return err
 	}
 
@@ -47,74 +47,74 @@ func ImportRDMFunc(datamoldParams *models.CommandTask) error {
 		return nil
 	})
 	if err != nil {
-		logrus.Errorf("Walk error : %v", err)
+		log.Error().Msgf("Walk error : %v", err)
 		return err
 	}
 
 	for _, sqlPath := range sqlList {
 		data, err := os.ReadFile(sqlPath)
 		if err != nil {
-			logrus.Errorf("ReadFile error : %v", err)
+			log.Error().Msgf("ReadFile error : %v", err)
 			return err
 		}
-		logrus.Infof("Import start: %s", sqlPath)
+		log.Info().Msgf("Import start: %s", sqlPath)
 		if err := RDBC.Put(string(data)); err != nil {
-			logrus.Error("Put error importing into rdbms")
+			log.Error().Msgf("Put error importing into rdbms")
 			return err
 		}
-		logrus.Infof("Import success: %s", sqlPath)
+		log.Info().Msgf("Import success: %s", sqlPath)
 	}
-	logrus.Infof("successfully imported : %s", datamoldParams.Directory)
+	log.Info().Msgf("successfully imported : %s", datamoldParams.Directory)
 	return nil
 }
 
 func ExportRDMFunc(datamoldParams *models.CommandTask) error {
 	var RDBC *rdbc.RDBController
 	var err error
-	logrus.Infof("User Information")
+	log.Info().Msgf("User Information")
 	RDBC, err = GetRDMS(&datamoldParams.TargetPoint)
 	if err != nil {
-		logrus.Errorf("RDBController error importing into rdbms : %v", err)
+		log.Error().Msgf("RDBController error importing into rdbms : %v", err)
 		return err
 	}
 
 	err = os.MkdirAll(datamoldParams.Directory, 0755)
 	if err != nil {
-		logrus.Errorf("MkdirAll error : %v", err)
+		log.Error().Msgf("MkdirAll error : %v", err)
 		return err
 	}
 
 	dbList := []string{}
 	if err := RDBC.ListDB(&dbList); err != nil {
-		logrus.Errorf("ListDB error : %v", err)
+		log.Error().Msgf("ListDB error : %v", err)
 		return err
 	}
 
 	var sqlData string
 	for _, db := range dbList {
 		sqlData = ""
-		logrus.Infof("Export start: %s", db)
+		log.Info().Msgf("Export start: %s", db)
 		if err := RDBC.Get(db, &sqlData); err != nil {
-			logrus.Errorf("Get error : %v", err)
+			log.Error().Msgf("Get error : %v", err)
 			return err
 		}
 
 		file, err := os.Create(filepath.Join(datamoldParams.Directory, fmt.Sprintf("%s.sql", db)))
 		if err != nil {
-			logrus.Errorf("File create error : %v", err)
+			log.Error().Msgf("File create error : %v", err)
 			return err
 		}
 		defer file.Close()
 
 		_, err = file.WriteString(sqlData)
 		if err != nil {
-			logrus.Errorf("File write error : %v", err)
+			log.Error().Msgf("File write error : %v", err)
 			return err
 		}
-		logrus.Infof("successfully exported : %s", file.Name())
+		log.Info().Msgf("successfully exported : %s", file.Name())
 		file.Close()
 	}
-	logrus.Infof("successfully exported : %s", datamoldParams.Directory)
+	log.Info().Msgf("successfully exported : %s", datamoldParams.Directory)
 	return nil
 }
 
@@ -123,25 +123,25 @@ func MigrationRDMFunc(datamoldParams *models.CommandTask) error {
 	var srcErr error
 	var dstRDBC *rdbc.RDBController
 	var dstErr error
-	logrus.Infof("Source Information")
+	log.Info().Msgf("Source Information")
 	srcRDBC, srcErr = GetRDMS(&datamoldParams.SourcePoint)
 	if srcErr != nil {
-		logrus.Errorf("RDBController error migration into rdbms : %v", srcErr)
+		log.Error().Msgf("RDBController error migration into rdbms : %v", srcErr)
 		return srcErr
 	}
-	logrus.Infof("Target Information")
+	log.Info().Msgf("Target Information")
 	dstRDBC, dstErr = GetRDMS(&datamoldParams.TargetPoint)
 	if dstErr != nil {
-		logrus.Errorf("RDBController error migration into rdbms : %v", dstErr)
+		log.Error().Msgf("RDBController error migration into rdbms : %v", dstErr)
 		return dstErr
 	}
 
-	logrus.Info("Launch RDBController Copy")
+	log.Info().Msgf("Launch RDBController Copy")
 	if err := srcRDBC.Copy(dstRDBC); err != nil {
-		logrus.Errorf("Copy error copying into rdbms : %v", err)
+		log.Error().Msgf("Copy error copying into rdbms : %v", err)
 		return err
 	}
-	logrus.Info("successfully migrationed")
+	log.Info().Msgf("successfully migrationed")
 	return nil
 }
 
@@ -151,15 +151,15 @@ func DeleteRDMFunc(datamoldParams *models.CommandTask) error {
 	RDBC, err = GetRDMS(&datamoldParams.TargetPoint)
 
 	if err != nil {
-		logrus.Errorf("RDBController error deleting into rdbms : %v", err)
+		log.Error().Msgf("RDBController error deleting into rdbms : %v", err)
 		return err
 	}
 
-	logrus.Info("Launch RDBController Delete")
+	log.Info().Msgf("Launch RDBController Delete")
 	if err := RDBC.DeleteDB(datamoldParams.DeleteDBList...); err != nil {
-		logrus.Errorf("Delete error deleting into rdbms : %v", err)
+		log.Error().Msgf("Delete error deleting into rdbms : %v", err)
 		return err
 	}
-	logrus.Info("successfully deleted")
+	log.Info().Msgf("successfully deleted")
 	return nil
 }

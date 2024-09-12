@@ -33,7 +33,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/cloud-barista/mc-data-manager/config"
-	"github.com/cloud-barista/mc-data-manager/internal/log"
 	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/pkg/nrdbms/awsdnmdb"
 	"github.com/cloud-barista/mc-data-manager/pkg/nrdbms/gcpfsdb"
@@ -45,278 +44,278 @@ import (
 	"github.com/cloud-barista/mc-data-manager/service/osc"
 	"github.com/cloud-barista/mc-data-manager/service/rdbc"
 	"github.com/labstack/echo/v4"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cast"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func getLogger(jobName string) *logrus.Logger {
-	logger := logrus.StandardLogger()
-	logger.SetFormatter(&log.CustomTextFormatter{CmdName: "server", JobName: jobName})
-	return logger
+func getLogger(jobName string) *zerolog.Logger {
+	logger := log.With().Str("jobName", jobName).Logger()
+	return &logger
 }
 
-func pageLogInit(pageName, pageInfo string, startTime time.Time) (*logrus.Logger, *strings.Builder) {
+func pageLogInit(pageName, pageInfo string, startTime time.Time) (*zerolog.Logger, *strings.Builder) {
 	logger := getLogger(pageName)
-	var logstrings = strings.Builder{}
+	var logstrings strings.Builder
 
-	logger.Infof("%s post page accessed", pageName)
+	logger.Info().Msgf("%s post page accessed", pageName)
 
-	logger.SetOutput(io.MultiWriter(logger.Out, &logstrings))
+	logger.Output(io.MultiWriter(logger, &logstrings))
 
-	logger.Info(pageInfo)
-	logger.Infof("start time : %s", startTime.Format("2006-01-02T15:04:05-07:00"))
+	logger.Info().Msg(pageInfo)
+	logger.Info().Str("start time", startTime.Format("2006-01-02T15:04:05-07:00")).Msg("")
 
 	return logger, &logstrings
 }
 
-func osCheck(logger *logrus.Logger, startTime time.Time, osName string) bool {
-	logger.Info("Check the operating system")
+func osCheck(logger *zerolog.Logger, startTime time.Time, osName string) bool {
+	logger.Info().Msg("Check the operating system")
 	if runtime.GOOS != osName {
 		end := time.Now()
-		logger.Errorf("Not a %s operating system", osName)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Msgf("Not a %s operating system", osName)
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return false
 	}
 	return true
 }
 
-func dummyCreate(logger *logrus.Logger, startTime time.Time, params GenFileParams) bool {
-	logger.Info("Start dummy generation")
+func dummyCreate(logger *zerolog.Logger, startTime time.Time, params GenFileParams) bool {
+	logger.Info().Msg("Start dummy generation")
 	err := genData(params, logger)
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("Failed to generate dummy data : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("Failed to generate dummy data")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return false
 	}
 	return true
 }
 
-func jobEnd(logger *logrus.Logger, endInfo string, startTime time.Time) {
+func jobEnd(logger *zerolog.Logger, endInfo string, startTime time.Time) {
 	end := time.Now()
-	logger.Info(endInfo)
-	logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-	logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+	logger.Info().Msg(endInfo)
+	logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+	logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 }
 
-func createDummyTemp(logger *logrus.Logger, startTime time.Time) (string, bool) {
-	logger.Info("Create a temporary directory where dummy data will be created")
+func createDummyTemp(logger *zerolog.Logger, startTime time.Time) (string, bool) {
+	logger.Info().Msg("Create a temporary directory where dummy data will be created")
 	tmpDir, err := os.MkdirTemp("", "datamold-dummy")
 	if err != nil {
 		end := time.Now()
-		logger.Error("Failed to generate dummy data : failed to create tmpdir")
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("Failed to generate dummy data: failed to create tmpdir")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return "", false
 	} else {
 		return tmpDir, true
 	}
 }
 
-func getS3OSC(logger *logrus.Logger, startTime time.Time, jobType string, params interface{}) *osc.OSController {
+func getS3OSC(logger *zerolog.Logger, startTime time.Time, jobType string, params interface{}) *osc.OSController {
 	gparam, _ := params.(ProviderConfig)
 	var err error
 	var s3c *s3.Client
 	var awsOSC *osc.OSController
-	logger.Info("Get S3 Client")
+	logger.Info().Msg("Get S3 Client")
 	credentailManger := config.NewProfileManager()
 	creds, err := credentailManger.LoadCredentialsByProfile(gparam.ProfileName, gparam.Provider)
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("credentail load failed : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("credentail load failed")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return nil
 	}
 
 	awsc, ok := creds.(models.AWSCredentials)
 	if !ok {
 		end := time.Now()
-		logger.Errorf("AWS client creation failed")
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Msg("AWS client creation failed")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return nil
 	}
 
 	s3c, err = config.NewS3Client(awsc.AccessKey, awsc.SecretKey, gparam.Region)
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("s3 client creation failed : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("s3 client creation failed")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return nil
 	}
 
-	logger.Info("Set up the client as an OSController")
+	logger.Info().Msg("Set up the client as an OSController")
 	if jobType == "gen" {
-		awsOSC, err = osc.New(s3fs.New(models.AWS, s3c, gparam.Bucket, gparam.Region), osc.WithLogger(logger))
+		awsOSC, err = osc.New(s3fs.New(models.AWS, s3c, gparam.Bucket, gparam.Region))
 	} else {
-		awsOSC, err = osc.New(s3fs.New(models.AWS, s3c, gparam.Bucket, gparam.Region), osc.WithLogger(logger))
+		awsOSC, err = osc.New(s3fs.New(models.AWS, s3c, gparam.Bucket, gparam.Region))
 	}
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("OSController creation failed : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("OSController creation failed")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return nil
 	}
 
 	return awsOSC
 }
 
-func getS3COSC(logger *logrus.Logger, startTime time.Time, jobType string, params interface{}) *osc.OSController {
+func getS3COSC(logger *zerolog.Logger, startTime time.Time, jobType string, params interface{}) *osc.OSController {
 	gparam, _ := params.(ProviderConfig)
 
 	var err error
 	var s3c *s3.Client
 	var OSC *osc.OSController
 
-	logger.Info("Get S3 Compataible Client")
+	logger.Info().Msg("Get S3 Compataible Client")
 	credentailManger := config.NewProfileManager()
 	creds, err := credentailManger.LoadCredentialsByProfile(gparam.ProfileName, gparam.Provider)
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("S3 credentail load failed : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("S3 credentail load failed")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return nil
 	}
 	ncpc, ok := creds.(models.NCPCredentials)
 	if !ok {
-		logger.Errorf(" credential load failed")
+		logger.Error().Msg("credential load failed")
 	}
 	s3c, err = config.NewS3ClientWithEndpoint(ncpc.AccessKey, ncpc.SecretKey, gparam.Region, gparam.Endpoint)
 
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("S3 s3 compatible client creation failed : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("S3 s3 compatible client creation failed")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return nil
 	}
 
-	logger.Info("Set up the client as an OSController")
-	OSC, err = osc.New(s3fs.New(models.NCP, s3c, gparam.Bucket, gparam.Region), osc.WithLogger(logger))
+	logger.Info().Msg("Set up the client as an OSController")
+	OSC, err = osc.New(s3fs.New(models.NCP, s3c, gparam.Bucket, gparam.Region))
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("OSController creation failed : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("OSController creation failed")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return nil
 	}
 
 	return OSC
 }
 
-func getGCPCOSC(logger *logrus.Logger, startTime time.Time, jobType string, params interface{}) *osc.OSController {
+func getGCPCOSC(logger *zerolog.Logger, startTime time.Time, jobType string, params interface{}) *osc.OSController {
 	gparam, _ := params.(ProviderConfig)
 
 	var err error
 	var gcpOSC *osc.OSController
 
-	logger.Info("Get GCP Client")
+	logger.Info().Msg("Get GCP Client")
 	credentailManger := config.NewProfileManager()
 	creds, err := credentailManger.LoadCredentialsByProfile(gparam.ProfileName, gparam.Provider)
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("gcp credentail load failed : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("gcp credentail load failed")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return nil
 	}
 	gcpc, ok := creds.(models.GCPCredentials)
 	if !ok {
-		logger.Errorf(" credential load failed")
+		logger.Error().Msg("credential load failed")
 		return nil
 	}
 	credentialsJson, err := json.Marshal(gcpc)
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("gcp credentail json Marshal failed : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("gcp credentail json Marshal failed")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return nil
 	}
 
 	gc, err := config.NewGCPClient(string(credentialsJson))
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("gcp client creation failed : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("gcp client creation failed")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return nil
 	}
 
-	logger.Info("Set up the client as an OSController")
+	logger.Info().Msg("Set up the client as an OSController")
 	if jobType == "gen" {
-		gcpOSC, err = osc.New(gcpfs.New(gc, gcpc.ProjectID, gparam.Bucket, gparam.Region), osc.WithLogger(logger))
+		gcpOSC, err = osc.New(gcpfs.New(gc, gcpc.ProjectID, gparam.Bucket, gparam.Region))
 	} else {
-		gcpOSC, err = osc.New(gcpfs.New(gc, gcpc.ProjectID, gparam.Bucket, gparam.Region), osc.WithLogger(logger))
+		gcpOSC, err = osc.New(gcpfs.New(gc, gcpc.ProjectID, gparam.Bucket, gparam.Region))
 	}
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("OSController creation failed : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("OSController creation failed")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return nil
 	}
 
 	return gcpOSC
 }
 
-func getMysqlRDBC(logger *logrus.Logger, startTime time.Time, jobType string, params interface{}) *rdbc.RDBController {
+func getMysqlRDBC(logger *zerolog.Logger, startTime time.Time, jobType string, params interface{}) *rdbc.RDBController {
 	gparam, _ := params.(ProviderConfig)
 
 	var err error
 	var sqlDB *sql.DB
 	var RDBC *rdbc.RDBController
 
-	logger.Infof("Get SQL Client %v", jobType)
+	logger.Info().Msgf("Get SQL Client %v", jobType)
 	sqlDB, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", gparam.User, gparam.Password, gparam.Host, gparam.Port))
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("sqlDB client creation failed : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("sqlDB client creation failed")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return nil
 	}
 
-	logger.Info("Set up the client as an RDBController")
-	RDBC, err = rdbc.New(mysql.New(models.Provider(gparam.Provider), sqlDB), rdbc.WithLogger(logger))
+	logger.Info().Msg("Set up the client as an RDBController")
+	RDBC, err = rdbc.New(mysql.New(models.Provider(gparam.Provider), sqlDB))
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("RDBController creation failed : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("RDBController creation failed")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return nil
 	}
 
 	return RDBC
 }
 
-func getDynamoNRDBC(logger *logrus.Logger, startTime time.Time, jobType string, params interface{}) *nrdbc.NRDBController {
+func getDynamoNRDBC(logger *zerolog.Logger, startTime time.Time, jobType string, params interface{}) *nrdbc.NRDBController {
 	gparam, _ := params.(ProviderConfig)
 
 	var err error
 	var dc *dynamodb.Client
 	var NRDBC *nrdbc.NRDBController
 
-	logger.Info("Get DynamoDB Client")
+	logger.Info().Msg("Get DynamoDB Client")
 	credentailManger := config.NewProfileManager()
 	creds, err := credentailManger.LoadCredentialsByProfile(gparam.ProfileName, gparam.Provider)
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("aws credentail load failed : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("aws credentail load failed")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return nil
 	}
 	awsc, ok := creds.(models.AWSCredentials)
 	if !ok {
-		logger.Errorf(" credential load failed")
+		logger.Error().Msg("credential load failed")
 	}
 	if jobType == "gen" {
 		dc, err = config.NewDynamoDBClient(awsc.AccessKey, awsc.SecretKey, gparam.Region)
@@ -325,58 +324,58 @@ func getDynamoNRDBC(logger *logrus.Logger, startTime time.Time, jobType string, 
 	}
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("dynamoDB client creation failed : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("dynamoDB client creation failed")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return nil
 	}
 
-	logger.Info("Set up the client as an NRDBController")
+	logger.Info().Msg("Set up the client as an NRDBController")
 	if jobType == "gen" {
-		NRDBC, err = nrdbc.New(awsdnmdb.New(dc, gparam.Region), nrdbc.WithLogger(logger))
+		NRDBC, err = nrdbc.New(awsdnmdb.New(dc, gparam.Region))
 	} else {
-		NRDBC, err = nrdbc.New(awsdnmdb.New(dc, gparam.Region), nrdbc.WithLogger(logger))
+		NRDBC, err = nrdbc.New(awsdnmdb.New(dc, gparam.Region))
 	}
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("NRDBController creation failed : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("NRDBController creation failed")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return nil
 	}
 
 	return NRDBC
 }
 
-func getFirestoreNRDBC(logger *logrus.Logger, startTime time.Time, jobType string, params interface{}) *nrdbc.NRDBController {
+func getFirestoreNRDBC(logger *zerolog.Logger, startTime time.Time, jobType string, params interface{}) *nrdbc.NRDBController {
 	gparam, _ := params.(ProviderConfig)
 
 	var err error
 	var fc *firestore.Client
 	var NRDBC *nrdbc.NRDBController
 
-	logger.Info("Get FirestoreDB Client")
+	logger.Info().Msg("Get FirestoreDB Client")
 
 	credentailManger := config.NewProfileManager()
 	creds, err := credentailManger.LoadCredentialsByProfile(gparam.ProfileName, gparam.Provider)
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("gcp credentail load failed : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("gcp credentail load failed")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return nil
 	}
 	gcpc, ok := creds.(models.GCPCredentials)
 	if !ok {
-		logger.Errorf(" credential load failed")
+		logger.Error().Msg("credential load failed")
 		return nil
 	}
 	credentialsJson, err := json.Marshal(gcpc)
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("gcp credentail json Marshal failed : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("gcp credentail json Marshal failed")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return nil
 	}
 
@@ -384,34 +383,34 @@ func getFirestoreNRDBC(logger *logrus.Logger, startTime time.Time, jobType strin
 
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("firestoreDB client creation failed : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("firestoreDB client creation failed")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return nil
 	}
 
-	logger.Info("Set up the client as an NRDBController")
-	NRDBC, err = nrdbc.New(gcpfsdb.New(fc, gparam.Region), nrdbc.WithLogger(logger))
+	logger.Info().Msg("Set up the client as an NRDBController")
+	NRDBC, err = nrdbc.New(gcpfsdb.New(fc, gparam.Region))
 
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("NRDBController creation failed : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("NRDBController creation failed")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return nil
 	}
 
 	return NRDBC
 }
 
-func getMongoNRDBC(logger *logrus.Logger, startTime time.Time, jobType string, params interface{}) *nrdbc.NRDBController {
+func getMongoNRDBC(logger *zerolog.Logger, startTime time.Time, jobType string, params interface{}) *nrdbc.NRDBController {
 	gparam, _ := params.(ProviderConfig)
 
 	var err error
 	var mc *mongo.Client
 	var NRDBC *nrdbc.NRDBController
 
-	logger.Info("Get MongoDB Client")
+	logger.Info().Msg("Get MongoDB Client")
 	if jobType == "gen" {
 		mc, err = config.NewNCPMongoDBClient(gparam.User, gparam.Password, gparam.Host, cast.ToInt(gparam.Port))
 	} else {
@@ -419,42 +418,42 @@ func getMongoNRDBC(logger *logrus.Logger, startTime time.Time, jobType string, p
 	}
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("mongoDB client creation failed : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("mongoDB client creation failed")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return nil
 	}
 
-	logger.Info("Set up the client as an NRDBController")
+	logger.Info().Msg("Set up the client as an NRDBController")
 	if jobType == "gen" {
-		NRDBC, err = nrdbc.New(ncpmgdb.New(mc, gparam.DatabaseName), nrdbc.WithLogger(logger))
+		NRDBC, err = nrdbc.New(ncpmgdb.New(mc, gparam.DatabaseName))
 	} else {
-		NRDBC, err = nrdbc.New(ncpmgdb.New(mc, gparam.DatabaseName), nrdbc.WithLogger(logger))
+		NRDBC, err = nrdbc.New(ncpmgdb.New(mc, gparam.DatabaseName))
 	}
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("NRDBController creation failed : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("NRDBController creation failed")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return nil
 	}
 
 	return NRDBC
 }
 
-func nrdbPutWorker(logger *logrus.Logger, startTime time.Time, dbType string, nrdbc *nrdbc.NRDBController, jsonList []string) bool {
+func nrdbPutWorker(logger *zerolog.Logger, startTime time.Time, dbType string, nrdbc *nrdbc.NRDBController, jsonList []string) bool {
 	var wg sync.WaitGroup
 	var mu sync.Mutex
 	ret := make(chan error)
 
-	logger.Infof("Start Import with %s", dbType)
+	logger.Info().Msgf("Start Import with %s", dbType)
 	for _, j := range jsonList {
 		wg.Add(1)
 		go func(jPath string, jret chan<- error) {
 			defer wg.Done()
 
 			mu.Lock()
-			logger.Infof("Read json file : %s", jPath)
+			logger.Info().Msgf("Read json file : %s", jPath)
 			mu.Unlock()
 
 			data, err := os.ReadFile(jPath)
@@ -463,7 +462,7 @@ func nrdbPutWorker(logger *logrus.Logger, startTime time.Time, dbType string, nr
 				return
 			}
 
-			logger.Infof("data unmarshal : %s", filepath.Base(jPath))
+			logger.Info().Msgf("data unmarshal : %s", filepath.Base(jPath))
 			var jsonData []map[string]interface{}
 			err = json.Unmarshal(data, &jsonData)
 			if err != nil {
@@ -474,7 +473,7 @@ func nrdbPutWorker(logger *logrus.Logger, startTime time.Time, dbType string, nr
 			tableName := strings.TrimSuffix(filepath.Base(jPath), ".json")
 
 			mu.Lock()
-			logger.Infof("Put start : %s", filepath.Base(jPath))
+			logger.Info().Msgf("Put start : %s", filepath.Base(jPath))
 			mu.Unlock()
 
 			if err := nrdbc.Put(tableName, &jsonData); err != nil {
@@ -494,9 +493,9 @@ func nrdbPutWorker(logger *logrus.Logger, startTime time.Time, dbType string, nr
 	for result := range ret {
 		if result != nil {
 			end := time.Now()
-			logger.Errorf("NRDBController Import failed : %v", result)
-			logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-			logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+			logger.Error().Err(result).Msg("NRDBController Import failed")
+			logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+			logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 			return false
 		}
 	}
@@ -504,7 +503,7 @@ func nrdbPutWorker(logger *logrus.Logger, startTime time.Time, dbType string, nr
 	return true
 }
 
-func walk(logger *logrus.Logger, startTime time.Time, list *[]string, dirPath string, ext string) bool {
+func walk(logger *zerolog.Logger, startTime time.Time, list *[]string, dirPath string, ext string) bool {
 	err := filepath.Walk(dirPath, func(path string, _ fs.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -518,33 +517,33 @@ func walk(logger *logrus.Logger, startTime time.Time, list *[]string, dirPath st
 	})
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("filepath walk failed : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("filepath walk failed")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return false
 	}
 	return true
 }
 
-func oscImport(logger *logrus.Logger, startTime time.Time, osType string, osc *osc.OSController, dstDir string) bool {
-	logger.Infof("Start Import with %s", osType)
+func oscImport(logger *zerolog.Logger, startTime time.Time, osType string, osc *osc.OSController, dstDir string) bool {
+	logger.Info().Msgf("Start Import with %s", osType)
 	if err := osc.MPut(dstDir); err != nil {
 		end := time.Now()
-		logger.Errorf("OSController import failed : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("OSController import failed")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return false
 	}
 	return true
 }
 
-func oscExport(logger *logrus.Logger, startTime time.Time, osType string, osc *osc.OSController, dstDir string) bool {
-	logger.Infof("Start Export with %s", osType)
+func oscExport(logger *zerolog.Logger, startTime time.Time, osType string, osc *osc.OSController, dstDir string) bool {
+	logger.Info().Msgf("Start Export with %s", osType)
 	if err := osc.MGet(dstDir); err != nil {
 		end := time.Now()
-		logger.Errorf("OSController export failed : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("OSController export failed")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return false
 	}
 	return true
@@ -591,36 +590,38 @@ func getFileData(jobtype string, ctx echo.Context) interface{} {
 }
 
 // Bind onetime
-func getDataWithBind(logger *logrus.Logger, startTime time.Time, ctx echo.Context, params interface{}) bool {
+func getDataWithBind(logger *zerolog.Logger, startTime time.Time, ctx echo.Context, params interface{}) bool {
+
 	if err := ctx.Bind(params); err != nil {
 		end := time.Now()
-		logger.Error("Failed to bind form data")
-		logger.Infof("params : %+v", ctx.Request().Body)
-		logger.Infof("End time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Msg("Failed to bind form data")
+		logger.Info().Interface("params", ctx.Request().Body).Msg("")
+		logger.Info().Str("End time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return false
 	}
 	return true
 }
 
 // For Rebind
-func getDataWithReBind(logger *logrus.Logger, startTime time.Time, ctx echo.Context, params interface{}) bool {
+func getDataWithReBind(logger *zerolog.Logger, startTime time.Time, ctx echo.Context, params interface{}) bool {
+
 	bodyBytes, err := io.ReadAll(ctx.Request().Body)
 	if err != nil {
-		logger.Error("Failed to read request body")
+		logger.Error().Msg("Failed to read request body")
 		return false
 	}
 
-	logger.Infof("Request Body: %s", string(bodyBytes))
+	logger.Info().Str("Request Body", string(bodyBytes)).Msg("")
 
 	ctx.Request().Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
 	if err := ctx.Bind(params); err != nil {
 		end := time.Now()
-		logger.Error("Failed to bind form data")
-		logger.Infof("Params: %+v", string(bodyBytes))
-		logger.Infof("End time: %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time: %s", end.Sub(startTime).String())
+		logger.Error().Msg("Failed to bind form data")
+		logger.Info().Interface("Params", string(bodyBytes)).Msg("")
+		logger.Info().Str("End time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return false
 	}
 
@@ -628,25 +629,25 @@ func getDataWithReBind(logger *logrus.Logger, startTime time.Time, ctx echo.Cont
 	return true
 }
 
-func gcpCreateCredFile(logger *logrus.Logger, startTime time.Time, ctx echo.Context) (string, string, bool) {
-	logger.Info("Create a temporary directory where credential files will be stored")
+func gcpCreateCredFile(logger *zerolog.Logger, startTime time.Time, ctx echo.Context) (string, string, bool) {
+	logger.Info().Msg("Create a temporary directory where credential files will be stored")
 	// func (*http.Request).FormFile(key string) (multipart.File, *multipart.FileHeader, error)
 	// gcpCredentialFile, gcpCredentialHeader, err := ctx.Request.FormFile("gcpCredential")
 	gcpCredentialHeader, err := ctx.FormFile("gcpCredential")
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("Get CredentialFile error : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("Get CredentialFile error")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return "", "", false
 	}
 
 	credTmpDir, err := os.MkdirTemp("", "datamold-gcp-cred-")
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("Get CredentialFile error : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("Get CredentialFile error")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return "", "", false
 	}
 
@@ -655,9 +656,9 @@ func gcpCreateCredFile(logger *logrus.Logger, startTime time.Time, ctx echo.Cont
 	// err = ctx.SaveUploadedFile(gcpCredentialHeader, credFileName)
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("Get CredentialFile error : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("Get CredentialFile error")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return "", "", false
 	}
 	defer gcpCredentialFile.Close()
@@ -665,18 +666,18 @@ func gcpCreateCredFile(logger *logrus.Logger, startTime time.Time, ctx echo.Cont
 	dst, err := os.Create(credFileName)
 	if err != nil {
 		end := time.Now()
-		logger.Errorf("File create error : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("File create error")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return "", "", false
 	}
 	defer dst.Close()
 
 	if _, err = io.Copy(dst, gcpCredentialFile); err != nil {
 		end := time.Now()
-		logger.Errorf("File copy error : %v", err)
-		logger.Infof("end time : %s", end.Format("2006-01-02T15:04:05-07:00"))
-		logger.Infof("Elapsed time : %s", end.Sub(startTime).String())
+		logger.Error().Err(err).Msg("File copy error")
+		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
+		logger.Info().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return "", "", false
 	}
 

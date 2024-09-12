@@ -20,91 +20,91 @@ import (
 	"github.com/cloud-barista/mc-data-manager/pkg/dummy/semistructured"
 	"github.com/cloud-barista/mc-data-manager/pkg/dummy/structured"
 	"github.com/cloud-barista/mc-data-manager/pkg/dummy/unstructured"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cast"
 )
 
 func DummyCreate(params models.CommandTask) error {
-	logrus.Info("check directory DummyPaths")
+	log.Info().Msgf("check directory DummyPaths")
 	if cast.ToInt(params.SizeSQL) != 0 {
-		logrus.Info("start sql generation")
+		log.Info().Msgf("start sql generation")
 		if err := structured.GenerateRandomSQL(params.DummyPath, cast.ToInt(params.SizeSQL)); err != nil {
-			logrus.Error("failed to generate sql")
+			log.Error().Msgf("failed to generate sql")
 			return err
 		}
-		logrus.Infof("successfully generated sql : %s", params.DummyPath)
+		log.Info().Msgf("successfully generated sql : %s", params.DummyPath)
 	}
-	logrus.Info("start Serversql generation Boolean? :", (cast.ToInt(params.SizeServerSQL) != 0))
+	log.Info().Msgf("start Serversql generation Boolean? :", (cast.ToInt(params.SizeServerSQL) != 0))
 	if cast.ToInt(params.SizeServerSQL) != 0 {
-		logrus.Info("start Serversql generation")
+		log.Info().Msgf("start Serversql generation")
 		if err := structured.GenerateRandomSQLWithServer(params.DummyPath, cast.ToInt(params.SizeServerSQL)); err != nil {
-			logrus.Error("failed to generate sql")
+			log.Error().Msgf("failed to generate sql")
 			return err
 		}
-		logrus.Infof("successfully generated sql : %s", params.DummyPath)
+		log.Info().Msgf("successfully generated sql : %s", params.DummyPath)
 	}
 
 	if cast.ToInt(params.SizeCSV) != 0 {
-		logrus.Info("start csv generation")
+		log.Info().Msgf("start csv generation")
 		if err := structured.GenerateRandomCSV(params.DummyPath, cast.ToInt(params.SizeCSV)); err != nil {
-			logrus.Error("failed to generate csv")
+			log.Error().Msgf("failed to generate csv")
 			return err
 		}
-		logrus.Infof("successfully generated csv : %s", params.DummyPath)
+		log.Info().Msgf("successfully generated csv : %s", params.DummyPath)
 	}
 
 	if cast.ToInt(params.SizeJSON) != 0 {
-		logrus.Info("start json generation")
+		log.Info().Msgf("start json generation")
 		if err := semistructured.GenerateRandomJSON(params.DummyPath, cast.ToInt(params.SizeJSON)); err != nil {
-			logrus.Error("failed to generate json")
+			log.Error().Msgf("failed to generate json")
 			return err
 		}
-		logrus.Infof("successfully generated json : %s", params.DummyPath)
+		log.Info().Msgf("successfully generated json : %s", params.DummyPath)
 	}
 
 	if cast.ToInt(params.SizeXML) != 0 {
-		logrus.Info("start xml generation")
+		log.Info().Msgf("start xml generation")
 		if err := semistructured.GenerateRandomXML(params.DummyPath, cast.ToInt(params.SizeXML)); err != nil {
-			logrus.Error("failed to generate xml")
+			log.Error().Msgf("failed to generate xml")
 			return err
 		}
-		logrus.Infof("successfully generated xml : %s", params.DummyPath)
+		log.Info().Msgf("successfully generated xml : %s", params.DummyPath)
 	}
 
 	if cast.ToInt(params.SizeTXT) != 0 {
-		logrus.Info("start txt generation")
+		log.Info().Msgf("start txt generation")
 		if err := unstructured.GenerateRandomTXT(params.DummyPath, cast.ToInt(params.SizeTXT)); err != nil {
-			logrus.Error("failed to generate txt")
+			log.Error().Msgf("failed to generate txt")
 			return err
 		}
-		logrus.Infof("successfully generated txt : %s", params.DummyPath)
+		log.Info().Msgf("successfully generated txt : %s", params.DummyPath)
 	}
 
 	if cast.ToInt(params.SizePNG) != 0 {
-		logrus.Info("start png generation")
+		log.Info().Msgf("start png generation")
 		if err := unstructured.GenerateRandomPNGImage(params.DummyPath, cast.ToInt(params.SizePNG)); err != nil {
-			logrus.Error("failed to generate png")
+			log.Error().Msgf("failed to generate png")
 			return err
 		}
-		logrus.Infof("successfully generated png : %s", params.DummyPath)
+		log.Info().Msgf("successfully generated png : %s", params.DummyPath)
 	}
 
 	if cast.ToInt(params.SizeGIF) != 0 {
-		logrus.Info("start gif generation")
+		log.Info().Msgf("start gif generation")
 		if err := unstructured.GenerateRandomGIF(params.DummyPath, cast.ToInt(params.SizeGIF)); err != nil {
-			logrus.Error("failed to generate gif")
+			log.Error().Msgf("failed to generate gif")
 			return err
 		}
-		logrus.Infof("successfully generated gif : %s", params.DummyPath)
+		log.Info().Msgf("successfully generated gif : %s", params.DummyPath)
 	}
 
 	if cast.ToInt(params.SizeZIP) != 0 {
-		logrus.Info("start zip generation")
+		log.Info().Msgf("start zip generation")
 		if err := unstructured.GenerateRandomZIP(params.DummyPath, cast.ToInt(params.SizeZIP)); err != nil {
-			logrus.Error("failed to generate zip")
+			log.Error().Msgf("failed to generate zip")
 			return err
 		}
-		logrus.Infof("successfully generated zip : %s", params.DummyPath)
+		log.Info().Msgf("successfully generated zip : %s", params.DummyPath)
 	}
 	return nil
 }

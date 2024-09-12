@@ -27,7 +27,7 @@ import (
 
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/cloud-barista/mc-data-manager/pkg/utils"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 type sqlData struct {
@@ -128,7 +128,7 @@ INSERT INTO BorrowedBooks (MemberID, BookID, BorrowedDate, DueDate, ReturnedDate
 func GenerateRandomSQL(dummyDir string, capacitySize int) error {
 	dummyDir = filepath.Join(dummyDir, "sql")
 	if err := utils.IsDir(dummyDir); err != nil {
-		logrus.Errorf("IsDir function error : %v", err)
+		log.Error().Msgf("IsDir function error : %v", err)
 		return err
 	}
 
@@ -158,7 +158,7 @@ func GenerateRandomSQL(dummyDir string, capacitySize int) error {
 
 	for ret := range resultChan {
 		if ret != nil {
-			logrus.Errorf("result error : %v", ret)
+			log.Error().Msgf("result error : %v", ret)
 			return ret
 		}
 	}
@@ -169,7 +169,7 @@ func GenerateRandomSQL(dummyDir string, capacitySize int) error {
 func GenerateRandomSQLWithServer(dummyDir string, capacitySize int) error {
 	dummyDir = filepath.Join(dummyDir, "sql")
 	if err := utils.IsDir(dummyDir); err != nil {
-		logrus.Errorf("IsDir function error : %v", err)
+		log.Error().Msgf("IsDir function error : %v", err)
 		return err
 	}
 
@@ -199,7 +199,7 @@ func GenerateRandomSQLWithServer(dummyDir string, capacitySize int) error {
 
 	for ret := range resultChan {
 		if ret != nil {
-			logrus.Errorf("result error : %v", ret)
+			log.Error().Msgf("result error : %v", ret)
 			return ret
 		}
 	}
@@ -257,7 +257,7 @@ func randomSQLWorker(countNum chan int, dirPath string, resultChan chan<- error)
 			continue
 		}
 
-		logrus.Infof("Creation success: %v", file.Name())
+		log.Info().Msgf("Creation success: %v", file.Name())
 		file.Close()
 
 		resultChan <- nil

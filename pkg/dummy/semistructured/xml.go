@@ -9,7 +9,7 @@ import (
 
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/cloud-barista/mc-data-manager/pkg/utils"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 // xml generation function using gofakeit
@@ -19,7 +19,7 @@ import (
 func GenerateRandomXML(dummyDir string, capacitySize int) error {
 	dummyDir = filepath.Join(dummyDir, "xml")
 	if err := utils.IsDir(dummyDir); err != nil {
-		logrus.Errorf("IsDir function error : %v", err)
+		log.Error().Msgf("IsDir function error : %v", err)
 		return err
 	}
 
@@ -48,7 +48,7 @@ func GenerateRandomXML(dummyDir string, capacitySize int) error {
 
 	for ret := range resultChan {
 		if ret != nil {
-			logrus.Errorf("return error : %v", ret)
+			log.Error().Msgf("return error : %v", ret)
 			return ret
 		}
 	}
@@ -107,7 +107,7 @@ func generateXMLBook(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.Infof("Creation success: %v", file.Name())
+		log.Info().Msgf("Creation success: %v", file.Name())
 	}
 	return err
 }
@@ -142,7 +142,7 @@ func generateXMLCar(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.Infof("Creation success: %v", file.Name())
+		log.Info().Msgf("Creation success: %v", file.Name())
 	}
 	return err
 }
@@ -177,7 +177,7 @@ func generateXMLAddress(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.Infof("Creation success: %v", file.Name())
+		log.Info().Msgf("Creation success: %v", file.Name())
 	}
 	return err
 }
@@ -212,7 +212,7 @@ func generateXMLCreditCard(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.Infof("Creation success: %v", file.Name())
+		log.Info().Msgf("Creation success: %v", file.Name())
 	}
 	return err
 }
@@ -247,7 +247,7 @@ func generateXMLJob(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.Infof("Creation success: %v", file.Name())
+		log.Info().Msgf("Creation success: %v", file.Name())
 	}
 	return err
 }
@@ -282,7 +282,7 @@ func generateXMLMovie(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.Infof("Creation success: %v", file.Name())
+		log.Info().Msgf("Creation success: %v", file.Name())
 	}
 	return err
 }
@@ -317,7 +317,7 @@ func generateXMLPerson(cnt int, dirPath string, count int) error {
 
 	_, err = file.Write(data)
 	if err == nil {
-		logrus.Infof("Creation success: %v", file.Name())
+		log.Info().Msgf("Creation success: %v", file.Name())
 	}
 	return err
 }

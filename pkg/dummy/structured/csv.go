@@ -25,7 +25,7 @@ import (
 
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/cloud-barista/mc-data-manager/pkg/utils"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 // CSV generation function using gofakeit
@@ -35,7 +35,7 @@ import (
 func GenerateRandomCSV(dummyDir string, capacitySize int) error {
 	dummyDir = filepath.Join(dummyDir, "csv")
 	if err := utils.IsDir(dummyDir); err != nil {
-		logrus.Errorf("IsDir function error : %v", err)
+		log.Error().Msgf("IsDir function error : %v", err)
 		return err
 	}
 
@@ -63,7 +63,7 @@ func GenerateRandomCSV(dummyDir string, capacitySize int) error {
 
 	for ret := range resultChan {
 		if ret != nil {
-			logrus.Errorf("return error : %v", ret)
+			log.Error().Msgf("return error : %v", ret)
 			return ret
 		}
 	}
@@ -128,7 +128,7 @@ func generateCSVBook(cnt int, dirPath string, count int) error {
 		}
 	}
 
-	logrus.Infof("Creation success: %v", file.Name())
+	log.Info().Msgf("Creation success: %v", file.Name())
 
 	csvWriter.Flush()
 	return csvWriter.Error()
@@ -170,7 +170,7 @@ func generateCSVCar(cnt int, dirPath string, count int) error {
 			return err
 		}
 	}
-	logrus.Infof("Creation success: %v", file.Name())
+	log.Info().Msgf("Creation success: %v", file.Name())
 	csvWriter.Flush()
 	return csvWriter.Error()
 }
@@ -211,7 +211,7 @@ func generateCSVAddress(cnt int, dirPath string, count int) error {
 			return err
 		}
 	}
-	logrus.Infof("Creation success: %v", file.Name())
+	log.Info().Msgf("Creation success: %v", file.Name())
 
 	csvWriter.Flush()
 	return csvWriter.Error()
@@ -253,7 +253,7 @@ func generateCSVCreditCard(cnt int, dirPath string, count int) error {
 			return err
 		}
 	}
-	logrus.Infof("Creation success: %v", file.Name())
+	log.Info().Msgf("Creation success: %v", file.Name())
 
 	csvWriter.Flush()
 	return csvWriter.Error()
@@ -295,7 +295,7 @@ func generateCSVJob(cnt int, dirPath string, count int) error {
 			return err
 		}
 	}
-	logrus.Infof("Creation success: %v", file.Name())
+	log.Info().Msgf("Creation success: %v", file.Name())
 
 	csvWriter.Flush()
 	return csvWriter.Error()
@@ -337,7 +337,7 @@ func generateCSVMovie(cnt int, dirPath string, count int) error {
 			return err
 		}
 	}
-	logrus.Infof("Creation success: %v", file.Name())
+	log.Info().Msgf("Creation success: %v", file.Name())
 
 	csvWriter.Flush()
 	return csvWriter.Error()
@@ -379,7 +379,7 @@ func generateCSVPerson(cnt int, dirPath string, count int) error {
 			return err
 		}
 	}
-	logrus.Infof("Creation success: %v", file.Name())
+	log.Info().Msgf("Creation success: %v", file.Name())
 
 	csvWriter.Flush()
 	return csvWriter.Error()

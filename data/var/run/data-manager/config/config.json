@@ -1,3 +1,14 @@
 {
-    "defaultProfile":"default"
+    "profile":{
+        "default":"default"
+    },
+    "log":{
+        "level":"debug",
+        "writer":"both",
+        "filepath": "./data/var/log/data-manager.log",
+        "maxsize": 1000,
+        "maxbackups": 3,
+        "maxage": 30,
+        "compress": false
+    }
 }

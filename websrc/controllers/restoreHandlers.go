@@ -29,7 +29,7 @@ import (
 	"github.com/cloud-barista/mc-data-manager/service/nrdbc"
 	"github.com/cloud-barista/mc-data-manager/service/rdbc"
 	"github.com/labstack/echo/v4"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 // RestoreOSPostHandler godoc
@@ -48,12 +48,12 @@ func RestoreOSPostHandler(ctx echo.Context) error {
 	logger, logstrings := pageLogInit("Restore-objectstorage", "Import data to objectstorage", start)
 	params := models.RestoreTask{}
 	if !getDataWithReBind(logger, start, ctx, &params) {
+		log.Error().Msgf("Req params err")
 		return ctx.JSON(http.StatusOK, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
 		})
 	}
-
 	switch params.TargetPoint.Provider {
 	case string(models.AWS):
 		return MigrationLinuxToS3PostHandler(ctx)
@@ -62,7 +62,7 @@ func RestoreOSPostHandler(ctx echo.Context) error {
 	case string(models.GCP):
 		return MigrationLinuxToGCPPostHandler(ctx)
 	default:
-		logger.Errorf("Unsupported provider: %v", params.TargetPoint.Provider)
+		logger.Error().Msgf("Unsupported provider: %v", params.TargetPoint.Provider)
 		errorMsg := fmt.Sprintf("unsupported provider: %v", params.TargetPoint.Provider)
 		return ctx.JSON(http.StatusBadRequest, models.BasicResponse{
 			Result: logstrings.String(),
@@ -93,6 +93,7 @@ func RestoreRDBPostHandler(ctx echo.Context) error {
 
 	params := models.RestoreTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
+		log.Error().Msgf("Req params err")
 		return ctx.JSON(http.StatusOK, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -120,7 +121,7 @@ func RestoreRDBPostHandler(ctx echo.Context) error {
 	})
 	if err != nil {
 		errorMsg := fmt.Sprintf("Walk error: %v", err)
-		logger.Error(errorMsg)
+		logger.Error().Msgf(errorMsg)
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  &errorMsg,
@@ -131,22 +132,22 @@ func RestoreRDBPostHandler(ctx echo.Context) error {
 		data, err := os.ReadFile(sqlPath)
 		if err != nil {
 			errorMsg := fmt.Sprintf("ReadFile error: %v", err)
-			logger.Error(errorMsg)
+			logger.Error().Msgf(errorMsg)
 			return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 				Result: logstrings.String(),
 				Error:  &errorMsg,
 			})
 		}
-		logrus.Infof("Import start: %s", sqlPath)
+		log.Info().Msgf("Import start: %s", sqlPath)
 		if err := RDBC.Put(string(data)); err != nil {
 			errorMsg := fmt.Sprintf("Put error importing into RDBMS: %v", err)
-			logger.Error(errorMsg)
+			logger.Error().Msgf(errorMsg)
 			return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 				Result: logstrings.String(),
 				Error:  &errorMsg,
 			})
 		}
-		logrus.Infof("Import success: %s", sqlPath)
+		log.Info().Msgf("Import success: %s", sqlPath)
 	}
 
 	jobEnd(logger, "Successfully Imported data from mysql", start)
@@ -178,6 +179,7 @@ func RestoreNRDBPostHandler(ctx echo.Context) error {
 
 	params := models.RestoreTask{}
 	if !getDataWithReBind(logger, start, ctx, &params) {
+		log.Error().Msgf("Req params err")
 		return ctx.JSON(http.StatusOK, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -186,7 +188,7 @@ func RestoreNRDBPostHandler(ctx echo.Context) error {
 
 	NRDBC, err = auth.GetNRDMS(&params.TargetPoint)
 	if err != nil {
-		logrus.Errorf("NRDBController error importing into nrdbms : %v", err)
+		log.Error().Msgf("NRDBController error importing into nrdbms : %v", err)
 		return err
 	}
 
@@ -202,7 +204,7 @@ func RestoreNRDBPostHandler(ctx echo.Context) error {
 	})
 
 	if err != nil {
-		logrus.Errorf("Walk error : %v", err)
+		log.Error().Msgf("Walk error : %v", err)
 		return err
 	}
 
@@ -212,25 +214,25 @@ func RestoreNRDBPostHandler(ctx echo.Context) error {
 
 		file, err := os.Open(jsonFile)
 		if err != nil {
-			logrus.Errorf("file open error : %v", err)
+			log.Error().Msgf("file open error : %v", err)
 			return err
 		}
 		defer file.Close()
 
 		if err := json.NewDecoder(file).Decode(&srcData); err != nil {
-			logrus.Errorf("file decoding error : %v", err)
+			log.Error().Msgf("file decoding error : %v", err)
 			return err
 		}
 
 		fileName := filepath.Base(jsonFile)
 		tableName := fileName[:len(fileName)-len(filepath.Ext(fileName))]
 
-		logrus.Infof("Import start: %s", fileName)
+		log.Info().Msgf("Import start: %s", fileName)
 		if err := NRDBC.Put(tableName, &srcData); err != nil {
-			logrus.Error("Put error importing into nrdbms")
+			log.Error().Msgf("Put error importing into nrdbms")
 			return err
 		}
-		logrus.Infof("successfully imported : %s", params.SourcePoint.Path)
+		log.Info().Msgf("successfully imported : %s", params.SourcePoint.Path)
 	}
 
 	jobEnd(logger, "Successfully Imported NRDB from Data", start)

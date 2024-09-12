@@ -19,7 +19,7 @@ import (
 	"io"
 
 	"github.com/cloud-barista/mc-data-manager/models"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
 type OSFS interface {
@@ -34,7 +34,7 @@ type OSFS interface {
 type OSController struct {
 	osfs OSFS
 
-	logger  *logrus.Logger
+	logger  *zerolog.Logger
 	threads int
 }
 
@@ -77,7 +77,7 @@ func WithThreads(count int) Option {
 	}
 }
 
-func WithLogger(logger *logrus.Logger) Option {
+func WithLogger(logger *zerolog.Logger) Option {
 	return func(o *OSController) {
 		o.logger = logger
 	}
@@ -101,9 +101,9 @@ func (osc *OSController) logWrite(logLevel, msg string, err error) {
 	if osc.logger != nil {
 		switch logLevel {
 		case "Info":
-			osc.logger.Info(msg)
+			osc.logger.Info().Msg(msg)
 		case "Error":
-			osc.logger.Errorf("%s : %v", msg, err)
+			osc.logger.Error().Msgf("%s : %v", msg, err)
 		}
 	}
 }

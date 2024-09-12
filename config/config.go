@@ -7,7 +7,65 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+
+	"github.com/rs/zerolog/log"
+	"github.com/spf13/viper"
 )
+
+var Settings InitConfig
+
+type InitConfig struct {
+	Profile ProfileConfig `mapstructure:"profile"`
+	Logger  LogConfig     `mapstructure:"log"`
+}
+
+type ProfileConfig struct {
+	Default string `mapstructure:"default"`
+}
+
+type LogConfig struct {
+	ZeroConfig `mapstructure:",squash"`
+	File       LumberConfig `mapstructure:",squash"`
+}
+
+type ZeroConfig struct {
+	LogLevel  string `mapstructure:"level"`
+	LogWriter string `mapstructure:"writer"`
+}
+type LumberConfig struct {
+	Path       string `mapstructure:"filepath"`
+	MaxSize    int    `mapstructure:"maxsize"`
+	MaxBackups int    `mapstructure:"maxbackups"`
+	MaxAge     int    `mapstructure:"maxage"`
+	Compress   bool   `mapstructure:"compress"`
+}
+
+// init
+func Init() {
+	execPath, err := os.Executable()
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to get executable path")
+		log.Info().Msg("Using Default Config")
+	}
+	viper.AddConfigPath(filepath.Join(execPath, "../../data/var/run/data-manager/config"))
+	viper.AddConfigPath(filepath.Join(execPath, "/data/var/run/data-manager/config"))
+	viper.AddConfigPath(filepath.Join(execPath, "./"))
+	viper.AddConfigPath(filepath.Join(execPath, "./config/"))
+	viper.SetConfigName("config")
+
+	err = viper.ReadInConfig()
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to read config file")
+		return
+	}
+
+	err = viper.Unmarshal(&Settings)
+	if err != nil {
+		log.Fatal().Err(err).Msg("Unable to decode into struct")
+	}
+	log.Debug().Msgf("config params : %+v", Settings)
+	log.Info().Str("loglevel", Settings.Logger.LogLevel).Msg("Logger initialized with loglevel")
+}
 
 // ConfigManager structure definition
 type ConfigManager struct {
