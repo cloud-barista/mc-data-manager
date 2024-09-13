@@ -34,6 +34,7 @@ import (
 
 // RestoreOSPostHandler godoc
 //
+//	@ID 			RestoreOSPostHandler
 //	@Summary		Import data from objectstorage
 //	@Description	Import data from a objectstorage  to files.
 //	@Tags			[Data Import], [Object Storage]
@@ -71,8 +72,9 @@ func RestoreOSPostHandler(ctx echo.Context) error {
 	}
 }
 
-// RestoreMySQLPostHandler godoc
+// RestoreRDBPostHandler godoc
 //
+//	@ID 			RestoreRDBPostHandler
 //	@Summary		Import data from MySQL
 //	@Description	Import data from a MySQL database to SQL files.
 //	@Tags			[Data Import], [RDBMS]
@@ -158,8 +160,9 @@ func RestoreRDBPostHandler(ctx echo.Context) error {
 
 }
 
-// RestoreMySQLPostHandler godoc
+// RestoreNRDBPostHandler godoc
 //
+//	@ID 			RestoreNRDBPostHandler
 //	@Summary		Import data from MySQL
 //	@Description	Import data from a MySQL database to SQL files.
 //	@Tags			[Data Import], [RDBMS]

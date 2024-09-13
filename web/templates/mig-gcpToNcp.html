@@ -13,12 +13,13 @@
         <form id="migForm">
             <input type="hidden" id="migSource" value="gcp">
             <input type="hidden" id="migDest" value="ncp">
-
+            <input type="hidden" id="sourcePoint[provider]" value="gcp">
+            <input type="hidden" id="targetPoint[provider]" value="ncp">
             <div class="mb-3">
                 <label for="mig-gcp-region" class="form-label">Google Cloud Storage</label>
 
                 <div class="form-floating">
-                    <select class="form-select form-select-sm w-50" id="mig-gcp-region" name="gcpRegion">
+                    <select class="form-select form-select-sm w-50" id="mig-gcp-region" name="sourcePoint[region]">
                     <!-- <option selected>Region</option> -->
                     {{ range $index, $value := .GCPRegions }}
                     <option value="{{ $value }}">{{ $value }}</option>
@@ -27,7 +28,17 @@
                     <label for="mig-gcp-region">리전 선택</label>
                 </div>
             </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-user-secret"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gen-s3-profile" name="sourcePoint[profileName]" placeholder="profile name" required>
+                    <label for="gen-s3-profile">Profile</label>
+                </div>
+            </div>
+
            
+
+<!--            
             <div class="mb-3">
                 <label for="mig-gcp-credential" class="form-label">Credentials 파일</label>
                 <input class="form-control" type="file" id="mig-gcp-credential" name="gcpCredential" required>
@@ -39,12 +50,12 @@
                     <input type="text" class="form-control" id="gen-gcp-projectid" name="projectid" placeholder="ProjectID" required>
                     <label for="mig-gcp-projectID">ProjectID</label>
                 </div>
-            </div>
+            </div> -->
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-gcp-bucket" name="gcpBucket" placeholder="Bucket" required>
+                    <input type="text" class="form-control" id="mig-gcp-bucket" name="sourcePoint[bucket]" placeholder="Bucket" required>
                     <label for="mig-gcp-bucket">Bucket</label>
                 </div>
             </div>
@@ -53,7 +64,7 @@
                 <label for="mig-ncp-region" class="form-label">Naver Object Storage</label>
 
                 <div class="form-floating">
-                    <select class="form-select form-select-sm w-50" id="mig-ncp-region" name="ncpRegion">
+                    <select class="form-select form-select-sm w-50" id="mig-ncp-region" name="targetPoint[region]">
                     <!-- <option selected>Region</option> -->
                     {{ range $index, $value := .NCPRegions }}
                     <option value="{{ $value }}">{{ $value }}</option>
@@ -62,8 +73,17 @@
                     <label for="mig-ncp-region">리전 선택</label>
                 </div>
             </div>
-
             <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-user-secret"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gen-s3-profile" name="targetPoint[profileName]" placeholder="profile name" required>
+                    <label for="gen-s3-profile">Profile</label>
+                </div>
+            </div>
+
+           
+
+            <!-- <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
                 <div class="form-floating">
                     <input type="text" class="form-control" id="mig-ncp-accessKey" name="ncpAccessKey" placeholder="Access Key" required>
@@ -77,12 +97,12 @@
                     <input type="password" class="form-control" id="mig-ncp-secretKey" name="ncpSecretKey" placeholder="Secret Key" required>
                     <label for="mig-ncp-secretKey">Secret Key</label>
                 </div>
-            </div>
+            </div> -->
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-flag"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-ncp-endpoint" name="ncpEndpoint" placeholder="Endpoint" required>
+                    <input type="text" class="form-control" id="mig-ncp-endpoint" name="targetPoint[endpoint]" placeholder="Endpoint">
                     <label for="mig-ncp-endpoint">Endpoint</label>
                 </div>
             </div>
@@ -90,7 +110,7 @@
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-ncp-bucket" name="ncpBucket" placeholder="Bucket" required>
+                    <input type="text" class="form-control" id="mig-ncp-bucket" name="targetPoint[bucket]" placeholder="Bucket" required>
                     <label for="mig-ncp-bucket">Bucket</label>
                 </div>
             </div>

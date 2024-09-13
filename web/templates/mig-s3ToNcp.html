@@ -11,14 +11,16 @@
     <div class="card-body">
         <!-- <form action="/migration/aws/ncp" method="POST"> -->
         <form id="migForm">
-            <input type="hidden" id="migSource" value="s3">
+            <input type="hidden" id="migSource" value="aws">
             <input type="hidden" id="migDest" value="ncp">
-
+            <input type="hidden" id="sourcePoint[provider]" value="aws">
+            <input type="hidden" id="targetPoint[provider]" value="ncp">
+            
             <div class="mb-3">
                 <label for="mig-aws-region" class="form-label">AWS S3</label>
 
                 <div class="form-floating">
-                    <select class="form-select form-select-sm w-50" id="mig-aws-region" name="awsRegion">
+                    <select class="form-select form-select-sm w-50" id="mig-aws-region" name="sourcePoint[region]">
                     <!-- <option selected>Region</option> -->
                     {{ range $index, $value := .AWSRegions }}
                     <option value="{{ $value }}">{{ $value }}</option>
@@ -27,27 +29,19 @@
                     <label for="mig-aws-region">리전 선택</label>
                 </div>
             </div>
-
             <div class="input-group mb-3">
-                <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+                <span class="input-group-text"><i class="fa-solid fa-user-secret"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-aws-accessKey" name="awsAccessKey" placeholder="Access Key" required>
-                    <label for="mig-aws-accessKey">Access Key</label>
+                    <input type="text" class="form-control" id="gen-s3-profile" name="sourcePoint[profileName]" placeholder="profile name" required>
+                    <label for="gen-s3-profile">Profile</label>
                 </div>
             </div>
 
-            <div class="input-group mb-3">
-                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
-                <div class="form-floating">
-                    <input type="password" class="form-control" id="mig-aws-secretKey" name="awsSecretKey" placeholder="Secret Key" required>
-                    <label for="mig-aws-secretKey">Secret Key</label>
-                </div>
-            </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-aws-bucket" name="awsBucket" placeholder="Bucket" required>
+                    <input type="text" class="form-control" id="mig-aws-bucket" name="sourcePoint[bucket]" placeholder="Bucket" required>
                     <label for="mig-aws-bucket">Bucket</label>
                 </div>
             </div>
@@ -67,6 +61,13 @@
             </div>
 
             <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-user-secret"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gen-s3-profile" name="targetPoint[profileName]" placeholder="profile name" required>
+                    <label for="gen-s3-profile">Profile</label>
+                </div>
+            </div>
+            <!-- <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
                 <div class="form-floating">
                     <input type="text" class="form-control" id="mig-ncp-accessKey" name="ncpAccessKey" placeholder="Access Key" required>
@@ -80,12 +81,12 @@
                     <input type="password" class="form-control" id="mig-ncp-secretKey" name="ncpSecretKey" placeholder="Secret Key" required>
                     <label for="mig-ncp-secretKey">Secret Key</label>
                 </div>
-            </div>
+            </div> -->
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-flag"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-ncp-endpoint" name="ncpEndpoint" placeholder="Endpoint" required>
+                    <input type="text" class="form-control" id="mig-ncp-endpoint" name="targetPoint[endpoint]" placeholder="Endpoint">
                     <label for="mig-ncp-endpoint">Endpoint</label>
                 </div>
             </div>
@@ -93,7 +94,7 @@
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-ncp-bucket" name="ncpBucket" placeholder="Bucket" required>
+                    <input type="text" class="form-control" id="mig-ncp-bucket" name="targetPoint[bucket]" placeholder="Bucket" required>
                     <label for="mig-ncp-bucket">Bucket</label>
                 </div>
             </div>

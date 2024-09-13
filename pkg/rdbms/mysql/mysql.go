@@ -74,7 +74,7 @@ func (d *MysqlDBMS) Exec(query string) error {
 	if err != nil {
 		log.Error().Err(err).Str("query", query).Msg("Failed to execute SQL query")
 	}
-	log.Info().Str("query", query).Msg("SQL query executed successfully")
+	log.Debug().Str("query", query).Msg("SQL query executed successfully")
 	return err
 }
 
@@ -106,13 +106,16 @@ func (d *MysqlDBMS) DeleteDB(dbName string) error {
 func (d *MysqlDBMS) ListDB(dst *[]string) error {
 	rows, err := d.db.Query("SHOW DATABASES")
 	if err != nil {
+		log.Error().Err(err).Msgf("SQL query executed failed %v", rows)
 		return err
 	}
+
 	defer rows.Close()
 
 	for rows.Next() {
 		var dbName string
 		if err := rows.Scan(&dbName); err != nil {
+			log.Error().Err(err).Msgf("SQL query executed failed %v", rows)
 			return err
 		}
 
@@ -127,6 +130,7 @@ func (d *MysqlDBMS) ListDB(dst *[]string) error {
 func (d *MysqlDBMS) ListTable(dbName string, dst *[]string) error {
 	_, err := d.db.Exec(fmt.Sprintf("USE %s;", dbName))
 	if err != nil {
+		log.Error().Err(err).Msgf("SQL query executed failed")
 		return err
 	}
 
@@ -150,6 +154,7 @@ func (d *MysqlDBMS) ListTable(dbName string, dst *[]string) error {
 func (d *MysqlDBMS) ShowCreateDBSql(dbName string, dbCreateSql *string) error {
 	err := d.db.QueryRow(fmt.Sprintf("SHOW CREATE DATABASE %s;", dbName)).Scan(&dbName, dbCreateSql)
 	if err != nil {
+		log.Error().Err(err).Msgf("SQL query executed failed")
 		return err
 	}
 
@@ -173,9 +178,11 @@ func (d *MysqlDBMS) ShowCreateDBSql(dbName string, dbCreateSql *string) error {
 // Get table create sql
 func (d *MysqlDBMS) ShowCreateTableSql(dbName, tableName string, tableCreateSql *string) error {
 	if err := d.Exec(fmt.Sprintf("USE %s;", dbName)); err != nil {
+		log.Error().Err(err).Msgf("SQL query executed failed")
 		return err
 	}
 	if err := d.db.QueryRow(fmt.Sprintf("SHOW CREATE TABLE %s;", tableName)).Scan(&tableName, tableCreateSql); err != nil {
+		log.Error().Err(err).Msgf("SQL query executed failed")
 		return err
 	}
 	*tableCreateSql = removeSequenceOption(*tableCreateSql)
@@ -188,6 +195,7 @@ func (d *MysqlDBMS) ShowCreateTableSql(dbName, tableName string, tableCreateSql 
 func (d *MysqlDBMS) GetInsert(dbName, tableName string, insertSql *[]string) error {
 	colRows, err := d.db.Query("SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?", dbName, tableName)
 	if err != nil {
+		log.Error().Err(err).Msgf("SQL query executed failed")
 		return err
 	}
 	defer colRows.Close()
@@ -196,6 +204,7 @@ func (d *MysqlDBMS) GetInsert(dbName, tableName string, insertSql *[]string) err
 	for colRows.Next() {
 		var columnName string
 		if err := colRows.Scan(&columnName); err != nil {
+			log.Error().Err(err).Msgf("SQL query executed failed")
 			return err
 		}
 		columns = append(columns, columnName)
@@ -210,6 +219,7 @@ func (d *MysqlDBMS) GetInsert(dbName, tableName string, insertSql *[]string) err
 	selectQuery := "SELECT " + strings.Join(escapedColumns, ", ") + " FROM " + tableName
 	selRows, err := d.db.Query(selectQuery)
 	if err != nil {
+		log.Error().Err(err).Msgf("SQL query executed failed")
 		return err
 	}
 	defer selRows.Close()
@@ -225,7 +235,7 @@ func (d *MysqlDBMS) GetInsert(dbName, tableName string, insertSql *[]string) err
 
 		err := selRows.Scan(valuePtrs...)
 		if err != nil {
-
+			log.Error().Err(err).Msgf("SQL query executed failed")
 			return err
 		}
 

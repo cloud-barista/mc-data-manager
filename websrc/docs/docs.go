@@ -160,6 +160,7 @@ const docTemplate = `{
                     "[Object Storage]"
                 ],
                 "summary": "Generate test data on AWS S3",
+                "operationId": "GenerateS3PostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required to generate test data",
@@ -207,6 +208,7 @@ const docTemplate = `{
                     "[NRDBMS]"
                 ],
                 "summary": "Generate test data on AWS DynamoDB",
+                "operationId": "GenerateDynamoDBPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required to generate test data",
@@ -254,6 +256,7 @@ const docTemplate = `{
                     "[NRDBMS]"
                 ],
                 "summary": "Generate test data on GCP Firestore",
+                "operationId": "GenerateFirestorePostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required to generate test data",
@@ -301,6 +304,7 @@ const docTemplate = `{
                     "[Object Storage]"
                 ],
                 "summary": "Generate test data on GCP Cloud Storage",
+                "operationId": "GenerateGCPPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required to generate test data",
@@ -341,6 +345,7 @@ const docTemplate = `{
                     "[Test Data Generation]"
                 ],
                 "summary": "Generate test data on on-premise Linux",
+                "operationId": "GenerateLinuxPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required to generate test data",
@@ -388,6 +393,7 @@ const docTemplate = `{
                     "[NRDBMS]"
                 ],
                 "summary": "Generate test data on NCP MongoDB",
+                "operationId": "GenerateMongoDBPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required to generate test data",
@@ -435,6 +441,7 @@ const docTemplate = `{
                     "[RDBMS]"
                 ],
                 "summary": "Generate test data on MySQL",
+                "operationId": "GenerateMySQLPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required to generate test data",
@@ -482,6 +489,7 @@ const docTemplate = `{
                     "[Object Storage]"
                 ],
                 "summary": "Generate test data on NCP Object Storage",
+                "operationId": "GenerateNCPPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required to generate test data",
@@ -528,6 +536,7 @@ const docTemplate = `{
                     "[Test Data Generation]"
                 ],
                 "summary": "Generate test data on on-premise Windows",
+                "operationId": "GenerateWindowsPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required to generate test data",
@@ -575,6 +584,7 @@ const docTemplate = `{
                     "[Object Storage]"
                 ],
                 "summary": "Migrate data from AWS S3 to GCP",
+                "operationId": "MigrationS3ToGCPPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -615,6 +625,7 @@ const docTemplate = `{
                     "[Data Migration]"
                 ],
                 "summary": "Migrate data from AWS S3 to Linux",
+                "operationId": "MigrationS3ToLinuxPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -662,6 +673,7 @@ const docTemplate = `{
                     "[Object Storage]"
                 ],
                 "summary": "Migrate data from AWS S3 to NCP",
+                "operationId": "MigrationS3ToNCPPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -702,6 +714,7 @@ const docTemplate = `{
                     "[Data Migration]"
                 ],
                 "summary": "Migrate data from AWS S3 to Windows",
+                "operationId": "MigrationS3ToWindowsPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -749,6 +762,7 @@ const docTemplate = `{
                     "[NRDBMS]"
                 ],
                 "summary": "Migrate data from DynamoDB to Firestore",
+                "operationId": "MigrationDynamoDBToFirestorePostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -790,6 +804,7 @@ const docTemplate = `{
                     "[NRDBMS]"
                 ],
                 "summary": "Migrate data from DynamoDB to MongoDB",
+                "operationId": "MigrationDynamoDBToMongoDBPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -831,6 +846,7 @@ const docTemplate = `{
                     "[NRDBMS]"
                 ],
                 "summary": "Migrate data from Firestore to DynamoDB",
+                "operationId": "MigrationFirestoreToDynamoDBPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -872,6 +888,7 @@ const docTemplate = `{
                     "[NRDBMS]"
                 ],
                 "summary": "Migrate data from Firestore to MongoDB",
+                "operationId": "MigrationFirestoreToMongoDBPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -913,6 +930,7 @@ const docTemplate = `{
                     "[Object Storage]"
                 ],
                 "summary": "Migrate data from GCP to AWS S3",
+                "operationId": "MigrationGCPToS3PostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -953,6 +971,7 @@ const docTemplate = `{
                     "[Data Migration]"
                 ],
                 "summary": "Migrate data from GCP to Linux",
+                "operationId": "MigrationGCPToLinuxPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -1000,6 +1019,7 @@ const docTemplate = `{
                     "[Object Storage]"
                 ],
                 "summary": "Migrate data from GCP to NCP Object Storage",
+                "operationId": "MigrationGCPToNCPPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -1040,6 +1060,7 @@ const docTemplate = `{
                     "[Data Migration]"
                 ],
                 "summary": "Migrate data from GCP to Windows",
+                "operationId": "MigrationGCPToWindowsPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -1086,6 +1107,7 @@ const docTemplate = `{
                     "[Data Migration]"
                 ],
                 "summary": "Migrate data from Linux to AWS S3",
+                "operationId": "MigrationLinuxToS3PostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -1132,6 +1154,7 @@ const docTemplate = `{
                     "[Data Migration]"
                 ],
                 "summary": "Migrate data from Linux to GCP Cloud Storage",
+                "operationId": "MigrationLinuxToGCPPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -1178,6 +1201,7 @@ const docTemplate = `{
                     "[Data Migration]"
                 ],
                 "summary": "Migrate data from Linux to NCP Object Storage",
+                "operationId": "MigrationLinuxToNCPPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -1225,6 +1249,7 @@ const docTemplate = `{
                     "[NRDBMS]"
                 ],
                 "summary": "Migrate data from MongoDB to DynamoDB",
+                "operationId": "MigrationMongoDBToDynamoDBPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -1266,6 +1291,7 @@ const docTemplate = `{
                     "[NRDBMS]"
                 ],
                 "summary": "Migrate data from MongoDB to Firestore",
+                "operationId": "MigrationMongoDBToFirestorePostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -1307,6 +1333,7 @@ const docTemplate = `{
                     "[RDBMS]"
                 ],
                 "summary": "Migrate data from MySQL to MySQL",
+                "operationId": "MigrationMySQLPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -1348,6 +1375,7 @@ const docTemplate = `{
                     "[Object Storage]"
                 ],
                 "summary": "Migrate data from NCP to AWS S3",
+                "operationId": "MigrationNCPToS3PostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -1389,6 +1417,7 @@ const docTemplate = `{
                     "[Object Storage]"
                 ],
                 "summary": "Migrate data from NCP to GCP Cloud Storage",
+                "operationId": "MigrationNCPToGCPPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -1435,6 +1464,7 @@ const docTemplate = `{
                     "[Data Migration]"
                 ],
                 "summary": "Migrate data from NCP to Linux",
+                "operationId": "MigrationNCPToLinuxPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -1481,6 +1511,7 @@ const docTemplate = `{
                     "[Data Migration]"
                 ],
                 "summary": "Migrate data from NCP to Windows",
+                "operationId": "MigrationNCPToWindowsPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -1527,6 +1558,7 @@ const docTemplate = `{
                     "[Data Migration]"
                 ],
                 "summary": "Migrate data from Windows to AWS S3",
+                "operationId": "MigrationWindowsToS3PostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -1573,6 +1605,7 @@ const docTemplate = `{
                     "[Data Migration]"
                 ],
                 "summary": "Migrate data from Windows to GCP Cloud Storage",
+                "operationId": "MigrationWindowsToGCPPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -1619,6 +1652,7 @@ const docTemplate = `{
                     "[Data Migration]"
                 ],
                 "summary": "Migrate data from Windows to NCP Object Storage",
+                "operationId": "MigrationWindowsToNCPPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -1666,6 +1700,7 @@ const docTemplate = `{
                     "[RDBMS]"
                 ],
                 "summary": "Import data from MySQL",
+                "operationId": "RestoreNRDBPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for Restore",
@@ -1707,6 +1742,7 @@ const docTemplate = `{
                     "[Object Storage]"
                 ],
                 "summary": "Import data from objectstorage",
+                "operationId": "RestoreOSPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for Restore",
@@ -1748,6 +1784,7 @@ const docTemplate = `{
                     "[RDBMS]"
                 ],
                 "summary": "Import data from MySQL",
+                "operationId": "RestoreRDBPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for Restore",
@@ -1785,6 +1822,7 @@ const docTemplate = `{
                     "[Task]"
                 ],
                 "summary": "Get all Tasks",
+                "operationId": "GetAllTasksHandler",
                 "responses": {
                     "200": {
                         "description": "Successfully retrieved all Tasks",
@@ -1815,6 +1853,7 @@ const docTemplate = `{
                     "[Task]"
                 ],
                 "summary": "Create a new Task",
+                "operationId": "CreateTaskHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for creating a Task",
@@ -1845,6 +1884,9 @@ const docTemplate = `{
         "/task/{id}": {
             "get": {
                 "description": "Get the details of a Task using its ID.",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -1852,6 +1894,7 @@ const docTemplate = `{
                     "[Task]"
                 ],
                 "summary": "Get a Task by ID",
+                "operationId": "GetTaskHandler",
                 "parameters": [
                     {
                         "type": "string",
@@ -1888,6 +1931,7 @@ const docTemplate = `{
                     "[Task]"
                 ],
                 "summary": "Update an existing Task",
+                "operationId": "UpdateTaskHandler",
                 "parameters": [
                     {
                         "type": "string",
@@ -1936,6 +1980,7 @@ const docTemplate = `{
                     "[Task]"
                 ],
                 "summary": "Delete a Task",
+                "operationId": "DeleteTaskHandler",
                 "parameters": [
                     {
                         "type": "string",
@@ -1966,14 +2011,8 @@ const docTemplate = `{
         "controllers.GenarateTask": {
             "type": "object",
             "properties": {
-                "operationId": {
-                    "type": "string"
-                },
-                "tag": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                "inline": {
+                    "$ref": "#/definitions/models.Task"
                 },
                 "targetPoint": {
                     "$ref": "#/definitions/models.GenTaskTarget"

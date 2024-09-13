@@ -13,12 +13,13 @@
         <form id="migForm">
             <input type="hidden" id="migSource" value="ncp">
             <input type="hidden" id="migDest" value="linux">
+            <input type="hidden" id="sourcePoint[provider]" value="ncp">
 
             <div class="mb-3">
                 <label for="mig-ncp-region" class="form-label">Naver Object Storage</label>
 
                 <div class="form-floating">
-                    <select class="form-select form-select-sm w-50" id="mig-ncp-region" name="ncpRegion">
+                    <select class="form-select form-select-sm w-50" id="mig-ncp-region" name="sourcePoint[region]">
                     <!-- <option selected>Region</option> -->
                     {{ range $index, $value := .Regions }}
                     <option value="{{ $value }}">{{ $value }}</option>
@@ -27,8 +28,16 @@
                     <label for="mig-ncp-region">리전 선택</label>
                 </div>
             </div>
-
             <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-user-secret"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gen-s3-profile" name="sourcePoint[profileName]" placeholder="profile name" required>
+                    <label for="gen-s3-profile">Profile</label>
+                </div>
+            </div>
+
+
+            <!-- <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
                 <div class="form-floating">
                     <input type="text" class="form-control" id="mig-ncp-accessKey" name="ncpAccessKey" placeholder="Access Key" required>
@@ -42,12 +51,12 @@
                     <input type="password" class="form-control" id="mig-ncp-secretKey" name="ncpSecretKey" placeholder="Secret Key" required>
                     <label for="mig-ncp-secretKey">Secret Key</label>
                 </div>
-            </div>
+            </div> -->
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-flag"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-ncp-endpoint" name="ncpEndpoint" placeholder="Endpoint" required>
+                    <input type="text" class="form-control" id="mig-ncp-endpoint" name="sourcePoint[endpoint]" placeholder="Endpoint">
                     <label for="mig-ncp-endpoint">Endpoint</label>
                 </div>
             </div>
@@ -55,7 +64,7 @@
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-ncp-bucket" name="ncpBucket" placeholder="Bucket" required>
+                    <input type="text" class="form-control" id="mig-ncp-bucket" name="sourcePoint[bucket]" placeholder="Bucket" required>
                     <label for="mig-ncp-bucket">Bucket</label>
                 </div>
             </div>
@@ -66,7 +75,7 @@
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-folder"></i></span>
                     <div class="form-floating">
-                      <input type="text" class="form-control" id="mig-linux-path" name="path" value="/tmp/dummy" placeholder="디렉토리 경로">
+                      <input type="text" class="form-control" id="mig-linux-path" name="targetPoint[path]" value="/tmp/dummy" placeholder="디렉토리 경로">
                       <label for="mig-linux-path">디렉토리 경로</label>
                     </div>
                 </div>

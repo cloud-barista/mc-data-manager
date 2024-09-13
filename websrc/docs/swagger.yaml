@@ -2,12 +2,8 @@ basePath: /
 definitions:
   controllers.GenarateTask:
     properties:
-      operationId:
-        type: string
-      tag:
-        items:
-          type: string
-        type: array
+      inline:
+        $ref: '#/definitions/models.Task'
       targetPoint:
         $ref: '#/definitions/models.GenTaskTarget'
     type: object
@@ -296,6 +292,7 @@ paths:
       consumes:
       - application/json
       description: Generate test data on AWS S3.
+      operationId: GenerateS3PostHandler
       parameters:
       - description: Parameters required to generate test data
         in: body
@@ -327,6 +324,7 @@ paths:
       consumes:
       - application/json
       description: Generate test data on AWS DynamoDB.
+      operationId: GenerateDynamoDBPostHandler
       parameters:
       - description: Parameters required to generate test data
         in: body
@@ -358,6 +356,7 @@ paths:
       consumes:
       - application/json
       description: Generate test data on GCP Firestore.
+      operationId: GenerateFirestorePostHandler
       parameters:
       - description: Parameters required to generate test data
         in: body
@@ -389,6 +388,7 @@ paths:
       consumes:
       - application/json
       description: Generate test data on GCP Cloud Storage.
+      operationId: GenerateGCPPostHandler
       parameters:
       - description: Parameters required to generate test data
         in: body
@@ -416,6 +416,7 @@ paths:
       consumes:
       - application/json
       description: Generate test data on on-premise Linux.
+      operationId: GenerateLinuxPostHandler
       parameters:
       - description: Parameters required to generate test data
         in: body
@@ -446,6 +447,7 @@ paths:
       consumes:
       - application/json
       description: Generate test data on NCP MongoDB.
+      operationId: GenerateMongoDBPostHandler
       parameters:
       - description: Parameters required to generate test data
         in: body
@@ -477,6 +479,7 @@ paths:
       consumes:
       - application/json
       description: Generate test data on MySQL.
+      operationId: GenerateMySQLPostHandler
       parameters:
       - description: Parameters required to generate test data
         in: body
@@ -508,6 +511,7 @@ paths:
       consumes:
       - application/json
       description: Generate test data on NCP Object Storage.
+      operationId: GenerateNCPPostHandler
       parameters:
       - description: Parameters required to generate test data
         in: body
@@ -539,6 +543,7 @@ paths:
       consumes:
       - application/json
       description: Generate test data on on-premise Windows.
+      operationId: GenerateWindowsPostHandler
       parameters:
       - description: Parameters required to generate test data
         in: body
@@ -569,6 +574,7 @@ paths:
       consumes:
       - application/json
       description: Migrate data stored in AWS S3 to Google Cloud Storage.
+      operationId: MigrationS3ToGCPPostHandler
       parameters:
       - description: Parameters required for migration
         in: body
@@ -596,6 +602,7 @@ paths:
       consumes:
       - application/json
       description: Migrate data stored in AWS S3 to a Linux-based system.
+      operationId: MigrationS3ToLinuxPostHandler
       parameters:
       - description: Parameters required for migration
         in: body
@@ -626,6 +633,7 @@ paths:
       consumes:
       - application/json
       description: Migrate data stored in AWS S3 to Naver Cloud Object Storage.
+      operationId: MigrationS3ToNCPPostHandler
       parameters:
       - description: Parameters required for migration
         in: body
@@ -653,6 +661,7 @@ paths:
       consumes:
       - application/json
       description: Migrate data stored in AWS S3 to a Windows-based system.
+      operationId: MigrationS3ToWindowsPostHandler
       parameters:
       - description: Parameters required for migration
         in: body
@@ -683,6 +692,7 @@ paths:
       consumes:
       - application/json
       description: Migrate data stored in AWS DynamoDB to Google Cloud Firestore.
+      operationId: MigrationDynamoDBToFirestorePostHandler
       parameters:
       - description: Parameters required for migration
         in: body
@@ -710,6 +720,7 @@ paths:
       consumes:
       - application/json
       description: Migrate data stored in AWS DynamoDB to Naver Cloud MongoDB.
+      operationId: MigrationDynamoDBToMongoDBPostHandler
       parameters:
       - description: Parameters required for migration
         in: body
@@ -737,6 +748,7 @@ paths:
       consumes:
       - application/json
       description: Migrate data stored in Google Cloud Firestore to AWS DynamoDB.
+      operationId: MigrationFirestoreToDynamoDBPostHandler
       parameters:
       - description: Parameters required for migration
         in: body
@@ -764,6 +776,7 @@ paths:
       consumes:
       - application/json
       description: Migrate data stored in Google Cloud Firestore to Naver Cloud MongoDB.
+      operationId: MigrationFirestoreToMongoDBPostHandler
       parameters:
       - description: Parameters required for migration
         in: body
@@ -791,6 +804,7 @@ paths:
       consumes:
       - application/json
       description: Migrate data stored in GCP Cloud Storage to AWS S3.
+      operationId: MigrationGCPToS3PostHandler
       parameters:
       - description: Parameters required for migration
         in: body
@@ -818,6 +832,7 @@ paths:
       consumes:
       - application/json
       description: Migrate data stored in GCP Cloud Storage to a Linux-based system.
+      operationId: MigrationGCPToLinuxPostHandler
       parameters:
       - description: Parameters required for migration
         in: body
@@ -848,6 +863,7 @@ paths:
       consumes:
       - application/json
       description: Migrate data stored in GCP Cloud Storage to NCP Object Storage.
+      operationId: MigrationGCPToNCPPostHandler
       parameters:
       - description: Parameters required for migration
         in: body
@@ -875,6 +891,7 @@ paths:
       consumes:
       - application/json
       description: Migrate data stored in GCP Cloud Storage to a Windows-based system.
+      operationId: MigrationGCPToWindowsPostHandler
       parameters:
       - description: Parameters required for migration
         in: body
@@ -905,6 +922,7 @@ paths:
       consumes:
       - application/json
       description: Migrate data stored in a Linux-based system to AWS S3.
+      operationId: MigrationLinuxToS3PostHandler
       parameters:
       - description: Parameters required for migration
         in: body
@@ -935,6 +953,7 @@ paths:
       consumes:
       - application/json
       description: Migrate data stored in a Linux-based system to GCP Cloud Storage.
+      operationId: MigrationLinuxToGCPPostHandler
       parameters:
       - description: Parameters required for migration
         in: body
@@ -965,6 +984,7 @@ paths:
       consumes:
       - application/json
       description: Migrate data stored in a Linux-based system to NCP Object Storage.
+      operationId: MigrationLinuxToNCPPostHandler
       parameters:
       - description: Parameters required for migration
         in: body
@@ -995,6 +1015,7 @@ paths:
       consumes:
       - application/json
       description: Migrate data stored in Naver Cloud MongoDB to AWS DynamoDB.
+      operationId: MigrationMongoDBToDynamoDBPostHandler
       parameters:
       - description: Parameters required for migration
         in: body
@@ -1022,6 +1043,7 @@ paths:
       consumes:
       - application/json
       description: Migrate data stored in Naver Cloud MongoDB to Google Cloud Firestore.
+      operationId: MigrationMongoDBToFirestorePostHandler
       parameters:
       - description: Parameters required for migration
         in: body
@@ -1049,6 +1071,7 @@ paths:
       consumes:
       - application/json
       description: Migrate data from one MySQL database to another MySQL database.
+      operationId: MigrationMySQLPostHandler
       parameters:
       - description: Parameters required for migration
         in: body
@@ -1076,6 +1099,7 @@ paths:
       consumes:
       - application/json
       description: Migrate data stored in NCP Object Storage to AWS S3.
+      operationId: MigrationNCPToS3PostHandler
       parameters:
       - description: Parameters required for migration
         in: body
@@ -1103,6 +1127,7 @@ paths:
       consumes:
       - application/json
       description: Migrate data stored in NCP Object Storage to GCP Cloud Storage.
+      operationId: MigrationNCPToGCPPostHandler
       parameters:
       - description: Parameters required for migration
         in: body
@@ -1134,6 +1159,7 @@ paths:
       consumes:
       - application/json
       description: Migrate data stored in NCP Object Storage to a Linux-based system.
+      operationId: MigrationNCPToLinuxPostHandler
       parameters:
       - description: Parameters required for migration
         in: body
@@ -1164,6 +1190,7 @@ paths:
       consumes:
       - application/json
       description: Migrate data stored in NCP Object Storage to a Windows-based system.
+      operationId: MigrationNCPToWindowsPostHandler
       parameters:
       - description: Parameters required for migration
         in: body
@@ -1194,6 +1221,7 @@ paths:
       consumes:
       - application/json
       description: Migrate data stored in a Windows-based system to AWS S3.
+      operationId: MigrationWindowsToS3PostHandler
       parameters:
       - description: Parameters required for migration
         in: body
@@ -1224,6 +1252,7 @@ paths:
       consumes:
       - application/json
       description: Migrate data stored in a Windows-based system to GCP Cloud Storage.
+      operationId: MigrationWindowsToGCPPostHandler
       parameters:
       - description: Parameters required for migration
         in: body
@@ -1254,6 +1283,7 @@ paths:
       consumes:
       - application/json
       description: Migrate data stored in a Windows-based system to NCP Object Storage.
+      operationId: MigrationWindowsToNCPPostHandler
       parameters:
       - description: Parameters required for migration
         in: body
@@ -1284,6 +1314,7 @@ paths:
       consumes:
       - application/json
       description: Import data from a MySQL database to SQL files.
+      operationId: RestoreNRDBPostHandler
       parameters:
       - description: Parameters required for Restore
         in: body
@@ -1311,6 +1342,7 @@ paths:
       consumes:
       - application/json
       description: Import data from a objectstorage  to files.
+      operationId: RestoreOSPostHandler
       parameters:
       - description: Parameters required for Restore
         in: body
@@ -1338,6 +1370,7 @@ paths:
       consumes:
       - application/json
       description: Import data from a MySQL database to SQL files.
+      operationId: RestoreRDBPostHandler
       parameters:
       - description: Parameters required for Restore
         in: body
@@ -1363,6 +1396,7 @@ paths:
   /task:
     get:
       description: Retrieve a list of all Tasks in the system.
+      operationId: GetAllTasksHandler
       produces:
       - application/json
       responses:
@@ -1383,6 +1417,7 @@ paths:
       consumes:
       - application/json
       description: Create a new Task and store it in the system.
+      operationId: CreateTaskHandler
       parameters:
       - description: Parameters required for creating a Task
         in: body
@@ -1407,6 +1442,7 @@ paths:
   /task/{id}:
     delete:
       description: Delete an existing Task using its ID.
+      operationId: DeleteTaskHandler
       parameters:
       - description: Task ID
         in: path
@@ -1428,7 +1464,10 @@ paths:
       tags:
       - '[Task]'
     get:
+      consumes:
+      - application/json
       description: Get the details of a Task using its ID.
+      operationId: GetTaskHandler
       parameters:
       - description: Task ID
         in: path
@@ -1453,6 +1492,7 @@ paths:
       consumes:
       - application/json
       description: Update the details of an existing Task using its ID.
+      operationId: UpdateTaskHandler
       parameters:
       - description: Task ID
         in: path

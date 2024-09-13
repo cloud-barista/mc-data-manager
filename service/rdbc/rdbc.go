@@ -79,7 +79,7 @@ func New(rdb RDBMS, opts ...Option) (*RDBController, error) {
 func (rdb *RDBController) ListDB(dst *[]string) error {
 	err := rdb.client.ListDB(dst)
 	if err != nil {
-		log.Info().Msgf("RDB", *dst)
+		log.Error().Err(err).Msgf("RDB %v", *dst)
 		return err
 	}
 	return nil

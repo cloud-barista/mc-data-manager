@@ -26,7 +26,14 @@
                 </div>
             </div>
 
-            <div class="mb-3">
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-user-secret"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gen-s3-profile" name="profileName" placeholder="profile name" required>
+                    <label for="gen-s3-profile">Profile</label>
+                </div>
+            </div>
+            <!-- <div class="mb-3">
                 <label for="gen-gcp-credential" class="form-label">Credentials 파일</label>
                 <input class="form-control" type="file" id="mig-gcp-credential" name="gcpCredential" required>
             </div>
@@ -37,7 +44,7 @@
                     <input type="text" class="form-control" id="gen-s3-projectid" name="projectid" placeholder="ProjectID" required>
                     <label for="gen-s3-bucket">ProjectID</label>
                 </div>
-            </div>
+            </div> -->
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
@@ -51,6 +58,7 @@
 
             <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
             <input type="hidden" id="genTarget" value="gcp">
+            <input type="hidden" id="provider" value="gcp">
         </form>
     </div>
 </div>

@@ -26,8 +26,14 @@
                     <label for="gen-ncp-region">리전 선택</label>
                 </div>
             </div>
-
             <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-user-secret"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gen-s3-profile" name="profileName" placeholder="profile name" required>
+                    <label for="gen-s3-profile">Profile</label>
+                </div>
+            </div>
+            <!-- <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
                 <div class="form-floating">
                     <input type="text" class="form-control" id="gen-ncp-accessKey" name="accessKey" placeholder="Access Key" required>
@@ -41,12 +47,12 @@
                     <input type="password" class="form-control" id="gen-ncp-secretKey" name="secretKey" placeholder="Secret Key" required>
                     <label for="gen-ncp-secretKey">Secret Key</label>
                 </div>
-            </div>
+            </div> -->
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-location-dot"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="gen-ncp-endpoint" name="endpoint" placeholder="Endpoint" required>
+                    <input type="text" class="form-control" id="gen-ncp-endpoint" name="endpoint" placeholder="Endpoint">
                     <label for="gen-ncp-endpoint">Endpoint</label>
                 </div>
             </div>
@@ -63,6 +69,7 @@
 
             <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
             <input type="hidden" id="genTarget" value="ncp">
+            <input type="hidden" id="provider" value="ncp">
         </form>
     </div>
 </div>
