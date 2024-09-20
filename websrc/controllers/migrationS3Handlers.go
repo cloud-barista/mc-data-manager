@@ -24,6 +24,7 @@ import (
 )
 
 // MigrationS3ToLinuxPostHandler godoc
+// @ID MigrationS3ToLinuxPostHandler
 // @Summary Migrate data from AWS S3 to Linux
 // @Description Migrate data stored in AWS S3 to a Linux-based system.
 // @Tags [Data Migration]
@@ -78,6 +79,7 @@ func MigrationS3ToLinuxPostHandler(ctx echo.Context) error {
 }
 
 // MigrationS3ToWindowsPostHandler godoc
+// @ID MigrationS3ToWindowsPostHandler
 // @Summary Migrate data from AWS S3 to Windows
 // @Description Migrate data stored in AWS S3 to a Windows-based system.
 // @Tags [Data Migration]
@@ -133,6 +135,7 @@ func MigrationS3ToWindowsPostHandler(ctx echo.Context) error {
 }
 
 // MigrationS3ToGCPPostHandler godoc
+// @ID MigrationS3ToGCPPostHandler
 // @Summary Migrate data from AWS S3 to GCP
 // @Description Migrate data stored in AWS S3 to Google Cloud Storage.
 // @Tags	[Data Migration], [Object Storage]
@@ -193,6 +196,7 @@ func MigrationS3ToGCPPostHandler(ctx echo.Context) error {
 }
 
 // MigrationS3ToNCPPostHandler godoc
+// @ID MigrationS3ToNCPPostHandler
 // @Summary Migrate data from AWS S3 to NCP
 // @Description Migrate data stored in AWS S3 to Naver Cloud Object Storage.
 // @Tags	[Data Migration], [Object Storage]

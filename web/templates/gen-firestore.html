@@ -26,8 +26,21 @@
                     <label for="gen-firestore-region">리전 선택</label>
                 </div>
             </div>
-
-            <div class="mb-3">
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-user-secret"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gen-s3-profile" name="profileName" placeholder="profile name" required>
+                    <label for="gen-s3-profile">Profile</label>
+                </div>
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-folder"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gen-s3-profile" name="databaseId" placeholder="database id">
+                    <label for="gen-s3-databaseId">DatabaseId</label>
+                </div>
+            </div>
+            <!-- <div class="mb-3">
                 <label for="gen-firestore-credential" class="form-label">Credentials 파일</label>
                 <input class="form-control" type="file" id="mig-gcp-credential" name="gcpCredential" required>
             </div>
@@ -38,10 +51,11 @@
                     <input type="text" class="form-control" id="gen-firestore-projectid" name="projectid" placeholder="Project ID" required>
                     <label for="gen-firestore-projectid">Project ID</label>
                 </div>
-            </div>
+            </div> -->
 
             <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
             <input type="hidden" id="genTarget" value="firestore">
+            <input type="hidden" id="provider" value="gcp">
         </form>
     </div>
 </div>

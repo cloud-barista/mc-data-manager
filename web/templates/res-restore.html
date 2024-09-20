@@ -1,36 +1,36 @@
-<h1 class="mt-4">백업</h1>
+<h1 class="mt-4">복구</h1>
 <ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item">백업</li>
-    <li class="breadcrumb-item active">Back Up</li>
+    <li class="breadcrumb-item">복구</li>
+    <li class="breadcrumb-item active">Restore</li>
 </ol>
 
 <div class="card mb-4 col-auto">
     <div class="card-header">
       <i class="fa-solid fa-clone"></i>
-        Back Up
+        Restore
     </div>
     <div class="card-body">
-        <form id="backForm">
-            <input type="hidden" id="backSource" value="backup">
-            <input type="hidden" id="backDest" value="backup">
+        <form id="restoreForm">
+            <input type="hidden" id="backSource" value="restore">
+            <input type="hidden" id="backDest" value="restore">
 
-            <label for="back-mysql-srcHost" class="form-label">Back Up</label>
+            <label class="form-label">Restore</label>
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-user-secret"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="back-profile" name="sourcePoint[profileName]" placeholder="profile name" required>
-                    <label for="back-profile">Profile</label>
+                    <input type="text" class="form-control" id="res-profile" name="targetPoint[profileName]" placeholder="profile name" required>
+                    <label for="res-profile">Profile</label>
                 </div>
             </div>
 
             <div class="mb-3">
-                <label for="mig-linux-path" class="form-label">Backup Path</label>
+                <label lass="form-label">Restore Path</label>
 
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-folder"></i></span>
                     <div class="form-floating">
-                      <input type="text" class="form-control" id="mig-linux-path" name="targetPoint[path]" value="/tmp/dummy" placeholder="디렉토리 경로">
-                      <label for="mig-linux-path">Backup Path</label>
+                      <input type="text" class="form-control" id="mig-linux-path" name="sourcePoint[path]" value="/tmp/dummy" placeholder="디렉토리 경로">
+                      <label for="mig-linux-path">restore Path</label>
                     </div>
                 </div>
             </div>
@@ -38,11 +38,11 @@
 
 
 
-            <label for="mig-linux-path" class="form-label">Backup Service</label>
+            <label class="form-label">restore Service</label>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-cloud"></i></span>
-                <select class="form-select" id="srcProvider" name="sourcePoint[provider]">
+                <select class="form-select" id="srcProvider" name="targetPoint[provider]">
                     <option value="aws">AWS</option>
                     <option value="gcp">GCP</option>
                     <option value="ncp">NCP</option>
@@ -60,7 +60,7 @@
             <div class="form-section" id="aws-objectstorage" style="display:none;">
                 <div class="mb-3">    
                     <div class="form-floating">
-                        <select class="form-select form-select-sm" id="mig-aws-region" name="sourcePoint[region]">
+                        <select class="form-select form-select-sm" id="mig-aws-region" name="targetPoint[region]">
                         {{ range $index, $value := .AWSRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}
@@ -71,7 +71,7 @@
                 <div class="input-group mb-3">
                     <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="back-aws-bucket" name="sourcePoint[bucket]" placeholder="Bucket" required>
+                        <input type="text" class="form-control" id="res-aws-bucket" name="targetPoint[bucket]" placeholder="Bucket" required>
                         <label for="mig-aws-bucket">Bucket</label>
                     </div>
                 </div>
@@ -81,7 +81,7 @@
                 <!-- <label class="form-label">GCP ObjectStorage Settings</label> -->
                 <div class="mb-3">    
                     <div class="form-floating">
-                        <select class="form-select form-select-sm" id="mig-gcp-region" name="sourcePoint[region]">
+                        <select class="form-select form-select-sm" id="mig-gcp-region" name="targetPoint[region]">
                         {{ range $index, $value := .GCPRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}
@@ -93,7 +93,7 @@
                 <div class="input-group mb-3">
                     <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="gcp-objectstorage-bucket" name="sourcePoint[bucket]" placeholder="Bucket" required>
+                        <input type="text" class="form-control" id="gcp-objectstorage-bucket" name="targetPoint[bucket]" placeholder="Bucket" required>
                         <label for="gcp-objectstorage-bucket">Bucket</label>
                     </div>
                 </div>
@@ -103,7 +103,7 @@
                 <!-- <label class="form-label">NCP ObjectStorage Settings</label> -->
                 <div class="mb-3">    
                     <div class="form-floating">
-                        <select class="form-select form-select-sm" id="mig-ncp-region" name="sourcePoint[region]">
+                        <select class="form-select form-select-sm" id="mig-ncp-region" name="targetPoint[region]">
                         {{ range $index, $value := .NCPRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}
@@ -114,14 +114,14 @@
                 <div class="input-group mb-3">
                     <span class="input-group-text"><i class="fa-solid fa-location-dot"></i></span>
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="gen-ncp-endpoint" name="sourcePoint[endpoint]" placeholder="Endpoint">
+                        <input type="text" class="form-control" id="gen-ncp-endpoint" name="targetPoint[endpoint]" placeholder="Endpoint">
                         <label for="ncp-endpoint">Endpoint</label>
                     </div>
                 </div>
                 <div class="input-group mb-3">
                     <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="ncp-objectstorage-bucket" name="sourcePoint[bucket]" placeholder="Bucket" required>
+                        <input type="text" class="form-control" id="ncp-objectstorage-bucket" name="targetPoint[bucket]" placeholder="Bucket" required>
                         <label for="ncp-objectstorage-bucket">Bucket</label>
                     </div>
                 </div>
@@ -132,7 +132,7 @@
                 <div class="input-group mb-3">
                     <span class="input-group-text"><i class="fa-solid fa-house"></i></span>
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="mysql-srcHost" name="sourcePoint[host]" placeholder="호스트명 / IP">
+                        <input type="text" class="form-control" id="mysql-srcHost" name="targetPoint[host]" placeholder="호스트명 / IP">
                         <label for="mysql-srcHost">호스트명 / IP</label>
                     </div>
                 </div>
@@ -140,7 +140,7 @@
                 <div class="input-group mb-3">
                     <span class="input-group-text"><i class="fa-solid fa-flag"></i></span>
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="mysql-srcPort" name="sourcePoint[port]" placeholder="포트">
+                        <input type="text" class="form-control" id="mysql-srcPort" name="targetPoint[port]" placeholder="포트">
                         <label for="mysql-srcPort">포트</label>
                     </div>
                 </div>
@@ -148,7 +148,7 @@
                 <div class="input-group mb-3">
                     <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="mysql-srcUsername" name="sourcePoint[username]" placeholder="사용자">
+                        <input type="text" class="form-control" id="mysql-srcUsername" name="targetPoint[username]" placeholder="사용자">
                         <label for="mysql-srcUsername">사용자</label>
                     </div>
                 </div>
@@ -156,7 +156,7 @@
                 <div class="input-group mb-3">
                     <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
                     <div class="form-floating">
-                        <input type="password" class="form-control" id="mysql-srcPassword" name="sourcePoint[password]" placeholder="패스워드">
+                        <input type="password" class="form-control" id="mysql-srcPassword" name="targetPoint[password]" placeholder="패스워드">
                         <label for="mysql-srcPassword">패스워드</label>
                     </div>
                 </div>
@@ -167,7 +167,7 @@
                 <!-- <label class="form-label">AWS NRDB Settings</label> -->
                 <div class="mb-3">    
                     <div class="form-floating">
-                        <select class="form-select form-select-sm" id="nrdb-aws-region" name="sourcePoint[region]">
+                        <select class="form-select form-select-sm" id="nrdb-aws-region" name="targetPoint[region]">
                         {{ range $index, $value := .AWSRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}
@@ -181,7 +181,7 @@
                 <!-- <label class="form-label">GCP NRDB Settings</label> -->
                 <div class="mb-3">    
                     <div class="form-floating">
-                        <select class="form-select form-select-sm" id="nrdb-gcp-region" name="sourcePoint[region]">
+                        <select class="form-select form-select-sm" id="nrdb-gcp-region" name="targetPoint[region]">
                         {{ range $index, $value := .GCPRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}
@@ -195,7 +195,7 @@
                 <!-- <label class="form-label">NCP NRDB Settings</label> -->
                 <div class="mb-3">    
                     <div class="form-floating">
-                        <select class="form-select form-select-sm" id="nrdb-ncp-region" name="sourcePoint[region]">
+                        <select class="form-select form-select-sm" id="nrdb-ncp-region" name="targetPoint[region]">
                         {{ range $index, $value := .NCPRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}
@@ -207,7 +207,7 @@
                 <div class="input-group mb-3">
                     <span class="input-group-text"><i class="fa-solid fa-house"></i></span>
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="nosql-srcHost" name="sourcePoint[host]" placeholder="호스트명 / IP">
+                        <input type="text" class="form-control" id="nosql-srcHost" name="targetPoint[host]" placeholder="호스트명 / IP">
                         <label for="nosql-srcHost">호스트명 / IP</label>
                     </div>
                 </div>
@@ -215,7 +215,7 @@
                 <div class="input-group mb-3">
                     <span class="input-group-text"><i class="fa-solid fa-flag"></i></span>
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="nosql-srcPort" name="sourcePoint[port]" placeholder="포트">
+                        <input type="text" class="form-control" id="nosql-srcPort" name="targetPoint[port]" placeholder="포트">
                         <label for="nosql-srcPort">포트</label>
                     </div>
                 </div>
@@ -223,7 +223,7 @@
                 <div class="input-group mb-3">
                     <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="nosql-srcUsername" name="sourcePoint[username]" placeholder="사용자">
+                        <input type="text" class="form-control" id="nosql-srcUsername" name="targetPoint[username]" placeholder="사용자">
                         <label for="nosql-srcUsername">사용자</label>
                     </div>
                 </div>
@@ -231,14 +231,14 @@
                 <div class="input-group mb-3">
                     <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
                     <div class="form-floating">
-                        <input type="password" class="form-control" id="nosql-srcPassword" name="sourcePoint[password]" placeholder="패스워드">
+                        <input type="password" class="form-control" id="nosql-srcPassword" name="targetPoint[password]" placeholder="패스워드">
                         <label for="nosql-srcPassword">패스워드</label>
                     </div>
                 </div>
                 <div class="input-group mb-3">
                     <span class="input-group-text"><i class="fa-solid fa-database"></i></span>
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="nosql-databaseName" name="sourcePoint[databaseName]" placeholder="DataBase">
+                        <input type="text" class="form-control" id="nosql-databaseName" name="targetPoint[databaseName]" placeholder="DataBase">
                         <label for="nosql-databaseName">DataBase Name</label>
                     </div>
                 </div>
@@ -254,7 +254,7 @@
         var provider = document.getElementById('srcProvider').value;
         var service = document.getElementById('srcService').value;
         var idToShow = provider + '-' + service;
-
+        console.log(provider, service)
         if (service === 'rdb') {
             idToShow = 'rdb';
         }

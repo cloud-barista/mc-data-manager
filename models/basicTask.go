@@ -54,7 +54,7 @@ type Schedule struct {
 }
 
 type GenarateTask struct {
-	Task
+	Task        `json:"inline"`
 	TargetPoint GenTaskTarget `json:"targetPoint"`
 }
 

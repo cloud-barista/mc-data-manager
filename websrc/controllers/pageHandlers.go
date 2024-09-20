@@ -34,6 +34,22 @@ func MainGetHandler(ctx echo.Context) error {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
+// Page handlers related to Dashboard data
+
+func DashBoardHandler(ctx echo.Context) error {
+	logger := getLogger("dashboard")
+	logger.Info().Msg("dashboard get page accessed")
+	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
+		Content:    "dashboard",
+		AWSRegions: GetAWSRegions(),
+		GCPRegions: GetGCPRegions(),
+		NCPRegions: GetNCPRegions(),
+		OS:         runtime.GOOS,
+		Error:      nil,
+	})
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////
 // Page handlers related to generate data
 
 func GenerateLinuxGetHandler(ctx echo.Context) error {
@@ -147,14 +163,32 @@ func BackupHandler(ctx echo.Context) error {
 	logger := getLogger("backup")
 	logger.Info().Msg("backup get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
-		Content: "Backup",
-		Regions: GetAWSRegions(),
-		OS:      runtime.GOOS,
-		Error:   nil,
+		Content:    "Backup",
+		AWSRegions: GetAWSRegions(),
+		GCPRegions: GetGCPRegions(),
+		NCPRegions: GetNCPRegions(),
+		OS:         runtime.GOOS,
+		Error:      nil,
 	})
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
+// Page handlers related to backup data
+
+func RestoreHandler(ctx echo.Context) error {
+	logger := getLogger("restore")
+	logger.Info().Msg("restore get page accessed")
+	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
+		Content:    "Restore",
+		AWSRegions: GetAWSRegions(),
+		GCPRegions: GetGCPRegions(),
+		NCPRegions: GetNCPRegions(),
+		OS:         runtime.GOOS,
+		Error:      nil,
+	})
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
 // Page handlers related to migration data
 
 // linux to object storage

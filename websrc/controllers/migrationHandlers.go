@@ -25,6 +25,7 @@ import (
 
 // MigrationLinuxToS3PostHandler godoc
 //
+//	@ID 			MigrationLinuxToS3PostHandler
 //	@Summary		Migrate data from Linux to AWS S3
 //	@Description	Migrate data stored in a Linux-based system to AWS S3.
 //	@Tags			[Data Migration]
@@ -48,13 +49,13 @@ func MigrationLinuxToS3PostHandler(ctx echo.Context) error {
 	}
 
 	params := MigrateTask{}
-	if !getDataWithBind(logger, start, ctx, &params) {
+	if !getDataWithReBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
 		})
 	}
-
+	logger.Debug().Msgf("%v", params)
 	awsOSC := getS3OSC(logger, start, "mig", params.TargetPoint)
 	if awsOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
@@ -80,6 +81,7 @@ func MigrationLinuxToS3PostHandler(ctx echo.Context) error {
 
 // MigrationLinuxToGCPPostHandler godoc
 //
+//	@ID 			MigrationLinuxToGCPPostHandler
 //	@Summary		Migrate data from Linux to GCP Cloud Storage
 //	@Description	Migrate data stored in a Linux-based system to GCP Cloud Storage.
 //	@Tags			[Data Migration]
@@ -139,6 +141,7 @@ func MigrationLinuxToGCPPostHandler(ctx echo.Context) error {
 
 // MigrationLinuxToNCPPostHandler godoc
 //
+//	@ID 			MigrationLinuxToNCPPostHandler
 //	@Summary		Migrate data from Linux to NCP Object Storage
 //	@Description	Migrate data stored in a Linux-based system to NCP Object Storage.
 //	@Tags			[Data Migration]
@@ -196,6 +199,7 @@ func MigrationLinuxToNCPPostHandler(ctx echo.Context) error {
 
 // MigrationWindowsToS3PostHandler godoc
 //
+//	@ID 			MigrationWindowsToS3PostHandler
 //	@Summary		Migrate data from Windows to AWS S3
 //	@Description	Migrate data stored in a Windows-based system to AWS S3.
 //	@Tags			[Data Migration]
@@ -256,6 +260,7 @@ func MigrationWindowsToS3PostHandler(ctx echo.Context) error {
 
 // MigrationWindowsToGCPPostHandler godoc
 //
+//	@ID 			MigrationWindowsToGCPPostHandler
 //	@Summary		Migrate data from Windows to GCP Cloud Storage
 //	@Description	Migrate data stored in a Windows-based system to GCP Cloud Storage.
 //	@Tags			[Data Migration]
@@ -311,6 +316,7 @@ func MigrationWindowsToGCPPostHandler(ctx echo.Context) error {
 
 // MigrationWindowsToNCPPostHandler godoc
 //
+//	@ID 			MigrationWindowsToNCPPostHandler
 //	@Summary		Migrate data from Windows to NCP Object Storage
 //	@Description	Migrate data stored in a Windows-based system to NCP Object Storage.
 //	@Tags			[Data Migration]
@@ -367,6 +373,7 @@ func MigrationWindowsToNCPPostHandler(ctx echo.Context) error {
 
 // MigrationMySQLPostHandler godoc
 //
+//	@ID 			MigrationMySQLPostHandler
 //	@Summary		Migrate data from MySQL to MySQL
 //	@Description	Migrate data from one MySQL database to another MySQL database.
 //	@Tags			[Data Migration], [RDBMS]

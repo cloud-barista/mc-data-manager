@@ -29,8 +29,14 @@
           <label for="gen-dynamodb-region">리전 선택</label>
         </div>
       </div>
-
       <div class="input-group mb-3">
+        <span class="input-group-text"><i class="fa-solid fa-user-secret"></i></span>
+        <div class="form-floating">
+            <input type="text" class="form-control" id="gen-s3-profile" name="profileName" placeholder="profile name" required>
+            <label for="gen-s3-profile">Profile</label>
+        </div>
+    </div>
+      <!-- <div class="input-group mb-3">
         <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
         <div class="form-floating">
           <input type="text" class="form-control" id="gen-dynamodb-accessKey" name="accessKey" placeholder="Access Key" required>
@@ -44,10 +50,11 @@
           <input type="password" class="form-control" id="gen-dynamodb-secretKey" name="secretKey" placeholder="Secret Key" required>
           <label for="gen-dynamodb-secretKey">Secret Key</label>
         </div>
-      </div>
+      </div> -->
 
       <button type="submit" class="btn btn-primary" id="submitBtn">생성</button>
       <input type="hidden" id="genTarget" value="dynamodb" />
+      <input type="hidden" id="provider" value="aws">
     </form>
   </div>
 </div>

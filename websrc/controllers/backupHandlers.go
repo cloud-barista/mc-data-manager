@@ -33,7 +33,7 @@ import (
 //
 //	@Summary		Export data from objectstorage
 //	@Description	Export data from a objectstorage  to files.
-//	@Tags			[Data Export], [Object Storage]
+//	@Tags			[Data Backup], [Object Storage]
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody		body	models.BackupTask	true	"Parameters required for backup"
@@ -72,7 +72,7 @@ func BackupOSPostHandler(ctx echo.Context) error {
 //
 //	@Summary		Export data from MySQL
 //	@Description	Export data from a MySQL database to SQL files.
-//	@Tags			[Data Export], [RDBMS]
+//	@Tags			[Data Backup], [RDBMS]
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody		body	models.BackupTask	true	"Parameters required for backup"
@@ -160,7 +160,7 @@ func BackupRDBPostHandler(ctx echo.Context) error {
 //
 //	@Summary		Export data from MySQL
 //	@Description	Export data from a MySQL database to SQL files.
-//	@Tags			[Data Export], [RDBMS]
+//	@Tags			[Data Backup], [RDBMS]
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody		body	models.BackupTask	true	"Parameters required for backup"
@@ -177,33 +177,37 @@ func BackupNRDBPostHandler(ctx echo.Context) error {
 
 	params := models.BackupTask{}
 	if !getDataWithReBind(logger, start, ctx, &params) {
+		errorMsg := fmt.Sprintf("err getDataWithReBind: %v", params)
 		return ctx.JSON(http.StatusOK, models.BasicResponse{
 			Result: logstrings.String(),
-			Error:  nil,
+			Error:  &errorMsg,
 		})
 	}
-
+	logger.Debug().Msgf("%+v", params)
 	NRDBC, err = auth.GetNRDMS(&params.SourcePoint)
 	if err != nil {
+		errorMsg := fmt.Sprintf("err provider: %v", err)
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
-			Error:  nil,
+			Error:  &errorMsg,
 		})
 	}
 
 	err = os.MkdirAll(params.TargetPoint.Path, 0755)
 	if err != nil {
+		errorMsg := fmt.Sprintf("err Mkdir: %v", err)
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
-			Error:  nil,
+			Error:  &errorMsg,
 		})
 	}
 
 	tableList, err := NRDBC.ListTables()
 	if err != nil {
+		errorMsg := fmt.Sprintf("err Get ListTables: %v", err)
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
-			Error:  nil,
+			Error:  &errorMsg,
 		})
 	}
 

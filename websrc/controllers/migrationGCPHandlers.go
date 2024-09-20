@@ -25,6 +25,7 @@ import (
 
 // MigrationGCPToLinuxPostHandler godoc
 //
+//	@ID 			MigrationGCPToLinuxPostHandler
 //	@Summary        Migrate data from GCP to Linux
 //	@Description    Migrate data stored in GCP Cloud Storage to a Linux-based system.
 //	@Tags            [Data Migration]
@@ -80,6 +81,7 @@ func MigrationGCPToLinuxPostHandler(ctx echo.Context) error {
 
 // MigrationGCPToWindowsPostHandler godoc
 //
+//	@ID 			MigrationGCPToWindowsPostHandler
 //	@Summary        Migrate data from GCP to Windows
 //	@Description    Migrate data stored in GCP Cloud Storage to a Windows-based system.
 //	@Tags            [Data Migration]
@@ -135,6 +137,7 @@ func MigrationGCPToWindowsPostHandler(ctx echo.Context) error {
 
 // MigrationGCPToS3PostHandler godoc
 //
+//	@ID 			MigrationGCPToS3PostHandler
 //	@Summary        Migrate data from GCP to AWS S3
 //	@Description    Migrate data stored in GCP Cloud Storage to AWS S3.
 //	@Tags            [Data Migration], [Object Storage]
@@ -195,6 +198,7 @@ func MigrationGCPToS3PostHandler(ctx echo.Context) error {
 
 // MigrationGCPToNCPPostHandler godoc
 //
+//	@ID 			MigrationGCPToNCPPostHandler
 //	@Summary        Migrate data from GCP to NCP Object Storage
 //	@Description    Migrate data stored in GCP Cloud Storage to NCP Object Storage.
 //	@Tags            [Data Migration], [Object Storage]

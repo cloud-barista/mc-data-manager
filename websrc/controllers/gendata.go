@@ -16,8 +16,10 @@ limitations under the License.
 package controllers
 
 import (
+	"reflect"
 	"strconv"
 
+	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/pkg/dummy/semistructured"
 	"github.com/cloud-barista/mc-data-manager/pkg/dummy/structured"
 	"github.com/cloud-barista/mc-data-manager/pkg/dummy/unstructured"
@@ -26,9 +28,13 @@ import (
 )
 
 func genData(params GenFileParams, logger *zerolog.Logger) error {
-	logger.Info().Msg("Let's generate")
 
-	if params.CheckSQL {
+	// if !hasAnyTrue(params.FileFormatParams) {
+	// 	err := errors.New("no file format selected")
+	// 	logger.Error().Err(err).Msg("At least one file format must be selected")
+	// 	return err
+	// }
+	if cast.ToBool(params.CheckSQL) {
 		logger.Info().Msg("Start creating SQL dummy")
 		sql, _ := strconv.Atoi(params.SizeSQL)
 		if err := structured.GenerateRandomSQL(params.DummyPath, sql); err != nil {
@@ -48,7 +54,7 @@ func genData(params GenFileParams, logger *zerolog.Logger) error {
 		logger.Info().Msg("Successfully generated CSV dummy")
 	}
 
-	if params.CheckTXT {
+	if cast.ToBool(params.CheckTXT) {
 		logger.Info().Msg("Start creating TXT dummy")
 		txt, _ := strconv.Atoi(params.SizeTXT)
 		if err := unstructured.GenerateRandomTXT(params.DummyPath, txt); err != nil {
@@ -58,7 +64,7 @@ func genData(params GenFileParams, logger *zerolog.Logger) error {
 		logger.Info().Msg("Successfully generated TXT dummy")
 	}
 
-	if params.CheckPNG {
+	if cast.ToBool(params.CheckPNG) {
 		logger.Info().Msg("Start creating PNG dummy")
 		png, _ := strconv.Atoi(params.SizePNG)
 		if err := unstructured.GenerateRandomPNGImage(params.DummyPath, png); err != nil {
@@ -68,7 +74,7 @@ func genData(params GenFileParams, logger *zerolog.Logger) error {
 		logger.Info().Msg("Successfully generated PNG dummy")
 	}
 
-	if params.CheckGIF {
+	if cast.ToBool(params.CheckGIF) {
 		logger.Info().Msg("Start creating GIF dummy")
 		gif, _ := strconv.Atoi(params.SizeGIF)
 		if err := unstructured.GenerateRandomGIF(params.DummyPath, gif); err != nil {
@@ -78,7 +84,7 @@ func genData(params GenFileParams, logger *zerolog.Logger) error {
 		logger.Info().Msg("Successfully generated GIF dummy")
 	}
 
-	if params.CheckZIP {
+	if cast.ToBool(params.CheckZIP) {
 		logger.Info().Msg("Start creating a pile of ZIP files that compress TXT")
 		zip, _ := strconv.Atoi(params.SizeZIP)
 		if err := unstructured.GenerateRandomZIP(params.DummyPath, zip); err != nil {
@@ -88,7 +94,7 @@ func genData(params GenFileParams, logger *zerolog.Logger) error {
 		logger.Info().Msg("Successfully created ZIP file dummy compressed TXT")
 	}
 
-	if params.CheckJSON {
+	if cast.ToBool(params.CheckJSON) {
 		logger.Info().Msg("Start creating JSON dummy")
 		json, _ := strconv.Atoi(params.SizeJSON)
 		if err := semistructured.GenerateRandomJSON(params.DummyPath, json); err != nil {
@@ -98,7 +104,7 @@ func genData(params GenFileParams, logger *zerolog.Logger) error {
 		logger.Info().Msg("Successfully generated JSON dummy")
 	}
 
-	if params.CheckXML {
+	if cast.ToBool(params.CheckXML) {
 		logger.Info().Msg("Start creating XML dummy")
 		xml, _ := strconv.Atoi(params.SizeXML)
 		if err := semistructured.GenerateRandomXML(params.DummyPath, xml); err != nil {
@@ -108,7 +114,7 @@ func genData(params GenFileParams, logger *zerolog.Logger) error {
 		logger.Info().Msg("Successfully generated XML dummy")
 	}
 
-	if params.CheckServerJSON {
+	if cast.ToBool(params.CheckServerJSON) {
 		logger.Info().Msg("Start creating JSON dummy")
 		json, _ := strconv.Atoi(params.SizeServerJSON)
 		if err := semistructured.GenerateRandomJSONWithServer(params.DummyPath, json); err != nil {
@@ -118,7 +124,7 @@ func genData(params GenFileParams, logger *zerolog.Logger) error {
 		logger.Info().Msg("Successfully generated JSON dummy")
 	}
 
-	if params.CheckServerSQL {
+	if cast.ToBool(params.CheckServerSQL) {
 		logger.Info().Msg("Start creating SQL dummy")
 		sql, _ := strconv.Atoi(params.SizeServerSQL)
 		if err := structured.GenerateRandomSQLWithServer(params.DummyPath, sql); err != nil {
@@ -129,4 +135,14 @@ func genData(params GenFileParams, logger *zerolog.Logger) error {
 	}
 
 	return nil
+}
+func hasAnyTrue(fileFormatParams models.FileFormatParams) bool {
+	v := reflect.ValueOf(fileFormatParams)
+	for i := 0; i < v.NumField(); i++ {
+		field := v.Field(i)
+		if field.Kind() == reflect.Bool && field.Bool() {
+			return true
+		}
+	}
+	return false
 }

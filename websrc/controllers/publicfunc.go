@@ -51,7 +51,7 @@ import (
 )
 
 func getLogger(jobName string) *zerolog.Logger {
-	logger := log.With().Str("jobName", jobName).Logger()
+	logger := log.With().Str("serviceType", jobName).Str("taskType", jobName).Logger()
 	return &logger
 }
 
@@ -60,8 +60,6 @@ func pageLogInit(pageName, pageInfo string, startTime time.Time) (*zerolog.Logge
 	var logstrings strings.Builder
 
 	logger.Info().Msgf("%s post page accessed", pageName)
-
-	logger.Output(io.MultiWriter(logger, &logstrings))
 
 	logger.Info().Msg(pageInfo)
 	logger.Info().Str("start time", startTime.Format("2006-01-02T15:04:05-07:00")).Msg("")
@@ -595,7 +593,7 @@ func getDataWithBind(logger *zerolog.Logger, startTime time.Time, ctx echo.Conte
 	if err := ctx.Bind(params); err != nil {
 		end := time.Now()
 		logger.Error().Msg("Failed to bind form data")
-		logger.Error().Interface("params", ctx.Request().Body).Msg("")
+		logger.Error().Msgf("params : %+v", ctx.Request().Body)
 		logger.Error().Str("End time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
 		logger.Error().Str("Elapsed time", end.Sub(startTime).String()).Msg("")
 		return false

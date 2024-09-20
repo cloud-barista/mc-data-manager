@@ -31,6 +31,7 @@ type TaskController struct {
 
 // GetAllTasksHandler godoc
 //
+//	@ID 			GetAllTasksHandler
 //	@Summary		Get all Tasks
 //	@Description	Retrieve a list of all Tasks in the system.
 //	@Tags			[Task]
@@ -56,6 +57,7 @@ func (tc *TaskController) GetAllTasksHandler(ctx echo.Context) error {
 
 // CreateTaskHandler godoc
 //
+//	@ID 			CreateTaskHandler
 //	@Summary		Create a new Task
 //	@Description	Create a new Task and store it in the system.
 //	@Tags			[Task]
@@ -94,9 +96,11 @@ func (tc *TaskController) CreateTaskHandler(ctx echo.Context) error {
 
 // GetTaskHandler godoc
 //
+//	@ID 			GetTaskHandler
 //	@Summary		Get a Task by ID
 //	@Description	Get the details of a Task using its ID.
 //	@Tags			[Task]
+//	@Accept			json
 //	@Produce		json
 //	@Param			id		path	string	true	"Task ID"
 //	@Success		200		{object}	models.Task	"Successfully retrieved a Task"
@@ -121,6 +125,7 @@ func (tc *TaskController) GetTaskHandler(ctx echo.Context) error {
 
 // UpdateTaskHandler godoc
 //
+//	@ID 			UpdateTaskHandler
 //	@Summary		Update an existing Task
 //	@Description	Update the details of an existing Task using its ID.
 //	@Tags			[Task]
@@ -162,6 +167,7 @@ func (tc *TaskController) UpdateTaskHandler(ctx echo.Context) error {
 
 // DeleteTaskHandler godoc
 //
+//	@ID 			DeleteTaskHandler
 //	@Summary		Delete a Task
 //	@Description	Delete an existing Task using its ID.
 //	@Tags			[Task]

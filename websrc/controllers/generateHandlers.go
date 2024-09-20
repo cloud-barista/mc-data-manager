@@ -27,6 +27,7 @@ import (
 
 // GenerateLinuxPostHandler godoc
 //
+//	@ID 			GenerateLinuxPostHandler
 //	@Summary		Generate test data on on-premise Linux
 //	@Description	Generate test data on on-premise Linux.
 //	@Tags			[Test Data Generation]
@@ -51,7 +52,7 @@ func GenerateLinuxPostHandler(ctx echo.Context) error {
 	}
 
 	params := GenarateTask{}
-	if !getDataWithBind(logger, start, ctx, &params) {
+	if !getDataWithReBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -64,7 +65,6 @@ func GenerateLinuxPostHandler(ctx echo.Context) error {
 			Error:  nil,
 		})
 	}
-
 	jobEnd(logger, "Successfully creating a dummy with Linux", start)
 	return ctx.JSON(http.StatusOK, models.BasicResponse{
 		Result: logstrings.String(),
@@ -74,6 +74,7 @@ func GenerateLinuxPostHandler(ctx echo.Context) error {
 
 // GenerateWindowsPostHandler godoc
 //
+//	@ID 			GenerateWindowsPostHandler
 //	@Summary		Generate test data on on-premise Windows
 //	@Description	Generate test data on on-premise Windows.
 //	@Tags			[Test Data Generation]
@@ -99,7 +100,7 @@ func GenerateWindowsPostHandler(ctx echo.Context) error {
 	}
 
 	params := GenarateTask{}
-	if !getDataWithBind(logger, start, ctx, &params) {
+	if !getDataWithReBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -128,6 +129,7 @@ type GenerateS3PostHandlerResponseBody struct {
 
 // GenerateS3PostHandler godoc
 //
+//	@ID 			GenerateS3PostHandler
 //	@Summary		Generate test data on AWS S3
 //	@Description	Generate test data on AWS S3.
 //	@Tags			[Test Data Generation], [Object Storage]
@@ -144,7 +146,7 @@ func GenerateS3PostHandler(ctx echo.Context) error {
 	logger, logstrings := pageLogInit("genS3", "Create dummy data and import to s3", start)
 
 	params := GenarateTask{}
-	if !getDataWithBind(logger, start, ctx, &params) {
+	if !getDataWithReBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -169,6 +171,7 @@ func GenerateS3PostHandler(ctx echo.Context) error {
 		})
 
 	}
+	logger.Info().Msgf("ProviderConfig %+v", params.TargetPoint.ProviderConfig)
 	awsOSC := getS3OSC(logger, start, "gen", params.TargetPoint.ProviderConfig)
 	if awsOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
@@ -195,6 +198,7 @@ func GenerateS3PostHandler(ctx echo.Context) error {
 
 // GenerateGCPPostHandler godoc
 //
+//	@ID 			GenerateGCPPostHandler
 //	@Summary		Generate test data on GCP Cloud Storage
 //	@Description	Generate test data on GCP Cloud Storage.
 //	@Tags			[Test Data Generation], [Object Storage]
@@ -261,6 +265,7 @@ func GenerateGCPPostHandler(ctx echo.Context) error {
 
 // GenerateNCPPostHandler godoc
 //
+//	@ID 			GenerateNCPPostHandler
 //	@Summary		Generate test data on NCP Object Storage
 //	@Description	Generate test data on NCP Object Storage.
 //	@Tags			[Test Data Generation], [Object Storage]
@@ -327,6 +332,7 @@ func GenerateNCPPostHandler(ctx echo.Context) error {
 
 // GenerateMySQLPostHandler godoc
 //
+//	@ID 			GenerateMySQLPostHandler
 //	@Summary		Generate test data on MySQL
 //	@Description	Generate test data on MySQL.
 //	@Tags			[Test Data Generation], [RDBMS]
@@ -426,6 +432,7 @@ func GenerateMySQLPostHandler(ctx echo.Context) error {
 
 // GenerateDynamoDBPostHandler godoc
 //
+//	@ID 			GenerateDynamoDBPostHandler
 //	@Summary		Generate test data on AWS DynamoDB
 //	@Description	Generate test data on AWS DynamoDB.
 //	@Tags			[Test Data Generation], [NRDBMS]
@@ -500,6 +507,7 @@ func GenerateDynamoDBPostHandler(ctx echo.Context) error {
 
 // GenerateFirestorePostHandler godoc
 //
+//	@ID 			GenerateFirestorePostHandler
 //	@Summary		Generate test data on GCP Firestore
 //	@Description	Generate test data on GCP Firestore.
 //	@Tags			[Test Data Generation], [NRDBMS]
@@ -575,6 +583,7 @@ func GenerateFirestorePostHandler(ctx echo.Context) error {
 
 // GenerateMongoDBPostHandler godoc
 //
+//	@ID 			GenerateMongoDBPostHandler
 //	@Summary		Generate test data on NCP MongoDB
 //	@Description	Generate test data on NCP MongoDB.
 //	@Tags			[Test Data Generation], [NRDBMS]
