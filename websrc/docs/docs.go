@@ -33,7 +33,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Export]",
+                    "[Data Backup]",
                     "[RDBMS]"
                 ],
                 "summary": "Export data from MySQL",
@@ -74,7 +74,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Export]",
+                    "[Data Backup]",
                     "[Object Storage]"
                 ],
                 "summary": "Export data from objectstorage",
@@ -115,7 +115,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Export]",
+                    "[Data Backup]",
                     "[RDBMS]"
                 ],
                 "summary": "Export data from MySQL",
@@ -1696,7 +1696,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Import]",
+                    "[Data Restore]",
                     "[RDBMS]"
                 ],
                 "summary": "Import data from MySQL",
@@ -1738,7 +1738,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Import]",
+                    "[Data Restore]",
                     "[Object Storage]"
                 ],
                 "summary": "Import data from objectstorage",
@@ -1780,7 +1780,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Import]",
+                    "[Data Restore]",
                     "[RDBMS]"
                 ],
                 "summary": "Import data from MySQL",

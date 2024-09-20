@@ -41,7 +41,7 @@ type TaskController struct {
 //	@Router			/task [get]
 func (tc *TaskController) GetAllTasksHandler(ctx echo.Context) error {
 	start := time.Now()
-	logger, logstrings := pageLogInit("Get-task-list", "Get an existing task", start)
+	logger, logstrings := pageLogInit(ctx, "Get-task-list", "Get an existing task", start)
 	tasks, err := tc.TaskService.GetScheduleList()
 	if err != nil {
 		errStr := err.Error()
@@ -69,7 +69,7 @@ func (tc *TaskController) GetAllTasksHandler(ctx echo.Context) error {
 //	@Router			/task [post]
 func (tc *TaskController) CreateTaskHandler(ctx echo.Context) error {
 	start := time.Now()
-	logger, logstrings := pageLogInit("Create-task", "Creating a new task", start)
+	logger, logstrings := pageLogInit(ctx, "Create-task", "Creating a new task", start)
 	params := models.Schedule{}
 	if !getDataWithReBind(logger, start, ctx, &params) {
 		errStr := "Invalid request data"
@@ -108,7 +108,7 @@ func (tc *TaskController) CreateTaskHandler(ctx echo.Context) error {
 //	@Router			/task/{id} [get]
 func (tc *TaskController) GetTaskHandler(ctx echo.Context) error {
 	start := time.Now()
-	logger, logstrings := pageLogInit("Get-task", "Get an existing task", start)
+	logger, logstrings := pageLogInit(ctx, "Get-task", "Get an existing task", start)
 	id := ctx.Param("id")
 	task, err := tc.TaskService.GetSchedule(id)
 	if err != nil {
@@ -139,7 +139,7 @@ func (tc *TaskController) GetTaskHandler(ctx echo.Context) error {
 //	@Router			/task/{id} [put]
 func (tc *TaskController) UpdateTaskHandler(ctx echo.Context) error {
 	start := time.Now()
-	logger, logstrings := pageLogInit("Update-task", "Updating an existing task", start)
+	logger, logstrings := pageLogInit(ctx, "Update-task", "Updating an existing task", start)
 	id := ctx.Param("id")
 	params := models.Schedule{}
 	if !getDataWithReBind(logger, start, ctx, &params) {
@@ -178,7 +178,7 @@ func (tc *TaskController) UpdateTaskHandler(ctx echo.Context) error {
 //	@Router			/task/{id} [delete]
 func (tc *TaskController) DeleteTaskHandler(ctx echo.Context) error {
 	start := time.Now()
-	logger, logstrings := pageLogInit("Delete-task", "Delete an existing task", start)
+	logger, logstrings := pageLogInit(ctx, "Delete-task", "Delete an existing task", start)
 	id := ctx.Param("id")
 	if err := tc.TaskService.DeleteSchedule(id); err != nil {
 		errStr := "Task not found"

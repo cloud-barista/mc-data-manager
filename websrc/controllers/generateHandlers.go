@@ -42,7 +42,7 @@ func GenerateLinuxPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("genlinux", "Create dummy data in linux", start)
+	logger, logstrings := pageLogInit(ctx, "genlinux", "Create dummy data in linux", start)
 
 	if !osCheck(logger, start, "linux") {
 		return ctx.JSON(http.StatusBadRequest, models.BasicResponse{
@@ -89,7 +89,7 @@ func GenerateWindowsPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("genwindows", "Create dummy data in windows", start)
+	logger, logstrings := pageLogInit(ctx, "genwindows", "Create dummy data in windows", start)
 
 	if !osCheck(logger, start, "windows") {
 		return ctx.JSON(http.StatusBadRequest, models.BasicResponse{
@@ -143,7 +143,7 @@ type GenerateS3PostHandlerResponseBody struct {
 func GenerateS3PostHandler(ctx echo.Context) error {
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("genS3", "Create dummy data and import to s3", start)
+	logger, logstrings := pageLogInit(ctx, "genS3", "Create dummy data and import to s3", start)
 
 	params := GenarateTask{}
 	if !getDataWithReBind(logger, start, ctx, &params) {
@@ -211,7 +211,7 @@ func GenerateS3PostHandler(ctx echo.Context) error {
 func GenerateGCPPostHandler(ctx echo.Context) error {
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("genGCP", "Create dummy data and import to gcp", start)
+	logger, logstrings := pageLogInit(ctx, "genGCP", "Create dummy data and import to gcp", start)
 
 	params := GenarateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
@@ -279,7 +279,7 @@ func GenerateGCPPostHandler(ctx echo.Context) error {
 func GenerateNCPPostHandler(ctx echo.Context) error {
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("genNCP", "Create dummy data and import to ncp objectstorage", start)
+	logger, logstrings := pageLogInit(ctx, "genNCP", "Create dummy data and import to ncp objectstorage", start)
 
 	params := GenarateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
@@ -346,7 +346,7 @@ func GenerateNCPPostHandler(ctx echo.Context) error {
 func GenerateMySQLPostHandler(ctx echo.Context) error {
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("genmysql", "Create dummy data and import to mysql", start)
+	logger, logstrings := pageLogInit(ctx, "genmysql", "Create dummy data and import to mysql", start)
 
 	params := GenarateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
@@ -446,7 +446,7 @@ func GenerateMySQLPostHandler(ctx echo.Context) error {
 func GenerateDynamoDBPostHandler(ctx echo.Context) error {
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("gendynamodb", "Create dummy data and import to dynamoDB", start)
+	logger, logstrings := pageLogInit(ctx, "gendynamodb", "Create dummy data and import to dynamoDB", start)
 
 	params := GenarateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
@@ -520,8 +520,9 @@ func GenerateDynamoDBPostHandler(ctx echo.Context) error {
 //	@Router			/generate/firestore [post]
 func GenerateFirestorePostHandler(ctx echo.Context) error {
 	start := time.Now()
-
-	logger, logstrings := pageLogInit("genfirestore", "Create dummy data and import to firestoreDB", start)
+	pageName := "genfirestore"
+	pageInfo := "Create dummy data and import to firestoreDB"
+	logger, logstrings := pageLogInit(ctx, pageName, pageInfo, start)
 
 	params := GenarateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
@@ -597,7 +598,7 @@ func GenerateFirestorePostHandler(ctx echo.Context) error {
 func GenerateMongoDBPostHandler(ctx echo.Context) error {
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("genmongodb", "Create dummy data and import to mongoDB", start)
+	logger, logstrings := pageLogInit(ctx, "genmongodb", "Create dummy data and import to mongoDB", start)
 
 	params := GenarateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {

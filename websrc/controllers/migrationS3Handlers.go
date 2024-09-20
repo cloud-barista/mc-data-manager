@@ -39,7 +39,7 @@ func MigrationS3ToLinuxPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("migs3lin", "Export s3 data to linux", start)
+	logger, logstrings := pageLogInit(ctx, "migs3lin", "Export s3 data to linux", start)
 
 	if !osCheck(logger, start, "linux") {
 		return ctx.JSON(http.StatusBadRequest, models.BasicResponse{
@@ -94,7 +94,7 @@ func MigrationS3ToWindowsPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("genlinux", "Export s3 data to windows", start)
+	logger, logstrings := pageLogInit(ctx, "genlinux", "Export s3 data to windows", start)
 
 	if !osCheck(logger, start, "windows") {
 		return ctx.JSON(http.StatusBadRequest, models.BasicResponse{
@@ -149,7 +149,7 @@ func MigrationS3ToGCPPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("migs3gcp", "Export s3 data to gcp", start)
+	logger, logstrings := pageLogInit(ctx, "migs3gcp", "Export s3 data to gcp", start)
 
 	params := MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
@@ -210,7 +210,7 @@ func MigrationS3ToNCPPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("migs3ncp", "Export s3 data to ncp objectstorage", start)
+	logger, logstrings := pageLogInit(ctx, "migs3ncp", "Export s3 data to ncp objectstorage", start)
 
 	params := MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {

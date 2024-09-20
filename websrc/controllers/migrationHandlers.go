@@ -39,7 +39,7 @@ import (
 func MigrationLinuxToS3PostHandler(ctx echo.Context) error {
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("miglins3", "Import linux data to s3", start)
+	logger, logstrings := pageLogInit(ctx, "miglins3", "Import linux data to s3", start)
 
 	if !osCheck(logger, start, "linux") {
 		return ctx.JSON(http.StatusBadRequest, models.BasicResponse{
@@ -95,7 +95,7 @@ func MigrationLinuxToS3PostHandler(ctx echo.Context) error {
 func MigrationLinuxToGCPPostHandler(ctx echo.Context) error {
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("miglingcp", "Import linux data to gcp", start)
+	logger, logstrings := pageLogInit(ctx, "miglingcp", "Import linux data to gcp", start)
 
 	if !osCheck(logger, start, "linux") {
 		return ctx.JSON(http.StatusBadRequest, models.BasicResponse{
@@ -156,7 +156,7 @@ func MigrationLinuxToNCPPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("miglinncp", "Import linux data to ncp objectstorage", start)
+	logger, logstrings := pageLogInit(ctx, "miglinncp", "Import linux data to ncp objectstorage", start)
 
 	if !osCheck(logger, start, "linux") {
 		return ctx.JSON(http.StatusBadRequest, models.BasicResponse{
@@ -214,7 +214,7 @@ func MigrationWindowsToS3PostHandler(ctx echo.Context) error {
 
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("migwins3", "Import windows data to s3", start)
+	logger, logstrings := pageLogInit(ctx, "migwins3", "Import windows data to s3", start)
 
 	if !osCheck(logger, start, "windows") {
 		return ctx.JSON(http.StatusOK, models.BasicResponse{
@@ -274,7 +274,7 @@ func MigrationWindowsToS3PostHandler(ctx echo.Context) error {
 func MigrationWindowsToGCPPostHandler(ctx echo.Context) error {
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("migwingcp", "Import windows data to gcp", start)
+	logger, logstrings := pageLogInit(ctx, "migwingcp", "Import windows data to gcp", start)
 
 	if !osCheck(logger, start, "windows") {
 		return ctx.JSON(http.StatusBadRequest, models.BasicResponse{
@@ -331,7 +331,7 @@ func MigrationWindowsToNCPPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("migwinncp", "Import linux data to ncp objectstorage", start)
+	logger, logstrings := pageLogInit(ctx, "migwinncp", "Import linux data to ncp objectstorage", start)
 
 	if !osCheck(logger, start, "windows") {
 		return ctx.JSON(http.StatusBadRequest, models.BasicResponse{
@@ -387,7 +387,7 @@ func MigrationMySQLPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("migmysql", "Import mysql to mysql", start)
+	logger, logstrings := pageLogInit(ctx, "migmysql", "Import mysql to mysql", start)
 
 	params := MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {

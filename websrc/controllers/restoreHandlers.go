@@ -46,7 +46,7 @@ import (
 //	@Router			/restore/objectstorage [post]
 func RestoreOSPostHandler(ctx echo.Context) error {
 	start := time.Now()
-	logger, logstrings := pageLogInit("Restore-objectstorage", "Import data to objectstorage", start)
+	logger, logstrings := pageLogInit(ctx, "Restore-objectstorage", "Import data to objectstorage", start)
 	params := models.RestoreTask{}
 	if !getDataWithReBind(logger, start, ctx, &params) {
 		log.Error().Msgf("Req params err")
@@ -91,7 +91,7 @@ func RestoreRDBPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("restore-sql", "Import data to mysql", start)
+	logger, logstrings := pageLogInit(ctx, "restore-sql", "Import data to mysql", start)
 
 	params := models.RestoreTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
@@ -178,7 +178,7 @@ func RestoreNRDBPostHandler(ctx echo.Context) error {
 	var err error
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("Restore-nrdb", "Import data from nrdb", start)
+	logger, logstrings := pageLogInit(ctx, "Restore-nrdb", "Import data from nrdb", start)
 
 	params := models.RestoreTask{}
 	if !getDataWithReBind(logger, start, ctx, &params) {

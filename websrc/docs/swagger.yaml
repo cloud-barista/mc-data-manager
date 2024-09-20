@@ -231,7 +231,7 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Export data from MySQL
       tags:
-      - '[Data Export]'
+      - '[Data Backup]'
       - '[RDBMS]'
   /backup/objectstorage:
     post:
@@ -258,7 +258,7 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Export data from objectstorage
       tags:
-      - '[Data Export]'
+      - '[Data Backup]'
       - '[Object Storage]'
   /backup/rdb:
     post:
@@ -285,7 +285,7 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Export data from MySQL
       tags:
-      - '[Data Export]'
+      - '[Data Backup]'
       - '[RDBMS]'
   /generate/aws:
     post:
@@ -1335,7 +1335,7 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Import data from MySQL
       tags:
-      - '[Data Import]'
+      - '[Data Restore]'
       - '[RDBMS]'
   /restore/objectstorage:
     post:
@@ -1363,7 +1363,7 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Import data from objectstorage
       tags:
-      - '[Data Import]'
+      - '[Data Restore]'
       - '[Object Storage]'
   /restore/rdb:
     post:
@@ -1391,7 +1391,7 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Import data from MySQL
       tags:
-      - '[Data Import]'
+      - '[Data Restore]'
       - '[RDBMS]'
   /task:
     get:

@@ -38,7 +38,7 @@ func MigrationDynamoDBToFirestorePostHandler(ctx echo.Context) error {
 
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("migDNFS", "Export dynamoDB data to firestoreDB", start)
+	logger, logstrings := pageLogInit(ctx, "migDNFS", "Export dynamoDB data to firestoreDB", start)
 
 	params := MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
@@ -98,7 +98,7 @@ func MigrationDynamoDBToMongoDBPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("migDNMG", "Export dynamoDB data to mongoDB", start)
+	logger, logstrings := pageLogInit(ctx, "migDNMG", "Export dynamoDB data to mongoDB", start)
 
 	params := MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
@@ -158,7 +158,7 @@ func MigrationFirestoreToDynamoDBPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("migFSDN", "Export firestoreDB data to dynamoDB", start)
+	logger, logstrings := pageLogInit(ctx, "migFSDN", "Export firestoreDB data to dynamoDB", start)
 
 	params := MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
@@ -218,7 +218,7 @@ func MigrationFirestoreToMongoDBPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("migFSMG", "Export firestoreDB data to mongoDB", start)
+	logger, logstrings := pageLogInit(ctx, "migFSMG", "Export firestoreDB data to mongoDB", start)
 
 	params := MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
@@ -278,7 +278,7 @@ func MigrationMongoDBToDynamoDBPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("migMGDN", "Export mongoDB data to dynamoDB", start)
+	logger, logstrings := pageLogInit(ctx, "migMGDN", "Export mongoDB data to dynamoDB", start)
 
 	params := MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
@@ -338,7 +338,7 @@ func MigrationMongoDBToFirestorePostHandler(ctx echo.Context) error {
 
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("migMGFS", "Export mongoDB data to firestoreDB", start)
+	logger, logstrings := pageLogInit(ctx, "migMGFS", "Export mongoDB data to firestoreDB", start)
 
 	params := MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
