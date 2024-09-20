@@ -32,6 +32,9 @@ window.addEventListener('DOMContentLoaded', event => {
     if (document.getElementById('backForm')) {
         backUpFormSubmit();
     }
+    if (document.getElementById('restoreForm')) {
+        RestoreFormSubmit();
+    }
     
 });
 
@@ -210,16 +213,32 @@ function backUpFormSubmit() {
         resultCollpase();
 
         const payload = new FormData(form);
-        const dest = document.getElementById('backDest').value;
-        const source = document.getElementById('backSource').value;
-        let url = "/backup/" + source;
 
+        var service = document.getElementById('srcService').value;
+        let url = "/backup/" + service;
         console.log(url);
 
-        fetch(url, {
+
+        let jsonData= formDataToObject(payload)
+        console.log(jsonData)
+
+
+        if ( (jsonData.targetPoint.provider =="ncp") && (jsonData.targetPoint.endpoint =="") ) {
+            jsonData.targetPoint.endpoint ="https://kr.object.ncloudstorage.com"
+        }
+        if ( (jsonData.sourcePoint.provider =="ncp") && (jsonData.sourcePoint.endpoint =="") ) {
+            jsonData.sourcePoint.endpoint ="https://kr.object.ncloudstorage.com"
+        }
+
+        let req= {
             method: 'POST',
-            body: payload
-        })
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        };
+
+        fetch(url, req )
         .then(response => {
             return response.json();
         })
@@ -240,6 +259,63 @@ function backUpFormSubmit() {
         console.log("backup progressing...");
     });
 }
+
+function RestoreFormSubmit() {
+    const form = document.getElementById('restoreForm');
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        loadingButtonOn();
+        resultCollpase();
+
+        const payload = new FormData(form);
+
+        var service = document.getElementById('srcService').value;
+        let url = "/restore/" + service;
+        console.log(url);
+
+
+        let jsonData= formDataToObject(payload)
+        console.log(jsonData)
+
+
+        if ( (jsonData.targetPoint.provider =="ncp") && (jsonData.targetPoint.endpoint =="") ) {
+            jsonData.targetPoint.endpoint ="https://kr.object.ncloudstorage.com"
+        }
+        if ( (jsonData.sourcePoint.provider =="ncp") && (jsonData.sourcePoint.endpoint =="") ) {
+            jsonData.sourcePoint.endpoint ="https://kr.object.ncloudstorage.com"
+        }
+
+        let req= {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        };
+
+        fetch(url, req )
+        .then(response => {
+            return response.json();
+        })
+        .then(json => {
+            const resultText = document.getElementById('resultText');
+            resultText.value = json.Result;
+            console.log(json);
+            console.log("restore done.");
+        })
+        .catch(reason => {
+            console.log(reason);
+            alert(reason);
+        })
+        .finally(() => {
+            loadingButtonOff();
+        });
+
+        console.log("restore progressing...");
+    });
+}
+
 
 function loadingButtonOn() {
     let btn = document.getElementById('submitBtn');

@@ -1,0 +1,84 @@
+<h1 class="mt-4">백업</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">백업</li>
+    <li class="breadcrumb-item active">Back Up</li>
+</ol>
+
+<div class="card mb-4 col-auto">
+    <div class="card-header">
+      <i class="fa-solid fa-clone"></i>
+        Back Up
+    </div>
+    <div class="card-body">
+        <!-- <form action="/backup" method="POST"> -->
+        <form id="backForm">
+            <input type="hidden" id="backSource" value="backup">
+            <input type="hidden" id="backDest" value="backup">
+
+            <label for="back-mysql-srcHost" class="form-label">Back Up</label>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-cloud"></i></span>
+                <select class="form-select" id="srcProvider" name="srcProvider">
+                    <option value="aws">AWS</option>
+                    <option value="gcp">GCP</option>
+                    <option value="ncp">NCP</option>
+                    <option value="on-premise">On-premise</option>
+                </select>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-house"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="back-mysql-srcHost" name="srcHost" placeholder="호스트명 / IP" required>
+                    <label for="back-mysql-host">호스트명 / IP</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-flag"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="back-mysql-srcPort" name="srcPort" placeholder="포트" required>
+                    <label for="back-mysql-port">포트</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="back-mysql-srcUsername" name="srcUsername" placeholder="사용자" required>
+                    <label for="back-mysql-username">사용자</label>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" id="submitBtn">실행</button>
+        </form>
+        <div class="input-group  mb-3">
+            <div class="input-group mb-3">
+            <label>JSON 입력</label>
+            </div>
+            <div class="input-group mb-3">
+
+            <textarea class="form-control" id="jsonInput" placeholder="여기에 JSON 데이터를 입력하세요"></textarea>
+            </div>
+            <button onclick="validateJSON()">검증</button>
+            <p id="result" class="error"></p>
+        
+            <script>
+                function validateJSON() {
+                    const jsonInput = document.getElementById('jsonInput').value;
+                    const result = document.getElementById('result');
+                    try {
+                        JSON.parse(jsonInput);
+                        result.textContent = "유효한 JSON 데이터입니다.";
+                        result.style.color = "green";
+                    } catch (e) {
+                        result.textContent = "잘못된 JSON 형식입니다.";
+                        result.style.color = "red";
+                    }
+                }
+            </script>
+        </div>
+    </div>
+
+</div>

@@ -5,6 +5,11 @@
                 {{ template "main.html" }}
             {{ end }}
 
+            <!-- dash-board 템플릿 -->
+            {{ if eq .Content "dashboard" }}
+            {{ template "dash-board.html" . }}
+            {{ end }}
+
             <!-- 데이터 생성 템플릿 -->
 
             {{ if eq .Content "Generate-Linux" }}
@@ -46,6 +51,11 @@
 
             {{ if eq .Content "Backup" }}
                 {{ template "back-backup.html" . }}
+            {{ end }}
+            <!-- 복구 템플릿 -->
+
+            {{ if eq .Content "Restore" }}
+                {{ template "res-restore.html" . }}
             {{ end }}
 
             <!-- 마이그레이션 템플릿 -->
@@ -158,11 +168,7 @@
                 {{ template "mig-mongodbToFirestore.html" . }}
             {{ end }}
 
-            <!-- 백업 템플릿 -->
-            {{ if eq .Content "BackUp" }}
-                {{ template "back-backup.html" . }}
-            {{ end }}
-            
+
             {{ if ne .Content "main" }}
                 {{ template "result.html" . }}
             {{ end }}

@@ -33,7 +33,7 @@ func RestoreRoutes(g *echo.Group) {
 }
 
 func RestoreRoot(g *echo.Group) {
-	// g.GET("", controllers.RestoreHandler)
+	g.GET("", controllers.RestoreHandler)
 }
 
 func RestoreObjectStorage(g *echo.Group) {

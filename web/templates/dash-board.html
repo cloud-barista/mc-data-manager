@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>서비스 상태</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+          integrity="sha384-ksm0swQvcw5iY7kdldc49F8eN5+4b1eQ1bVHeeSpUjz9uVZC7ePgKDPz0xd29N44"
+          crossorigin="anonymous">
+</head>
+<body>
+<div class="container mt-4">
+    <!-- 월별 선택 드롭다운 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="mb-3">
+                <label for="month-select" class="form-label">월별 선택</label>
+                <select class="form-select w-auto" id="month-select">
+                    <!-- 월별 옵션 추가 -->
+                    <option value="2024-10" selected>2024년 10월</option>
+                    <option value="2024-09">2024년 9월</option>
+                    <option value="2024-08">2024년 8월</option>
+                    <!-- 필요에 따라 더 많은 월 추가 -->
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- 서비스 상태 블록 -->
+    <div class="row">
+        <!-- AWS 컬럼 -->
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">
+                    <i class="fab fa-aws"></i> AWS
+                </div>
+                <div class="card-body">
+                    <p class="card-title">활성화된 서비스 개수: <span id="aws-active-services">0</span></p>
+                    <p class="card-text">이번 달 청구 비용: <span id="aws-billing">₩0</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- GCP 컬럼 -->
+        <div class="col-md-4">
+            <div class="card text-white bg-danger mb-3">
+                <div class="card-header">
+                    <i class="fab fa-google"></i> GCP
+                </div>
+                <div class="card-body">
+                    <p class="card-title">활성화된 서비스 개수: <span id="gcp-active-services">0</span></p>
+                    <p class="card-text">이번 달 청구 비용: <span id="gcp-billing">₩0</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- NCP 컬럼 -->
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">
+                    <i class="fas fa-cloud"></i> NCP
+                </div>
+                <div class="card-body">
+                    <p class="card-title">활성화된 서비스 개수: <span id="ncp-active-services">0</span></p>
+                    <p class="card-text">이번 달 청구 비용: <span id="ncp-billing">₩0</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 날짜별 서비스 상태 블록 -->
+    <div id="daily-service-status">
+        <!-- 각 날짜별 서비스 상태가 동적으로 추가됩니다. -->
+    </div>
+
+    <!-- CSP별 데일리 로그 블록 -->
+    <!-- AWS 데일리 로그 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-header">
+                    <i class="fab fa-aws"></i> AWS 데일리 로그
+                </div>
+                <div class="card-body">
+                    <!-- AWS 데일리 로그 내용 -->
+                    <ul class="list-group" id="aws-log-list">
+                        <!-- 로그 항목이 동적으로 추가됩니다. -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GCP 데일리 로그 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-header">
+                    <i class="fab fa-google"></i> GCP 데일리 로그
+                </div>
+                <div class="card-body">
+                    <!-- GCP 데일리 로그 내용 -->
+                    <ul class="list-group" id="gcp-log-list">
+                        <!-- 로그 항목이 동적으로 추가됩니다. -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NCP 데일리 로그 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-header">
+                    <i class="fas fa-cloud"></i> NCP 데일리 로그
+                </div>
+                <div class="card-body">
+                    <!-- NCP 데일리 로그 내용 -->
+                    <ul class="list-group" id="ncp-log-list">
+                        <!-- 로그 항목이 동적으로 추가됩니다. -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 추가 블록들 -->
+    <!-- 다른 서비스나 정보가 있다면 여기에 추가 -->
+
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- 데이터 업데이트를 위한 스크립트 -->
+<script>
+    // 서비스 상태 데이터
+    const serviceData = {
+        '2024-10-01': {
+            aws: { activeServices: 5, billing: 12000 },
+            gcp: { activeServices: 3, billing: 8000 },
+            ncp: { activeServices: 4, billing: 9000 }
+        },
+        '2024-10-02': {
+            aws: { activeServices: 6, billing: 13000 },
+            gcp: { activeServices: 4, billing: 8500 },
+            ncp: { activeServices: 5, billing: 9500 }
+        },
+        '2024-10-03': {
+            aws: { activeServices: 7, billing: 14000 },
+            gcp: { activeServices: 5, billing: 9000 },
+            ncp: { activeServices: 6, billing: 10000 }
+        },
+        // 더 많은 날짜 데이터 추가 가능
+    };
+
+    // 로그 데이터
+    const logData = {
+        aws: {
+            '2024-10': [
+                '2024-10-01: AWS 서비스 점검 완료',
+                '2024-10-02: AWS 신규 인스턴스 추가',
+                '2024-10-03: AWS 보안 패치 적용'
+            ],
+            '2024-09': [
+                '2024-09-15: AWS 요금 결제 완료',
+                '2024-09-20: AWS 네트워크 업그레이드'
+            ]
+        },
+        gcp: {
+            '2024-10': [
+                '2024-10-01: GCP 서비스 점검 완료',
+                '2024-10-02: GCP 신규 프로젝트 생성'
+            ],
+            '2024-09': [
+                '2024-09-10: GCP 스토리지 확장',
+                '2024-09-18: GCP 데이터베이스 백업 수행'
+            ]
+        },
+        ncp: {
+            '2024-10': [
+                '2024-10-01: NCP 서비스 점검 완료',
+                '2024-10-03: NCP CDN 설정 변경'
+            ],
+            '2024-09': [
+                '2024-09-12: NCP 서버 증설',
+                '2024-09-22: NCP 보안 점검 실시'
+            ]
+        }
+    };
+
+    // 날짜 형식 변환 함수
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = ('0' + (date.getMonth() + 1)).slice(-2);
+        const day = ('0' + date.getDate()).slice(-2);
+        return `${year}-${month}-${day}`;
+    }
+
+    // CSP에 따른 카드 색상 클래스 반환 함수
+    function getCSPCardClass(csp) {
+        switch (csp) {
+            case 'aws':
+                return 'bg-primary';
+            case 'gcp':
+                return 'bg-danger';
+            case 'ncp':
+                return 'bg-success';
+            default:
+                return 'bg-secondary';
+        }
+    }
+
+    // CSP에 따른 아이콘 반환 함수
+    function getCSPIcon(csp) {
+        switch (csp) {
+            case 'aws':
+                return '<i class="fab fa-aws"></i>';
+            case 'gcp':
+                return '<i class="fab fa-google"></i>';
+            case 'ncp':
+                return '<i class="fas fa-cloud"></i>';
+            default:
+                return '<i class="fas fa-server"></i>';
+        }
+    }
+
+    // 서비스 상태 업데이트 함수
+    function updateOverallServiceStatus() {
+        const selectedMonth = document.getElementById('month-select').value;
+        const awsData = getLatestServiceData('aws', selectedMonth);
+        const gcpData = getLatestServiceData('gcp', selectedMonth);
+        const ncpData = getLatestServiceData('ncp', selectedMonth);
+
+        if (awsData) {
+            document.getElementById('aws-active-services').textContent = awsData.activeServices;
+            document.getElementById('aws-billing').textContent = '₩' + awsData.billing.toLocaleString();
+        }
+
+        if (gcpData) {
+            document.getElementById('gcp-active-services').textContent = gcpData.activeServices;
+            document.getElementById('gcp-billing').textContent = '₩' + gcpData.billing.toLocaleString();
+        }
+
+        if (ncpData) {
+            document.getElementById('ncp-active-services').textContent = ncpData.activeServices;
+            document.getElementById('ncp-billing').textContent = '₩' + ncpData.billing.toLocaleString();
+        }
+    }
+
+    // 최신 서비스 데이터 가져오기 함수
+    function getLatestServiceData(csp, selectedMonth) {
+        const dates = Object.keys(serviceData).filter(date => date.startsWith(selectedMonth));
+        dates.sort().reverse(); // 최신 날짜 순으로 정렬
+        for (let date of dates) {
+            if (serviceData[date][csp]) {
+                return serviceData[date][csp];
+            }
+        }
+        return null;
+    }
+
+    // 날짜별 서비스 상태 업데이트 함수
+    function updateDailyServiceStatus() {
+        const selectedMonth = document.getElementById('month-select').value;
+        const dailyStatusContainer = document.getElementById('daily-service-status');
+        dailyStatusContainer.innerHTML = '';
+
+        // 현재 날짜와 선택된 월의 마지막 날짜 계산
+        const now = new Date();
+        const currentYear = parseInt(selectedMonth.split('-')[0]);
+        const currentMonth = parseInt(selectedMonth.split('-')[1]) - 1; // 월은 0부터 시작
+        const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+        const today = now.getMonth() === currentMonth && now.getFullYear() === currentYear ? now.getDate() : lastDayOfMonth;
+
+        // 날짜별로 데이터 생성 (최근 날짜부터)
+        for (let day = today; day >= 1; day--) {
+            const dateStr = `${selectedMonth}-${('0' + day).slice(-2)}`;
+            if (serviceData[dateStr]) {
+                // 날짜 블록 생성
+                const dateBlock = document.createElement('div');
+                dateBlock.className = 'row mb-4';
+
+                // 날짜 헤더
+                const dateHeader = document.createElement('h4');
+                dateHeader.textContent = `${dateStr}`;
+                dateBlock.appendChild(dateHeader);
+
+                // 서비스 상태 블록
+                const serviceRow = document.createElement('div');
+                serviceRow.className = 'row';
+
+                // AWS, GCP, NCP 컬럼 생성
+                ['aws', 'gcp', 'ncp'].forEach(csp => {
+                    const col = document.createElement('div');
+                    col.className = 'col-md-4';
+
+                    const card = document.createElement('div');
+                    card.className = `card text-white mb-3 ${getCSPCardClass(csp)}`;
+
+                    const cardHeader = document.createElement('div');
+                    cardHeader.className = 'card-header';
+                    cardHeader.innerHTML = `${getCSPIcon(csp)} ${csp.toUpperCase()}`;
+
+                    const cardBody = document.createElement('div');
+                    cardBody.className = 'card-body';
+
+                    const activeServices = document.createElement('p');
+                    activeServices.className = 'card-title';
+                    activeServices.textContent = `활성화된 서비스 개수: ${serviceData[dateStr][csp].activeServices}`;
+
+                    const billing = document.createElement('p');
+                    billing.className = 'card-text';
+                    billing.textContent = `이번 달 청구 비용: ₩${serviceData[dateStr][csp].billing.toLocaleString()}`;
+
+                    cardBody.appendChild(activeServices);
+                    cardBody.appendChild(billing);
+                    card.appendChild(cardHeader);
+                    card.appendChild(cardBody);
+                    col.appendChild(card);
+                    serviceRow.appendChild(col);
+                });
+
+                dateBlock.appendChild(serviceRow);
+                dailyStatusContainer.appendChild(dateBlock);
+            }
+        }
+    }
+
+    // 월별 로그 업데이트 함수
+    function updateLogs() {
+        const selectedMonth = document.getElementById('month-select').value;
+
+        // AWS 로그 업데이트
+        const awsLogList = document.getElementById('aws-log-list');
+        awsLogList.innerHTML = '';
+        if (logData.aws[selectedMonth]) {
+            logData.aws[selectedMonth].forEach(log => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item';
+                li.textContent = log;
+                awsLogList.appendChild(li);
+            });
+        } else {
+            const li = document.createElement('li');
+            li.className = 'list-group-item';
+            li.textContent = '로그가 없습니다.';
+            awsLogList.appendChild(li);
+        }
+
+        // GCP 로그 업데이트
+        const gcpLogList = document.getElementById('gcp-log-list');
+        gcpLogList.innerHTML = '';
+        if (logData.gcp[selectedMonth]) {
+            logData.gcp[selectedMonth].forEach(log => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item';
+                li.textContent = log;
+                gcpLogList.appendChild(li);
+            });
+        } else {
+            const li = document.createElement('li');
+            li.className = 'list-group-item';
+            li.textContent = '로그가 없습니다.';
+            gcpLogList.appendChild(li);
+        }
+
+        // NCP 로그 업데이트
+        const ncpLogList = document.getElementById('ncp-log-list');
+        ncpLogList.innerHTML = '';
+        if (logData.ncp[selectedMonth]) {
+            logData.ncp[selectedMonth].forEach(log => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item';
+                li.textContent = log;
+                ncpLogList.appendChild(li);
+            });
+        } else {
+            const li = document.createElement('li');
+            li.className = 'list-group-item';
+            li.textContent = '로그가 없습니다.';
+            ncpLogList.appendChild(li);
+        }
+    }
+
+    // 월별 선택 이벤트 리스너 추가
+    document.getElementById('month-select').addEventListener('change', () => {
+        updateOverallServiceStatus();
+        updateDailyServiceStatus();
+        updateLogs();
+    });
+
+    // 페이지 로드 시 데이터 업데이트
+    window.onload = () => {
+        updateOverallServiceStatus();
+        updateDailyServiceStatus();
+        updateLogs();
+    };
+</script>
+</body>
+</html>

@@ -261,7 +261,6 @@ func GetNRDMS(params *models.ProviderConfig) (*nrdbc.NRDBController, error) {
 		if err != nil {
 			return nil, err
 		}
-
 		NRDBC, err = nrdbc.New(ncpmgdb.New(ncpnrdb, params.DatabaseName))
 		if err != nil {
 			return nil, err

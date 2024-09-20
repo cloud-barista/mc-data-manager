@@ -37,7 +37,7 @@ import (
 //	@ID 			RestoreOSPostHandler
 //	@Summary		Import data from objectstorage
 //	@Description	Import data from a objectstorage  to files.
-//	@Tags			[Data Import], [Object Storage]
+//	@Tags			[Data Restore], [Object Storage]
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody		body	models.RestoreTask	true	"Parameters required for Restore"
@@ -77,7 +77,7 @@ func RestoreOSPostHandler(ctx echo.Context) error {
 //	@ID 			RestoreRDBPostHandler
 //	@Summary		Import data from MySQL
 //	@Description	Import data from a MySQL database to SQL files.
-//	@Tags			[Data Import], [RDBMS]
+//	@Tags			[Data Restore], [RDBMS]
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody		body	models.RestoreTask	true	"Parameters required for Restore"
@@ -165,7 +165,7 @@ func RestoreRDBPostHandler(ctx echo.Context) error {
 //	@ID 			RestoreNRDBPostHandler
 //	@Summary		Import data from MySQL
 //	@Description	Import data from a MySQL database to SQL files.
-//	@Tags			[Data Import], [RDBMS]
+//	@Tags			[Data Restore], [RDBMS]
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody		body	models.RestoreTask	true	"Parameters required for Restore"
