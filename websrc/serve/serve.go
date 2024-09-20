@@ -117,7 +117,7 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 
 	// Middleware
 	e.Use(TrustedProxiesMiddleware(allowIP))
-	e.Use(middleware.Logger())
+	// e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	// Custom middleware for tracing
 	e.Use(middlewares.TracingMiddleware)

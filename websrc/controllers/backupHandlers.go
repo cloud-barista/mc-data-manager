@@ -42,7 +42,7 @@ import (
 //	@Router			/backup/objectstorage [post]
 func BackupOSPostHandler(ctx echo.Context) error {
 	start := time.Now()
-	logger, logstrings := pageLogInit("backup-objectstorage", "Export data from objectstorage", start)
+	logger, logstrings := pageLogInit(ctx, "backup-objectstorage", "Export data from objectstorage", start)
 	params := models.BackupTask{}
 	if !getDataWithReBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusOK, models.BasicResponse{
@@ -85,7 +85,7 @@ func BackupRDBPostHandler(ctx echo.Context) error {
 
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("migmysql", "Export data from mysql", start)
+	logger, logstrings := pageLogInit(ctx, "migmysql", "Export data from mysql", start)
 
 	params := models.BackupTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
@@ -173,7 +173,7 @@ func BackupNRDBPostHandler(ctx echo.Context) error {
 	var err error
 	start := time.Now()
 
-	logger, logstrings := pageLogInit("backup-nrdb", "backup data from nrdb", start)
+	logger, logstrings := pageLogInit(ctx, "backup-nrdb", "backup data from nrdb", start)
 
 	params := models.BackupTask{}
 	if !getDataWithReBind(logger, start, ctx, &params) {

@@ -45,24 +45,22 @@ import (
 	"github.com/cloud-barista/mc-data-manager/service/rdbc"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	"github.com/spf13/cast"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func getLogger(jobName string) *zerolog.Logger {
-	logger := log.With().Str("serviceType", jobName).Str("taskType", jobName).Logger()
-	return &logger
+func getLoggerFromContext(c echo.Context) *zerolog.Logger {
+	// Retrieve the logger from the request context
+	return zerolog.Ctx(c.Request().Context())
 }
-
-func pageLogInit(pageName, pageInfo string, startTime time.Time) (*zerolog.Logger, *strings.Builder) {
-	logger := getLogger(pageName)
+func pageLogInit(c echo.Context, pageName, pageInfo string, startTime time.Time) (*zerolog.Logger, *strings.Builder) {
+	logger := getLoggerFromContext(c)
 	var logstrings strings.Builder
 
+	// Log page access information
 	logger.Info().Msgf("%s post page accessed", pageName)
-
 	logger.Info().Msg(pageInfo)
-	logger.Info().Str("start time", startTime.Format("2006-01-02T15:04:05-07:00")).Msg("")
+	logger.Info().Str("start time", startTime.Format(time.RFC3339)).Msg("")
 
 	return logger, &logstrings
 }

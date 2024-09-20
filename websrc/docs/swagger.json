@@ -26,7 +26,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Export]",
+                    "[Data Backup]",
                     "[RDBMS]"
                 ],
                 "summary": "Export data from MySQL",
@@ -67,7 +67,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Export]",
+                    "[Data Backup]",
                     "[Object Storage]"
                 ],
                 "summary": "Export data from objectstorage",
@@ -108,7 +108,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Export]",
+                    "[Data Backup]",
                     "[RDBMS]"
                 ],
                 "summary": "Export data from MySQL",
@@ -1689,7 +1689,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Import]",
+                    "[Data Restore]",
                     "[RDBMS]"
                 ],
                 "summary": "Import data from MySQL",
@@ -1731,7 +1731,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Import]",
+                    "[Data Restore]",
                     "[Object Storage]"
                 ],
                 "summary": "Import data from objectstorage",
@@ -1773,7 +1773,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Import]",
+                    "[Data Restore]",
                     "[RDBMS]"
                 ],
                 "summary": "Import data from MySQL",
