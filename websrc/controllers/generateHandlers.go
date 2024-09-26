@@ -30,7 +30,7 @@ import (
 //	@ID 			GenerateLinuxPostHandler
 //	@Summary		Generate test data on on-premise Linux
 //	@Description	Generate test data on on-premise Linux.
-//	@Tags			[Test Data Generation]
+//	@Tags			[Data Generation]
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody	body		GenarateTask			true	"Parameters required to generate test data"
@@ -77,7 +77,7 @@ func GenerateLinuxPostHandler(ctx echo.Context) error {
 //	@ID 			GenerateWindowsPostHandler
 //	@Summary		Generate test data on on-premise Windows
 //	@Description	Generate test data on on-premise Windows.
-//	@Tags			[Test Data Generation]
+//	@Tags			[Data Generation]
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody	body		GenarateTask			true	"Parameters required to generate test data"
@@ -132,7 +132,7 @@ type GenerateS3PostHandlerResponseBody struct {
 //	@ID 			GenerateS3PostHandler
 //	@Summary		Generate test data on AWS S3
 //	@Description	Generate test data on AWS S3.
-//	@Tags			[Test Data Generation], [Object Storage]
+//	@Tags			[Data Generation], [Service Object Storage]
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody	body		GenarateTask			true	"Parameters required to generate test data"
@@ -201,7 +201,7 @@ func GenerateS3PostHandler(ctx echo.Context) error {
 //	@ID 			GenerateGCPPostHandler
 //	@Summary		Generate test data on GCP Cloud Storage
 //	@Description	Generate test data on GCP Cloud Storage.
-//	@Tags			[Test Data Generation], [Object Storage]
+//	@Tags			[Data Generation], [Service Object Storage]
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody	body		GenarateTask			true	"Parameters required to generate test data"
@@ -268,7 +268,7 @@ func GenerateGCPPostHandler(ctx echo.Context) error {
 //	@ID 			GenerateNCPPostHandler
 //	@Summary		Generate test data on NCP Object Storage
 //	@Description	Generate test data on NCP Object Storage.
-//	@Tags			[Test Data Generation], [Object Storage]
+//	@Tags			[Data Generation], [Service Object Storage]
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody	body		GenarateTask			true	"Parameters required to generate test data"
@@ -335,7 +335,7 @@ func GenerateNCPPostHandler(ctx echo.Context) error {
 //	@ID 			GenerateMySQLPostHandler
 //	@Summary		Generate test data on MySQL
 //	@Description	Generate test data on MySQL.
-//	@Tags			[Test Data Generation], [RDBMS]
+//	@Tags			[Data Generation], [Service RDBMS]
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody	body		GenarateTask			true	"Parameters required to generate test data"
@@ -400,8 +400,8 @@ func GenerateMySQLPostHandler(ctx echo.Context) error {
 		if err != nil {
 			end := time.Now()
 			logger.Error().Err(err).Msg("os ReadFile failed")
-			logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
-			logger.Info().Str("Elapsed time", end.Sub(start).String()).Msg("")
+			logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00"))
+			logger.Info().Str("Elapsed time", end.Sub(start).String())
 			return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 				Result: logstrings.String(),
 				Error:  nil,
@@ -413,8 +413,8 @@ func GenerateMySQLPostHandler(ctx echo.Context) error {
 		if err := rdbc.Put(string(data)); err != nil {
 			end := time.Now()
 			logger.Error().Err(err).Msg("RDBController import failed")
-			logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
-			logger.Info().Str("Elapsed time", end.Sub(start).String()).Msg("")
+			logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00"))
+			logger.Info().Str("Elapsed time", end.Sub(start).String())
 			return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 				Result: logstrings.String(),
 				Error:  nil,
@@ -435,7 +435,7 @@ func GenerateMySQLPostHandler(ctx echo.Context) error {
 //	@ID 			GenerateDynamoDBPostHandler
 //	@Summary		Generate test data on AWS DynamoDB
 //	@Description	Generate test data on AWS DynamoDB.
-//	@Tags			[Test Data Generation], [NRDBMS]
+//	@Tags			[Data Generation], [Service NRDBMS]
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody	body		GenarateTask			true	"Parameters required to generate test data"
@@ -510,7 +510,7 @@ func GenerateDynamoDBPostHandler(ctx echo.Context) error {
 //	@ID 			GenerateFirestorePostHandler
 //	@Summary		Generate test data on GCP Firestore
 //	@Description	Generate test data on GCP Firestore.
-//	@Tags			[Test Data Generation], [NRDBMS]
+//	@Tags			[Data Generation], [Service NRDBMS]
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody	body		GenarateTask				true	"Parameters required to generate test data"
@@ -587,7 +587,7 @@ func GenerateFirestorePostHandler(ctx echo.Context) error {
 //	@ID 			GenerateMongoDBPostHandler
 //	@Summary		Generate test data on NCP MongoDB
 //	@Description	Generate test data on NCP MongoDB.
-//	@Tags			[Test Data Generation], [NRDBMS]
+//	@Tags			[Data Generation], [Service NRDBMS]
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody	body		GenarateTask			true	"Parameters required to generate test data"

@@ -27,7 +27,7 @@ import (
 // @ID MigrationDynamoDBToFirestorePostHandler
 // @Summary Migrate data from DynamoDB to Firestore
 // @Description Migrate data stored in AWS DynamoDB to Google Cloud Firestore.
-// @Tags [Data Migration], [NRDBMS]
+// @Tags [Data Migration], [Service NRDBMS]
 // @Accept json
 // @Produce json
 // @Param RequestBody body MigrateTask	true	"Parameters required for migration"
@@ -87,7 +87,7 @@ func MigrationDynamoDBToFirestorePostHandler(ctx echo.Context) error {
 // @ID MigrationDynamoDBToMongoDBPostHandler
 // @Summary Migrate data from DynamoDB to MongoDB
 // @Description Migrate data stored in AWS DynamoDB to Naver Cloud MongoDB.
-// @Tags [Data Migration], [NRDBMS]
+// @Tags [Data Migration], [Service NRDBMS]
 // @Accept json
 // @Produce json
 // @Param RequestBody body MigrateTask	true	"Parameters required for migration"
@@ -147,7 +147,7 @@ func MigrationDynamoDBToMongoDBPostHandler(ctx echo.Context) error {
 // @ID MigrationFirestoreToDynamoDBPostHandler
 // @Summary Migrate data from Firestore to DynamoDB
 // @Description Migrate data stored in Google Cloud Firestore to AWS DynamoDB.
-// @Tags [Data Migration], [NRDBMS]
+// @Tags [Data Migration], [Service NRDBMS]
 // @Accept json
 // @Produce json
 // @Param RequestBody body MigrateTask	true	"Parameters required for migration"
@@ -207,7 +207,7 @@ func MigrationFirestoreToDynamoDBPostHandler(ctx echo.Context) error {
 // @ID MigrationFirestoreToMongoDBPostHandler
 // @Summary Migrate data from Firestore to MongoDB
 // @Description Migrate data stored in Google Cloud Firestore to Naver Cloud MongoDB.
-// @Tags [Data Migration], [NRDBMS]
+// @Tags [Data Migration], [Service NRDBMS]
 // @Accept json
 // @Produce json
 // @Param RequestBody body MigrateTask	true	"Parameters required for migration"
@@ -267,7 +267,7 @@ func MigrationFirestoreToMongoDBPostHandler(ctx echo.Context) error {
 // @ID MigrationMongoDBToDynamoDBPostHandler
 // @Summary Migrate data from MongoDB to DynamoDB
 // @Description Migrate data stored in Naver Cloud MongoDB to AWS DynamoDB.
-// @Tags [Data Migration], [NRDBMS]
+// @Tags [Data Migration], [Service NRDBMS]
 // @Accept json
 // @Produce json
 // @Param RequestBody body MigrateTask	true	"Parameters required for migration"
@@ -327,7 +327,7 @@ func MigrationMongoDBToDynamoDBPostHandler(ctx echo.Context) error {
 // @ID MigrationMongoDBToFirestorePostHandler
 // @Summary Migrate data from MongoDB to Firestore
 // @Description Migrate data stored in Naver Cloud MongoDB to Google Cloud Firestore.
-// @Tags [Data Migration], [NRDBMS]
+// @Tags [Data Migration], [Service NRDBMS]
 // @Accept json
 // @Produce json
 // @Param RequestBody body MigrateTask	true	"Parameters required for migration"

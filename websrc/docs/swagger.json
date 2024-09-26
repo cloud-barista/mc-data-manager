@@ -27,9 +27,10 @@
                 ],
                 "tags": [
                     "[Data Backup]",
-                    "[RDBMS]"
+                    "[Service RDBMS]"
                 ],
                 "summary": "Export data from MySQL",
+                "operationId": "BackupNRDBPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for backup",
@@ -68,9 +69,10 @@
                 ],
                 "tags": [
                     "[Data Backup]",
-                    "[Object Storage]"
+                    "[Service Object Storage]"
                 ],
                 "summary": "Export data from objectstorage",
+                "operationId": "BackupOSPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for backup",
@@ -109,9 +111,10 @@
                 ],
                 "tags": [
                     "[Data Backup]",
-                    "[RDBMS]"
+                    "[Service RDBMS]"
                 ],
                 "summary": "Export data from MySQL",
+                "operationId": "BackupRDBPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for backup",
@@ -149,8 +152,8 @@
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation]",
-                    "[Object Storage]"
+                    "[Data Generation]",
+                    "[Service Object Storage]"
                 ],
                 "summary": "Generate test data on AWS S3",
                 "operationId": "GenerateS3PostHandler",
@@ -197,8 +200,8 @@
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation]",
-                    "[NRDBMS]"
+                    "[Data Generation]",
+                    "[Service NRDBMS]"
                 ],
                 "summary": "Generate test data on AWS DynamoDB",
                 "operationId": "GenerateDynamoDBPostHandler",
@@ -245,8 +248,8 @@
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation]",
-                    "[NRDBMS]"
+                    "[Data Generation]",
+                    "[Service NRDBMS]"
                 ],
                 "summary": "Generate test data on GCP Firestore",
                 "operationId": "GenerateFirestorePostHandler",
@@ -293,8 +296,8 @@
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation]",
-                    "[Object Storage]"
+                    "[Data Generation]",
+                    "[Service Object Storage]"
                 ],
                 "summary": "Generate test data on GCP Cloud Storage",
                 "operationId": "GenerateGCPPostHandler",
@@ -335,7 +338,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation]"
+                    "[Data Generation]"
                 ],
                 "summary": "Generate test data on on-premise Linux",
                 "operationId": "GenerateLinuxPostHandler",
@@ -382,8 +385,8 @@
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation]",
-                    "[NRDBMS]"
+                    "[Data Generation]",
+                    "[Service NRDBMS]"
                 ],
                 "summary": "Generate test data on NCP MongoDB",
                 "operationId": "GenerateMongoDBPostHandler",
@@ -430,8 +433,8 @@
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation]",
-                    "[RDBMS]"
+                    "[Data Generation]",
+                    "[Service RDBMS]"
                 ],
                 "summary": "Generate test data on MySQL",
                 "operationId": "GenerateMySQLPostHandler",
@@ -478,8 +481,8 @@
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation]",
-                    "[Object Storage]"
+                    "[Data Generation]",
+                    "[Service Object Storage]"
                 ],
                 "summary": "Generate test data on NCP Object Storage",
                 "operationId": "GenerateNCPPostHandler",
@@ -526,7 +529,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation]"
+                    "[Data Generation]"
                 ],
                 "summary": "Generate test data on on-premise Windows",
                 "operationId": "GenerateWindowsPostHandler",
@@ -574,7 +577,7 @@
                 ],
                 "tags": [
                     "[Data Migration]",
-                    "[Object Storage]"
+                    "[Service Object Storage]"
                 ],
                 "summary": "Migrate data from AWS S3 to GCP",
                 "operationId": "MigrationS3ToGCPPostHandler",
@@ -663,7 +666,7 @@
                 ],
                 "tags": [
                     "[Data Migration]",
-                    "[Object Storage]"
+                    "[Service Object Storage]"
                 ],
                 "summary": "Migrate data from AWS S3 to NCP",
                 "operationId": "MigrationS3ToNCPPostHandler",
@@ -752,7 +755,7 @@
                 ],
                 "tags": [
                     "[Data Migration]",
-                    "[NRDBMS]"
+                    "[Service NRDBMS]"
                 ],
                 "summary": "Migrate data from DynamoDB to Firestore",
                 "operationId": "MigrationDynamoDBToFirestorePostHandler",
@@ -794,7 +797,7 @@
                 ],
                 "tags": [
                     "[Data Migration]",
-                    "[NRDBMS]"
+                    "[Service NRDBMS]"
                 ],
                 "summary": "Migrate data from DynamoDB to MongoDB",
                 "operationId": "MigrationDynamoDBToMongoDBPostHandler",
@@ -836,7 +839,7 @@
                 ],
                 "tags": [
                     "[Data Migration]",
-                    "[NRDBMS]"
+                    "[Service NRDBMS]"
                 ],
                 "summary": "Migrate data from Firestore to DynamoDB",
                 "operationId": "MigrationFirestoreToDynamoDBPostHandler",
@@ -878,7 +881,7 @@
                 ],
                 "tags": [
                     "[Data Migration]",
-                    "[NRDBMS]"
+                    "[Service NRDBMS]"
                 ],
                 "summary": "Migrate data from Firestore to MongoDB",
                 "operationId": "MigrationFirestoreToMongoDBPostHandler",
@@ -920,7 +923,7 @@
                 ],
                 "tags": [
                     "[Data Migration]",
-                    "[Object Storage]"
+                    "[Service Object Storage]"
                 ],
                 "summary": "Migrate data from GCP to AWS S3",
                 "operationId": "MigrationGCPToS3PostHandler",
@@ -1009,7 +1012,7 @@
                 ],
                 "tags": [
                     "[Data Migration]",
-                    "[Object Storage]"
+                    "[Service Object Storage]"
                 ],
                 "summary": "Migrate data from GCP to NCP Object Storage",
                 "operationId": "MigrationGCPToNCPPostHandler",
@@ -1239,7 +1242,7 @@
                 ],
                 "tags": [
                     "[Data Migration]",
-                    "[NRDBMS]"
+                    "[Service NRDBMS]"
                 ],
                 "summary": "Migrate data from MongoDB to DynamoDB",
                 "operationId": "MigrationMongoDBToDynamoDBPostHandler",
@@ -1281,7 +1284,7 @@
                 ],
                 "tags": [
                     "[Data Migration]",
-                    "[NRDBMS]"
+                    "[Service NRDBMS]"
                 ],
                 "summary": "Migrate data from MongoDB to Firestore",
                 "operationId": "MigrationMongoDBToFirestorePostHandler",
@@ -1323,7 +1326,7 @@
                 ],
                 "tags": [
                     "[Data Migration]",
-                    "[RDBMS]"
+                    "[Service RDBMS]"
                 ],
                 "summary": "Migrate data from MySQL to MySQL",
                 "operationId": "MigrationMySQLPostHandler",
@@ -1365,7 +1368,7 @@
                 ],
                 "tags": [
                     "[Data Migration]",
-                    "[Object Storage]"
+                    "[Service Object Storage]"
                 ],
                 "summary": "Migrate data from NCP to AWS S3",
                 "operationId": "MigrationNCPToS3PostHandler",
@@ -1407,7 +1410,7 @@
                 ],
                 "tags": [
                     "[Data Migration]",
-                    "[Object Storage]"
+                    "[Service Object Storage]"
                 ],
                 "summary": "Migrate data from NCP to GCP Cloud Storage",
                 "operationId": "MigrationNCPToGCPPostHandler",
@@ -1690,7 +1693,7 @@
                 ],
                 "tags": [
                     "[Data Restore]",
-                    "[RDBMS]"
+                    "[Service RDBMS]"
                 ],
                 "summary": "Import data from MySQL",
                 "operationId": "RestoreNRDBPostHandler",
@@ -1732,7 +1735,7 @@
                 ],
                 "tags": [
                     "[Data Restore]",
-                    "[Object Storage]"
+                    "[Service Object Storage]"
                 ],
                 "summary": "Import data from objectstorage",
                 "operationId": "RestoreOSPostHandler",
@@ -1774,7 +1777,7 @@
                 ],
                 "tags": [
                     "[Data Restore]",
-                    "[RDBMS]"
+                    "[Service RDBMS]"
                 ],
                 "summary": "Import data from MySQL",
                 "operationId": "RestoreRDBPostHandler",
@@ -2040,6 +2043,17 @@
                 }
             }
         },
+        "models.BasicDataTask": {
+            "type": "object",
+            "properties": {
+                "sourcePoint": {
+                    "$ref": "#/definitions/models.ProviderConfig"
+                },
+                "targetPoint": {
+                    "$ref": "#/definitions/models.ProviderConfig"
+                }
+            }
+        },
         "models.BasicResponse": {
             "type": "object",
             "properties": {
@@ -2048,20 +2062,6 @@
                 },
                 "Result": {
                     "type": "string"
-                }
-            }
-        },
-        "models.DataTask": {
-            "type": "object",
-            "properties": {
-                "operationId": {
-                    "type": "string"
-                },
-                "sourcePoint": {
-                    "$ref": "#/definitions/models.ProviderConfig"
-                },
-                "targetPoint": {
-                    "$ref": "#/definitions/models.ProviderConfig"
                 }
             }
         },
@@ -2242,6 +2242,9 @@
                 "operationId": {
                     "type": "string"
                 },
+                "startTime": {
+                    "type": "string"
+                },
                 "status": {
                     "$ref": "#/definitions/models.Status"
                 },
@@ -2254,7 +2257,7 @@
                 "tasks": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.DataTask"
+                        "$ref": "#/definitions/models.BasicDataTask"
                     }
                 },
                 "tz": {

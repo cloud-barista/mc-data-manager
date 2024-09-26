@@ -1,7 +1,6 @@
 {
   "tasks": [
     {
-      "operationId": "",
       "meta": {
         "serviceType": "nrdbms",
         "taskType": "generate",
@@ -42,7 +41,6 @@
       }
     },
     {
-      "operationId": "",
       "meta": {
         "serviceType": "nrdbms",
         "taskType": "generate",
@@ -83,7 +81,6 @@
       }
     },
     {
-      "operationId": "",
       "meta": {
         "serviceType": "nrdbms",
         "taskType": "generate",
@@ -124,7 +121,6 @@
       }
     },
     {
-      "operationId": "",
       "meta": {
         "serviceType": "nrdbms",
         "taskType": "generate",
@@ -165,7 +161,6 @@
       }
     },
     {
-      "operationId": "",
       "meta": {
         "serviceType": "nrdbms",
         "taskType": "generate",
@@ -206,7 +201,6 @@
       }
     },
     {
-      "operationId": "",
       "meta": {
         "serviceType": "nrdbms",
         "taskType": "generate",
@@ -247,7 +241,6 @@
       }
     },
     {
-      "operationId": "",
       "meta": {
         "serviceType": "nrdbms",
         "taskType": "backup",
@@ -288,7 +281,6 @@
       }
     },
     {
-      "operationId": "",
       "meta": {
         "serviceType": "nrdbms",
         "taskType": "backup",
@@ -329,7 +321,6 @@
       }
     },
     {
-      "operationId": "",
       "meta": {
         "serviceType": "nrdbms",
         "taskType": "backup",
@@ -370,7 +361,6 @@
       }
     },
     {
-      "operationId": "",
       "meta": {
         "serviceType": "nrdbms",
         "taskType": "backup",
@@ -409,7 +399,6 @@
       }
     },
     {
-      "operationId": "",
       "meta": {
         "serviceType": "nrdbms",
         "taskType": "backup",
@@ -448,7 +437,6 @@
       }
     },
     {
-      "operationId": "",
       "meta": {
         "serviceType": "nrdbms",
         "taskType": "backup",
@@ -487,7 +475,6 @@
       }
     },
     {
-      "operationId": "",
       "meta": {
         "serviceType": "nrdbms",
         "taskType": "backup",
@@ -515,6 +502,1351 @@
         "profileName": "admin",
         "path": "",
         "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "backup",
+        "taskId": "operation-18542-task-0-20240925-135350",
+        "taskName": "restore Backup Task",
+        "description": "Backup the main restore"
+      },
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "backup",
+        "taskId": "operation-18542-task-0-20240925-135513",
+        "taskName": "restore Backup Task",
+        "description": "Backup the main restore"
+      },
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "backup",
+        "taskId": "operation-18542-task-0-20240925-140047",
+        "taskName": "restore Backup Task",
+        "description": "Backup the main restore"
+      },
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectStorage",
+        "taskType": "backup",
+        "taskId": "operation-18542-task-0-20240925-140136",
+        "taskName": "restore Backup Task",
+        "description": "Backup the main restore"
+      },
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "backup",
+        "taskId": "operation-18542-task-0-20240925-140225",
+        "taskName": "restore Backup Task",
+        "description": "Backup the main restore"
+      },
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "backup",
+        "taskId": "operation-18542-task-0-20240925-143328",
+        "taskName": "restore Backup Task",
+        "description": "Backup the main restore"
+      },
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "backup",
+        "taskId": "operation-18542-task-0-20240925-143439",
+        "taskName": "restore Backup Task",
+        "description": "Backup the main restore"
+      },
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "backup",
+        "taskId": "operation-18542-task-0-20240925-144205",
+        "taskName": "restore Backup Task",
+        "description": "Backup the main restore"
+      },
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "backup",
+        "taskId": "operation-18542-task-0-20240925-144220",
+        "taskName": "restore Backup Task",
+        "description": "Backup the main restore"
+      },
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "backup",
+        "taskId": "operation-18542-task-0-20240925-144542",
+        "taskName": "restore Backup Task",
+        "description": "Backup the main restore"
+      },
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "backup",
+        "taskId": "operation-18542-task-0-20240925-144728",
+        "taskName": "restore Backup Task",
+        "description": "Backup the main restore"
+      },
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "backup",
+        "taskId": "operation-18542-task-0-20240925-144904",
+        "taskName": "restore Backup Task",
+        "description": "Backup the main restore"
+      },
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "backup",
+        "taskId": "operation-18542-task-0-20240925-145018",
+        "taskName": "restore Backup Task",
+        "description": "Backup the main restore"
+      },
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "backup",
+        "taskId": "operation-18542-task-0-20240925-145149",
+        "taskName": "restore Backup Task",
+        "description": "Backup the main restore"
+      },
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "backup",
+        "taskId": "operation-18542-task-0-20240925-145354",
+        "taskName": "restore Backup Task",
+        "description": "Backup the main restore"
+      },
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "backup",
+        "taskId": "operation-18542-task-0-20240925-145457",
+        "taskName": "restore Backup Task",
+        "description": "Backup the main restore"
+      },
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "backup",
+        "taskId": "operation-18542-task-0-20240925-150058",
+        "taskName": "restore Backup Task",
+        "description": "Backup the main restore"
+      },
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "backup",
+        "taskId": "operation-18542-task-0-20240925-150059",
+        "taskName": "restore Backup Task",
+        "description": "Backup the main restore"
+      },
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "backup",
+        "taskId": "operation-18542-task-0-20240925-150102",
+        "taskName": "restore Backup Task",
+        "description": "Backup the main restore"
+      },
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "backup",
+        "taskId": "operation-18542-task-0-20240925-150104",
+        "taskName": "restore Backup Task",
+        "description": "Backup the main restore"
+      },
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "backup",
+        "taskId": "operation-18542-task-0-20240925-152412",
+        "taskName": "restore Backup Task",
+        "description": "Backup the main restore"
+      },
+      "status": "completed",
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "backup",
+        "taskId": "operation-18542-task-0-20240925-152419",
+        "taskName": "restore Backup Task",
+        "description": "Backup the main restore"
+      },
+      "status": "completed",
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "backup",
+        "taskId": "operation-18542-task-0-20240925-155112"
+      },
+      "status": "completed",
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "delete",
+        "taskId": "operation-18542-task-0-20240925-162032"
+      },
+      "status": "failed",
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "delete",
+        "taskId": "operation-18542-task-0-20240925-162114"
+      },
+      "status": "failed",
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "delete",
+        "taskId": "operation-18542-task-0-20240925-162940"
+      },
+      "status": "completed",
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "delete",
+        "taskId": "operation-18542-task-0-20240925-163016"
+      },
+      "status": "completed",
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "delete",
+        "taskId": "operation-18542-task-0-20240925-174713"
+      },
+      "status": "failed",
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "delete",
+        "taskId": "operation-18542-task-0-20240925-174813"
+      },
+      "status": "failed",
+      "Directory": "./tmp/schedule/dummy/OBJ/aws",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "delete",
+        "taskId": "operation-18542-task-0-20240925-175157"
+      },
+      "status": "failed",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "delete",
+        "taskId": "operation-18542-task-0-20240925-180832"
+      },
+      "status": "failed",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "delete",
+        "taskId": "operation-18542-task-0-20240925-181035"
+      },
+      "status": "completed",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "delete",
+        "taskId": "operation-18542-task-0-20240925-181109"
+      },
+      "status": "failed",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "objectstorage",
+        "taskType": "delete",
+        "taskId": "operation-18542-task-0-20240925-181140"
+      },
+      "status": "completed",
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "profileName": "",
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "profileName": "admin",
+        "path": "",
+        "bucket": "mc-data-manager",
         "endpoint": "",
         "host": "",
         "port": "",

@@ -25,21 +25,19 @@ definitions:
       targetPoint:
         $ref: '#/definitions/models.ProviderConfig'
     type: object
+  models.BasicDataTask:
+    properties:
+      sourcePoint:
+        $ref: '#/definitions/models.ProviderConfig'
+      targetPoint:
+        $ref: '#/definitions/models.ProviderConfig'
+    type: object
   models.BasicResponse:
     properties:
       Error:
         type: string
       Result:
         type: string
-    type: object
-  models.DataTask:
-    properties:
-      operationId:
-        type: string
-      sourcePoint:
-        $ref: '#/definitions/models.ProviderConfig'
-      targetPoint:
-        $ref: '#/definitions/models.ProviderConfig'
     type: object
   models.GenTaskTarget:
     properties:
@@ -158,6 +156,8 @@ definitions:
         type: string
       operationId:
         type: string
+      startTime:
+        type: string
       status:
         $ref: '#/definitions/models.Status'
       tag:
@@ -166,7 +166,7 @@ definitions:
         type: array
       tasks:
         items:
-          $ref: '#/definitions/models.DataTask'
+          $ref: '#/definitions/models.BasicDataTask'
         type: array
       tz:
         type: string
@@ -211,6 +211,7 @@ paths:
       consumes:
       - application/json
       description: Export data from a MySQL database to SQL files.
+      operationId: BackupNRDBPostHandler
       parameters:
       - description: Parameters required for backup
         in: body
@@ -232,12 +233,13 @@ paths:
       summary: Export data from MySQL
       tags:
       - '[Data Backup]'
-      - '[RDBMS]'
+      - '[Service RDBMS]'
   /backup/objectstorage:
     post:
       consumes:
       - application/json
       description: Export data from a objectstorage  to files.
+      operationId: BackupOSPostHandler
       parameters:
       - description: Parameters required for backup
         in: body
@@ -259,12 +261,13 @@ paths:
       summary: Export data from objectstorage
       tags:
       - '[Data Backup]'
-      - '[Object Storage]'
+      - '[Service Object Storage]'
   /backup/rdb:
     post:
       consumes:
       - application/json
       description: Export data from a MySQL database to SQL files.
+      operationId: BackupRDBPostHandler
       parameters:
       - description: Parameters required for backup
         in: body
@@ -286,7 +289,7 @@ paths:
       summary: Export data from MySQL
       tags:
       - '[Data Backup]'
-      - '[RDBMS]'
+      - '[Service RDBMS]'
   /generate/aws:
     post:
       consumes:
@@ -317,8 +320,8 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Generate test data on AWS S3
       tags:
-      - '[Test Data Generation]'
-      - '[Object Storage]'
+      - '[Data Generation]'
+      - '[Service Object Storage]'
   /generate/dynamodb:
     post:
       consumes:
@@ -349,8 +352,8 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Generate test data on AWS DynamoDB
       tags:
-      - '[Test Data Generation]'
-      - '[NRDBMS]'
+      - '[Data Generation]'
+      - '[Service NRDBMS]'
   /generate/firestore:
     post:
       consumes:
@@ -381,8 +384,8 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Generate test data on GCP Firestore
       tags:
-      - '[Test Data Generation]'
-      - '[NRDBMS]'
+      - '[Data Generation]'
+      - '[Service NRDBMS]'
   /generate/gcp:
     post:
       consumes:
@@ -409,8 +412,8 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Generate test data on GCP Cloud Storage
       tags:
-      - '[Test Data Generation]'
-      - '[Object Storage]'
+      - '[Data Generation]'
+      - '[Service Object Storage]'
   /generate/linux:
     post:
       consumes:
@@ -441,7 +444,7 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Generate test data on on-premise Linux
       tags:
-      - '[Test Data Generation]'
+      - '[Data Generation]'
   /generate/mongodb:
     post:
       consumes:
@@ -472,8 +475,8 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Generate test data on NCP MongoDB
       tags:
-      - '[Test Data Generation]'
-      - '[NRDBMS]'
+      - '[Data Generation]'
+      - '[Service NRDBMS]'
   /generate/mysql:
     post:
       consumes:
@@ -504,8 +507,8 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Generate test data on MySQL
       tags:
-      - '[Test Data Generation]'
-      - '[RDBMS]'
+      - '[Data Generation]'
+      - '[Service RDBMS]'
   /generate/ncp:
     post:
       consumes:
@@ -536,8 +539,8 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Generate test data on NCP Object Storage
       tags:
-      - '[Test Data Generation]'
-      - '[Object Storage]'
+      - '[Data Generation]'
+      - '[Service Object Storage]'
   /generate/windows:
     post:
       consumes:
@@ -568,7 +571,7 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Generate test data on on-premise Windows
       tags:
-      - '[Test Data Generation]'
+      - '[Data Generation]'
   /migration/aws/gcp:
     post:
       consumes:
@@ -596,7 +599,7 @@ paths:
       summary: Migrate data from AWS S3 to GCP
       tags:
       - '[Data Migration]'
-      - '[Object Storage]'
+      - '[Service Object Storage]'
   /migration/aws/linux:
     post:
       consumes:
@@ -655,7 +658,7 @@ paths:
       summary: Migrate data from AWS S3 to NCP
       tags:
       - '[Data Migration]'
-      - '[Object Storage]'
+      - '[Service Object Storage]'
   /migration/aws/windows:
     post:
       consumes:
@@ -714,7 +717,7 @@ paths:
       summary: Migrate data from DynamoDB to Firestore
       tags:
       - '[Data Migration]'
-      - '[NRDBMS]'
+      - '[Service NRDBMS]'
   /migration/dynamodb/mongodb:
     post:
       consumes:
@@ -742,7 +745,7 @@ paths:
       summary: Migrate data from DynamoDB to MongoDB
       tags:
       - '[Data Migration]'
-      - '[NRDBMS]'
+      - '[Service NRDBMS]'
   /migration/firestore/dynamodb:
     post:
       consumes:
@@ -770,7 +773,7 @@ paths:
       summary: Migrate data from Firestore to DynamoDB
       tags:
       - '[Data Migration]'
-      - '[NRDBMS]'
+      - '[Service NRDBMS]'
   /migration/firestore/mongodb:
     post:
       consumes:
@@ -798,7 +801,7 @@ paths:
       summary: Migrate data from Firestore to MongoDB
       tags:
       - '[Data Migration]'
-      - '[NRDBMS]'
+      - '[Service NRDBMS]'
   /migration/gcp/aws:
     post:
       consumes:
@@ -826,7 +829,7 @@ paths:
       summary: Migrate data from GCP to AWS S3
       tags:
       - '[Data Migration]'
-      - '[Object Storage]'
+      - '[Service Object Storage]'
   /migration/gcp/linux:
     post:
       consumes:
@@ -885,7 +888,7 @@ paths:
       summary: Migrate data from GCP to NCP Object Storage
       tags:
       - '[Data Migration]'
-      - '[Object Storage]'
+      - '[Service Object Storage]'
   /migration/gcp/windows:
     post:
       consumes:
@@ -1037,7 +1040,7 @@ paths:
       summary: Migrate data from MongoDB to DynamoDB
       tags:
       - '[Data Migration]'
-      - '[NRDBMS]'
+      - '[Service NRDBMS]'
   /migration/mongodb/firestore:
     post:
       consumes:
@@ -1065,7 +1068,7 @@ paths:
       summary: Migrate data from MongoDB to Firestore
       tags:
       - '[Data Migration]'
-      - '[NRDBMS]'
+      - '[Service NRDBMS]'
   /migration/mysql:
     post:
       consumes:
@@ -1093,7 +1096,7 @@ paths:
       summary: Migrate data from MySQL to MySQL
       tags:
       - '[Data Migration]'
-      - '[RDBMS]'
+      - '[Service RDBMS]'
   /migration/ncp/aws:
     post:
       consumes:
@@ -1121,7 +1124,7 @@ paths:
       summary: Migrate data from NCP to AWS S3
       tags:
       - '[Data Migration]'
-      - '[Object Storage]'
+      - '[Service Object Storage]'
   /migration/ncp/gcp:
     post:
       consumes:
@@ -1153,7 +1156,7 @@ paths:
       summary: Migrate data from NCP to GCP Cloud Storage
       tags:
       - '[Data Migration]'
-      - '[Object Storage]'
+      - '[Service Object Storage]'
   /migration/ncp/linux:
     post:
       consumes:
@@ -1336,7 +1339,7 @@ paths:
       summary: Import data from MySQL
       tags:
       - '[Data Restore]'
-      - '[RDBMS]'
+      - '[Service RDBMS]'
   /restore/objectstorage:
     post:
       consumes:
@@ -1364,7 +1367,7 @@ paths:
       summary: Import data from objectstorage
       tags:
       - '[Data Restore]'
-      - '[Object Storage]'
+      - '[Service Object Storage]'
   /restore/rdb:
     post:
       consumes:
@@ -1392,7 +1395,7 @@ paths:
       summary: Import data from MySQL
       tags:
       - '[Data Restore]'
-      - '[RDBMS]'
+      - '[Service RDBMS]'
   /task:
     get:
       description: Retrieve a list of all Tasks in the system.

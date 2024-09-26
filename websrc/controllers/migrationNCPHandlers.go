@@ -141,7 +141,7 @@ func MigrationNCPToWindowsPostHandler(ctx echo.Context) error {
 //	@ID 			MigrationNCPToS3PostHandler
 //	@Summary		Migrate data from NCP to AWS S3
 //	@Description	Migrate data stored in NCP Object Storage to AWS S3.
-//	@Tags			[Data Migration], [Object Storage]
+//	@Tags			[Data Migration], [Service Object Storage]
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody		body	MigrateTask	true	"Parameters required for migration"
@@ -203,7 +203,7 @@ func MigrationNCPToS3PostHandler(ctx echo.Context) error {
 //	@ID 			MigrationNCPToGCPPostHandler
 //	@Summary		Migrate data from NCP to GCP Cloud Storage
 //	@Description	Migrate data stored in NCP Object Storage to GCP Cloud Storage.
-//	@Tags			[Data Migration], [Object Storage]
+//	@Tags			[Data Migration], [Service Object Storage]
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody		body	MigrateTask	true	"Parameters required for migration"

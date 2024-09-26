@@ -337,6 +337,3 @@ function resultCollpase() {
 }
 
 
-function test() {
-
-}

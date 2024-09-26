@@ -137,14 +137,14 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 
 	e.GET("/", controllers.MainGetHandler)
 
+	migrationGroup := e.Group("/migration")
+	routes.MigrationRoutes(migrationGroup)
+
 	backupGroup := e.Group("/backup")
 	routes.BackupRoutes(backupGroup)
 
 	generateGroup := e.Group("/generate")
 	routes.GenerateRoutes(generateGroup)
-
-	migrationGroup := e.Group("/migration")
-	routes.MigrationRoutes(migrationGroup)
 
 	restoreGroup := e.Group("/restore")
 	routes.RestoreRoutes(restoreGroup)

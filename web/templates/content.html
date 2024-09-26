@@ -7,9 +7,12 @@
 
             <!-- dash-board 템플릿 -->
             {{ if eq .Content "dashboard" }}
-            {{ template "dash-board.html" . }}
+                {{ template "dash-board.html" . }}
             {{ end }}
-
+            <!-- Task Register 템플릿 -->
+            {{ if eq .Content "Register-Task" }}
+                {{ template "task.html" . }}
+            {{ end }}
             <!-- 데이터 생성 템플릿 -->
 
             {{ if eq .Content "Generate-Linux" }}

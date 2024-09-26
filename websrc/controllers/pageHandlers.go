@@ -51,6 +51,23 @@ func DashBoardHandler(ctx echo.Context) error {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
+// Page handlers related to Task data
+
+func TaskRegisterHandler(ctx echo.Context) error {
+	logger := getLoggerFromContext(ctx)
+
+	logger.Info().Msg("Task get page accessed")
+	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
+		Content:    "Register-Task",
+		AWSRegions: GetAWSRegions(),
+		GCPRegions: GetGCPRegions(),
+		NCPRegions: GetNCPRegions(),
+		OS:         runtime.GOOS,
+		Error:      nil,
+	})
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////
 // Page handlers related to generate data
 
 func GenerateLinuxGetHandler(ctx echo.Context) error {

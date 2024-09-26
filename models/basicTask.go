@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type OperationParams struct {
 	OperationId string `json:"operationId" form:"operationId"`
 }
@@ -38,11 +40,12 @@ type Flow struct {
 }
 
 type BasicSchedule struct {
-	ScheduleID   string     `json:"ScheduleID,omitempty"`
-	ScheduleName string     `json:"ScheduleName"`
-	Tasks        []DataTask `json:"tasks"`
-	Cron         string     `json:"cron"`
-	TimeZone     string     `json:"tz"`
+	ScheduleID   string          `json:"ScheduleID,omitempty"`
+	ScheduleName string          `json:"ScheduleName"`
+	Tasks        []BasicDataTask `json:"tasks"`
+	Cron         string          `json:"cron,omitempty"`
+	StartTime    *time.Time      `json:"startTime,omitempty"`
+	TimeZone     string          `json:"tz,omitempty"`
 
 	Status Status `json:"status"`
 }
