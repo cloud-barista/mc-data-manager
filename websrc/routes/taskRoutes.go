@@ -38,4 +38,6 @@ func TaskRoot(g *echo.Group, scheduleManager *task.FileScheduleManager) {
 	g.PUT("/:id", taskController.UpdateTaskHandler)    // Update an existing task by ID or OperationID
 	g.DELETE("/:id", taskController.DeleteTaskHandler) // Delete a task by ID or OperationID
 	g.GET("/dash", controllers.DashBoardHandler)
+	g.GET("/register", controllers.TaskRegisterHandler)
+
 }

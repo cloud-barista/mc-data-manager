@@ -140,7 +140,7 @@ func MigrationGCPToWindowsPostHandler(ctx echo.Context) error {
 //	@ID 			MigrationGCPToS3PostHandler
 //	@Summary        Migrate data from GCP to AWS S3
 //	@Description    Migrate data stored in GCP Cloud Storage to AWS S3.
-//	@Tags            [Data Migration], [Object Storage]
+//	@Tags            [Data Migration], [Service Object Storage]
 //	@Accept            json
 //	@Produce        json
 //	@Param            RequestBody        body    MigrateTask    true    "Parameters required for migration"
@@ -180,8 +180,8 @@ func MigrationGCPToS3PostHandler(ctx echo.Context) error {
 	if err := gcpOSC.Copy(awsOSC); err != nil {
 		end := time.Now()
 		logger.Error().Err(err).Msg("OSController migration failed")
-		logger.Info().Str("End time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
-		logger.Info().Str("Elapsed time", end.Sub(start).String()).Msg("")
+		logger.Info().Str("End time", end.Format("2006-01-02T15:04:05-07:00"))
+		logger.Info().Str("Elapsed time", end.Sub(start).String())
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
@@ -201,7 +201,7 @@ func MigrationGCPToS3PostHandler(ctx echo.Context) error {
 //	@ID 			MigrationGCPToNCPPostHandler
 //	@Summary        Migrate data from GCP to NCP Object Storage
 //	@Description    Migrate data stored in GCP Cloud Storage to NCP Object Storage.
-//	@Tags            [Data Migration], [Object Storage]
+//	@Tags            [Data Migration], [Service Object Storage]
 //	@Accept            json
 //	@Produce        json
 //	@Param            RequestBody        body    MigrateTask    true    "Parameters required for migration"
@@ -241,8 +241,8 @@ func MigrationGCPToNCPPostHandler(ctx echo.Context) error {
 	if err := gcpOSC.Copy(ncpOSC); err != nil {
 		end := time.Now()
 		logger.Error().Err(err).Msg("OSController migration failed")
-		logger.Info().Str("End time", end.Format("2006-01-02T15:04:05-07:00")).Msg("")
-		logger.Info().Str("Elapsed time", end.Sub(start).String()).Msg("")
+		logger.Info().Str("End time", end.Format("2006-01-02T15:04:05-07:00"))
+		logger.Info().Str("Elapsed time", end.Sub(start).String())
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,

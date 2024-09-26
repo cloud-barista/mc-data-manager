@@ -51,7 +51,7 @@ func (tc *TaskController) GetAllTasksHandler(ctx echo.Context) error {
 			Error:  &errStr,
 		})
 	}
-
+	jobEnd(logger, "Successfully Get Task List", start)
 	return ctx.JSON(http.StatusOK, tasks)
 }
 
@@ -75,19 +75,19 @@ func (tc *TaskController) CreateTaskHandler(ctx echo.Context) error {
 		errStr := "Invalid request data"
 		logger.Error().Msg(errStr)
 		return ctx.JSON(http.StatusBadRequest, models.BasicResponse{
-			Result: logstrings.String(),
+			Result: "",
 			Error:  &errStr,
 		})
 	}
 	if err := tc.TaskService.CreateSchedule(params); err != nil {
 		errStr := err.Error()
-		logger.Error().Err(err)
+		logger.Error().Err(err).Msg(errStr)
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  &errStr,
 		})
 	}
-
+	jobEnd(logger, "Successfully Register Task", start)
 	return ctx.JSON(http.StatusOK, models.BasicResponse{
 		Result: logstrings.String(),
 		Error:  nil,

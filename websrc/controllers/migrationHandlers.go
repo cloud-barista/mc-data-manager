@@ -55,7 +55,6 @@ func MigrationLinuxToS3PostHandler(ctx echo.Context) error {
 			Error:  nil,
 		})
 	}
-	logger.Debug().Msgf("%v", params)
 	awsOSC := getS3OSC(logger, start, "mig", params.TargetPoint)
 	if awsOSC == nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
@@ -376,7 +375,7 @@ func MigrationWindowsToNCPPostHandler(ctx echo.Context) error {
 //	@ID 			MigrationMySQLPostHandler
 //	@Summary		Migrate data from MySQL to MySQL
 //	@Description	Migrate data from one MySQL database to another MySQL database.
-//	@Tags			[Data Migration], [RDBMS]
+//	@Tags			[Data Migration], [Service RDBMS]
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody		body	MigrateTask	true	"Parameters required for migration"

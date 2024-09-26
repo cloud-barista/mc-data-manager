@@ -31,9 +31,10 @@ import (
 
 // BackupOSPostHandler godoc
 //
+//	@ID 			BackupOSPostHandler
 //	@Summary		Export data from objectstorage
 //	@Description	Export data from a objectstorage  to files.
-//	@Tags			[Data Backup], [Object Storage]
+//	@Tags			[Data Backup], [Service Object Storage]
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody		body	models.BackupTask	true	"Parameters required for backup"
@@ -70,9 +71,10 @@ func BackupOSPostHandler(ctx echo.Context) error {
 
 // BackupRDBPostHandler godoc
 //
+//	@ID 			BackupRDBPostHandler
 //	@Summary		Export data from MySQL
 //	@Description	Export data from a MySQL database to SQL files.
-//	@Tags			[Data Backup], [RDBMS]
+//	@Tags			[Data Backup], [Service RDBMS]
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody		body	models.BackupTask	true	"Parameters required for backup"
@@ -158,9 +160,10 @@ func BackupRDBPostHandler(ctx echo.Context) error {
 
 // BackupNRDBPostHandler godoc
 //
+//	@ID 			BackupNRDBPostHandler
 //	@Summary		Export data from MySQL
 //	@Description	Export data from a MySQL database to SQL files.
-//	@Tags			[Data Backup], [RDBMS]
+//	@Tags			[Data Backup], [Service RDBMS]
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody		body	models.BackupTask	true	"Parameters required for backup"

@@ -34,9 +34,10 @@ const docTemplate = `{
                 ],
                 "tags": [
                     "[Data Backup]",
-                    "[RDBMS]"
+                    "[Service RDBMS]"
                 ],
                 "summary": "Export data from MySQL",
+                "operationId": "BackupNRDBPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for backup",
@@ -75,9 +76,10 @@ const docTemplate = `{
                 ],
                 "tags": [
                     "[Data Backup]",
-                    "[Object Storage]"
+                    "[Service Object Storage]"
                 ],
                 "summary": "Export data from objectstorage",
+                "operationId": "BackupOSPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for backup",
@@ -116,9 +118,10 @@ const docTemplate = `{
                 ],
                 "tags": [
                     "[Data Backup]",
-                    "[RDBMS]"
+                    "[Service RDBMS]"
                 ],
                 "summary": "Export data from MySQL",
+                "operationId": "BackupRDBPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for backup",
@@ -156,8 +159,8 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation]",
-                    "[Object Storage]"
+                    "[Data Generation]",
+                    "[Service Object Storage]"
                 ],
                 "summary": "Generate test data on AWS S3",
                 "operationId": "GenerateS3PostHandler",
@@ -204,8 +207,8 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation]",
-                    "[NRDBMS]"
+                    "[Data Generation]",
+                    "[Service NRDBMS]"
                 ],
                 "summary": "Generate test data on AWS DynamoDB",
                 "operationId": "GenerateDynamoDBPostHandler",
@@ -252,8 +255,8 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation]",
-                    "[NRDBMS]"
+                    "[Data Generation]",
+                    "[Service NRDBMS]"
                 ],
                 "summary": "Generate test data on GCP Firestore",
                 "operationId": "GenerateFirestorePostHandler",
@@ -300,8 +303,8 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation]",
-                    "[Object Storage]"
+                    "[Data Generation]",
+                    "[Service Object Storage]"
                 ],
                 "summary": "Generate test data on GCP Cloud Storage",
                 "operationId": "GenerateGCPPostHandler",
@@ -342,7 +345,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation]"
+                    "[Data Generation]"
                 ],
                 "summary": "Generate test data on on-premise Linux",
                 "operationId": "GenerateLinuxPostHandler",
@@ -389,8 +392,8 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation]",
-                    "[NRDBMS]"
+                    "[Data Generation]",
+                    "[Service NRDBMS]"
                 ],
                 "summary": "Generate test data on NCP MongoDB",
                 "operationId": "GenerateMongoDBPostHandler",
@@ -437,8 +440,8 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation]",
-                    "[RDBMS]"
+                    "[Data Generation]",
+                    "[Service RDBMS]"
                 ],
                 "summary": "Generate test data on MySQL",
                 "operationId": "GenerateMySQLPostHandler",
@@ -485,8 +488,8 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation]",
-                    "[Object Storage]"
+                    "[Data Generation]",
+                    "[Service Object Storage]"
                 ],
                 "summary": "Generate test data on NCP Object Storage",
                 "operationId": "GenerateNCPPostHandler",
@@ -533,7 +536,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Test Data Generation]"
+                    "[Data Generation]"
                 ],
                 "summary": "Generate test data on on-premise Windows",
                 "operationId": "GenerateWindowsPostHandler",
@@ -581,7 +584,7 @@ const docTemplate = `{
                 ],
                 "tags": [
                     "[Data Migration]",
-                    "[Object Storage]"
+                    "[Service Object Storage]"
                 ],
                 "summary": "Migrate data from AWS S3 to GCP",
                 "operationId": "MigrationS3ToGCPPostHandler",
@@ -670,7 +673,7 @@ const docTemplate = `{
                 ],
                 "tags": [
                     "[Data Migration]",
-                    "[Object Storage]"
+                    "[Service Object Storage]"
                 ],
                 "summary": "Migrate data from AWS S3 to NCP",
                 "operationId": "MigrationS3ToNCPPostHandler",
@@ -759,7 +762,7 @@ const docTemplate = `{
                 ],
                 "tags": [
                     "[Data Migration]",
-                    "[NRDBMS]"
+                    "[Service NRDBMS]"
                 ],
                 "summary": "Migrate data from DynamoDB to Firestore",
                 "operationId": "MigrationDynamoDBToFirestorePostHandler",
@@ -801,7 +804,7 @@ const docTemplate = `{
                 ],
                 "tags": [
                     "[Data Migration]",
-                    "[NRDBMS]"
+                    "[Service NRDBMS]"
                 ],
                 "summary": "Migrate data from DynamoDB to MongoDB",
                 "operationId": "MigrationDynamoDBToMongoDBPostHandler",
@@ -843,7 +846,7 @@ const docTemplate = `{
                 ],
                 "tags": [
                     "[Data Migration]",
-                    "[NRDBMS]"
+                    "[Service NRDBMS]"
                 ],
                 "summary": "Migrate data from Firestore to DynamoDB",
                 "operationId": "MigrationFirestoreToDynamoDBPostHandler",
@@ -885,7 +888,7 @@ const docTemplate = `{
                 ],
                 "tags": [
                     "[Data Migration]",
-                    "[NRDBMS]"
+                    "[Service NRDBMS]"
                 ],
                 "summary": "Migrate data from Firestore to MongoDB",
                 "operationId": "MigrationFirestoreToMongoDBPostHandler",
@@ -927,7 +930,7 @@ const docTemplate = `{
                 ],
                 "tags": [
                     "[Data Migration]",
-                    "[Object Storage]"
+                    "[Service Object Storage]"
                 ],
                 "summary": "Migrate data from GCP to AWS S3",
                 "operationId": "MigrationGCPToS3PostHandler",
@@ -1016,7 +1019,7 @@ const docTemplate = `{
                 ],
                 "tags": [
                     "[Data Migration]",
-                    "[Object Storage]"
+                    "[Service Object Storage]"
                 ],
                 "summary": "Migrate data from GCP to NCP Object Storage",
                 "operationId": "MigrationGCPToNCPPostHandler",
@@ -1246,7 +1249,7 @@ const docTemplate = `{
                 ],
                 "tags": [
                     "[Data Migration]",
-                    "[NRDBMS]"
+                    "[Service NRDBMS]"
                 ],
                 "summary": "Migrate data from MongoDB to DynamoDB",
                 "operationId": "MigrationMongoDBToDynamoDBPostHandler",
@@ -1288,7 +1291,7 @@ const docTemplate = `{
                 ],
                 "tags": [
                     "[Data Migration]",
-                    "[NRDBMS]"
+                    "[Service NRDBMS]"
                 ],
                 "summary": "Migrate data from MongoDB to Firestore",
                 "operationId": "MigrationMongoDBToFirestorePostHandler",
@@ -1330,7 +1333,7 @@ const docTemplate = `{
                 ],
                 "tags": [
                     "[Data Migration]",
-                    "[RDBMS]"
+                    "[Service RDBMS]"
                 ],
                 "summary": "Migrate data from MySQL to MySQL",
                 "operationId": "MigrationMySQLPostHandler",
@@ -1372,7 +1375,7 @@ const docTemplate = `{
                 ],
                 "tags": [
                     "[Data Migration]",
-                    "[Object Storage]"
+                    "[Service Object Storage]"
                 ],
                 "summary": "Migrate data from NCP to AWS S3",
                 "operationId": "MigrationNCPToS3PostHandler",
@@ -1414,7 +1417,7 @@ const docTemplate = `{
                 ],
                 "tags": [
                     "[Data Migration]",
-                    "[Object Storage]"
+                    "[Service Object Storage]"
                 ],
                 "summary": "Migrate data from NCP to GCP Cloud Storage",
                 "operationId": "MigrationNCPToGCPPostHandler",
@@ -1697,7 +1700,7 @@ const docTemplate = `{
                 ],
                 "tags": [
                     "[Data Restore]",
-                    "[RDBMS]"
+                    "[Service RDBMS]"
                 ],
                 "summary": "Import data from MySQL",
                 "operationId": "RestoreNRDBPostHandler",
@@ -1739,7 +1742,7 @@ const docTemplate = `{
                 ],
                 "tags": [
                     "[Data Restore]",
-                    "[Object Storage]"
+                    "[Service Object Storage]"
                 ],
                 "summary": "Import data from objectstorage",
                 "operationId": "RestoreOSPostHandler",
@@ -1781,7 +1784,7 @@ const docTemplate = `{
                 ],
                 "tags": [
                     "[Data Restore]",
-                    "[RDBMS]"
+                    "[Service RDBMS]"
                 ],
                 "summary": "Import data from MySQL",
                 "operationId": "RestoreRDBPostHandler",
@@ -2047,6 +2050,17 @@ const docTemplate = `{
                 }
             }
         },
+        "models.BasicDataTask": {
+            "type": "object",
+            "properties": {
+                "sourcePoint": {
+                    "$ref": "#/definitions/models.ProviderConfig"
+                },
+                "targetPoint": {
+                    "$ref": "#/definitions/models.ProviderConfig"
+                }
+            }
+        },
         "models.BasicResponse": {
             "type": "object",
             "properties": {
@@ -2055,20 +2069,6 @@ const docTemplate = `{
                 },
                 "Result": {
                     "type": "string"
-                }
-            }
-        },
-        "models.DataTask": {
-            "type": "object",
-            "properties": {
-                "operationId": {
-                    "type": "string"
-                },
-                "sourcePoint": {
-                    "$ref": "#/definitions/models.ProviderConfig"
-                },
-                "targetPoint": {
-                    "$ref": "#/definitions/models.ProviderConfig"
                 }
             }
         },
@@ -2249,6 +2249,9 @@ const docTemplate = `{
                 "operationId": {
                     "type": "string"
                 },
+                "startTime": {
+                    "type": "string"
+                },
                 "status": {
                     "$ref": "#/definitions/models.Status"
                 },
@@ -2261,7 +2264,7 @@ const docTemplate = `{
                 "tasks": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.DataTask"
+                        "$ref": "#/definitions/models.BasicDataTask"
                     }
                 },
                 "tz": {

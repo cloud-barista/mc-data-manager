@@ -25,6 +25,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/cloud-barista/mc-data-manager/models"
+	"github.com/rs/zerolog/log"
 )
 
 type reader struct {
@@ -119,7 +120,6 @@ func (f *S3FS) CreateBucket() error {
 }
 
 // Delete Bucket
-//
 // Check and delete all objects in the bucket and delete the bucket
 func (f *S3FS) DeleteBucket() error {
 	objList, err := f.ObjectList()
@@ -128,25 +128,47 @@ func (f *S3FS) DeleteBucket() error {
 	}
 
 	if len(objList) != 0 {
+		// Divide objectIds into batches of 1000
+		const batchSize = 1000
 		var objectIds []types.ObjectIdentifier
+
 		for _, object := range objList {
 			objectIds = append(objectIds, types.ObjectIdentifier{Key: aws.String(object.Key)})
+
+			// When we reach batch size, delete objects
+			if len(objectIds) == batchSize {
+				if err := f.deleteObjectBatch(objectIds); err != nil {
+					return err
+				}
+				// Reset objectIds for the next batch
+				objectIds = []types.ObjectIdentifier{}
+			}
 		}
 
-		_, err = f.client.DeleteObjects(f.ctx, &s3.DeleteObjectsInput{
-			Bucket: aws.String(f.bucketName),
-			Delete: &types.Delete{Objects: objectIds},
-		})
-
-		if err != nil {
-			return err
+		// Delete any remaining objects
+		if len(objectIds) > 0 {
+			if err := f.deleteObjectBatch(objectIds); err != nil {
+				return err
+			}
 		}
 	}
+
+	// Delete the bucket
 	_, err = f.client.DeleteBucket(f.ctx, &s3.DeleteBucketInput{Bucket: &f.bucketName})
 	if err != nil {
 		return err
 	}
+	log.Info().Msg("DeleteDone")
 	return nil
+}
+
+// deleteObjectBatch deletes a batch of objects
+func (f *S3FS) deleteObjectBatch(objectIds []types.ObjectIdentifier) error {
+	_, err := f.client.DeleteObjects(f.ctx, &s3.DeleteObjectsInput{
+		Bucket: aws.String(f.bucketName),
+		Delete: &types.Delete{Objects: objectIds},
+	})
+	return err
 }
 
 // Open function using pipeline

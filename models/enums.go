@@ -30,7 +30,7 @@ type CloudServiceType string
 
 const (
 	ComputeService CloudServiceType = "compute"
-	ObejectStorage CloudServiceType = "objectStorage"
+	ObejectStorage CloudServiceType = "objectstorage"
 	RDBMS          CloudServiceType = "rdbms"
 	NRDBMS         CloudServiceType = "nrdbms"
 )

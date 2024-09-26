@@ -16,8 +16,11 @@ limitations under the License.
 package utils
 
 import (
+	"errors"
 	"fmt"
 	"os"
+	"regexp"
+	"strings"
 	"time"
 
 	"github.com/cloud-barista/mc-data-manager/models"
@@ -86,4 +89,36 @@ func GenerateFlowID(opId string) string {
 
 func GenerateScheduleID(opId string) string {
 	return fmt.Sprintf("%s-schedule-%s", opId, time.Now().Format("20060102-150405"))
+}
+
+// validateCronExpression checks if the provided cron expression is valid.
+// It returns an error if the expression is invalid.
+func validateCronExpression(cronExpr string) error {
+	// Split the cron expression by spaces
+	fields := strings.Fields(cronExpr)
+	if len(fields) != 5 {
+		return errors.New("cron expression must have exactly 5 fields")
+	}
+
+	// Define regex patterns for each field
+	// This is a simplified version and may need to be expanded for full validation
+	fieldPatterns := []string{
+		`^(\*|([0-5]?\d)(-[0-5]?\d)?(\/\d+)?)$`, // Minute
+		`^(\*|([01]?\d|2[0-3])(\/\d+)?)$`,       // Hour
+		`^(\*|([01]?\d|2[0-9]|3[01])(\/\d+)?)$`, // Day of Month
+		`^(\*|(1[0-2]|0?[1-9])(\/\d+)?)$`,       // Month
+		`^(\*|(0|1|2|3|4|5|6)(\/\d+)?)$`,        // Day of Week
+	}
+
+	for i, field := range fields {
+		matched, err := regexp.MatchString(fieldPatterns[i], field)
+		if err != nil {
+			return err
+		}
+		if !matched {
+			return errors.New("invalid cron expression in field " + string(i+1))
+		}
+	}
+
+	return nil
 }
