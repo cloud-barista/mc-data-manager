@@ -21,6 +21,9 @@ import (
 )
 
 func MigrationRoutes(g *echo.Group) {
+
+	//base Migration
+	MigrationRoot(g)
 	// Migration From On-premise (Linux, Windows) to Object Storage
 	MigrationFromOnpremiseToObjectStorage(g)
 
@@ -34,6 +37,16 @@ func MigrationRoutes(g *echo.Group) {
 
 	// Migration No-SQL to the other No-SQL
 	MigrationNoSQLRoutes(g)
+}
+
+func MigrationRoot(g *echo.Group) {
+	g.POST("/objectstorage", controllers.MigrationObjectstoragePostHandler)
+	g.POST("/nrdbms", controllers.MigrationNRDBMSPostHandler)
+	g.POST("/rdbms", controllers.MigrationRDBMSPostHandler)
+	g.GET("", controllers.GetAllMigrateHandler)        // Retrieve all tasks
+	g.GET("/:id", controllers.GetMigrateHandler)       // Retrieve a single task by ID
+	g.PUT("/:id", controllers.UpdateMigrateHandler)    // Update an existing task by ID
+	g.DELETE("/:id", controllers.DeleteBackupkHandler) // Delete a task by ID
 }
 
 func MigrationFromOnpremiseToObjectStorage(g *echo.Group) {

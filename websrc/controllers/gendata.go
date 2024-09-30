@@ -16,6 +16,7 @@ limitations under the License.
 package controllers
 
 import (
+	"errors"
 	"reflect"
 	"strconv"
 
@@ -29,11 +30,11 @@ import (
 
 func genData(params GenFileParams, logger *zerolog.Logger) error {
 
-	// if !hasAnyTrue(params.FileFormatParams) {
-	// 	err := errors.New("no file format selected")
-	// 	logger.Error().Err(err).Msg("At least one file format must be selected")
-	// 	return err
-	// }
+	if !hasAnyTrue(params.FileFormatParams) {
+		err := errors.New("no file format selected")
+		logger.Error().Err(err).Msg("At least one file format must be selected")
+		return err
+	}
 	if cast.ToBool(params.CheckSQL) {
 		logger.Info().Msg("Start creating SQL dummy")
 		sql, _ := strconv.Atoi(params.SizeSQL)

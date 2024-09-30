@@ -152,6 +152,9 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 	taskGroup := e.Group("/task")
 	routes.TaskRoutes(taskGroup, scheduleManager)
 
+	serviceGroup := e.Group("/service")
+	routes.ServiceRoutes(serviceGroup, scheduleManager)
+
 	selfEndpoint := "localhost" + ":" + port
 	website := " http://" + selfEndpoint
 	apidashboard := " http://" + selfEndpoint + "/swagger/index.html"

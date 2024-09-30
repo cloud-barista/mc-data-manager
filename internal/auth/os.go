@@ -67,7 +67,7 @@ func MigrationOSFunc(params *models.CommandTask) error {
 	var dst *osc.OSController
 	var dstErr error
 	log.Info().Msgf("Source Information")
-	src, srcErr = GetOS(&params.TargetPoint)
+	src, srcErr = GetOS(&params.SourcePoint)
 	if srcErr != nil {
 		log.Error().Msgf("OSController error migration into objectstorage : %v", srcErr)
 		return srcErr

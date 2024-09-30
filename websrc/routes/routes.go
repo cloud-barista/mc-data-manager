@@ -21,6 +21,7 @@ import (
 )
 
 func GenerateRoutes(g *echo.Group) {
+
 	g.GET("/linux", controllers.GenerateLinuxGetHandler)
 	g.POST("/linux", controllers.GenerateLinuxPostHandler)
 
@@ -47,4 +48,14 @@ func GenerateRoutes(g *echo.Group) {
 
 	g.GET("/mongodb", controllers.GenerateMongoDBGetHandler)
 	g.POST("/mongodb", controllers.GenerateMongoDBPostHandler)
+
+	g.POST("/objectstorage", controllers.GenerateObjectStoragePostHandler)
+	g.POST("/nrdbms", controllers.GenerateNRDBMSPostHandler)
+	g.POST("/rdbms", controllers.GenerateRDBMSPostHandler)
+
+	g.GET("", controllers.GetAllGenerateHandler)         // Retrieve all tasks
+	g.GET("/:id", controllers.GetGenerateHandler)        // Retrieve a single task by ID
+	g.PUT("/:id", controllers.UpdateGenerateHandler)     // Update an existing task by ID
+	g.DELETE("/:id", controllers.DeleteGeneratekHandler) // Delete a task by ID
+
 }

@@ -30,7 +30,6 @@ type (
 	//
 	ProviderConfig = models.ProviderConfig
 	Task           = models.Task
-	GenarateTask   = models.GenarateTask
 	MigrateTask    = models.MigrateTask
 
 	// Mig

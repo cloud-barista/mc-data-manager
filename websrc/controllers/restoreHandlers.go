@@ -16,27 +16,19 @@ limitations under the License.
 package controllers
 
 import (
-	"encoding/json"
-	"fmt"
-	"io/fs"
 	"net/http"
-	"os"
-	"path/filepath"
 	"time"
 
-	"github.com/cloud-barista/mc-data-manager/internal/auth"
 	"github.com/cloud-barista/mc-data-manager/models"
-	"github.com/cloud-barista/mc-data-manager/service/nrdbc"
-	"github.com/cloud-barista/mc-data-manager/service/rdbc"
+	"github.com/cloud-barista/mc-data-manager/service/task"
 	"github.com/labstack/echo/v4"
-	"github.com/rs/zerolog/log"
 )
 
 // RestoreOSPostHandler godoc
 //
 //	@ID 			RestoreOSPostHandler
-//	@Summary		Import data from objectstorage
-//	@Description	Import data from a objectstorage  to files.
+//	@Summary		Restore data from objectstorage
+//	@Description	Restore objectstorage from files to a objectstorage
 //	@Tags			[Data Restore], [Service Object Storage]
 //	@Accept			json
 //	@Produce		json
@@ -46,202 +38,249 @@ import (
 //	@Router			/restore/objectstorage [post]
 func RestoreOSPostHandler(ctx echo.Context) error {
 	start := time.Now()
-	logger, logstrings := pageLogInit(ctx, "Restore-objectstorage", "Import data to objectstorage", start)
-	params := models.RestoreTask{}
+
+	logger, logstrings := pageLogInit(ctx, "Bakcup", "Bakcup linux objectstorage to objectstorage", start)
+
+	params := models.DataTask{}
 	if !getDataWithReBind(logger, start, ctx, &params) {
-		log.Error().Msgf("Req params err")
-		return ctx.JSON(http.StatusOK, models.BasicResponse{
+		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
 		})
 	}
-	switch params.TargetPoint.Provider {
-	case string(models.AWS):
-		return MigrationLinuxToS3PostHandler(ctx)
-	case string(models.NCP):
-		return MigrationLinuxToNCPPostHandler(ctx)
-	case string(models.GCP):
-		return MigrationLinuxToGCPPostHandler(ctx)
-	default:
-		logger.Error().Msgf("Unsupported provider: %v", params.TargetPoint.Provider)
-		errorMsg := fmt.Sprintf("unsupported provider: %v", params.TargetPoint.Provider)
-		return ctx.JSON(http.StatusBadRequest, models.BasicResponse{
+	params.TaskMeta.TaskID = params.OperationId
+	params.TaskMeta.TaskType = models.Restore
+	params.TaskMeta.ServiceType = models.ObejectStorage
+	manager := task.GetFileScheduleManager()
+
+	if !manager.RunTaskOnce(params) {
+		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
-			Error:  &errorMsg,
+			Error:  nil,
 		})
 	}
+	// backup success. Send result to client
+	jobEnd(logger, "Successfully Bakcup data", start)
+	return ctx.JSON(http.StatusOK, models.BasicResponse{
+		Result: logstrings.String(),
+		Error:  nil,
+	})
 }
 
 // RestoreRDBPostHandler godoc
 //
 //	@ID 			RestoreRDBPostHandler
-//	@Summary		Import data from MySQL
-//	@Description	Import data from a MySQL database to SQL files.
+//	@Summary		Restore data from MySQL
+//	@Description	Restore MySQL from MySQL files to a MySQL database
 //	@Tags			[Data Restore], [Service RDBMS]
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody		body	models.RestoreTask	true	"Parameters required for Restore"
 //	@Success		200			{object}	models.BasicResponse	"Successfully Restore data"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/restore/rdb [post]
+//	@Router			/restore/rdbms [post]
 func RestoreRDBPostHandler(ctx echo.Context) error {
-
-	var RDBC *rdbc.RDBController
-	var err error
-
 	start := time.Now()
 
-	logger, logstrings := pageLogInit(ctx, "restore-sql", "Import data to mysql", start)
+	logger, logstrings := pageLogInit(ctx, "Restore", "Restore linux objectstorage to objectstorage", start)
 
-	params := models.RestoreTask{}
-	if !getDataWithBind(logger, start, ctx, &params) {
-		log.Error().Msgf("Req params err")
-		return ctx.JSON(http.StatusOK, models.BasicResponse{
+	params := models.DataTask{}
+	if !getDataWithReBind(logger, start, ctx, &params) {
+		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
 		})
 	}
+	params.TaskMeta.TaskID = params.OperationId
+	params.TaskMeta.TaskType = models.Restore
+	params.TaskMeta.ServiceType = models.RDBMS
+	manager := task.GetFileScheduleManager()
 
-	RDBC, err = auth.GetRDMS(&params.TargetPoint)
-	if err != nil {
-		errorMsg := fmt.Sprintf("Failed to get RDBController: %v", err)
+	if !manager.RunTaskOnce(params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
-			Error:  &errorMsg,
+			Error:  nil,
 		})
 	}
-
-	sqlList := []string{}
-	err = filepath.Walk(params.SourcePoint.Path, func(path string, info fs.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		if filepath.Ext(path) == ".sql" {
-			sqlList = append(sqlList, path)
-		}
-		return nil
-	})
-	if err != nil {
-		errorMsg := fmt.Sprintf("Walk error: %v", err)
-		logger.Error().Msgf(errorMsg)
-		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
-			Result: logstrings.String(),
-			Error:  &errorMsg,
-		})
-	}
-
-	for _, sqlPath := range sqlList {
-		data, err := os.ReadFile(sqlPath)
-		if err != nil {
-			errorMsg := fmt.Sprintf("ReadFile error: %v", err)
-			logger.Error().Msgf(errorMsg)
-			return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
-				Result: logstrings.String(),
-				Error:  &errorMsg,
-			})
-		}
-		log.Info().Msgf("Import start: %s", sqlPath)
-		if err := RDBC.Put(string(data)); err != nil {
-			errorMsg := fmt.Sprintf("Put error importing into RDBMS: %v", err)
-			logger.Error().Msgf(errorMsg)
-			return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
-				Result: logstrings.String(),
-				Error:  &errorMsg,
-			})
-		}
-		log.Info().Msgf("Import success: %s", sqlPath)
-	}
-
-	jobEnd(logger, "Successfully Imported data from mysql", start)
+	// backup success. Send result to client
+	jobEnd(logger, "Successfully Restore data", start)
 	return ctx.JSON(http.StatusOK, models.BasicResponse{
 		Result: logstrings.String(),
 		Error:  nil,
 	})
-
 }
 
 // RestoreNRDBPostHandler godoc
 //
 //	@ID 			RestoreNRDBPostHandler
-//	@Summary		Import data from MySQL
-//	@Description	Import data from a MySQL database to SQL files.
+//	@Summary		Restore NoSQL from data to NoSQL
+//	@Description	Restore NoSQL from SQL files to a NoSQL database
 //	@Tags			[Data Restore], [Service RDBMS]
 //	@Accept			json
 //	@Produce		json
 //	@Param			RequestBody		body	models.RestoreTask	true	"Parameters required for Restore"
 //	@Success		200			{object}	models.BasicResponse	"Successfully Restore data"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/restore/nrdb [post]
+//	@Router			/restore/nrdbms [post]
 func RestoreNRDBPostHandler(ctx echo.Context) error {
-
-	var NRDBC *nrdbc.NRDBController
-	var err error
 	start := time.Now()
 
-	logger, logstrings := pageLogInit(ctx, "Restore-nrdb", "Import data from nrdb", start)
+	logger, logstrings := pageLogInit(ctx, "Restore", "Restore linux objectstorage to objectstorage", start)
 
-	params := models.RestoreTask{}
+	params := models.DataTask{}
 	if !getDataWithReBind(logger, start, ctx, &params) {
-		log.Error().Msgf("Req params err")
-		return ctx.JSON(http.StatusOK, models.BasicResponse{
+		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
 		})
 	}
+	params.TaskMeta.TaskID = params.OperationId
+	params.TaskMeta.TaskType = models.Restore
+	params.TaskMeta.ServiceType = models.NRDBMS
+	manager := task.GetFileScheduleManager()
 
-	NRDBC, err = auth.GetNRDMS(&params.TargetPoint)
-	if err != nil {
-		log.Error().Msgf("NRDBController error importing into nrdbms : %v", err)
-		return err
+	if !manager.RunTaskOnce(params) {
+		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
+			Result: logstrings.String(),
+			Error:  nil,
+		})
 	}
-
-	jsonList := []string{}
-	err = filepath.Walk(params.SourcePoint.Path, func(path string, info fs.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		if filepath.Ext(path) == ".json" {
-			jsonList = append(jsonList, path)
-		}
-		return nil
-	})
-
-	if err != nil {
-		log.Error().Msgf("Walk error : %v", err)
-		return err
-	}
-
-	var srcData []map[string]interface{}
-	for _, jsonFile := range jsonList {
-		srcData = []map[string]interface{}{}
-
-		file, err := os.Open(jsonFile)
-		if err != nil {
-			log.Error().Msgf("file open error : %v", err)
-			return err
-		}
-		defer file.Close()
-
-		if err := json.NewDecoder(file).Decode(&srcData); err != nil {
-			log.Error().Msgf("file decoding error : %v", err)
-			return err
-		}
-
-		fileName := filepath.Base(jsonFile)
-		tableName := fileName[:len(fileName)-len(filepath.Ext(fileName))]
-
-		log.Info().Msgf("Import start: %s", fileName)
-		if err := NRDBC.Put(tableName, &srcData); err != nil {
-			log.Error().Msgf("Put error importing into nrdbms")
-			return err
-		}
-		log.Info().Msgf("successfully imported : %s", params.SourcePoint.Path)
-	}
-
-	jobEnd(logger, "Successfully Imported NRDB from Data", start)
+	// backup success. Send result to client
+	jobEnd(logger, "Successfully Restore data", start)
 	return ctx.JSON(http.StatusOK, models.BasicResponse{
 		Result: logstrings.String(),
 		Error:  nil,
 	})
+}
 
+// GetAllRestoreHandler godoc
+//
+//	@ID 			GetAllRestoreHandler
+//	@Summary		Get all Tasks
+//	@Description	Retrieve a list of all Tasks in the system.
+//	@Tags			[Restore]
+//	@Produce		json
+//	@Success		200		{array}		models.Task	"Successfully retrieved all Tasks"
+//	@Failure		500		{object}	models.BasicResponse	"Internal Server Error"
+//	@Router			/restore [get]
+func GetAllRestoreHandler(ctx echo.Context) error {
+	start := time.Now()
+	logger, logstrings := pageLogInit(ctx, "Get-task-list", "Get an existing task", start)
+	manager := task.GetFileScheduleManager()
+	tasks, err := manager.GetTasksByTypeList(models.Restore)
+	if err != nil {
+		errStr := err.Error()
+		logger.Error().Err(err)
+		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
+			Result: logstrings.String(),
+			Error:  &errStr,
+		})
+	}
+	logger.Info().Msgf("%v", tasks)
+	jobEnd(logger, "Successfully Get Task List", start)
+	return ctx.JSON(http.StatusOK, tasks)
+}
+
+// GetRestoreHandler godoc
+//
+//	@ID 			GetRestoreHandler
+//	@Summary		Get a Task by ID
+//	@Description	Get the details of a Task using its ID.
+//	@Tags			[Restore]
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path	string	true	"Task ID"
+//	@Success		200		{object}	models.Task	"Successfully retrieved a Task"
+//	@Failure		404		{object}	models.BasicResponse	"Task not found"
+//	@Router			/restore/{id} [get]
+func GetRestoreHandler(ctx echo.Context) error {
+	start := time.Now()
+	logger, logstrings := pageLogInit(ctx, "Get-task", "Get an existing task", start)
+	id := ctx.Param("id")
+	manager := task.GetFileScheduleManager()
+	task, err := manager.GetTasksByType(models.Restore, id)
+	if err != nil {
+		errStr := err.Error()
+		logger.Error().Err(err)
+		return ctx.JSON(http.StatusNotFound, models.BasicResponse{
+			Result: logstrings.String(),
+			Error:  &errStr,
+		})
+	}
+
+	return ctx.JSON(http.StatusOK, task)
+}
+
+// UpdateRestoreHandler godoc
+//
+//	@ID 			UpdateRestoreHandler
+//	@Summary		Update an existing Task
+//	@Description	Update the details of an existing Task using its ID.
+//	@Tags			[Restore]
+//	@Accept			json
+//	@Produce		json
+//	@Param			id			path	string	true	"Task ID"
+//	@Param			RequestBody	body	models.Schedule	true	"Parameters required for updating a Task"
+//	@Success		200			{object}	models.BasicResponse	"Successfully updated the Task"
+//	@Failure		404			{object}	models.BasicResponse	"Task not found"
+//	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
+//	@Router			/restore/{id} [put]
+func UpdateRestoreHandler(ctx echo.Context) error {
+	start := time.Now()
+	logger, logstrings := pageLogInit(ctx, "Update-task", "Updating an existing task", start)
+	id := ctx.Param("id")
+	params := models.DataTask{}
+	if !getDataWithReBind(logger, start, ctx, &params) {
+		errStr := "Invalid request data"
+		logger.Error().Msg(errStr)
+		return ctx.JSON(http.StatusBadRequest, models.BasicResponse{
+			Result: logstrings.String(),
+			Error:  &errStr,
+		})
+	}
+	manager := task.GetFileScheduleManager()
+	if err := manager.UpdateTasksByType(models.Restore, id, params.BasicDataTask); err != nil {
+		errStr := err.Error()
+		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
+			Result: logstrings.String(),
+			Error:  &errStr,
+		})
+	}
+
+	return ctx.JSON(http.StatusOK, models.BasicResponse{
+		Result: logstrings.String(),
+		Error:  nil,
+	})
+}
+
+// DeleteRestorekHandler godoc
+//
+//	@ID 			DeleteRestorekHandler
+//	@Summary		Delete a Task
+//	@Description	Delete an existing Task using its ID.
+//	@Tags			[Restore]
+//	@Produce		json
+//	@Param			id		path	string	true	"Task ID"
+//	@Success		200		{object}	models.BasicResponse	"Successfully deleted the Task"
+//	@Failure		404		{object}	models.BasicResponse	"Task not found"
+//	@Router			/restore/{id} [delete]
+func DeleteRestorekHandler(ctx echo.Context) error {
+	start := time.Now()
+	logger, logstrings := pageLogInit(ctx, "Delete-task", "Delete an existing task", start)
+	id := ctx.Param("id")
+	manager := task.GetFileScheduleManager()
+	if err := manager.DeleteTasksByType(models.Restore, id); err != nil {
+		errStr := "Task not found"
+		logger.Error().Msg(errStr)
+
+		return ctx.JSON(http.StatusNotFound, models.BasicResponse{
+			Result: logstrings.String(),
+			Error:  &errStr,
+		})
+	}
+
+	return ctx.JSON(http.StatusOK, models.BasicResponse{
+		Result: logstrings.String(),
+		Error:  nil,
+	})
 }

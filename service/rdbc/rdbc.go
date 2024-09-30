@@ -87,13 +87,10 @@ func (rdb *RDBController) ListDB(dst *[]string) error {
 
 // sql import each line With Transaction
 func (rdb *RDBController) Put(sql string) error {
+
+	var err error
 	scanner := bufio.NewScanner(strings.NewReader(sql))
 	scanner.Split(splitLine)
-
-	err := rdb.client.Exec("BEGIN")
-	if err != nil {
-		return err
-	}
 
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -101,7 +98,6 @@ func (rdb *RDBController) Put(sql string) error {
 		if line != "" {
 			err = rdb.client.Exec(line)
 			if err != nil {
-				rdb.client.Exec("ROLLBACK")
 				rdb.logger.Error().Msgf("err Line : %+v", line)
 				rdb.logWrite("Error", "sql exec error", err)
 				return err
@@ -113,7 +109,7 @@ func (rdb *RDBController) Put(sql string) error {
 	if err != nil {
 		return err
 	}
-	return rdb.client.Exec("COMMIT")
+	return nil
 }
 
 // sql import by .sql
