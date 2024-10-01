@@ -23,17 +23,16 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// DeleteTaskHandler godoc
+// DeleteServiceAndTaskAllHandler godoc
 //
-//	@ID 			DeleteTaskHandler
+//	@ID 			DeleteServiceAndTaskAllHandler
 //	@Summary		Delete a Task
-//	@Description	Delete an existing Task using its ID.
-//	@Tags			[Task]
+//	@Description	Delete an All Service and Task.
+//	@Tags			[service]
 //	@Produce		json
-//	@Param			id		path	string	true	"Task ID"
-//	@Success		200		{object}	models.BasicResponse	"Successfully deleted the Task"
-//	@Failure		404		{object}	models.BasicResponse	"Task not found"
-//	@Router			/service/all [delete]
+//	@Success		200		{object}	models.BasicResponse	"Successfully deleted the All Service"
+//	@Failure		404		{object}	models.BasicResponse	"Clear All Task , Failed"
+//	@Router			/service/clearAll [delete]
 func (tc *TaskController) DeleteServiceAndTaskAllHandler(ctx echo.Context) error {
 	start := time.Now()
 	logger, logstrings := pageLogInit(ctx, "Delete-task", "Delete an existing task", start)

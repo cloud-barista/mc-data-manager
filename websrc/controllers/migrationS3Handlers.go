@@ -27,10 +27,10 @@ import (
 // @ID MigrationS3ToLinuxPostHandler
 // @Summary Migrate data from AWS S3 to Linux
 // @Description Migrate data stored in AWS S3 to a Linux-based system.
-// @Tags [Data Migration]
+// @Tags [Migrate]
 // @Accept json
 // @Produce json
-// @Param RequestBody body MigrateTask	true	"Parameters required for migration"
+// @Param RequestBody body models.MigrateTask	true	"Parameters required for migration"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 400 {object} models.BasicResponse "Invalid Request"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
@@ -48,7 +48,7 @@ func MigrationS3ToLinuxPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	params := MigrateTask{}
+	params := models.MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -82,10 +82,10 @@ func MigrationS3ToLinuxPostHandler(ctx echo.Context) error {
 // @ID MigrationS3ToWindowsPostHandler
 // @Summary Migrate data from AWS S3 to Windows
 // @Description Migrate data stored in AWS S3 to a Windows-based system.
-// @Tags [Data Migration]
+// @Tags [Migrate]
 // @Accept json
 // @Produce json
-// @Param RequestBody body MigrateTask	true	"Parameters required for migration"
+// @Param RequestBody body models.MigrateTask	true	"Parameters required for migration"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 400 {object} models.BasicResponse "Invalid Request"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
@@ -103,7 +103,7 @@ func MigrationS3ToWindowsPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	params := MigrateTask{}
+	params := models.MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -138,10 +138,10 @@ func MigrationS3ToWindowsPostHandler(ctx echo.Context) error {
 // @ID MigrationS3ToGCPPostHandler
 // @Summary Migrate data from AWS S3 to GCP
 // @Description Migrate data stored in AWS S3 to Google Cloud Storage.
-// @Tags	[Data Migration], [Service Object Storage]
+// @Tags	[Migrate]
 // @Accept json
 // @Produce json
-// @Param RequestBody body MigrateTask	true	"Parameters required for migration"
+// @Param RequestBody body models.MigrateTask	true	"Parameters required for migration"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /migration/aws/gcp [post]
@@ -151,7 +151,7 @@ func MigrationS3ToGCPPostHandler(ctx echo.Context) error {
 
 	logger, logstrings := pageLogInit(ctx, "migs3gcp", "Export s3 data to gcp", start)
 
-	params := MigrateTask{}
+	params := models.MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -199,10 +199,10 @@ func MigrationS3ToGCPPostHandler(ctx echo.Context) error {
 // @ID MigrationS3ToNCPPostHandler
 // @Summary Migrate data from AWS S3 to NCP
 // @Description Migrate data stored in AWS S3 to Naver Cloud Object Storage.
-// @Tags	[Data Migration], [Service Object Storage]
+// @Tags	[Migrate]
 // @Accept json
 // @Produce json
-// @Param RequestBody body MigrateTask	true	"Parameters required for migration"
+// @Param RequestBody body models.MigrateTask	true	"Parameters required for migration"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /migration/aws/ncp [post]
@@ -212,7 +212,7 @@ func MigrationS3ToNCPPostHandler(ctx echo.Context) error {
 
 	logger, logstrings := pageLogInit(ctx, "migs3ncp", "Export s3 data to ncp objectstorage", start)
 
-	params := MigrateTask{}
+	params := models.MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),

@@ -27,10 +27,10 @@ import (
 // @ID MigrationDynamoDBToFirestorePostHandler
 // @Summary Migrate data from DynamoDB to Firestore
 // @Description Migrate data stored in AWS DynamoDB to Google Cloud Firestore.
-// @Tags [Data Migration], [Service NRDBMS]
+// @Tags [Migrate]
 // @Accept json
 // @Produce json
-// @Param RequestBody body MigrateTask	true	"Parameters required for migration"
+// @Param RequestBody body models.MigrateTask	true	"Parameters required for migration"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /migration/dynamodb/firestore [post]
@@ -40,7 +40,7 @@ func MigrationDynamoDBToFirestorePostHandler(ctx echo.Context) error {
 
 	logger, logstrings := pageLogInit(ctx, "migDNFS", "Export dynamoDB data to firestoreDB", start)
 
-	params := MigrateTask{}
+	params := models.MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -87,10 +87,10 @@ func MigrationDynamoDBToFirestorePostHandler(ctx echo.Context) error {
 // @ID MigrationDynamoDBToMongoDBPostHandler
 // @Summary Migrate data from DynamoDB to MongoDB
 // @Description Migrate data stored in AWS DynamoDB to Naver Cloud MongoDB.
-// @Tags [Data Migration], [Service NRDBMS]
+// @Tags [Migrate]
 // @Accept json
 // @Produce json
-// @Param RequestBody body MigrateTask	true	"Parameters required for migration"
+// @Param RequestBody body models.MigrateTask	true	"Parameters required for migration"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /migration/dynamodb/mongodb [post]
@@ -100,7 +100,7 @@ func MigrationDynamoDBToMongoDBPostHandler(ctx echo.Context) error {
 
 	logger, logstrings := pageLogInit(ctx, "migDNMG", "Export dynamoDB data to mongoDB", start)
 
-	params := MigrateTask{}
+	params := models.MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -147,10 +147,10 @@ func MigrationDynamoDBToMongoDBPostHandler(ctx echo.Context) error {
 // @ID MigrationFirestoreToDynamoDBPostHandler
 // @Summary Migrate data from Firestore to DynamoDB
 // @Description Migrate data stored in Google Cloud Firestore to AWS DynamoDB.
-// @Tags [Data Migration], [Service NRDBMS]
+// @Tags [Migrate]
 // @Accept json
 // @Produce json
-// @Param RequestBody body MigrateTask	true	"Parameters required for migration"
+// @Param RequestBody body models.MigrateTask	true	"Parameters required for migration"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /migration/firestore/dynamodb [post]
@@ -160,7 +160,7 @@ func MigrationFirestoreToDynamoDBPostHandler(ctx echo.Context) error {
 
 	logger, logstrings := pageLogInit(ctx, "migFSDN", "Export firestoreDB data to dynamoDB", start)
 
-	params := MigrateTask{}
+	params := models.MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -207,10 +207,10 @@ func MigrationFirestoreToDynamoDBPostHandler(ctx echo.Context) error {
 // @ID MigrationFirestoreToMongoDBPostHandler
 // @Summary Migrate data from Firestore to MongoDB
 // @Description Migrate data stored in Google Cloud Firestore to Naver Cloud MongoDB.
-// @Tags [Data Migration], [Service NRDBMS]
+// @Tags [Migrate]
 // @Accept json
 // @Produce json
-// @Param RequestBody body MigrateTask	true	"Parameters required for migration"
+// @Param RequestBody body models.MigrateTask	true	"Parameters required for migration"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /migration/firestore/mongodb [post]
@@ -220,7 +220,7 @@ func MigrationFirestoreToMongoDBPostHandler(ctx echo.Context) error {
 
 	logger, logstrings := pageLogInit(ctx, "migFSMG", "Export firestoreDB data to mongoDB", start)
 
-	params := MigrateTask{}
+	params := models.MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -267,10 +267,10 @@ func MigrationFirestoreToMongoDBPostHandler(ctx echo.Context) error {
 // @ID MigrationMongoDBToDynamoDBPostHandler
 // @Summary Migrate data from MongoDB to DynamoDB
 // @Description Migrate data stored in Naver Cloud MongoDB to AWS DynamoDB.
-// @Tags [Data Migration], [Service NRDBMS]
+// @Tags [Migrate]
 // @Accept json
 // @Produce json
-// @Param RequestBody body MigrateTask	true	"Parameters required for migration"
+// @Param RequestBody body models.MigrateTask	true	"Parameters required for migration"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /migration/mongodb/dynamodb [post]
@@ -280,7 +280,7 @@ func MigrationMongoDBToDynamoDBPostHandler(ctx echo.Context) error {
 
 	logger, logstrings := pageLogInit(ctx, "migMGDN", "Export mongoDB data to dynamoDB", start)
 
-	params := MigrateTask{}
+	params := models.MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -327,10 +327,10 @@ func MigrationMongoDBToDynamoDBPostHandler(ctx echo.Context) error {
 // @ID MigrationMongoDBToFirestorePostHandler
 // @Summary Migrate data from MongoDB to Firestore
 // @Description Migrate data stored in Naver Cloud MongoDB to Google Cloud Firestore.
-// @Tags [Data Migration], [Service NRDBMS]
+// @Tags [Migrate]
 // @Accept json
 // @Produce json
-// @Param RequestBody body MigrateTask	true	"Parameters required for migration"
+// @Param RequestBody body models.MigrateTask	true	"Parameters required for migration"
 // @Success 200 {object} models.BasicResponse "Successfully migrated data"
 // @Failure 500 {object} models.BasicResponse "Internal Server Error"
 // @Router /migration/mongodb/firestore [post]
@@ -340,7 +340,7 @@ func MigrationMongoDBToFirestorePostHandler(ctx echo.Context) error {
 
 	logger, logstrings := pageLogInit(ctx, "migMGFS", "Export mongoDB data to firestoreDB", start)
 
-	params := MigrateTask{}
+	params := models.MigrateTask{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),

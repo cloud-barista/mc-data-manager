@@ -15,31 +15,27 @@ limitations under the License.
 */
 package controllers
 
-import (
-	"github.com/cloud-barista/mc-data-manager/models"
-)
+// type (
+// 	OperationParams = models.OperationParams
+// 	// Gen
+// 	GenDataParams      = models.GenDataParams
+// 	GenFileParams      = models.GenFileParams
+// 	GenMySQLParams     = models.GenMySQLParams
+// 	GenFirestoreParams = models.FirestoreParams
 
-type (
-	OperationParams = models.OperationParams
-	// Gen
-	GenDataParams      = models.GenDataParams
-	GenFileParams      = models.GenFileParams
-	GenMySQLParams     = models.GenMySQLParams
-	GenFirestoreParams = models.FirestoreParams
+// 	//
+// 	ProviderConfig = models.ProviderConfig
+// 	Task           = models.Task
+// 	MigrateTask    = models.MigrateTask
 
-	//
-	ProviderConfig = models.ProviderConfig
-	Task           = models.Task
-	MigrateTask    = models.MigrateTask
-
-	// Mig
-	MigrationMySQLForm   = models.MigrationMySQLForm
-	MigrationMySQLParams = models.MigrationMySQLParams
-	MySQLParams          = models.MySQLParams
-	MigrationForm        = models.MigrationForm
-	LinuxMigrationParams = models.LinuxMigrationParams
-	NCPMigrationParams   = models.NCPMigrationParams
-	AWSMigrationParams   = models.AWSMigrationParams
-	GCPMigrationParams   = models.GCPMigrationParams
-	MongoMigrationParams = models.MongoMigrationParams
-)
+// 	// Mig
+// 	MigrationMySQLForm   = models.MigrationMySQLForm
+// 	MigrationMySQLParams = models.MigrationMySQLParams
+// 	MySQLParams          = models.MySQLParams
+// 	MigrationForm        = models.MigrationForm
+// 	LinuxMigrationParams = models.LinuxMigrationParams
+// 	NCPMigrationParams   = models.NCPMigrationParams
+// 	AWSMigrationParams   = models.AWSMigrationParams
+// 	GCPMigrationParams   = models.GCPMigrationParams
+// 	MongoMigrationParams = models.MongoMigrationParams
+// )

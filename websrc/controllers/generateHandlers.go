@@ -94,11 +94,11 @@ func GenerateObjectStoragePostHandler(ctx echo.Context) error {
 	})
 }
 
-// GenerateNRDBMSPostHandler godoc
+// GenerateRDBMSPostHandler godoc
 //
-//	@ID 			GenerateNRDBMSPostHandler
-//	@Summary		Generate test data on Object Storage
-//	@Description	Generate test data on Object Storage
+//	@ID 			GenerateRDBMSPostHandler
+//	@Summary		Generate test data on RDBMS
+//	@Description	Generate test data on RDBMS
 //	@Tags			[Generate]
 //	@Accept			json
 //	@Produce		json
