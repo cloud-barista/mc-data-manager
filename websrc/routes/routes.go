@@ -29,25 +29,25 @@ func GenerateRoutes(g *echo.Group) {
 	g.POST("/windows", controllers.GenerateWindowsPostHandler)
 
 	g.GET("/aws", controllers.GenerateS3GetHandler)
-	g.POST("/aws", controllers.GenerateS3PostHandler)
+	// g.POST("/aws", controllers.GenerateS3PostHandler)
 
 	g.GET("/gcp", controllers.GenerateGCPGetHandler)
-	g.POST("/gcp", controllers.GenerateGCPPostHandler)
+	// g.POST("/gcp", controllers.GenerateGCPPostHandler)
 
 	g.GET("/ncp", controllers.GenerateNCPGetHandler)
-	g.POST("/ncp", controllers.GenerateNCPPostHandler)
+	// g.POST("/ncp", controllers.GenerateNCPPostHandler)
 
 	g.GET("/mysql", controllers.GenerateMySQLGetHandler)
-	g.POST("/mysql", controllers.GenerateMySQLPostHandler)
+	// g.POST("/mysql", controllers.GenerateMySQLPostHandler)
 
 	g.GET("/dynamodb", controllers.GenerateDynamoDBGetHandler)
-	g.POST("/dynamodb", controllers.GenerateDynamoDBPostHandler)
+	// g.POST("/dynamodb", controllers.GenerateDynamoDBPostHandler)
 
 	g.GET("/firestore", controllers.GenerateFirestoreGetHandler)
-	g.POST("/firestore", controllers.GenerateFirestorePostHandler)
+	// g.POST("/firestore", controllers.GenerateFirestorePostHandler)
 
 	g.GET("/mongodb", controllers.GenerateMongoDBGetHandler)
-	g.POST("/mongodb", controllers.GenerateMongoDBPostHandler)
+	// g.POST("/mongodb", controllers.GenerateMongoDBPostHandler)
 
 	g.POST("/objectstorage", controllers.GenerateObjectStoragePostHandler)
 	g.POST("/nrdbms", controllers.GenerateNRDBMSPostHandler)

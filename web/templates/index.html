@@ -2,266 +2,304 @@
 <html lang="en">
 {{ template "header.html" . }}
 
-        <div id="layoutSidenav">
-            <div id="layoutSidenav_nav">
-                <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
-                    <div class="sb-sidenav-menu">
-                        <div class="nav">
+<div id="layoutSidenav">
+    <div id="layoutSidenav_nav">
+        <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+            <div class="sb-sidenav-menu">
+                <div class="nav">
 
-                            <!-- 대쉬보드 사이드 메뉴 -->
-                            <!-- <div class="sb-sidenav-menu-heading">Core</div>
+                    <!-- 대쉬보드 사이드 메뉴 -->
+                    <!-- <div class="sb-sidenav-menu-heading">Core</div>
                             <a class="nav-link" href="#">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Dashboard
                             </a> -->
 
-                            <!-- 테스트 데이터 생성 사이드 메뉴 -->
-                            <div class="sb-sidenav-menu-heading">Generate</div>
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseOnpremiseGenerate" aria-expanded="false" aria-controls="collapseOnpremiseGenerate">
-                                <div class="sb-nav-link-icon"><i class="fas fa-computer"></i></div>
-                                On-Premise
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="collapseOnpremiseGenerate" data-bs-parent="#collapseOnpremiseGenerate">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                    {{if eq .OS "linux"}}
-                                        <a class="nav-link" href="/generate/linux">Linux</a>
-                                    {{else}}
-                                        <a class="nav-link" href="/generate/windows">Windows</a>
-                                    {{end}}
-                                </nav>
-                            </div>
-
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseObjectStorageGenerate" aria-expanded="false" aria-controls="collapseObjectStorageGenerate">
-                                <div class="sb-nav-link-icon"><i class="fa-solid fa-box-archive"></i></div>
-                                Object Storage
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="collapseObjectStorageGenerate" data-bs-parent="#collapseObjectStorageGenerate">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="/generate/aws">AWS S3</a>
-                                    <a class="nav-link" href="/generate/gcp">Google Cloud Storage</a>
-                                    <a class="nav-link" href="/generate/ncp">Naver Object Storage</a>
-                                </nav>
-                            </div>
-
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseSQLGenerate" aria-expanded="false" aria-controls="collapseSQLGenerate">
-                                <div class="sb-nav-link-icon"><i class="fa-solid fa-database"></i></div>
-                                SQL Database
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="collapseSQLGenerate" data-bs-parent="#collapseSQLGenerate">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="/generate/mysql">MySQL</a>
-                                </nav>
-                            </div>
-                            
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseNoSQLGenerate" aria-expanded="false" aria-controls="collapseNoSQLGenerate">
-                                <div class="sb-nav-link-icon"><i class="bi bi-database"></i></div>
-                                No-SQL Database
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="collapseNoSQLGenerate" data-bs-parent="#collapseNoSQLGenerate">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="/generate/dynamodb">AWS DynamoDB</a>
-                                    <a class="nav-link" href="/generate/firestore">Google Firestore</a>
-                                    <a class="nav-link" href="/generate/mongodb">Naver MongoDB</a>
-                                </nav>
-                            </div>
-
-                            <!-- 마이그레이션 사이드 메뉴 -->
-                            <div class="sb-sidenav-menu-heading">Migration</div>
-
-                            <!-- 온프레미스 마이그레이션 사이드 메뉴 -->
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseOnpremiseMigration" aria-expanded="false" aria-controls="collapseOnpremiseMigration">
-                                <div class="sb-nav-link-icon"><i class="fas fa-computer"></i></div>
-                                On-Premise
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="collapseOnpremiseMigration" data-bs-parent="#sidenavAccordion">
-                                <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionOnpremiseMigration">
-                                    {{if eq .OS "linux"}}
-                                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#migrationCollapseLinux" aria-expanded="false" aria-controls="migrationCollapseLinux">
-                                            Linux to
-                                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                        </a>
-                                        <div class="collapse" id="migrationCollapseLinux" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionOnpremiseMigration">
-                                            <nav class="sb-sidenav-menu-nested nav">
-                                                <a class="nav-link" href="/migration/linux/aws">AWS S3</a>
-                                                <a class="nav-link" href="/migration/linux/gcp">Google Cloud Storage</a>
-                                                <a class="nav-link" href="/migration/linux/ncp">Naver Object Storage</a>
-                                            </nav>
-                                        </div>
-                                    {{else}}
-                                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#migrationCollapseWindows" aria-expanded="false" aria-controls="migrationCollapseWindows">
-                                            Windows to
-                                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                        </a>
-                                        <div class="collapse" id="migrationCollapseWindows" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionOnpremiseMigration">
-                                            <nav class="sb-sidenav-menu-nested nav">
-                                                <a class="nav-link" href="/migration/windows/aws">AWS S3</a>
-                                                <a class="nav-link" href="/migration/windows/gcp">Google Cloud Storage</a>
-                                                <a class="nav-link" href="/migration/windows/ncp">Naver Object Storage</a>
-                                            </nav>
-                                        </div>
-                                    {{end}}
-                                </nav>
-                            </div>
-
-                            <!-- 오프젝트 스토리지 사이드 메뉴 -->
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseObjectStorageMigration" aria-expanded="false" aria-controls="collapseObjectStorageMigration">
-                                <div class="sb-nav-link-icon"><i class="fa-solid fa-box-archive"></i></div>
-                                Object Storage
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="collapseObjectStorageMigration" data-bs-parent="#sidenavAccordion">
-                                <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionObjectStorageMigration">
-
-                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#migrationCollapseaws" aria-expanded="false" aria-controls="migrationCollapseaws">
-                                        AWS S3 to
-                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                    </a>
-                                    <div class="collapse" id="migrationCollapseaws" data-bs-parent="#sidenavAccordionObjectStorageMigration">
-                                        <nav class="sb-sidenav-menu-nested nav">
-                                            {{if eq .OS "linux"}}
-                                                <a class="nav-link" href="/migration/aws/linux">Linux</a>
-                                            {{else}}
-                                                <a class="nav-link" href="/migration/aws/windows">Windows</a>
-                                            {{end}}
-                                            <a class="nav-link" href="/migration/aws/gcp">Google Cloud Storage</a>
-                                            <a class="nav-link" href="/migration/aws/ncp">Naver Object Storage</a>
-                                        </nav>
-                                    </div>
-
-                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#migrationCollapseGCP" aria-expanded="false" aria-controls="migrationCollapseGCP">
-                                        Google Cloud Storage to
-                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                    </a>
-                                    <div class="collapse" id="migrationCollapseGCP" data-bs-parent="#sidenavAccordionObjectStorageMigration">
-                                        <nav class="sb-sidenav-menu-nested nav">
-                                            {{if eq .OS "linux"}}
-                                                <a class="nav-link" href="/migration/gcp/linux">Linux</a>
-                                            {{else}}
-                                                <a class="nav-link" href="/migration/gcp/windows">Windows</a>
-                                            {{end}}
-                                            <a class="nav-link" href="/migration/gcp/aws">AWS S3</a>
-                                            <a class="nav-link" href="/migration/gcp/ncp">Naver Object Storage</a>
-                                        </nav>
-                                    </div>
-
-                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#migrationCollapseNCP" aria-expanded="false" aria-controls="migrationCollapseNCP">
-                                        Naver Object Storage to
-                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                    </a>
-                                    <div class="collapse" id="migrationCollapseNCP" data-bs-parent="#sidenavAccordionObjectStorageMigration">
-                                        <nav class="sb-sidenav-menu-nested nav">
-                                            {{if eq .OS "linux"}}
-                                                <a class="nav-link" href="/migration/ncp/linux">Linux</a>
-                                            {{else}}
-                                                <a class="nav-link" href="/migration/ncp/windows">Windows</a>
-                                            {{end}}
-                                            <a class="nav-link" href="/migration/ncp/aws">AWS S3</a>
-                                            <a class="nav-link" href="/migration/ncp/gcp">Google Cloud Storage</a>
-                                        </nav>
-                                    </div>
-
-                                    
-                                </nav>
-                            </div>
-
-                            <!-- SQL 마이그레이션 사이드 메뉴 -->
-                            
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseSQLMigration" aria-expanded="false" aria-controls="collapseSQLMigration">
-                                <div class="sb-nav-link-icon"><i class="fa-solid fa-code"></i></div>
-                                SQL Database
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="collapseSQLMigration" data-bs-parent="#collapseSQLMigration">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="/migration/mysql">MySQL</a>
-                                </nav>
-                            </div>
-
-                            <!-- No-SQL 마이그레이션 사이드 메뉴 -->
-
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseNoSQLMigration" aria-expanded="false" aria-controls="collapseNoSQLMigration">
-                                <div class="sb-nav-link-icon"><i class="fa-solid fa-laptop-code"></i></div>
-                                No-SQL
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="collapseNoSQLMigration" data-bs-parent="#sidenavAccordion">
-                                <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionNoSQLMigration">
-
-                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#migrationCollapseDynamoDB" aria-expanded="false" aria-controls="migrationCollapseDynamoDB">
-                                        AWS DynamoDB to
-                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                    </a>
-                                    <div class="collapse" id="migrationCollapseDynamoDB" data-bs-parent="#sidenavAccordionNoSQLMigration">
-                                        <nav class="sb-sidenav-menu-nested nav">
-                                            <a class="nav-link" href="/migration/dynamodb/firestore">Firestore</a>
-                                            <a class="nav-link" href="/migration/dynamodb/mongodb">MongoDB</a>
-                                        </nav>
-                                    </div>
-
-                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#migrationCollapseFirestore" aria-expanded="false" aria-controls="migrationCollapseFirestore">
-                                        GCP Firestore to
-                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                    </a>
-                                    <div class="collapse" id="migrationCollapseFirestore" data-bs-parent="#sidenavAccordionNoSQLMigration">
-                                        <nav class="sb-sidenav-menu-nested nav">
-                                            <a class="nav-link" href="/migration/firestore/dynamodb">DynamoDB</a>
-                                            <a class="nav-link" href="/migration/firestore/mongodb">MongoDB</a>
-                                        </nav>
-                                    </div>
-
-                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#migrationCollapseMongoDB" aria-expanded="false" aria-controls="migrationCollapseMongoDB">
-                                        NCP MongoDB to
-                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                    </a>
-                                    <div class="collapse" id="migrationCollapseMongoDB" data-bs-parent="#sidenavAccordionNoSQLMigration">
-                                        <nav class="sb-sidenav-menu-nested nav">
-                                            <a class="nav-link" href="/migration/mongodb/dynamodb">DynamoDB</a>
-                                            <a class="nav-link" href="/migration/mongodb/firestore">Firestore</a>
-                                        </nav>
-                                    </div>
-
-                                </nav>
-                            </div>
-
-                            <!-- 백업 사이드 메뉴 -->
-                            <div class="sb-sidenav-menu-heading">Back Up</div>
-
-                            <!-- 백업 사이드 메뉴 -->
-
-                            <a class="nav-link collapsed" href="/backup/register">
-                                <div class="sb-nav-link-icon"><i class="fa-solid fa-clone"></i></div>
-                                Back up
-                            </a>
-
-                            <!-- 백업 사이드 메뉴 -->
-                            <div class="sb-sidenav-menu-heading">Restore</div>
-
-                            <!-- 백업 사이드 메뉴 -->
-
-                            <a class="nav-link collapsed" href="/restore/register">
-                                <div class="sb-nav-link-icon"><i class="fa-solid fa-clone"></i></div>
-                                Restore
-                            </a>
-
-                        </div>
-                    </div>  <!-- sb-sidenav-menu END -->
-
-                    <!-- sidebar bottom -->
-                    <div class="sb-sidenav-footer">
-                        <div class="small">Logged in as:</div>
-                        m-cmp
+                    <!-- 테스트 데이터 생성 사이드 메뉴 -->
+                    <div class="sb-sidenav-menu-heading">Generate</div>
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                        data-bs-target="#collapseOnpremiseGenerate" aria-expanded="false"
+                        aria-controls="collapseOnpremiseGenerate">
+                        <div class="sb-nav-link-icon"><i class="fas fa-computer"></i></div>
+                        On-Premise
+                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    </a>
+                    <div class="collapse" id="collapseOnpremiseGenerate" data-bs-parent="#collapseOnpremiseGenerate">
+                        <nav class="sb-sidenav-menu-nested nav">
+                            {{if eq .OS "linux"}}
+                            <a class="nav-link" href="/generate/linux">Linux</a>
+                            {{else}}
+                            <a class="nav-link" href="/generate/windows">Windows</a>
+                            {{end}}
+                        </nav>
                     </div>
-                </nav>
-            </div>
 
-            {{ template "content.html" . }}
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                        data-bs-target="#collapseObjectStorageGenerate" aria-expanded="false"
+                        aria-controls="collapseObjectStorageGenerate">
+                        <div class="sb-nav-link-icon"><i class="fa-solid fa-box-archive"></i></div>
+                        Object Storage
+                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    </a>
+                    <div class="collapse" id="collapseObjectStorageGenerate"
+                        data-bs-parent="#collapseObjectStorageGenerate">
+                        <nav class="sb-sidenav-menu-nested nav">
+                            <a class="nav-link" href="/generate/aws">AWS S3</a>
+                            <a class="nav-link" href="/generate/gcp">Google Cloud Storage</a>
+                            <a class="nav-link" href="/generate/ncp">Naver Object Storage</a>
+                        </nav>
+                    </div>
+
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                        data-bs-target="#collapseSQLGenerate" aria-expanded="false" aria-controls="collapseSQLGenerate">
+                        <div class="sb-nav-link-icon"><i class="fa-solid fa-database"></i></div>
+                        SQL Database
+                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    </a>
+                    <div class="collapse" id="collapseSQLGenerate" data-bs-parent="#collapseSQLGenerate">
+                        <nav class="sb-sidenav-menu-nested nav">
+                            <a class="nav-link" href="/generate/mysql">MySQL</a>
+                        </nav>
+                    </div>
+
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                        data-bs-target="#collapseNoSQLGenerate" aria-expanded="false"
+                        aria-controls="collapseNoSQLGenerate">
+                        <div class="sb-nav-link-icon"><i class="bi bi-database"></i></div>
+                        No-SQL Database
+                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    </a>
+                    <div class="collapse" id="collapseNoSQLGenerate" data-bs-parent="#collapseNoSQLGenerate">
+                        <nav class="sb-sidenav-menu-nested nav">
+                            <a class="nav-link" href="/generate/dynamodb">AWS DynamoDB</a>
+                            <a class="nav-link" href="/generate/firestore">Google Firestore</a>
+                            <a class="nav-link" href="/generate/mongodb">Naver MongoDB</a>
+                        </nav>
+                    </div>
+
+                    <!-- 마이그레이션 사이드 메뉴 -->
+                    <div class="sb-sidenav-menu-heading">Migration</div>
+
+                    <!-- 온프레미스 마이그레이션 사이드 메뉴 -->
+                    <!-- <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                        data-bs-target="#collapseOnpremiseMigration" aria-expanded="false"
+                        aria-controls="collapseOnpremiseMigration">
+                        <div class="sb-nav-link-icon"><i class="fas fa-computer"></i></div>
+                        On-Premise
+                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    </a>
+                    <div class="collapse" id="collapseOnpremiseMigration" data-bs-parent="#sidenavAccordion">
+                        <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionOnpremiseMigration">
+                            {{if eq .OS "linux"}}
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                                data-bs-target="#migrationCollapseLinux" aria-expanded="false"
+                                aria-controls="migrationCollapseLinux">
+                                Linux to
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="migrationCollapseLinux" aria-labelledby="headingOne"
+                                data-bs-parent="#sidenavAccordionOnpremiseMigration">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="/migration/linux/aws">AWS S3</a>
+                                    <a class="nav-link" href="/migration/linux/gcp">Google Cloud Storage</a>
+                                    <a class="nav-link" href="/migration/linux/ncp">Naver Object Storage</a>
+                                </nav>
+                            </div>
+                            {{else}}
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                                data-bs-target="#migrationCollapseWindows" aria-expanded="false"
+                                aria-controls="migrationCollapseWindows">
+                                Windows to
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="migrationCollapseWindows" aria-labelledby="headingOne"
+                                data-bs-parent="#sidenavAccordionOnpremiseMigration">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="/migration/windows/aws">AWS S3</a>
+                                    <a class="nav-link" href="/migration/windows/gcp">Google Cloud Storage</a>
+                                    <a class="nav-link" href="/migration/windows/ncp">Naver Object Storage</a>
+                                </nav>
+                            </div>
+                            {{end}}
+                        </nav>
+                    </div> -->
+
+                    <!-- 오프젝트 스토리지 사이드 메뉴 -->
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                        data-bs-target="#collapseObjectStorageMigration" aria-expanded="false"
+                        aria-controls="collapseObjectStorageMigration">
+                        <div class="sb-nav-link-icon"><i class="fa-solid fa-box-archive"></i></div>
+                        Object Storage
+                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    </a>
+                    <div class="collapse" id="collapseObjectStorageMigration" data-bs-parent="#sidenavAccordion">
+                        <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionObjectStorageMigration">
+
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                                data-bs-target="#migrationCollapseaws" aria-expanded="false"
+                                aria-controls="migrationCollapseaws">
+                                AWS S3 to
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="migrationCollapseaws"
+                                data-bs-parent="#sidenavAccordionObjectStorageMigration">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <!-- {{if eq .OS "linux"}}
+                                    <a class="nav-link" href="/migration/aws/linux">Linux</a>
+                                    {{else}}
+                                    <a class="nav-link" href="/migration/aws/windows">Windows</a>
+                                    {{end}} -->
+                                    <a class="nav-link" href="/migration/aws/gcp">Google Cloud Storage</a>
+                                    <a class="nav-link" href="/migration/aws/ncp">Naver Object Storage</a>
+                                </nav>
+                            </div>
+
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                                data-bs-target="#migrationCollapseGCP" aria-expanded="false"
+                                aria-controls="migrationCollapseGCP">
+                                Google Cloud Storage to
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="migrationCollapseGCP"
+                                data-bs-parent="#sidenavAccordionObjectStorageMigration">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <!-- {{if eq .OS "linux"}}
+                                    <a class="nav-link" href="/migration/gcp/linux">Linux</a>
+                                    {{else}}
+                                    <a class="nav-link" href="/migration/gcp/windows">Windows</a>
+                                    {{end}} -->
+                                    <a class="nav-link" href="/migration/gcp/aws">AWS S3</a>
+                                    <a class="nav-link" href="/migration/gcp/ncp">Naver Object Storage</a>
+                                </nav>
+                            </div>
+
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                                data-bs-target="#migrationCollapseNCP" aria-expanded="false"
+                                aria-controls="migrationCollapseNCP">
+                                Naver Object Storage to
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="migrationCollapseNCP"
+                                data-bs-parent="#sidenavAccordionObjectStorageMigration">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <!-- {{if eq .OS "linux"}}
+                                    <a class="nav-link" href="/migration/ncp/linux">Linux</a>
+                                    {{else}}
+                                    <a class="nav-link" href="/migration/ncp/windows">Windows</a>
+                                    {{end}} -->
+                                    <a class="nav-link" href="/migration/ncp/aws">AWS S3</a>
+                                    <a class="nav-link" href="/migration/ncp/gcp">Google Cloud Storage</a>
+                                </nav>
+                            </div>
+                        </nav>
+                    </div>
+
+                    <!-- SQL 마이그레이션 사이드 메뉴 -->
+
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                        data-bs-target="#collapseSQLMigration" aria-expanded="false"
+                        aria-controls="collapseSQLMigration">
+                        <div class="sb-nav-link-icon"><i class="fa-solid fa-code"></i></div>
+                        SQL Database
+                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    </a>
+                    <div class="collapse" id="collapseSQLMigration" data-bs-parent="#collapseSQLMigration">
+                        <nav class="sb-sidenav-menu-nested nav">
+                            <a class="nav-link" href="/migration/mysql">MySQL</a>
+                        </nav>
+                    </div>
+
+                    <!-- No-SQL 마이그레이션 사이드 메뉴 -->
+
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                        data-bs-target="#collapseNoSQLMigration" aria-expanded="false"
+                        aria-controls="collapseNoSQLMigration">
+                        <div class="sb-nav-link-icon"><i class="fa-solid fa-laptop-code"></i></div>
+                        No-SQL
+                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    </a>
+                    <div class="collapse" id="collapseNoSQLMigration" data-bs-parent="#sidenavAccordion">
+                        <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionNoSQLMigration">
+
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                                data-bs-target="#migrationCollapseDynamoDB" aria-expanded="false"
+                                aria-controls="migrationCollapseDynamoDB">
+                                AWS DynamoDB to
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="migrationCollapseDynamoDB"
+                                data-bs-parent="#sidenavAccordionNoSQLMigration">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="/migration/dynamodb/firestore">Firestore</a>
+                                    <a class="nav-link" href="/migration/dynamodb/mongodb">MongoDB</a>
+                                </nav>
+                            </div>
+
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                                data-bs-target="#migrationCollapseFirestore" aria-expanded="false"
+                                aria-controls="migrationCollapseFirestore">
+                                GCP Firestore to
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="migrationCollapseFirestore"
+                                data-bs-parent="#sidenavAccordionNoSQLMigration">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="/migration/firestore/dynamodb">DynamoDB</a>
+                                    <a class="nav-link" href="/migration/firestore/mongodb">MongoDB</a>
+                                </nav>
+                            </div>
+
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                                data-bs-target="#migrationCollapseMongoDB" aria-expanded="false"
+                                aria-controls="migrationCollapseMongoDB">
+                                NCP MongoDB to
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="migrationCollapseMongoDB"
+                                data-bs-parent="#sidenavAccordionNoSQLMigration">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="/migration/mongodb/dynamodb">DynamoDB</a>
+                                    <a class="nav-link" href="/migration/mongodb/firestore">Firestore</a>
+                                </nav>
+                            </div>
+                        </nav>
+                    </div>
+
+                    <!-- 백업 사이드 메뉴 -->
+                    <div class="sb-sidenav-menu-heading">Back Up</div>
+
+                    <!-- 백업 사이드 메뉴 -->
+
+                    <a class="nav-link collapsed" href="/backup/register">
+                        <div class="sb-nav-link-icon"><i class="fa-solid fa-clone"></i></div>
+                        Back up
+                    </a>
+
+                    <!-- 복구 사이드 메뉴 -->
+                    <div class="sb-sidenav-menu-heading">Restore</div>
+
+                    <!-- 복구 사이드 메뉴 -->
+
+                    <a class="nav-link collapsed" href="/restore/register">
+                        <div class="sb-nav-link-icon"><i class="fa-solid fa-clone"></i></div>
+                        Restore
+                    </a>
+
+                </div>
+            </div> <!-- sb-sidenav-menu END -->
+
+            <!-- sidebar bottom -->
+            <div class="sb-sidenav-footer">
+                <div class="small">Logged in as:</div>
+                m-cmp
+            </div>
+        </nav>
+    </div>
+
+    {{ template "content.html" . }}
 
     {{ template "footer.html" . }}
 
-</body>
+    </body>
+
 </html>

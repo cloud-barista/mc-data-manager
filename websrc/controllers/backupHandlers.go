@@ -176,7 +176,6 @@ func GetAllBackupHandler(ctx echo.Context) error {
 			Error:  &errStr,
 		})
 	}
-	logger.Info().Msgf("%v", tasks)
 	jobEnd(logger, "Successfully Get Task List", start)
 	return ctx.JSON(http.StatusOK, tasks)
 }

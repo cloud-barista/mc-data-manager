@@ -38,6 +38,26 @@ window.addEventListener('DOMContentLoaded', event => {
     
 });
 
+function loadingButtonOn() {
+    let btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;진행 중..';
+}
+
+function loadingButtonOff() {
+    let btn = document.getElementById('submitBtn');
+    btn.disabled = false;
+    btn.innerHTML = '생성';
+}
+
+function resultCollpase() {
+    const colp = new bootstrap.Collapse('#resultCollapse', {
+        toggle: true
+    });
+    colp.show();
+}
+
+
 function convertCheckboxParams(obj) {
     for (const key in obj) {
         if (obj.hasOwnProperty(key)) {
@@ -100,7 +120,7 @@ function generateFormSubmit() {
         console.log(jsonData)
         jsonData.targetPoint.provider = document.getElementById('provider').value;
         const target = document.getElementById('genTarget').value;
-
+        jsonData.dummy = jsonData.targetPoint
         if ( (jsonData.targetPoint.provider =="ncp") && (jsonData.targetPoint.endpoint =="") ) {
             jsonData.targetPoint.endpoint ="https://kr.object.ncloudstorage.com"
         }
@@ -154,14 +174,15 @@ function migrationFormSubmit() {
         console.log(jsonData)
         const dest = document.getElementById('migDest').value;
         const source = document.getElementById('migSource').value;
+        const service = document.getElementById('migService').value;
         jsonData.targetPoint.provider = getInputValue('targetPoint[provider]');
         jsonData.sourcePoint.provider = getInputValue('sourcePoint[provider]');
 
 
-        let url = "/migration/" + source;
-        if (source != dest) {
-            url = url + "/" + dest;
-        }
+        let url = "/migration/" + service;
+        // if (source != dest) {
+        //     url = url + "/" + dest;
+        // }
 
         if ( (jsonData.targetPoint.provider =="ncp") && (jsonData.targetPoint.endpoint =="") ) {
             jsonData.targetPoint.endpoint ="https://kr.object.ncloudstorage.com"
@@ -316,24 +337,41 @@ function RestoreFormSubmit() {
     });
 }
 
-
-function loadingButtonOn() {
-    let btn = document.getElementById('submitBtn');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;진행 중..';
-}
-
-function loadingButtonOff() {
-    let btn = document.getElementById('submitBtn');
-    btn.disabled = false;
-    btn.innerHTML = '생성';
-}
-
-function resultCollpase() {
-    const colp = new bootstrap.Collapse('#resultCollapse', {
-        toggle: true
-    });
-    colp.show();
-}
+document.addEventListener('DOMContentLoaded', function() {
+    const clearServiceLink = document.getElementById('clearServiceLink');
+  
+    if (clearServiceLink) {
+      clearServiceLink.addEventListener('click', function(event) {
+        event.preventDefault();
+  
+        const userConfirmed = confirm('정말로 서비스를 클리어하시겠습니까?');
+        if (!userConfirmed) {
+          return; 
+        }
+  
+        fetch('/service/clearAll', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(response => {
+          if (response.ok) {
+            alert('서비스가 성공적으로 클리어되었습니다.');
+          } else {
+            return response.json().then(data => {
+              throw new Error(data.message || '서비스 클리어 중 오류가 발생했습니다.');
+            });
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert(`오류: ${error.message}`);
+        });
+      });
+    } else {
+      console.error('Clear Service 링크를 찾을 수 없습니다.');
+    }
+  });
 
 

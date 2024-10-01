@@ -152,6 +152,9 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 	taskGroup := e.Group("/task")
 	routes.TaskRoutes(taskGroup, scheduleManager)
 
+	scheduleGroup := e.Group("/schedule")
+	routes.ScheduleRoutes(scheduleGroup, scheduleManager)
+
 	serviceGroup := e.Group("/service")
 	routes.ServiceRoutes(serviceGroup, scheduleManager)
 

@@ -32,22 +32,10 @@ func TaskRoot(g *echo.Group, scheduleManager *task.FileScheduleManager) {
 		TaskService: scheduleManager,
 	}
 
-	scheduleController := controllers.ScheduleController{
-		ScheduleService: scheduleManager,
-	}
-
 	g.GET("", taskController.GetAllTasksHandler)       // Retrieve all tasks
 	g.GET("/:id", taskController.GetTaskHandler)       // Retrieve a single task by ID
 	g.POST("", taskController.CreateTaskHandler)       // Create a new task
 	g.PUT("/:id", taskController.UpdateTaskHandler)    // Update an existing task by ID
 	g.DELETE("/:id", taskController.DeleteTaskHandler) // Delete a task by ID
-
-	g.GET("/schdedule", scheduleController.GetAllSchedulesHandler)       // Retrieve all schedules
-	g.GET("/schdedule/:id", scheduleController.GetScheduleHandler)       // Retrieve a single schedule by ID
-	g.POST("schdedule", scheduleController.CreateScheduleHandler)        // Create a new schedule
-	g.PUT("/schdedule/:id", scheduleController.UpdateScheduleHandler)    // Update an existing schedule by ID
-	g.DELETE("/schdedule/:id", scheduleController.DeleteScheduleHandler) // Delete a schedule by ID
-
-	g.GET("/schdedule/register", controllers.TaskRegisterHandler)
 
 }
