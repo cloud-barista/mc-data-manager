@@ -99,7 +99,7 @@ func pageLogInit(c echo.Context, pageName, pageInfo string, startTime time.Time)
 	logger := parentLogger.Output(multiWriter)
 
 	// Log page access information
-	logger.Info().Msgf("%s post page accessed", pageName)
+	logger.Info().Msgf("%s page accessed", pageName)
 	logger.Info().Msg(pageInfo)
 	logger.Info().Str("start time", startTime.Format(time.RFC3339))
 

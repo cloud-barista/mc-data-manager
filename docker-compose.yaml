@@ -32,6 +32,14 @@ services:
       - /etc/localtime:/etc/localtime:ro
     env_file:
       - .env
+    # Health check configuration      
+    # OK [ 2xx ,3xx}, ERR [4xx,5xx,...etc]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3300/readyZ"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
 ##################
 ##   OPTIONAL   ##
