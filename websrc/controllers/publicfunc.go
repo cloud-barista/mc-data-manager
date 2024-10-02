@@ -118,7 +118,7 @@ func osCheck(logger *zerolog.Logger, startTime time.Time, osName string) bool {
 	return true
 }
 
-func dummyCreate(logger *zerolog.Logger, startTime time.Time, params GenFileParams) bool {
+func dummyCreate(logger *zerolog.Logger, startTime time.Time, params models.GenFileParams) bool {
 	logger.Info().Msg("Start dummy generation")
 	err := genData(params, logger)
 	if err != nil {
@@ -153,7 +153,7 @@ func createDummyTemp(logger *zerolog.Logger, startTime time.Time) (string, bool)
 }
 
 func getS3OSC(logger *zerolog.Logger, startTime time.Time, jobType string, params interface{}) *osc.OSController {
-	gparam, _ := params.(ProviderConfig)
+	gparam, _ := params.(models.ProviderConfig)
 	var err error
 	var s3c *s3.Client
 	var awsOSC *osc.OSController
@@ -204,7 +204,7 @@ func getS3OSC(logger *zerolog.Logger, startTime time.Time, jobType string, param
 }
 
 func getS3COSC(logger *zerolog.Logger, startTime time.Time, jobType string, params interface{}) *osc.OSController {
-	gparam, _ := params.(ProviderConfig)
+	gparam, _ := params.(models.ProviderConfig)
 
 	var err error
 	var s3c *s3.Client
@@ -248,7 +248,7 @@ func getS3COSC(logger *zerolog.Logger, startTime time.Time, jobType string, para
 }
 
 func getGCPCOSC(logger *zerolog.Logger, startTime time.Time, jobType string, params interface{}) *osc.OSController {
-	gparam, _ := params.(ProviderConfig)
+	gparam, _ := params.(models.ProviderConfig)
 
 	var err error
 	var gcpOSC *osc.OSController
@@ -304,7 +304,7 @@ func getGCPCOSC(logger *zerolog.Logger, startTime time.Time, jobType string, par
 }
 
 func getMysqlRDBC(logger *zerolog.Logger, startTime time.Time, jobType string, params interface{}) *rdbc.RDBController {
-	gparam, _ := params.(ProviderConfig)
+	gparam, _ := params.(models.ProviderConfig)
 
 	var err error
 	var sqlDB *sql.DB
@@ -334,7 +334,7 @@ func getMysqlRDBC(logger *zerolog.Logger, startTime time.Time, jobType string, p
 }
 
 func getDynamoNRDBC(logger *zerolog.Logger, startTime time.Time, jobType string, params interface{}) *nrdbc.NRDBController {
-	gparam, _ := params.(ProviderConfig)
+	gparam, _ := params.(models.ProviderConfig)
 
 	var err error
 	var dc *dynamodb.Client
@@ -385,7 +385,7 @@ func getDynamoNRDBC(logger *zerolog.Logger, startTime time.Time, jobType string,
 }
 
 func getFirestoreNRDBC(logger *zerolog.Logger, startTime time.Time, jobType string, params interface{}) *nrdbc.NRDBController {
-	gparam, _ := params.(ProviderConfig)
+	gparam, _ := params.(models.ProviderConfig)
 
 	var err error
 	var fc *firestore.Client
@@ -441,7 +441,7 @@ func getFirestoreNRDBC(logger *zerolog.Logger, startTime time.Time, jobType stri
 }
 
 func getMongoNRDBC(logger *zerolog.Logger, startTime time.Time, jobType string, params interface{}) *nrdbc.NRDBController {
-	gparam, _ := params.(ProviderConfig)
+	gparam, _ := params.(models.ProviderConfig)
 
 	var err error
 	var mc *mongo.Client
@@ -597,7 +597,7 @@ func getData(jobtype string, ctx echo.Context) interface{} {
 		// Reset the request body using io.NopCloser
 		ctx.Request().Body = io.NopCloser(bytes.NewBuffer(data))
 
-		params := GenDataParams{}
+		params := models.GenDataParams{}
 		json.Unmarshal(data, &params)
 		return params
 	} else {
@@ -617,7 +617,7 @@ func getFileData(jobtype string, ctx echo.Context) interface{} {
 		// Reset the request body using io.NopCloser
 		ctx.Request().Body = io.NopCloser(bytes.NewBuffer(data))
 
-		params := GenFileParams{}
+		params := models.GenFileParams{}
 		json.Unmarshal(data, &params)
 		return params
 	} else {

@@ -22,6 +22,7 @@ import (
 	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/service/task"
 	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog/log"
 )
 
 // TaskController is a struct that holds a reference to the TaskService
@@ -42,7 +43,7 @@ type TaskController struct {
 func (tc *TaskController) GetAllTasksHandler(ctx echo.Context) error {
 	start := time.Now()
 	logger, logstrings := pageLogInit(ctx, "Get-task-list", "Get an existing task", start)
-	tasks, err := tc.TaskService.GetScheduleList()
+	tasks, err := tc.TaskService.GetTaskList()
 	if err != nil {
 		errStr := err.Error()
 		logger.Error().Err(err)
@@ -51,6 +52,7 @@ func (tc *TaskController) GetAllTasksHandler(ctx echo.Context) error {
 			Error:  &errStr,
 		})
 	}
+	log.Info().Msgf("%v", tasks)
 	jobEnd(logger, "Successfully Get Task List", start)
 	return ctx.JSON(http.StatusOK, tasks)
 }
@@ -70,7 +72,7 @@ func (tc *TaskController) GetAllTasksHandler(ctx echo.Context) error {
 func (tc *TaskController) CreateTaskHandler(ctx echo.Context) error {
 	start := time.Now()
 	logger, logstrings := pageLogInit(ctx, "Create-task", "Creating a new task", start)
-	params := models.Schedule{}
+	params := models.DataTask{}
 	if !getDataWithReBind(logger, start, ctx, &params) {
 		errStr := "Invalid request data"
 		logger.Error().Msg(errStr)
@@ -79,7 +81,8 @@ func (tc *TaskController) CreateTaskHandler(ctx echo.Context) error {
 			Error:  &errStr,
 		})
 	}
-	if err := tc.TaskService.CreateSchedule(params); err != nil {
+	logger.Info().Msg("=====Create Task======")
+	if err := tc.TaskService.CreateTask(params); err != nil {
 		errStr := err.Error()
 		logger.Error().Err(err).Msg(errStr)
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
@@ -110,7 +113,7 @@ func (tc *TaskController) GetTaskHandler(ctx echo.Context) error {
 	start := time.Now()
 	logger, logstrings := pageLogInit(ctx, "Get-task", "Get an existing task", start)
 	id := ctx.Param("id")
-	task, err := tc.TaskService.GetSchedule(id)
+	task, err := tc.TaskService.GetTask(id)
 	if err != nil {
 		errStr := err.Error()
 		logger.Error().Err(err)
@@ -141,7 +144,7 @@ func (tc *TaskController) UpdateTaskHandler(ctx echo.Context) error {
 	start := time.Now()
 	logger, logstrings := pageLogInit(ctx, "Update-task", "Updating an existing task", start)
 	id := ctx.Param("id")
-	params := models.Schedule{}
+	params := models.DataTask{}
 	if !getDataWithReBind(logger, start, ctx, &params) {
 		errStr := "Invalid request data"
 		logger.Error().Msg(errStr)
@@ -151,7 +154,7 @@ func (tc *TaskController) UpdateTaskHandler(ctx echo.Context) error {
 		})
 	}
 
-	if err := tc.TaskService.UpdateSchedule(id, params); err != nil {
+	if err := tc.TaskService.UpdateTask(id, params.BasicDataTask); err != nil {
 		errStr := err.Error()
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -180,7 +183,7 @@ func (tc *TaskController) DeleteTaskHandler(ctx echo.Context) error {
 	start := time.Now()
 	logger, logstrings := pageLogInit(ctx, "Delete-task", "Delete an existing task", start)
 	id := ctx.Param("id")
-	if err := tc.TaskService.DeleteSchedule(id); err != nil {
+	if err := tc.TaskService.DeleteTask(id); err != nil {
 		errStr := "Task not found"
 		logger.Error().Msg(errStr)
 

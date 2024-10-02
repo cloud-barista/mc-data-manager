@@ -34,9 +34,9 @@ func TracingMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			Str("RequestURI", c.Request().RequestURI).
 			Str("Method", c.Request().Method).
 			Str("UserAgent", c.Request().UserAgent()).
-			Str("X-Request-ID", c.Request().Header.Get("X-Request-ID")).
-			Str("X-Trace-ID", c.Request().Header.Get("X-Trace-ID")).
-			Str("X-Forwarded-For", c.Request().Header.Get("X-Forwarded-For")).
+			// Str("X-Request-ID", c.Request().Header.Get("X-Request-ID")).
+			// Str("X-Trace-ID", c.Request().Header.Get("X-Trace-ID")).
+			// Str("X-Forwarded-For", c.Request().Header.Get("X-Forwarded-For")).
 			Str("X-Real-IP", c.Request().Header.Get("X-Real-IP")).
 			Caller().
 			Logger()

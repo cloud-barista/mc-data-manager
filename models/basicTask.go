@@ -57,8 +57,9 @@ type Schedule struct {
 }
 
 type GenarateTask struct {
-	Task        `json:"inline"`
-	TargetPoint GenTaskTarget `json:"targetPoint"`
+	Task
+	Dummy       GenFileParams  `json:"dummy"`
+	TargetPoint ProviderConfig `json:"targetPoint"`
 }
 
 type CommandTask struct {
@@ -77,6 +78,7 @@ type GenTaskTarget struct {
 type BasicDataTask struct {
 	BasicTask
 	Directory   string         `json:"Directory,omitempty" swaggerignore:"true"`
+	Dummy       GenFileParams  `json:"dummy"`
 	SourcePoint ProviderConfig `json:"sourcePoint,omitempty"`
 	TargetPoint ProviderConfig `json:"targetPoint,omitempty"`
 }

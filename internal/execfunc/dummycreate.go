@@ -34,7 +34,6 @@ func DummyCreate(params models.CommandTask) error {
 		}
 		log.Info().Msgf("successfully generated sql : %s", params.DummyPath)
 	}
-	log.Info().Msgf("start Serversql generation Boolean? :", (cast.ToInt(params.SizeServerSQL) != 0))
 	if cast.ToInt(params.SizeServerSQL) != 0 {
 		log.Info().Msgf("start Serversql generation")
 		if err := structured.GenerateRandomSQLWithServer(params.DummyPath, cast.ToInt(params.SizeServerSQL)); err != nil {

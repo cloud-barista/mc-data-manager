@@ -196,7 +196,6 @@ func GetNRDMS(params *models.ProviderConfig) (*nrdbc.NRDBController, error) {
 	var NRDBC *nrdbc.NRDBController
 	log.Info().Str("ProfileName", params.ProfileName).Msg("GetNRDMS")
 	log.Info().Str("Provider", params.Provider).Msg("GetNRDMS")
-
 	log.Info().Msg("Get  Credential")
 	credentailManger := config.NewProfileManager()
 	creds, err := credentailManger.LoadCredentialsByProfile(params.ProfileName, params.Provider)

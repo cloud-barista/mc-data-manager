@@ -33,7 +33,13 @@ func RestoreRoutes(g *echo.Group) {
 }
 
 func RestoreRoot(g *echo.Group) {
-	g.GET("", controllers.RestoreHandler)
+
+	g.GET("/register", controllers.RestoreHandler)
+	g.GET("", controllers.GetAllRestoreHandler)         // Retrieve all tasks
+	g.GET("/:id", controllers.GetRestoreHandler)        // Retrieve a single task by ID
+	g.PUT("/:id", controllers.UpdateRestoreHandler)     // Update an existing task by ID
+	g.DELETE("/:id", controllers.DeleteRestorekHandler) // Delete a task by ID
+
 }
 
 func RestoreObjectStorage(g *echo.Group) {

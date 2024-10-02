@@ -33,7 +33,12 @@ func BackupRoutes(g *echo.Group) {
 }
 
 func BackupRoot(g *echo.Group) {
-	g.GET("", controllers.BackupHandler)
+	g.GET("/register", controllers.BackupHandler)
+	g.GET("", controllers.GetAllBackupHandler)         // Retrieve all tasks
+	g.GET("/:id", controllers.GetBackupHandler)        // Retrieve a single task by ID
+	g.PUT("/:id", controllers.UpdateBackupHandler)     // Update an existing task by ID
+	g.DELETE("/:id", controllers.DeleteBackupkHandler) // Delete a task by ID
+
 }
 
 func BackupObjectStorage(g *echo.Group) {
@@ -42,10 +47,10 @@ func BackupObjectStorage(g *echo.Group) {
 }
 func BackupRDB(g *echo.Group) {
 	// g.GET("/rdb", controllers.BackupRDBGetHandler)
-	g.POST("/rdb", controllers.BackupRDBPostHandler)
+	g.POST("/rdbms", controllers.BackupRDBPostHandler)
 }
 
 func BackupNRDB(g *echo.Group) {
 	// g.GET("/nrdb", controllers.BackupNRDBGetHandler)
-	g.POST("/nrdb", controllers.BackupNRDBPostHandler)
+	g.POST("/nrdbms", controllers.BackupNRDBPostHandler)
 }
