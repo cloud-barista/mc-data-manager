@@ -137,7 +137,7 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 
 	e.GET("/", controllers.MainGetHandler)
 
-	migrationGroup := e.Group("/migration")
+	migrationGroup := e.Group("/migrate")
 	routes.MigrationRoutes(migrationGroup)
 
 	backupGroup := e.Group("/backup")
