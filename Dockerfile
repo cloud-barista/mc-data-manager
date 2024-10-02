@@ -17,7 +17,7 @@ ARG USER=root
 ARG GROUP=root
 #-------------------------------------------------------------
 RUN apt-get update
-RUN apt-get install ca-certificates -y
+RUN apt-get install ca-certificates curl -y
 #-------------------------------------------------------------
 # User Set
 RUN if [ "${USER}" != "root" ]; then \

@@ -136,6 +136,7 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	e.GET("/", controllers.MainGetHandler)
+	e.GET("/readyZ", controllers.GetSystemReadyHandler)
 
 	migrationGroup := e.Group("/migrate")
 	routes.MigrationRoutes(migrationGroup)
