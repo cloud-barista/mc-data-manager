@@ -14,7 +14,12 @@
  /* @import url('./font.css'); */
  @import url(//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css);
 
-
+/*  
+https://tabler.io/admin-template
+https://tabler.io/docs/base/colors
+// Not Same, preview page Primarycolor  #066FD, (6, 111, 209)
+#4299e1
+*/
 :root {
   --bs-blue: #0d6efd;
   --bs-indigo: #6610f2;
@@ -54,7 +59,7 @@
   --bs-warning-rgb: 255, 193, 7;
   --bs-danger-rgb: 220, 53, 69;
   --bs-light-rgb: 248, 249, 250;
-  --bs-dark-rgb: 228, 143, 0;
+  --bs-dark-rgb: 6, 111, 209;
   --bs-white-rgb: 255, 255, 255;
   --bs-black-rgb: 0, 0, 0;
   --bs-body-color-rgb: 33, 37, 41;
@@ -82,8 +87,8 @@
   --bs-link-hover-color: #0a58ca;
   --bs-code-color: #d63384;
   --bs-highlight-bg: #fff3cd;
-  --bs-nav-bg: #E48F00;
-  --bs-nav-footer-bg: #F9AA25;
+  --bs-nav-bg: #066FD1;
+  --bs-nav-footer-bg: #4299e1;
 }
 
 *,
@@ -2867,8 +2872,8 @@ textarea.form-control-lg {
 
 .btn-primary {
   --bs-btn-color: #fff;
-  --bs-btn-bg: #E48F00;
-  --bs-btn-border-color: #E48F00;
+  --bs-btn-bg: #066FD1;
+  --bs-btn-border-color: #066FD1;
   --bs-btn-hover-color: #fff;
   --bs-btn-hover-bg: #B97400;
   --bs-btn-hover-border-color: #985F00;
@@ -2878,8 +2883,8 @@ textarea.form-control-lg {
   --bs-btn-active-border-color: #B97400;
   --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
   --bs-btn-disabled-color: #fff;
-  --bs-btn-disabled-bg: #E48F00;
-  --bs-btn-disabled-border-color: #E48F00;
+  --bs-btn-disabled-bg: #066FD1;
+  --bs-btn-disabled-border-color: #066FD1;
 }
 
 .btn-secondary {
