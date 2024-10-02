@@ -36,7 +36,7 @@ import (
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/migration/objectstorage [post]
+//	@Router			/migrate/objectstorage [post]
 func MigrationObjectstoragePostHandler(ctx echo.Context) error {
 	start := time.Now()
 
@@ -81,7 +81,7 @@ func MigrationObjectstoragePostHandler(ctx echo.Context) error {
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/migration/nrdbms [post]
+//	@Router			/migrate/nrdbms [post]
 func MigrationNRDBMSPostHandler(ctx echo.Context) error {
 	start := time.Now()
 
@@ -125,11 +125,11 @@ func MigrationNRDBMSPostHandler(ctx echo.Context) error {
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/migration/rdbms [post]
+//	@Router			/migrate/rdbms [post]
 func MigrationRDBMSPostHandler(ctx echo.Context) error {
 	start := time.Now()
 
-	logger, logstrings := pageLogInit(ctx, "migration", "Migration linux RDBMS to RDBMS", start)
+	logger, logstrings := pageLogInit(ctx, "migrate", "Migration linux RDBMS to RDBMS", start)
 
 	params := models.DataTask{}
 	if !getDataWithReBind(logger, start, ctx, &params) {

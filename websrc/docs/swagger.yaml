@@ -742,7 +742,7 @@ paths:
       summary: Update an existing Task
       tags:
       - '[Migrate]'
-  /migration/nrdbms:
+  /migrate/nrdbms:
     post:
       consumes:
       - application/json
@@ -773,7 +773,7 @@ paths:
       summary: Migrate data from NRDBMS to NRDBMS
       tags:
       - '[Migrate]'
-  /migration/objectstorage:
+  /migrate/objectstorage:
     post:
       consumes:
       - application/json
@@ -804,7 +804,7 @@ paths:
       summary: Migrate data from ObjectStorage to ObjectStorage
       tags:
       - '[Migrate]'
-  /migration/rdbms:
+  /migrate/rdbms:
     post:
       consumes:
       - application/json

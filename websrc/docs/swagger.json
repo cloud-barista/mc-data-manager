@@ -714,6 +714,147 @@
                 }
             }
         },
+        "/migrate/nrdbms": {
+            "post": {
+                "description": "Migrate data from NRDBMS to NRDBMS.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Migrate]"
+                ],
+                "summary": "Migrate data from NRDBMS to NRDBMS",
+                "operationId": "MigrationNRDBMSPostHandler",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.MigrateTask"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/migrate/objectstorage": {
+            "post": {
+                "description": "Migrate data from ObjectStorage to ObjectStorage.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Migrate]"
+                ],
+                "summary": "Migrate data from ObjectStorage to ObjectStorage",
+                "operationId": "MigrationObjectstoragePostHandler",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.MigrateTask"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/migrate/rdbms": {
+            "post": {
+                "description": "Migrate data from RDBMS to RDBMS.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Migrate]"
+                ],
+                "summary": "Migrate data from RDBMS to RDBMS",
+                "operationId": "MigrationRDBMSPostHandler",
+                "parameters": [
+                    {
+                        "description": "Parameters required for migration",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.MigrateTask"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully migrated data",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/migrate/{id}": {
             "get": {
                 "description": "Get the details of a Task using its ID.",
@@ -832,147 +973,6 @@
                     },
                     "404": {
                         "description": "Task not found",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/migration/nrdbms": {
-            "post": {
-                "description": "Migrate data from NRDBMS to NRDBMS.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[Migrate]"
-                ],
-                "summary": "Migrate data from NRDBMS to NRDBMS",
-                "operationId": "MigrationNRDBMSPostHandler",
-                "parameters": [
-                    {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.MigrateTask"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully migrated data",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/migration/objectstorage": {
-            "post": {
-                "description": "Migrate data from ObjectStorage to ObjectStorage.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[Migrate]"
-                ],
-                "summary": "Migrate data from ObjectStorage to ObjectStorage",
-                "operationId": "MigrationObjectstoragePostHandler",
-                "parameters": [
-                    {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.MigrateTask"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully migrated data",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/migration/rdbms": {
-            "post": {
-                "description": "Migrate data from RDBMS to RDBMS.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[Migrate]"
-                ],
-                "summary": "Migrate data from RDBMS to RDBMS",
-                "operationId": "MigrationRDBMSPostHandler",
-                "parameters": [
-                    {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.MigrateTask"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully migrated data",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/models.BasicResponse"
                         }
