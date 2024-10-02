@@ -179,10 +179,7 @@ function migrationFormSubmit() {
         jsonData.sourcePoint.provider = getInputValue('sourcePoint[provider]');
 
 
-        let url = "/migration/" + service;
-        // if (source != dest) {
-        //     url = url + "/" + dest;
-        // }
+        let url = "/migrate/" + service;
 
         if ( (jsonData.targetPoint.provider =="ncp") && (jsonData.targetPoint.endpoint =="") ) {
             jsonData.targetPoint.endpoint ="https://kr.object.ncloudstorage.com"
