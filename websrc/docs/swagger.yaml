@@ -1,23 +1,9 @@
 basePath: /
 definitions:
-  controllers.GenarateTask:
-    properties:
-      inline:
-        $ref: '#/definitions/models.Task'
-      targetPoint:
-        $ref: '#/definitions/models.GenTaskTarget'
-    type: object
-  controllers.MigrateTask:
-    properties:
-      operationId:
-        type: string
-      sourcePoint:
-        $ref: '#/definitions/models.ProviderConfig'
-      targetPoint:
-        $ref: '#/definitions/models.ProviderConfig'
-    type: object
   models.BackupTask:
     properties:
+      dummy:
+        $ref: '#/definitions/models.GenFileParams'
       operationId:
         type: string
       sourcePoint:
@@ -27,6 +13,8 @@ definitions:
     type: object
   models.BasicDataTask:
     properties:
+      dummy:
+        $ref: '#/definitions/models.GenFileParams'
       sourcePoint:
         $ref: '#/definitions/models.ProviderConfig'
       targetPoint:
@@ -39,10 +27,8 @@ definitions:
       Result:
         type: string
     type: object
-  models.GenTaskTarget:
+  models.GenFileParams:
     properties:
-      bucket:
-        type: string
       checkCSV:
         type: boolean
       checkGIF:
@@ -63,28 +49,6 @@ definitions:
         type: boolean
       checkZIP:
         type: boolean
-      databaseId:
-        type: string
-      databaseName:
-        type: string
-      endpoint:
-        type: string
-      host:
-        type: string
-      password:
-        type: string
-      path:
-        type: string
-      port:
-        type: string
-      profileName:
-        type: string
-      projectId:
-        type: string
-      provider:
-        type: string
-      region:
-        type: string
       sizeCSV:
         type: string
       sizeGIF:
@@ -105,8 +69,30 @@ definitions:
         type: string
       sizeZIP:
         type: string
-      username:
+    type: object
+  models.GenarateTask:
+    properties:
+      dummy:
+        $ref: '#/definitions/models.GenFileParams'
+      operationId:
         type: string
+      tag:
+        items:
+          type: string
+        type: array
+      targetPoint:
+        $ref: '#/definitions/models.ProviderConfig'
+    type: object
+  models.MigrateTask:
+    properties:
+      dummy:
+        $ref: '#/definitions/models.GenFileParams'
+      operationId:
+        type: string
+      sourcePoint:
+        $ref: '#/definitions/models.ProviderConfig'
+      targetPoint:
+        $ref: '#/definitions/models.ProviderConfig'
     type: object
   models.ProviderConfig:
     properties:
@@ -139,6 +125,8 @@ definitions:
     type: object
   models.RestoreTask:
     properties:
+      dummy:
+        $ref: '#/definitions/models.GenFileParams'
       operationId:
         type: string
       sourcePoint:
@@ -206,7 +194,111 @@ info:
   title: MC-Data-Manager REST API
   version: latest
 paths:
-  /backup/nrdb:
+  /backup:
+    get:
+      description: Retrieve a list of all Tasks in the system.
+      operationId: GetAllBackupHandler
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved all Tasks
+          schema:
+            items:
+              $ref: '#/definitions/models.Task'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Get all Tasks
+      tags:
+      - '[Backup]'
+  /backup/{id}:
+    delete:
+      description: Delete an existing Task using its ID.
+      operationId: DeleteBackupkHandler
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted the Task
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "404":
+          description: Task not found
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Delete a Task
+      tags:
+      - '[Backup]'
+    get:
+      consumes:
+      - application/json
+      description: Get the details of a Task using its ID.
+      operationId: GetBackupHandler
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved a Task
+          schema:
+            $ref: '#/definitions/models.Task'
+        "404":
+          description: Task not found
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Get a Task by ID
+      tags:
+      - '[Backup]'
+    put:
+      consumes:
+      - application/json
+      description: Update the details of an existing Task using its ID.
+      operationId: UpdateBackupHandler
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Parameters required for updating a Task
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.Schedule'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated the Task
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "404":
+          description: Task not found
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Update an existing Task
+      tags:
+      - '[Backup]'
+  /backup/nrdbms:
     post:
       consumes:
       - application/json
@@ -232,8 +324,7 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Export data from MySQL
       tags:
-      - '[Data Backup]'
-      - '[Service RDBMS]'
+      - '[Backup]'
   /backup/objectstorage:
     post:
       consumes:
@@ -260,9 +351,8 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Export data from objectstorage
       tags:
-      - '[Data Backup]'
-      - '[Service Object Storage]'
-  /backup/rdb:
+      - '[Backup]'
+  /backup/rdbms:
     post:
       consumes:
       - application/json
@@ -288,132 +378,111 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Export data from MySQL
       tags:
-      - '[Data Backup]'
-      - '[Service RDBMS]'
-  /generate/aws:
-    post:
-      consumes:
-      - application/json
-      description: Generate test data on AWS S3.
-      operationId: GenerateS3PostHandler
-      parameters:
-      - description: Parameters required to generate test data
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.GenarateTask'
+      - '[Backup]'
+  /generate:
+    get:
+      description: Retrieve a list of all Tasks in the system.
+      operationId: GetAllGenerateHandler
       produces:
       - application/json
       responses:
         "200":
-          description: Successfully generated test data
+          description: Successfully retrieved all Tasks
+          schema:
+            items:
+              $ref: '#/definitions/models.Task'
+            type: array
+        "500":
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/models.BasicResponse'
-        "400":
-          description: Invalid Request
+      summary: Get all Tasks
+      tags:
+      - '[Generate]'
+  /generate/{id}:
+    delete:
+      description: Delete an existing Task using its ID.
+      operationId: DeleteGeneratekHandler
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted the Task
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "404":
+          description: Task not found
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Delete a Task
+      tags:
+      - '[Generate]'
+    get:
+      consumes:
+      - application/json
+      description: Get the details of a Task using its ID.
+      operationId: GetGenerateHandler
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved a Task
+          schema:
+            $ref: '#/definitions/models.Task'
+        "404":
+          description: Task not found
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Get a Task by ID
+      tags:
+      - '[Generate]'
+    put:
+      consumes:
+      - application/json
+      description: Update the details of an existing Task using its ID.
+      operationId: UpdateGenerateHandler
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Parameters required for updating a Task
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.Schedule'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated the Task
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "404":
+          description: Task not found
           schema:
             $ref: '#/definitions/models.BasicResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.BasicResponse'
-      summary: Generate test data on AWS S3
+      summary: Update an existing Task
       tags:
-      - '[Data Generation]'
-      - '[Service Object Storage]'
-  /generate/dynamodb:
-    post:
-      consumes:
-      - application/json
-      description: Generate test data on AWS DynamoDB.
-      operationId: GenerateDynamoDBPostHandler
-      parameters:
-      - description: Parameters required to generate test data
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.GenarateTask'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully generated test data
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "400":
-          description: Invalid Request
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Generate test data on AWS DynamoDB
-      tags:
-      - '[Data Generation]'
-      - '[Service NRDBMS]'
-  /generate/firestore:
-    post:
-      consumes:
-      - application/json
-      description: Generate test data on GCP Firestore.
-      operationId: GenerateFirestorePostHandler
-      parameters:
-      - description: Parameters required to generate test data
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.GenarateTask'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully generated test data
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "400":
-          description: Invalid Request
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Generate test data on GCP Firestore
-      tags:
-      - '[Data Generation]'
-      - '[Service NRDBMS]'
-  /generate/gcp:
-    post:
-      consumes:
-      - application/json
-      description: Generate test data on GCP Cloud Storage.
-      operationId: GenerateGCPPostHandler
-      parameters:
-      - description: Parameters required to generate test data
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.GenarateTask'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully generated test data
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Generate test data on GCP Cloud Storage
-      tags:
-      - '[Data Generation]'
-      - '[Service Object Storage]'
+      - '[Generate]'
   /generate/linux:
     post:
       consumes:
@@ -426,7 +495,7 @@ paths:
         name: RequestBody
         required: true
         schema:
-          $ref: '#/definitions/controllers.GenarateTask'
+          $ref: '#/definitions/models.GenarateTask'
       produces:
       - application/json
       responses:
@@ -444,20 +513,20 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Generate test data on on-premise Linux
       tags:
-      - '[Data Generation]'
-  /generate/mongodb:
+      - '[Generate]'
+  /generate/nrdbms:
     post:
       consumes:
       - application/json
-      description: Generate test data on NCP MongoDB.
-      operationId: GenerateMongoDBPostHandler
+      description: Generate test data on Object Storage
+      operationId: GenerateNRDBMSPostHandler
       parameters:
       - description: Parameters required to generate test data
         in: body
         name: RequestBody
         required: true
         schema:
-          $ref: '#/definitions/controllers.GenarateTask'
+          $ref: '#/definitions/models.GenarateTask'
       produces:
       - application/json
       responses:
@@ -473,23 +542,22 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.BasicResponse'
-      summary: Generate test data on NCP MongoDB
+      summary: Generate test data on Object Storage
       tags:
-      - '[Data Generation]'
-      - '[Service NRDBMS]'
-  /generate/mysql:
+      - '[Generate]'
+  /generate/objectstorage:
     post:
       consumes:
       - application/json
-      description: Generate test data on MySQL.
-      operationId: GenerateMySQLPostHandler
+      description: Generate test data on Object Storage
+      operationId: GenerateObjectStoragePostHandler
       parameters:
       - description: Parameters required to generate test data
         in: body
         name: RequestBody
         required: true
         schema:
-          $ref: '#/definitions/controllers.GenarateTask'
+          $ref: '#/definitions/models.GenarateTask'
       produces:
       - application/json
       responses:
@@ -505,23 +573,22 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.BasicResponse'
-      summary: Generate test data on MySQL
+      summary: Generate test data on Object Storage
       tags:
-      - '[Data Generation]'
-      - '[Service RDBMS]'
-  /generate/ncp:
+      - '[Generate]'
+  /generate/rdbms:
     post:
       consumes:
       - application/json
-      description: Generate test data on NCP Object Storage.
-      operationId: GenerateNCPPostHandler
+      description: Generate test data on RDBMS
+      operationId: GenerateRDBMSPostHandler
       parameters:
       - description: Parameters required to generate test data
         in: body
         name: RequestBody
         required: true
         schema:
-          $ref: '#/definitions/controllers.GenarateTask'
+          $ref: '#/definitions/models.GenarateTask'
       produces:
       - application/json
       responses:
@@ -537,10 +604,9 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.BasicResponse'
-      summary: Generate test data on NCP Object Storage
+      summary: Generate test data on RDBMS
       tags:
-      - '[Data Generation]'
-      - '[Service Object Storage]'
+      - '[Generate]'
   /generate/windows:
     post:
       consumes:
@@ -553,7 +619,7 @@ paths:
         name: RequestBody
         required: true
         schema:
-          $ref: '#/definitions/controllers.GenarateTask'
+          $ref: '#/definitions/models.GenarateTask'
       produces:
       - application/json
       responses:
@@ -571,278 +637,124 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Generate test data on on-premise Windows
       tags:
-      - '[Data Generation]'
-  /migration/aws/gcp:
-    post:
-      consumes:
-      - application/json
-      description: Migrate data stored in AWS S3 to Google Cloud Storage.
-      operationId: MigrationS3ToGCPPostHandler
-      parameters:
-      - description: Parameters required for migration
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.MigrateTask'
+      - '[Generate]'
+  /migrate:
+    get:
+      description: Retrieve a list of all Tasks in the system.
+      operationId: GetAllMigrateHandler
       produces:
       - application/json
       responses:
         "200":
-          description: Successfully migrated data
+          description: Successfully retrieved all Tasks
+          schema:
+            items:
+              $ref: '#/definitions/models.Task'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Get all Tasks
+      tags:
+      - '[Migrate]'
+  /migrate/{id}:
+    delete:
+      description: Delete an existing Task using its ID.
+      operationId: DeleteMigratekHandler
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted the Task
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "404":
+          description: Task not found
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Delete a Task
+      tags:
+      - '[Migrate]'
+    get:
+      consumes:
+      - application/json
+      description: Get the details of a Task using its ID.
+      operationId: GetMigrateHandler
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved a Task
+          schema:
+            $ref: '#/definitions/models.Task'
+        "404":
+          description: Task not found
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Get a Task by ID
+      tags:
+      - '[Migrate]'
+    put:
+      consumes:
+      - application/json
+      description: Update the details of an existing Task using its ID.
+      operationId: UpdateMigrateHandler
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Parameters required for updating a Task
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.Schedule'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated the Task
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "404":
+          description: Task not found
           schema:
             $ref: '#/definitions/models.BasicResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from AWS S3 to GCP
+      summary: Update an existing Task
       tags:
-      - '[Data Migration]'
-      - '[Service Object Storage]'
-  /migration/aws/linux:
+      - '[Migrate]'
+  /migration/nrdbms:
     post:
       consumes:
       - application/json
-      description: Migrate data stored in AWS S3 to a Linux-based system.
-      operationId: MigrationS3ToLinuxPostHandler
+      description: Migrate data from NRDBMS to NRDBMS.
+      operationId: MigrationNRDBMSPostHandler
       parameters:
       - description: Parameters required for migration
         in: body
         name: RequestBody
         required: true
         schema:
-          $ref: '#/definitions/controllers.MigrateTask'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully migrated data
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "400":
-          description: Invalid Request
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from AWS S3 to Linux
-      tags:
-      - '[Data Migration]'
-  /migration/aws/ncp:
-    post:
-      consumes:
-      - application/json
-      description: Migrate data stored in AWS S3 to Naver Cloud Object Storage.
-      operationId: MigrationS3ToNCPPostHandler
-      parameters:
-      - description: Parameters required for migration
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.MigrateTask'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully migrated data
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from AWS S3 to NCP
-      tags:
-      - '[Data Migration]'
-      - '[Service Object Storage]'
-  /migration/aws/windows:
-    post:
-      consumes:
-      - application/json
-      description: Migrate data stored in AWS S3 to a Windows-based system.
-      operationId: MigrationS3ToWindowsPostHandler
-      parameters:
-      - description: Parameters required for migration
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.MigrateTask'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully migrated data
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "400":
-          description: Invalid Request
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from AWS S3 to Windows
-      tags:
-      - '[Data Migration]'
-  /migration/dynamodb/firestore:
-    post:
-      consumes:
-      - application/json
-      description: Migrate data stored in AWS DynamoDB to Google Cloud Firestore.
-      operationId: MigrationDynamoDBToFirestorePostHandler
-      parameters:
-      - description: Parameters required for migration
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.MigrateTask'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully migrated data
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from DynamoDB to Firestore
-      tags:
-      - '[Data Migration]'
-      - '[Service NRDBMS]'
-  /migration/dynamodb/mongodb:
-    post:
-      consumes:
-      - application/json
-      description: Migrate data stored in AWS DynamoDB to Naver Cloud MongoDB.
-      operationId: MigrationDynamoDBToMongoDBPostHandler
-      parameters:
-      - description: Parameters required for migration
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.MigrateTask'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully migrated data
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from DynamoDB to MongoDB
-      tags:
-      - '[Data Migration]'
-      - '[Service NRDBMS]'
-  /migration/firestore/dynamodb:
-    post:
-      consumes:
-      - application/json
-      description: Migrate data stored in Google Cloud Firestore to AWS DynamoDB.
-      operationId: MigrationFirestoreToDynamoDBPostHandler
-      parameters:
-      - description: Parameters required for migration
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.MigrateTask'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully migrated data
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from Firestore to DynamoDB
-      tags:
-      - '[Data Migration]'
-      - '[Service NRDBMS]'
-  /migration/firestore/mongodb:
-    post:
-      consumes:
-      - application/json
-      description: Migrate data stored in Google Cloud Firestore to Naver Cloud MongoDB.
-      operationId: MigrationFirestoreToMongoDBPostHandler
-      parameters:
-      - description: Parameters required for migration
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.MigrateTask'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully migrated data
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from Firestore to MongoDB
-      tags:
-      - '[Data Migration]'
-      - '[Service NRDBMS]'
-  /migration/gcp/aws:
-    post:
-      consumes:
-      - application/json
-      description: Migrate data stored in GCP Cloud Storage to AWS S3.
-      operationId: MigrationGCPToS3PostHandler
-      parameters:
-      - description: Parameters required for migration
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.MigrateTask'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully migrated data
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from GCP to AWS S3
-      tags:
-      - '[Data Migration]'
-      - '[Service Object Storage]'
-  /migration/gcp/linux:
-    post:
-      consumes:
-      - application/json
-      description: Migrate data stored in GCP Cloud Storage to a Linux-based system.
-      operationId: MigrationGCPToLinuxPostHandler
-      parameters:
-      - description: Parameters required for migration
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.MigrateTask'
+          $ref: '#/definitions/models.MigrateTask'
       produces:
       - application/json
       responses:
@@ -858,50 +770,22 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from GCP to Linux
+      summary: Migrate data from NRDBMS to NRDBMS
       tags:
-      - '[Data Migration]'
-  /migration/gcp/ncp:
+      - '[Migrate]'
+  /migration/objectstorage:
     post:
       consumes:
       - application/json
-      description: Migrate data stored in GCP Cloud Storage to NCP Object Storage.
-      operationId: MigrationGCPToNCPPostHandler
+      description: Migrate data from ObjectStorage to ObjectStorage.
+      operationId: MigrationObjectstoragePostHandler
       parameters:
       - description: Parameters required for migration
         in: body
         name: RequestBody
         required: true
         schema:
-          $ref: '#/definitions/controllers.MigrateTask'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully migrated data
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from GCP to NCP Object Storage
-      tags:
-      - '[Data Migration]'
-      - '[Service Object Storage]'
-  /migration/gcp/windows:
-    post:
-      consumes:
-      - application/json
-      description: Migrate data stored in GCP Cloud Storage to a Windows-based system.
-      operationId: MigrationGCPToWindowsPostHandler
-      parameters:
-      - description: Parameters required for migration
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.MigrateTask'
+          $ref: '#/definitions/models.MigrateTask'
       produces:
       - application/json
       responses:
@@ -917,22 +801,22 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from GCP to Windows
+      summary: Migrate data from ObjectStorage to ObjectStorage
       tags:
-      - '[Data Migration]'
-  /migration/linux/aws:
+      - '[Migrate]'
+  /migration/rdbms:
     post:
       consumes:
       - application/json
-      description: Migrate data stored in a Linux-based system to AWS S3.
-      operationId: MigrationLinuxToS3PostHandler
+      description: Migrate data from RDBMS to RDBMS.
+      operationId: MigrationRDBMSPostHandler
       parameters:
       - description: Parameters required for migration
         in: body
         name: RequestBody
         required: true
         schema:
-          $ref: '#/definitions/controllers.MigrateTask'
+          $ref: '#/definitions/models.MigrateTask'
       produces:
       - application/json
       responses:
@@ -948,375 +832,118 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from Linux to AWS S3
+      summary: Migrate data from RDBMS to RDBMS
       tags:
-      - '[Data Migration]'
-  /migration/linux/gcp:
-    post:
-      consumes:
-      - application/json
-      description: Migrate data stored in a Linux-based system to GCP Cloud Storage.
-      operationId: MigrationLinuxToGCPPostHandler
-      parameters:
-      - description: Parameters required for migration
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.MigrateTask'
+      - '[Migrate]'
+  /restore:
+    get:
+      description: Retrieve a list of all Tasks in the system.
+      operationId: GetAllRestoreHandler
       produces:
       - application/json
       responses:
         "200":
-          description: Successfully migrated data
+          description: Successfully retrieved all Tasks
+          schema:
+            items:
+              $ref: '#/definitions/models.Task'
+            type: array
+        "500":
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/models.BasicResponse'
-        "400":
-          description: Invalid Request
+      summary: Get all Tasks
+      tags:
+      - '[Restore]'
+  /restore/{id}:
+    delete:
+      description: Delete an existing Task using its ID.
+      operationId: DeleteRestorekHandler
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted the Task
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "404":
+          description: Task not found
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Delete a Task
+      tags:
+      - '[Restore]'
+    get:
+      consumes:
+      - application/json
+      description: Get the details of a Task using its ID.
+      operationId: GetRestoreHandler
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved a Task
+          schema:
+            $ref: '#/definitions/models.Task'
+        "404":
+          description: Task not found
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Get a Task by ID
+      tags:
+      - '[Restore]'
+    put:
+      consumes:
+      - application/json
+      description: Update the details of an existing Task using its ID.
+      operationId: UpdateRestoreHandler
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Parameters required for updating a Task
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.Schedule'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated the Task
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "404":
+          description: Task not found
           schema:
             $ref: '#/definitions/models.BasicResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from Linux to GCP Cloud Storage
+      summary: Update an existing Task
       tags:
-      - '[Data Migration]'
-  /migration/linux/ncp:
+      - '[Restore]'
+  /restore/nrdbms:
     post:
       consumes:
       - application/json
-      description: Migrate data stored in a Linux-based system to NCP Object Storage.
-      operationId: MigrationLinuxToNCPPostHandler
-      parameters:
-      - description: Parameters required for migration
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.MigrateTask'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully migrated data
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "400":
-          description: Invalid Request
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from Linux to NCP Object Storage
-      tags:
-      - '[Data Migration]'
-  /migration/mongodb/dynamodb:
-    post:
-      consumes:
-      - application/json
-      description: Migrate data stored in Naver Cloud MongoDB to AWS DynamoDB.
-      operationId: MigrationMongoDBToDynamoDBPostHandler
-      parameters:
-      - description: Parameters required for migration
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.MigrateTask'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully migrated data
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from MongoDB to DynamoDB
-      tags:
-      - '[Data Migration]'
-      - '[Service NRDBMS]'
-  /migration/mongodb/firestore:
-    post:
-      consumes:
-      - application/json
-      description: Migrate data stored in Naver Cloud MongoDB to Google Cloud Firestore.
-      operationId: MigrationMongoDBToFirestorePostHandler
-      parameters:
-      - description: Parameters required for migration
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.MigrateTask'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully migrated data
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from MongoDB to Firestore
-      tags:
-      - '[Data Migration]'
-      - '[Service NRDBMS]'
-  /migration/mysql:
-    post:
-      consumes:
-      - application/json
-      description: Migrate data from one MySQL database to another MySQL database.
-      operationId: MigrationMySQLPostHandler
-      parameters:
-      - description: Parameters required for migration
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.MigrateTask'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully migrated data
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from MySQL to MySQL
-      tags:
-      - '[Data Migration]'
-      - '[Service RDBMS]'
-  /migration/ncp/aws:
-    post:
-      consumes:
-      - application/json
-      description: Migrate data stored in NCP Object Storage to AWS S3.
-      operationId: MigrationNCPToS3PostHandler
-      parameters:
-      - description: Parameters required for migration
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.MigrateTask'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully migrated data
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from NCP to AWS S3
-      tags:
-      - '[Data Migration]'
-      - '[Service Object Storage]'
-  /migration/ncp/gcp:
-    post:
-      consumes:
-      - application/json
-      description: Migrate data stored in NCP Object Storage to GCP Cloud Storage.
-      operationId: MigrationNCPToGCPPostHandler
-      parameters:
-      - description: Parameters required for migration
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.MigrateTask'
-      - description: Parameters required to generate test data
-        in: formData
-        name: gcpCredential
-        type: file
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully migrated data
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from NCP to GCP Cloud Storage
-      tags:
-      - '[Data Migration]'
-      - '[Service Object Storage]'
-  /migration/ncp/linux:
-    post:
-      consumes:
-      - application/json
-      description: Migrate data stored in NCP Object Storage to a Linux-based system.
-      operationId: MigrationNCPToLinuxPostHandler
-      parameters:
-      - description: Parameters required for migration
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.MigrateTask'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully migrated data
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "400":
-          description: Invalid Request
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from NCP to Linux
-      tags:
-      - '[Data Migration]'
-  /migration/ncp/windows:
-    post:
-      consumes:
-      - application/json
-      description: Migrate data stored in NCP Object Storage to a Windows-based system.
-      operationId: MigrationNCPToWindowsPostHandler
-      parameters:
-      - description: Parameters required for migration
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.MigrateTask'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully migrated data
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "400":
-          description: Invalid Request
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from NCP to Windows
-      tags:
-      - '[Data Migration]'
-  /migration/windows/aws:
-    post:
-      consumes:
-      - application/json
-      description: Migrate data stored in a Windows-based system to AWS S3.
-      operationId: MigrationWindowsToS3PostHandler
-      parameters:
-      - description: Parameters required for migration
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.MigrateTask'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully migrated data
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "400":
-          description: Invalid Request
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from Windows to AWS S3
-      tags:
-      - '[Data Migration]'
-  /migration/windows/gcp:
-    post:
-      consumes:
-      - application/json
-      description: Migrate data stored in a Windows-based system to GCP Cloud Storage.
-      operationId: MigrationWindowsToGCPPostHandler
-      parameters:
-      - description: Parameters required for migration
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.MigrateTask'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully migrated data
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "400":
-          description: Invalid Request
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from Windows to GCP Cloud Storage
-      tags:
-      - '[Data Migration]'
-  /migration/windows/ncp:
-    post:
-      consumes:
-      - application/json
-      description: Migrate data stored in a Windows-based system to NCP Object Storage.
-      operationId: MigrationWindowsToNCPPostHandler
-      parameters:
-      - description: Parameters required for migration
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.MigrateTask'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully migrated data
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "400":
-          description: Invalid Request
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Migrate data from Windows to NCP Object Storage
-      tags:
-      - '[Data Migration]'
-  /restore/nrdb:
-    post:
-      consumes:
-      - application/json
-      description: Import data from a MySQL database to SQL files.
+      description: Restore NoSQL from SQL files to a NoSQL database
       operationId: RestoreNRDBPostHandler
       parameters:
       - description: Parameters required for Restore
@@ -1336,15 +963,14 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.BasicResponse'
-      summary: Import data from MySQL
+      summary: Restore NoSQL from data to NoSQL
       tags:
-      - '[Data Restore]'
-      - '[Service RDBMS]'
+      - '[Restore]'
   /restore/objectstorage:
     post:
       consumes:
       - application/json
-      description: Import data from a objectstorage  to files.
+      description: Restore objectstorage from files to a objectstorage
       operationId: RestoreOSPostHandler
       parameters:
       - description: Parameters required for Restore
@@ -1364,15 +990,14 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.BasicResponse'
-      summary: Import data from objectstorage
+      summary: Restore data from objectstorage
       tags:
-      - '[Data Restore]'
-      - '[Service Object Storage]'
-  /restore/rdb:
+      - '[Restore]'
+  /restore/rdbms:
     post:
       consumes:
       - application/json
-      description: Import data from a MySQL database to SQL files.
+      description: Restore MySQL from MySQL files to a MySQL database
       operationId: RestoreRDBPostHandler
       parameters:
       - description: Parameters required for Restore
@@ -1392,10 +1017,157 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.BasicResponse'
-      summary: Import data from MySQL
+      summary: Restore data from MySQL
       tags:
-      - '[Data Restore]'
-      - '[Service RDBMS]'
+      - '[Restore]'
+  /schedule:
+    get:
+      description: Retrieve a list of all Schedules in the system.
+      operationId: GetAllSchedulesHandler
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved all Schedules
+          schema:
+            items:
+              $ref: '#/definitions/models.Schedule'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Get all Schedules
+      tags:
+      - '[Schedule]'
+    post:
+      consumes:
+      - application/json
+      description: Create a new Schedule and store it in the system.
+      operationId: CreateScheduleHandler
+      parameters:
+      - description: Parameters required for creating a Schedule
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.Schedule'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully created a Schedule
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Create a new Schedule
+      tags:
+      - '[Schedule]'
+  /schedule/{id}:
+    delete:
+      description: Delete an existing Schedule using its ID.
+      operationId: DeleteScheduleHandler
+      parameters:
+      - description: Schedule ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted the Schedule
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "404":
+          description: Schedule not found
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Delete a Schedule
+      tags:
+      - '[Schedule]'
+    get:
+      consumes:
+      - application/json
+      description: Get the details of a Schedule using its ID.
+      operationId: GetScheduleHandler
+      parameters:
+      - description: Schedule ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved a Schedule
+          schema:
+            $ref: '#/definitions/models.Schedule'
+        "404":
+          description: Schedule not found
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Get a Schedule by ID
+      tags:
+      - '[Schedule]'
+    put:
+      consumes:
+      - application/json
+      description: Update the details of an existing Schedule using its ID.
+      operationId: UpdateScheduleHandler
+      parameters:
+      - description: Schedule ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Parameters required for updating a Schedule
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.Schedule'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated the Schedule
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "404":
+          description: Schedule not found
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Update an existing Schedule
+      tags:
+      - '[Schedule]'
+  /service/clearAll:
+    delete:
+      description: Delete an All Service and Task.
+      operationId: DeleteServiceAndTaskAllHandler
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted the All Service
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "404":
+          description: Clear All Task , Failed
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Delete a Task
+      tags:
+      - '[service]'
   /task:
     get:
       description: Retrieve a list of all Tasks in the system.

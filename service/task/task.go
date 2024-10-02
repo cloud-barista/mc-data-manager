@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/cloud-barista/mc-data-manager/internal/auth"
-	"github.com/cloud-barista/mc-data-manager/internal/execfunc"
 	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/pkg/utils"
 	"github.com/cloud-barista/mc-data-manager/service/nrdbc"
@@ -63,6 +62,14 @@ func InitFileScheduleManager() *FileScheduleManager {
 
 	if managerInstance == nil {
 		log.Error().Msg("FileScheduleManager initialization failed")
+	}
+	return managerInstance
+}
+
+// GetFileScheduleManager provides access to the singleton instance.
+func GetFileScheduleManager() *FileScheduleManager {
+	if managerInstance == nil {
+		InitFileScheduleManager()
 	}
 	return managerInstance
 }
@@ -284,20 +291,16 @@ func (m *FileScheduleManager) registerSchedule(schedule models.Schedule) error {
 func (m *FileScheduleManager) CreateSchedule(schedule models.Schedule) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-
 	if schedule.OperationId == "" {
 		return errors.New("OperationId is required")
 	}
-
 	// Generate ScheduleID based on OperationId
 	schedule.ScheduleID = utils.GenerateScheduleID(schedule.OperationId)
 
-	// Check if a schedule with the same ScheduleID already exists
-	for _, existingSchedule := range m.schedules {
-		if existingSchedule.OperationId == schedule.OperationId {
-			return fmt.Errorf("schedule with operation ID %s already exists", schedule.OperationId)
-		}
-	}
+	// // Check if a schedule with the same ScheduleID already exists
+	// if m.hasDuplicateOperationID(schedule.OperationId) {
+	// 	return fmt.Errorf("schedule with operation ID %s already exists", schedule.OperationId)
+	// }
 
 	// Initialize tasks and assign TaskIDs
 	for i, task := range schedule.Tasks {
@@ -313,7 +316,6 @@ func (m *FileScheduleManager) CreateSchedule(schedule models.Schedule) error {
 	if err := m.registerSchedule(schedule); err != nil {
 		return fmt.Errorf("failed to register schedule: %v", err)
 	}
-
 	return m.saveToFile()
 }
 
@@ -442,19 +444,238 @@ func (m *FileScheduleManager) removeSchedule(schedule models.Schedule) error {
 	return nil
 }
 
+// Task
+
+func (m *FileScheduleManager) CreateTask(task models.DataTask) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	// Generate a unique TaskID if not provided
+	if task.TaskMeta.TaskID == "" {
+		task.TaskMeta.TaskID = utils.GenerateTaskID(task.OperationId, 0)
+	}
+
+	// Check for duplicate TaskID
+	for _, existingTask := range m.tasks {
+		if existingTask.TaskMeta.TaskID == task.TaskMeta.TaskID {
+			return fmt.Errorf("task with TaskID %s already exists", task.TaskMeta.TaskID)
+		}
+	}
+
+	// Add the new task to the tasks slice
+	m.tasks = append(m.tasks, task.BasicDataTask)
+
+	// Save the updated tasks to file
+	if err := m.saveToFile(); err != nil {
+		return fmt.Errorf("failed to save tasks to file: %w", err)
+	}
+
+	return nil
+}
+
+// GetTask retrieves a task by its TaskID.
+func (m *FileScheduleManager) GetTask(taskID string) (models.BasicDataTask, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	// Iterate over the tasks slice to find the task
+	for _, task := range m.tasks {
+		if task.TaskMeta.TaskID == taskID {
+			return task, nil
+		}
+	}
+
+	return models.BasicDataTask{}, errors.New("task not found")
+}
+
+// GetTaskList retrieves a list of all tasks.
+func (m *FileScheduleManager) GetTaskList() ([]models.BasicDataTask, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	// Return a copy of the tasks slice to avoid external modifications
+	tasksCopy := make([]models.BasicDataTask, len(m.tasks))
+	copy(tasksCopy, m.tasks)
+
+	return tasksCopy, nil
+}
+
+// UpdateTask updates an existing task by TaskID.
+func (m *FileScheduleManager) UpdateTask(taskID string, updatedTask models.BasicDataTask) error {
+	// Find and update the task in the tasks slice
+	for i, task := range m.tasks {
+		if task.TaskMeta.TaskID == taskID {
+			// Update the task in the tasks slice
+			m.tasks[i] = updatedTask
+			// Save the updated tasks to file
+			if err := m.saveToFile(); err != nil {
+				return fmt.Errorf("failed to save tasks to file: %w", err)
+			}
+			return nil
+		}
+	}
+	return errors.New("task not found")
+}
+
+// DeleteTask deletes a task by its TaskID.
+func (m *FileScheduleManager) DeleteTask(taskID string) error {
+	// Find and remove the task from the tasks slice
+	for i, task := range m.tasks {
+		if task.TaskMeta.TaskID == taskID {
+			// Remove the task from the tasks slice
+			m.tasks = append(m.tasks[:i], m.tasks[i+1:]...)
+			// Save the updated tasks to file
+			if err := m.saveToFile(); err != nil {
+				return fmt.Errorf("failed to save tasks to file: %w", err)
+			}
+
+			return nil
+		}
+	}
+
+	return errors.New("task not found")
+}
+
+// GetTasksByTypeList retrieves tasks filtered by TaskType.
+func (m *FileScheduleManager) GetTasksByTypeList(taskType models.TaskType) ([]models.BasicDataTask, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	var filteredTasks []models.BasicDataTask
+	for _, task := range m.tasks {
+		if task.TaskType == taskType {
+			filteredTasks = append(filteredTasks, task)
+		}
+	}
+
+	if len(filteredTasks) == 0 {
+		return nil, fmt.Errorf("no tasks found for the given TaskType: %s", taskType)
+	}
+
+	return filteredTasks, nil
+}
+
+// GetTasksByType retrieves a task filtered by TaskType and TaskID.
+func (m *FileScheduleManager) GetTasksByType(taskType models.TaskType, taskID string) (models.BasicDataTask, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	for _, task := range m.tasks {
+		if task.TaskType == taskType && task.TaskMeta.TaskID == taskID {
+			return task, nil
+		}
+	}
+
+	return models.BasicDataTask{}, fmt.Errorf("task not found for the given criteria: TaskType=%s, TaskID=%s", taskType, taskID)
+}
+
+// UpdateTasksByType updates a task specified by TaskType and TaskID.
+func (m *FileScheduleManager) UpdateTasksByType(taskType models.TaskType, taskID string, updatedTask models.BasicDataTask) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	var updated bool
+	for i, task := range m.tasks {
+		if task.TaskType == taskType && task.TaskMeta.TaskID == taskID {
+			// Update the task in the tasks slice
+			m.tasks[i] = updatedTask
+			updated = true
+			break
+		}
+	}
+
+	if !updated {
+		return fmt.Errorf("no task found to update for the given TaskType: %s and TaskID: %s", taskType, taskID)
+	}
+
+	// Save the updated tasks to file
+	if err := m.saveToFile(); err != nil {
+		return fmt.Errorf("failed to save tasks to file: %w", err)
+	}
+
+	return nil
+}
+
+// DeleteTasksByType deletes a task specified by TaskType and TaskID.
+func (m *FileScheduleManager) DeleteTasksByType(taskType models.TaskType, taskID string) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	var deleted bool
+
+	for i, task := range m.tasks {
+		if task.TaskType == taskType && task.TaskMeta.TaskID == taskID {
+			// Remove the task from the tasks slice
+			m.tasks = append(m.tasks[:i], m.tasks[i+1:]...)
+			deleted = true
+			break
+		}
+	}
+
+	if !deleted {
+		return fmt.Errorf("no task found to delete for the given TaskType: %s and TaskID: %s", taskType, taskID)
+	}
+
+	// Save the updated tasks to file
+	if err := m.saveToFile(); err != nil {
+		return fmt.Errorf("failed to save tasks to file: %w", err)
+	}
+
+	return nil
+}
+
 // RunTasks executes the tasks associated with a schedule.
 func (m *FileScheduleManager) RunTasks(tasks []models.BasicDataTask) {
-	for _, task := range tasks {
+	for idx, task := range tasks {
+		log.Debug().Msgf("(%v/%v)", idx, len(tasks))
 		// Call the handleTask function to process the task
+		if (task.Status == models.StatusInactive) || (task.Status == models.StatusFailed) {
+			log.Warn().Msgf(" task status : %v", task.Status)
+			continue
+		}
 		task.Status = handleTask(task.ServiceType, task.TaskType, task)
 		log.Debug().Msgf("status : %v", task.Status)
 		m.updateTaskStatus(task)
 	}
 
-	err := m.saveToFile()
-	if err != nil {
+	if err := m.saveToFile(); err != nil {
 		log.Error().Err(err).Msg("Error saving tasks to file")
 	}
+}
+
+func (m *FileScheduleManager) RunTaskOnce(task models.DataTask) bool {
+	// CreateTask
+	m.CreateTask(task)
+	// Call the handleTask function to process the task
+	if (task.Status == models.StatusInactive) || (task.Status == models.StatusFailed) {
+		log.Warn().Msgf(" task status : %v", task.Status)
+		return false
+	}
+	task.Status = handleTask(task.ServiceType, task.TaskType, task.BasicDataTask)
+	m.updateTaskStatus(task.BasicDataTask)
+
+	if task.Status == models.StatusFailed {
+		log.Error().Msg("task Failed")
+		return false
+	}
+
+	if err := m.saveToFile(); err != nil {
+		log.Error().Err(err).Msg("Error saving tasks to file")
+		return false
+	}
+	return true
+}
+
+// handler
+
+// hasDuplicateOperationID checks if a schedule with the given OperationId already exists.
+func (m *FileScheduleManager) hasDuplicateOperationID(operationID string) bool {
+	for _, existingSchedule := range m.schedules {
+		if existingSchedule.OperationId == operationID {
+			return true
+		}
+	}
+	return false
 }
 
 // handleTask is a function that processes a task based on its ServiceType and TaskType.
@@ -521,18 +742,6 @@ func handleTask(serviceType models.CloudServiceType, taskType models.TaskType, p
 	return taskStatus
 }
 
-// Test func
-func handleGenTest(params models.BasicDataTask) models.Status {
-
-	log.Info().Msg("Handling object storage Gen task")
-	_ = params
-	var cParams models.CommandTask
-	cParams.SizeServerSQL = "1"
-	cParams.DummyPath = "./tmp/Schedule/dummy"
-	execfunc.DummyCreate(cParams)
-	return models.StatusCompleted
-}
-
 func handleObjectStorageGenerateTask(params models.BasicDataTask) models.Status {
 
 	var OSC *osc.OSController
@@ -545,13 +754,13 @@ func handleObjectStorageGenerateTask(params models.BasicDataTask) models.Status 
 	}
 
 	log.Info().Msgf("Launch OSController MPut")
-	if err := OSC.MPut(params.Directory); err != nil {
-		log.Error().Msgf("MPut error importing into objectstorage")
-		log.Info().Msgf("params : %+v", params.TargetPoint)
+	if err := OSC.MPut(params.Dummy.DummyPath); err != nil {
+		log.Error().Err(err).Msgf("MPut error importing into objectstorage")
+		log.Info().Msgf("params : %+v", params.Dummy)
 
 		return models.StatusFailed
 	}
-	log.Info().Msgf("successfully imported : %s", params.Directory)
+	log.Info().Msgf("successfully imported : %s", params.Dummy.DummyPath)
 	return models.StatusCompleted
 }
 
@@ -611,18 +820,18 @@ func handleObjectStorageBackupTask(params models.BasicDataTask) models.Status {
 	var OSC *osc.OSController
 	var err error
 	log.Info().Msg("User Information")
-	OSC, err = auth.GetOS(&params.TargetPoint)
+	OSC, err = auth.GetOS(&params.SourcePoint)
 	if err != nil {
 		log.Error().Err(err).Msg("OSController error importing into objectstorage ")
 		return models.StatusFailed
 	}
 
 	log.Info().Msg("Launch OSController MGet")
-	if err := OSC.MGet(params.Directory); err != nil {
+	if err := OSC.MGet(params.TargetPoint.Path); err != nil {
 		log.Error().Err(err).Msg("MGet error exporting into objectstorage ")
 		return models.StatusFailed
 	}
-	log.Info().Msgf("successfully backup : %s", params.Directory)
+	log.Info().Msgf("successfully backup : %s", params.TargetPoint.Path)
 	return models.StatusCompleted
 }
 
@@ -642,7 +851,7 @@ func handleObjectStorageRestoreTask(params models.BasicDataTask) models.Status {
 		log.Error().Err(err).Msg("MPut error importing into objectstorage ")
 		return models.StatusFailed
 	}
-	log.Info().Msgf("successfully restore : %s", params.Directory)
+	log.Info().Msgf("successfully restore : %s", params.SourcePoint.Path)
 	return models.StatusCompleted
 }
 
@@ -657,7 +866,7 @@ func handleRDBMSGenerateTask(params models.BasicDataTask) models.Status {
 	}
 
 	sqlList := []string{}
-	err = filepath.Walk(params.Directory, func(path string, info fs.FileInfo, err error) error {
+	err = filepath.Walk(params.Dummy.DummyPath, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -684,7 +893,7 @@ func handleRDBMSGenerateTask(params models.BasicDataTask) models.Status {
 		}
 		log.Info().Msgf("Import success: %s", sqlPath)
 	}
-	log.Info().Msgf("successfully imported : %s", params.Directory)
+	log.Info().Msgf("successfully imported : %s", params.Dummy.DummyPath)
 	return models.StatusCompleted
 }
 
@@ -747,13 +956,13 @@ func handleRDBMSBackupTask(params models.BasicDataTask) models.Status {
 	var RDBC *rdbc.RDBController
 	var err error
 	log.Info().Msg("User Information")
-	RDBC, err = auth.GetRDMS(&params.TargetPoint)
+	RDBC, err = auth.GetRDMS(&params.SourcePoint)
 	if err != nil {
 		log.Error().Err(err).Msg("RDBController error importing into rdbms ")
 		return models.StatusFailed
 	}
 
-	err = os.MkdirAll(params.Directory, 0755)
+	err = os.MkdirAll(params.TargetPoint.Path, 0755)
 	if err != nil {
 		log.Error().Err(err).Msg("MkdirAll error ")
 		return models.StatusFailed
@@ -774,7 +983,7 @@ func handleRDBMSBackupTask(params models.BasicDataTask) models.Status {
 			return models.StatusFailed
 		}
 
-		file, err := os.Create(filepath.Join(params.Directory, fmt.Sprintf("%s.sql", db)))
+		file, err := os.Create(filepath.Join(params.TargetPoint.Path, fmt.Sprintf("%s.sql", db)))
 		if err != nil {
 			log.Error().Err(err).Msg("File create error ")
 			return models.StatusFailed
@@ -789,7 +998,7 @@ func handleRDBMSBackupTask(params models.BasicDataTask) models.Status {
 		log.Info().Msgf("successfully exported : %s", file.Name())
 		file.Close()
 	}
-	log.Info().Msgf("successfully backup : %s", params.Directory)
+	log.Info().Msgf("successfully backup : %s", params.TargetPoint.Path)
 	return models.StatusCompleted
 
 }
@@ -806,7 +1015,7 @@ func handleRDBMSRestoreTask(params models.BasicDataTask) models.Status {
 	}
 
 	sqlList := []string{}
-	err = filepath.Walk(params.Directory, func(path string, info fs.FileInfo, err error) error {
+	err = filepath.Walk(params.SourcePoint.Path, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -833,7 +1042,7 @@ func handleRDBMSRestoreTask(params models.BasicDataTask) models.Status {
 		}
 		log.Info().Msgf("Import success: %s", sqlPath)
 	}
-	log.Info().Msgf("successfully restore : %s", params.Directory)
+	log.Info().Msgf("successfully restore : %s", params.SourcePoint.Path)
 	return models.StatusCompleted
 
 }
@@ -849,7 +1058,7 @@ func handleNRDBMSGenerateTask(params models.BasicDataTask) models.Status {
 	}
 
 	jsonList := []string{}
-	err = filepath.Walk(params.Directory, func(path string, info fs.FileInfo, err error) error {
+	err = filepath.Walk(params.Dummy.DummyPath, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -888,7 +1097,7 @@ func handleNRDBMSGenerateTask(params models.BasicDataTask) models.Status {
 			log.Error().Msgf("Put error importing into nrdbms")
 			return models.StatusFailed
 		}
-		log.Info().Msgf("successfully imported : %s", params.Directory)
+		log.Info().Msgf("successfully imported : %s", params.Dummy.DummyPath)
 	}
 	return models.StatusCompleted
 }
@@ -949,11 +1158,12 @@ func handleNRDBMSMigrateTask(params models.BasicDataTask) models.Status {
 
 }
 
+// S -> T
 func handleNRDBMSBackupTask(params models.BasicDataTask) models.Status {
 	log.Info().Msg("Handling NRDBMS backup task")
 	var NRDBC *nrdbc.NRDBController
 	var err error
-	NRDBC, err = auth.GetNRDMS(&params.TargetPoint)
+	NRDBC, err = auth.GetNRDMS(&params.SourcePoint)
 	if err != nil {
 		log.Error().Err(err).Msg("NRDBController error importing into nrdbms ")
 		return models.StatusFailed
@@ -965,12 +1175,12 @@ func handleNRDBMSBackupTask(params models.BasicDataTask) models.Status {
 		return models.StatusFailed
 	}
 
-	if !utils.FileExists(params.Directory) {
+	if !utils.FileExists(params.TargetPoint.Path) {
 		log.Info().Msg("directory does not exist")
 		log.Info().Msg("Make Directory")
-		err = os.MkdirAll(params.Directory, 0755)
+		err = os.MkdirAll(params.TargetPoint.Path, 0755)
 		if err != nil {
-			log.Info().Msgf("Make Failed 0755 : %s", params.Directory)
+			log.Info().Msgf("Make Failed 0755 : %s", params.TargetPoint.Path)
 			return models.StatusFailed
 		}
 	}
@@ -985,7 +1195,7 @@ func handleNRDBMSBackupTask(params models.BasicDataTask) models.Status {
 			return models.StatusFailed
 		}
 
-		file, err := os.Create(filepath.Join(params.Directory, fmt.Sprintf("%s.json", table)))
+		file, err := os.Create(filepath.Join(params.TargetPoint.Path, fmt.Sprintf("%s.json", table)))
 		if err != nil {
 			log.Error().Err(err).Msg("File create error ")
 			return models.StatusFailed
@@ -1000,11 +1210,12 @@ func handleNRDBMSBackupTask(params models.BasicDataTask) models.Status {
 		}
 		log.Info().Msgf("successfully create File : %s", file.Name())
 	}
-	log.Info().Msgf("successfully backup to : %s", params.Directory)
+	log.Info().Msgf("successfully backup to : %s", params.TargetPoint.Path)
 	return models.StatusCompleted
 
 }
 
+// Restore S -> T
 func handleNRDBMSRestoreTask(params models.BasicDataTask) models.Status {
 	log.Info().Msg("Handling NRDBMS restore task")
 	var NRDBC *nrdbc.NRDBController
@@ -1016,7 +1227,7 @@ func handleNRDBMSRestoreTask(params models.BasicDataTask) models.Status {
 	}
 
 	jsonList := []string{}
-	err = filepath.Walk(params.Directory, func(path string, info fs.FileInfo, err error) error {
+	err = filepath.Walk(params.SourcePoint.Path, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -1055,7 +1266,7 @@ func handleNRDBMSRestoreTask(params models.BasicDataTask) models.Status {
 			log.Error().Msg("Put error importing into nrdbms")
 			return models.StatusFailed
 		}
-		log.Info().Msgf("successfully Restore : %s", params.Directory)
+		log.Info().Msgf("successfully Restore : %s", params.SourcePoint.Path)
 	}
 	return models.StatusCompleted
 
@@ -1101,4 +1312,77 @@ func (m *FileScheduleManager) updateTaskStatus(task models.BasicDataTask) {
 			return
 		}
 	}
+}
+
+// ClearServiceAndTaskAll loads all tasks, changes their TaskType to 'delete',
+// executes the delete tasks to remove services, and then removes the tasks and schedules.
+func (m *FileScheduleManager) ClearServiceAndTaskAll() error {
+	// Lock the mutex to prevent concurrent modifications
+	// m.mu.Lock()
+	// defer m.mu.Unlock()
+
+	log.Info().Msg("Starting to clear all services and tasks.")
+	// Step 1: Update all tasks' TaskType to 'delete'
+	for i, task := range m.tasks {
+		if task.Status == models.StatusFailed {
+			continue
+		}
+		if task.TaskType != "delete" {
+			log.Info().Msgf("Updating Task ID: %s from %s to delete", task.TaskMeta.TaskID, task.TaskType)
+			m.tasks[i].TaskType = "delete"
+		} else {
+			log.Debug().Msgf("Task ID: %s is already a delete task.", task.TaskMeta.TaskID)
+		}
+		if task.ServiceType == models.NRDBMS {
+			log.Debug().Msgf(" NRDB skip.", task.TaskMeta.TaskID)
+			m.tasks[i].Status = models.StatusInactive
+		}
+	}
+	// Step 2: Execute all delete tasks
+	m.RunTasks(m.tasks)
+	// Step 3: Iterate through all schedules and update their tasks to 'delete'
+	for i, schedule := range m.schedules {
+		log.Info().Msgf("Processing Schedule ID: %s (%d/%d)", schedule.ScheduleID, i+1, len(m.schedules))
+
+		for j, task := range schedule.Tasks {
+			if task.TaskType != "delete" {
+				log.Info().Msgf("Updating Task ID: %s from %s to delete in Schedule ID: %s", task.TaskMeta.TaskID, task.TaskType, schedule.ScheduleID)
+				m.schedules[i].Tasks[j].TaskType = "delete"
+			} else {
+				log.Debug().Msgf("Task ID: %s in Schedule ID: %s is already a delete task.", task.TaskMeta.TaskID, schedule.ScheduleID)
+			}
+		}
+
+		// Execute delete tasks for the current schedule
+		m.RunTasks(m.schedules[i].Tasks)
+	}
+	// Step 4: Remove all schedules
+	for _, schedule := range m.schedules {
+		log.Info().Msgf("Removing Schedule ID: %s", schedule.ScheduleID)
+		if err := m.removeSchedule(schedule); err != nil {
+			log.Error().Err(err).Msgf("Failed to remove Schedule ID: %s", schedule.ScheduleID)
+			return err
+		}
+	}
+	// Step 5: Remove all tasks from the manager
+	log.Info().Msg("Removing all tasks from the manager.")
+	m.tasks = []models.BasicDataTask{}
+	fmt.Println(m.tasks)
+	// Step 6: Clear all schedules from the manager
+	log.Info().Msg("Clearing all schedules from the manager.")
+	m.schedules = []models.Schedule{}
+
+	// Step 7: Stop all schedulers and reset the schedulers map
+	log.Info().Msg("Stopping and clearing all schedulers.")
+	m.StopSchedulers()
+	m.schedulers = make(map[string]*gocron.Scheduler)
+
+	// Step 8: Save the updated state to the file
+	if err := m.saveToFile(); err != nil {
+		log.Error().Err(err).Msg("Failed to save updated schedules and tasks to file.")
+		return err
+	}
+
+	log.Info().Msg("Successfully cleared all services and tasks.")
+	return nil
 }

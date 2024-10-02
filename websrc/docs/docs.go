@@ -23,7 +23,37 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/backup/nrdb": {
+        "/backup": {
+            "get": {
+                "description": "Retrieve a list of all Tasks in the system.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Backup]"
+                ],
+                "summary": "Get all Tasks",
+                "operationId": "GetAllBackupHandler",
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved all Tasks",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Task"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/backup/nrdbms": {
             "post": {
                 "description": "Export data from a MySQL database to SQL files.",
                 "consumes": [
@@ -33,8 +63,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Backup]",
-                    "[Service RDBMS]"
+                    "[Backup]"
                 ],
                 "summary": "Export data from MySQL",
                 "operationId": "BackupNRDBPostHandler",
@@ -75,8 +104,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Backup]",
-                    "[Service Object Storage]"
+                    "[Backup]"
                 ],
                 "summary": "Export data from objectstorage",
                 "operationId": "BackupOSPostHandler",
@@ -107,7 +135,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/backup/rdb": {
+        "/backup/rdbms": {
             "post": {
                 "description": "Export data from a MySQL database to SQL files.",
                 "consumes": [
@@ -117,8 +145,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Backup]",
-                    "[Service RDBMS]"
+                    "[Backup]"
                 ],
                 "summary": "Export data from MySQL",
                 "operationId": "BackupRDBPostHandler",
@@ -149,9 +176,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/generate/aws": {
-            "post": {
-                "description": "Generate test data on AWS S3.",
+        "/backup/{id}": {
+            "get": {
+                "description": "Get the details of a Task using its ID.",
                 "consumes": [
                     "application/json"
                 ],
@@ -159,31 +186,74 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Generation]",
-                    "[Service Object Storage]"
+                    "[Backup]"
                 ],
-                "summary": "Generate test data on AWS S3",
-                "operationId": "GenerateS3PostHandler",
+                "summary": "Get a Task by ID",
+                "operationId": "GetBackupHandler",
                 "parameters": [
                     {
-                        "description": "Parameters required to generate test data",
+                        "type": "string",
+                        "description": "Task ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved a Task",
+                        "schema": {
+                            "$ref": "#/definitions/models.Task"
+                        }
+                    },
+                    "404": {
+                        "description": "Task not found",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update the details of an existing Task using its ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Backup]"
+                ],
+                "summary": "Update an existing Task",
+                "operationId": "UpdateBackupHandler",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Task ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Parameters required for updating a Task",
                         "name": "RequestBody",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.GenarateTask"
+                            "$ref": "#/definitions/models.Schedule"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successfully generated test data",
+                        "description": "Successfully updated the Task",
                         "schema": {
                             "$ref": "#/definitions/models.BasicResponse"
                         }
                     },
-                    "400": {
-                        "description": "Invalid Request",
+                    "404": {
+                        "description": "Task not found",
                         "schema": {
                             "$ref": "#/definitions/models.BasicResponse"
                         }
@@ -195,49 +265,35 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/generate/dynamodb": {
-            "post": {
-                "description": "Generate test data on AWS DynamoDB.",
-                "consumes": [
-                    "application/json"
-                ],
+            },
+            "delete": {
+                "description": "Delete an existing Task using its ID.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Generation]",
-                    "[Service NRDBMS]"
+                    "[Backup]"
                 ],
-                "summary": "Generate test data on AWS DynamoDB",
-                "operationId": "GenerateDynamoDBPostHandler",
+                "summary": "Delete a Task",
+                "operationId": "DeleteBackupkHandler",
                 "parameters": [
                     {
-                        "description": "Parameters required to generate test data",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.GenarateTask"
-                        }
+                        "type": "string",
+                        "description": "Task ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successfully generated test data",
+                        "description": "Successfully deleted the Task",
                         "schema": {
                             "$ref": "#/definitions/models.BasicResponse"
                         }
                     },
-                    "400": {
-                        "description": "Invalid Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
+                    "404": {
+                        "description": "Task not found",
                         "schema": {
                             "$ref": "#/definitions/models.BasicResponse"
                         }
@@ -245,85 +301,25 @@ const docTemplate = `{
                 }
             }
         },
-        "/generate/firestore": {
-            "post": {
-                "description": "Generate test data on GCP Firestore.",
-                "consumes": [
-                    "application/json"
-                ],
+        "/generate": {
+            "get": {
+                "description": "Retrieve a list of all Tasks in the system.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Generation]",
-                    "[Service NRDBMS]"
+                    "[Generate]"
                 ],
-                "summary": "Generate test data on GCP Firestore",
-                "operationId": "GenerateFirestorePostHandler",
-                "parameters": [
-                    {
-                        "description": "Parameters required to generate test data",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.GenarateTask"
-                        }
-                    }
-                ],
+                "summary": "Get all Tasks",
+                "operationId": "GetAllGenerateHandler",
                 "responses": {
                     "200": {
-                        "description": "Successfully generated test data",
+                        "description": "Successfully retrieved all Tasks",
                         "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/generate/gcp": {
-            "post": {
-                "description": "Generate test data on GCP Cloud Storage.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[Data Generation]",
-                    "[Service Object Storage]"
-                ],
-                "summary": "Generate test data on GCP Cloud Storage",
-                "operationId": "GenerateGCPPostHandler",
-                "parameters": [
-                    {
-                        "description": "Parameters required to generate test data",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.GenarateTask"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully generated test data",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Task"
+                            }
                         }
                     },
                     "500": {
@@ -345,7 +341,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Generation]"
+                    "[Generate]"
                 ],
                 "summary": "Generate test data on on-premise Linux",
                 "operationId": "GenerateLinuxPostHandler",
@@ -356,7 +352,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.GenarateTask"
+                            "$ref": "#/definitions/models.GenarateTask"
                         }
                     }
                 ],
@@ -382,9 +378,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/generate/mongodb": {
+        "/generate/nrdbms": {
             "post": {
-                "description": "Generate test data on NCP MongoDB.",
+                "description": "Generate test data on Object Storage",
                 "consumes": [
                     "application/json"
                 ],
@@ -392,11 +388,10 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Generation]",
-                    "[Service NRDBMS]"
+                    "[Generate]"
                 ],
-                "summary": "Generate test data on NCP MongoDB",
-                "operationId": "GenerateMongoDBPostHandler",
+                "summary": "Generate test data on Object Storage",
+                "operationId": "GenerateNRDBMSPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required to generate test data",
@@ -404,7 +399,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.GenarateTask"
+                            "$ref": "#/definitions/models.GenarateTask"
                         }
                     }
                 ],
@@ -430,9 +425,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/generate/mysql": {
+        "/generate/objectstorage": {
             "post": {
-                "description": "Generate test data on MySQL.",
+                "description": "Generate test data on Object Storage",
                 "consumes": [
                     "application/json"
                 ],
@@ -440,11 +435,10 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Generation]",
-                    "[Service RDBMS]"
+                    "[Generate]"
                 ],
-                "summary": "Generate test data on MySQL",
-                "operationId": "GenerateMySQLPostHandler",
+                "summary": "Generate test data on Object Storage",
+                "operationId": "GenerateObjectStoragePostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required to generate test data",
@@ -452,7 +446,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.GenarateTask"
+                            "$ref": "#/definitions/models.GenarateTask"
                         }
                     }
                 ],
@@ -478,9 +472,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/generate/ncp": {
+        "/generate/rdbms": {
             "post": {
-                "description": "Generate test data on NCP Object Storage.",
+                "description": "Generate test data on RDBMS",
                 "consumes": [
                     "application/json"
                 ],
@@ -488,11 +482,10 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Generation]",
-                    "[Service Object Storage]"
+                    "[Generate]"
                 ],
-                "summary": "Generate test data on NCP Object Storage",
-                "operationId": "GenerateNCPPostHandler",
+                "summary": "Generate test data on RDBMS",
+                "operationId": "GenerateRDBMSPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required to generate test data",
@@ -500,7 +493,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.GenarateTask"
+                            "$ref": "#/definitions/models.GenarateTask"
                         }
                     }
                 ],
@@ -536,7 +529,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Generation]"
+                    "[Generate]"
                 ],
                 "summary": "Generate test data on on-premise Windows",
                 "operationId": "GenerateWindowsPostHandler",
@@ -547,7 +540,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.GenarateTask"
+                            "$ref": "#/definitions/models.GenarateTask"
                         }
                     }
                 ],
@@ -573,9 +566,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/migration/aws/gcp": {
-            "post": {
-                "description": "Migrate data stored in AWS S3 to Google Cloud Storage.",
+        "/generate/{id}": {
+            "get": {
+                "description": "Get the details of a Task using its ID.",
                 "consumes": [
                     "application/json"
                 ],
@@ -583,25 +576,74 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Migration]",
-                    "[Service Object Storage]"
+                    "[Generate]"
                 ],
-                "summary": "Migrate data from AWS S3 to GCP",
-                "operationId": "MigrationS3ToGCPPostHandler",
+                "summary": "Get a Task by ID",
+                "operationId": "GetGenerateHandler",
                 "parameters": [
                     {
-                        "description": "Parameters required for migration",
+                        "type": "string",
+                        "description": "Task ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved a Task",
+                        "schema": {
+                            "$ref": "#/definitions/models.Task"
+                        }
+                    },
+                    "404": {
+                        "description": "Task not found",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update the details of an existing Task using its ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Generate]"
+                ],
+                "summary": "Update an existing Task",
+                "operationId": "UpdateGenerateHandler",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Task ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Parameters required for updating a Task",
                         "name": "RequestBody",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.MigrateTask"
+                            "$ref": "#/definitions/models.Schedule"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successfully migrated data",
+                        "description": "Successfully updated the Task",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Task not found",
                         "schema": {
                             "$ref": "#/definitions/models.BasicResponse"
                         }
@@ -613,44 +655,61 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/migration/aws/linux": {
-            "post": {
-                "description": "Migrate data stored in AWS S3 to a Linux-based system.",
-                "consumes": [
-                    "application/json"
-                ],
+            },
+            "delete": {
+                "description": "Delete an existing Task using its ID.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Migration]"
+                    "[Generate]"
                 ],
-                "summary": "Migrate data from AWS S3 to Linux",
-                "operationId": "MigrationS3ToLinuxPostHandler",
+                "summary": "Delete a Task",
+                "operationId": "DeleteGeneratekHandler",
                 "parameters": [
                     {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrateTask"
-                        }
+                        "type": "string",
+                        "description": "Task ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successfully migrated data",
+                        "description": "Successfully deleted the Task",
                         "schema": {
                             "$ref": "#/definitions/models.BasicResponse"
                         }
                     },
-                    "400": {
-                        "description": "Invalid Request",
+                    "404": {
+                        "description": "Task not found",
                         "schema": {
                             "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/migrate": {
+            "get": {
+                "description": "Retrieve a list of all Tasks in the system.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Migrate]"
+                ],
+                "summary": "Get all Tasks",
+                "operationId": "GetAllMigrateHandler",
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved all Tasks",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Task"
+                            }
                         }
                     },
                     "500": {
@@ -662,9 +721,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/migration/aws/ncp": {
-            "post": {
-                "description": "Migrate data stored in AWS S3 to Naver Cloud Object Storage.",
+        "/migrate/{id}": {
+            "get": {
+                "description": "Get the details of a Task using its ID.",
                 "consumes": [
                     "application/json"
                 ],
@@ -672,25 +731,74 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Migration]",
-                    "[Service Object Storage]"
+                    "[Migrate]"
                 ],
-                "summary": "Migrate data from AWS S3 to NCP",
-                "operationId": "MigrationS3ToNCPPostHandler",
+                "summary": "Get a Task by ID",
+                "operationId": "GetMigrateHandler",
                 "parameters": [
                     {
-                        "description": "Parameters required for migration",
+                        "type": "string",
+                        "description": "Task ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved a Task",
+                        "schema": {
+                            "$ref": "#/definitions/models.Task"
+                        }
+                    },
+                    "404": {
+                        "description": "Task not found",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update the details of an existing Task using its ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Migrate]"
+                ],
+                "summary": "Update an existing Task",
+                "operationId": "UpdateMigrateHandler",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Task ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Parameters required for updating a Task",
                         "name": "RequestBody",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.MigrateTask"
+                            "$ref": "#/definitions/models.Schedule"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successfully migrated data",
+                        "description": "Successfully updated the Task",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Task not found",
                         "schema": {
                             "$ref": "#/definitions/models.BasicResponse"
                         }
@@ -702,48 +810,35 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/migration/aws/windows": {
-            "post": {
-                "description": "Migrate data stored in AWS S3 to a Windows-based system.",
-                "consumes": [
-                    "application/json"
-                ],
+            },
+            "delete": {
+                "description": "Delete an existing Task using its ID.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Migration]"
+                    "[Migrate]"
                 ],
-                "summary": "Migrate data from AWS S3 to Windows",
-                "operationId": "MigrationS3ToWindowsPostHandler",
+                "summary": "Delete a Task",
+                "operationId": "DeleteMigratekHandler",
                 "parameters": [
                     {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrateTask"
-                        }
+                        "type": "string",
+                        "description": "Task ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successfully migrated data",
+                        "description": "Successfully deleted the Task",
                         "schema": {
                             "$ref": "#/definitions/models.BasicResponse"
                         }
                     },
-                    "400": {
-                        "description": "Invalid Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
+                    "404": {
+                        "description": "Task not found",
                         "schema": {
                             "$ref": "#/definitions/models.BasicResponse"
                         }
@@ -751,9 +846,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/migration/dynamodb/firestore": {
+        "/migration/nrdbms": {
             "post": {
-                "description": "Migrate data stored in AWS DynamoDB to Google Cloud Firestore.",
+                "description": "Migrate data from NRDBMS to NRDBMS.",
                 "consumes": [
                     "application/json"
                 ],
@@ -761,11 +856,10 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Migration]",
-                    "[Service NRDBMS]"
+                    "[Migrate]"
                 ],
-                "summary": "Migrate data from DynamoDB to Firestore",
-                "operationId": "MigrationDynamoDBToFirestorePostHandler",
+                "summary": "Migrate data from NRDBMS to NRDBMS",
+                "operationId": "MigrationNRDBMSPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -773,216 +867,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.MigrateTask"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully migrated data",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/migration/dynamodb/mongodb": {
-            "post": {
-                "description": "Migrate data stored in AWS DynamoDB to Naver Cloud MongoDB.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[Data Migration]",
-                    "[Service NRDBMS]"
-                ],
-                "summary": "Migrate data from DynamoDB to MongoDB",
-                "operationId": "MigrationDynamoDBToMongoDBPostHandler",
-                "parameters": [
-                    {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrateTask"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully migrated data",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/migration/firestore/dynamodb": {
-            "post": {
-                "description": "Migrate data stored in Google Cloud Firestore to AWS DynamoDB.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[Data Migration]",
-                    "[Service NRDBMS]"
-                ],
-                "summary": "Migrate data from Firestore to DynamoDB",
-                "operationId": "MigrationFirestoreToDynamoDBPostHandler",
-                "parameters": [
-                    {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrateTask"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully migrated data",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/migration/firestore/mongodb": {
-            "post": {
-                "description": "Migrate data stored in Google Cloud Firestore to Naver Cloud MongoDB.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[Data Migration]",
-                    "[Service NRDBMS]"
-                ],
-                "summary": "Migrate data from Firestore to MongoDB",
-                "operationId": "MigrationFirestoreToMongoDBPostHandler",
-                "parameters": [
-                    {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrateTask"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully migrated data",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/migration/gcp/aws": {
-            "post": {
-                "description": "Migrate data stored in GCP Cloud Storage to AWS S3.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[Data Migration]",
-                    "[Service Object Storage]"
-                ],
-                "summary": "Migrate data from GCP to AWS S3",
-                "operationId": "MigrationGCPToS3PostHandler",
-                "parameters": [
-                    {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrateTask"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully migrated data",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/migration/gcp/linux": {
-            "post": {
-                "description": "Migrate data stored in GCP Cloud Storage to a Linux-based system.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[Data Migration]"
-                ],
-                "summary": "Migrate data from GCP to Linux",
-                "operationId": "MigrationGCPToLinuxPostHandler",
-                "parameters": [
-                    {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrateTask"
+                            "$ref": "#/definitions/models.MigrateTask"
                         }
                     }
                 ],
@@ -1008,9 +893,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/migration/gcp/ncp": {
+        "/migration/objectstorage": {
             "post": {
-                "description": "Migrate data stored in GCP Cloud Storage to NCP Object Storage.",
+                "description": "Migrate data from ObjectStorage to ObjectStorage.",
                 "consumes": [
                     "application/json"
                 ],
@@ -1018,11 +903,10 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Migration]",
-                    "[Service Object Storage]"
+                    "[Migrate]"
                 ],
-                "summary": "Migrate data from GCP to NCP Object Storage",
-                "operationId": "MigrationGCPToNCPPostHandler",
+                "summary": "Migrate data from ObjectStorage to ObjectStorage",
+                "operationId": "MigrationObjectstoragePostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -1030,48 +914,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.MigrateTask"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully migrated data",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/migration/gcp/windows": {
-            "post": {
-                "description": "Migrate data stored in GCP Cloud Storage to a Windows-based system.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[Data Migration]"
-                ],
-                "summary": "Migrate data from GCP to Windows",
-                "operationId": "MigrationGCPToWindowsPostHandler",
-                "parameters": [
-                    {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrateTask"
+                            "$ref": "#/definitions/models.MigrateTask"
                         }
                     }
                 ],
@@ -1097,9 +940,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/migration/linux/aws": {
+        "/migration/rdbms": {
             "post": {
-                "description": "Migrate data stored in a Linux-based system to AWS S3.",
+                "description": "Migrate data from RDBMS to RDBMS.",
                 "consumes": [
                     "application/json"
                 ],
@@ -1107,10 +950,10 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Migration]"
+                    "[Migrate]"
                 ],
-                "summary": "Migrate data from Linux to AWS S3",
-                "operationId": "MigrationLinuxToS3PostHandler",
+                "summary": "Migrate data from RDBMS to RDBMS",
+                "operationId": "MigrationRDBMSPostHandler",
                 "parameters": [
                     {
                         "description": "Parameters required for migration",
@@ -1118,7 +961,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.MigrateTask"
+                            "$ref": "#/definitions/models.MigrateTask"
                         }
                     }
                 ],
@@ -1144,42 +987,25 @@ const docTemplate = `{
                 }
             }
         },
-        "/migration/linux/gcp": {
-            "post": {
-                "description": "Migrate data stored in a Linux-based system to GCP Cloud Storage.",
-                "consumes": [
-                    "application/json"
-                ],
+        "/restore": {
+            "get": {
+                "description": "Retrieve a list of all Tasks in the system.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Migration]"
+                    "[Restore]"
                 ],
-                "summary": "Migrate data from Linux to GCP Cloud Storage",
-                "operationId": "MigrationLinuxToGCPPostHandler",
-                "parameters": [
-                    {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrateTask"
-                        }
-                    }
-                ],
+                "summary": "Get all Tasks",
+                "operationId": "GetAllRestoreHandler",
                 "responses": {
                     "200": {
-                        "description": "Successfully migrated data",
+                        "description": "Successfully retrieved all Tasks",
                         "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Task"
+                            }
                         }
                     },
                     "500": {
@@ -1191,9 +1017,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/migration/linux/ncp": {
+        "/restore/nrdbms": {
             "post": {
-                "description": "Migrate data stored in a Linux-based system to NCP Object Storage.",
+                "description": "Restore NoSQL from SQL files to a NoSQL database",
                 "consumes": [
                     "application/json"
                 ],
@@ -1201,508 +1027,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Migration]"
+                    "[Restore]"
                 ],
-                "summary": "Migrate data from Linux to NCP Object Storage",
-                "operationId": "MigrationLinuxToNCPPostHandler",
-                "parameters": [
-                    {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrateTask"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully migrated data",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/migration/mongodb/dynamodb": {
-            "post": {
-                "description": "Migrate data stored in Naver Cloud MongoDB to AWS DynamoDB.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[Data Migration]",
-                    "[Service NRDBMS]"
-                ],
-                "summary": "Migrate data from MongoDB to DynamoDB",
-                "operationId": "MigrationMongoDBToDynamoDBPostHandler",
-                "parameters": [
-                    {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrateTask"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully migrated data",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/migration/mongodb/firestore": {
-            "post": {
-                "description": "Migrate data stored in Naver Cloud MongoDB to Google Cloud Firestore.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[Data Migration]",
-                    "[Service NRDBMS]"
-                ],
-                "summary": "Migrate data from MongoDB to Firestore",
-                "operationId": "MigrationMongoDBToFirestorePostHandler",
-                "parameters": [
-                    {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrateTask"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully migrated data",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/migration/mysql": {
-            "post": {
-                "description": "Migrate data from one MySQL database to another MySQL database.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[Data Migration]",
-                    "[Service RDBMS]"
-                ],
-                "summary": "Migrate data from MySQL to MySQL",
-                "operationId": "MigrationMySQLPostHandler",
-                "parameters": [
-                    {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrateTask"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully migrated data",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/migration/ncp/aws": {
-            "post": {
-                "description": "Migrate data stored in NCP Object Storage to AWS S3.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[Data Migration]",
-                    "[Service Object Storage]"
-                ],
-                "summary": "Migrate data from NCP to AWS S3",
-                "operationId": "MigrationNCPToS3PostHandler",
-                "parameters": [
-                    {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrateTask"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully migrated data",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/migration/ncp/gcp": {
-            "post": {
-                "description": "Migrate data stored in NCP Object Storage to GCP Cloud Storage.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[Data Migration]",
-                    "[Service Object Storage]"
-                ],
-                "summary": "Migrate data from NCP to GCP Cloud Storage",
-                "operationId": "MigrationNCPToGCPPostHandler",
-                "parameters": [
-                    {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrateTask"
-                        }
-                    },
-                    {
-                        "type": "file",
-                        "description": "Parameters required to generate test data",
-                        "name": "gcpCredential",
-                        "in": "formData"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully migrated data",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/migration/ncp/linux": {
-            "post": {
-                "description": "Migrate data stored in NCP Object Storage to a Linux-based system.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[Data Migration]"
-                ],
-                "summary": "Migrate data from NCP to Linux",
-                "operationId": "MigrationNCPToLinuxPostHandler",
-                "parameters": [
-                    {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrateTask"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully migrated data",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/migration/ncp/windows": {
-            "post": {
-                "description": "Migrate data stored in NCP Object Storage to a Windows-based system.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[Data Migration]"
-                ],
-                "summary": "Migrate data from NCP to Windows",
-                "operationId": "MigrationNCPToWindowsPostHandler",
-                "parameters": [
-                    {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrateTask"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully migrated data",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/migration/windows/aws": {
-            "post": {
-                "description": "Migrate data stored in a Windows-based system to AWS S3.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[Data Migration]"
-                ],
-                "summary": "Migrate data from Windows to AWS S3",
-                "operationId": "MigrationWindowsToS3PostHandler",
-                "parameters": [
-                    {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrateTask"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully migrated data",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/migration/windows/gcp": {
-            "post": {
-                "description": "Migrate data stored in a Windows-based system to GCP Cloud Storage.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[Data Migration]"
-                ],
-                "summary": "Migrate data from Windows to GCP Cloud Storage",
-                "operationId": "MigrationWindowsToGCPPostHandler",
-                "parameters": [
-                    {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrateTask"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully migrated data",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/migration/windows/ncp": {
-            "post": {
-                "description": "Migrate data stored in a Windows-based system to NCP Object Storage.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[Data Migration]"
-                ],
-                "summary": "Migrate data from Windows to NCP Object Storage",
-                "operationId": "MigrationWindowsToNCPPostHandler",
-                "parameters": [
-                    {
-                        "description": "Parameters required for migration",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.MigrateTask"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully migrated data",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/restore/nrdb": {
-            "post": {
-                "description": "Import data from a MySQL database to SQL files.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[Data Restore]",
-                    "[Service RDBMS]"
-                ],
-                "summary": "Import data from MySQL",
+                "summary": "Restore NoSQL from data to NoSQL",
                 "operationId": "RestoreNRDBPostHandler",
                 "parameters": [
                     {
@@ -1733,7 +1060,7 @@ const docTemplate = `{
         },
         "/restore/objectstorage": {
             "post": {
-                "description": "Import data from a objectstorage  to files.",
+                "description": "Restore objectstorage from files to a objectstorage",
                 "consumes": [
                     "application/json"
                 ],
@@ -1741,10 +1068,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Restore]",
-                    "[Service Object Storage]"
+                    "[Restore]"
                 ],
-                "summary": "Import data from objectstorage",
+                "summary": "Restore data from objectstorage",
                 "operationId": "RestoreOSPostHandler",
                 "parameters": [
                     {
@@ -1773,9 +1099,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/restore/rdb": {
+        "/restore/rdbms": {
             "post": {
-                "description": "Import data from a MySQL database to SQL files.",
+                "description": "Restore MySQL from MySQL files to a MySQL database",
                 "consumes": [
                     "application/json"
                 ],
@@ -1783,10 +1109,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[Data Restore]",
-                    "[Service RDBMS]"
+                    "[Restore]"
                 ],
-                "summary": "Import data from MySQL",
+                "summary": "Restore data from MySQL",
                 "operationId": "RestoreRDBPostHandler",
                 "parameters": [
                     {
@@ -1808,6 +1133,352 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/restore/{id}": {
+            "get": {
+                "description": "Get the details of a Task using its ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Restore]"
+                ],
+                "summary": "Get a Task by ID",
+                "operationId": "GetRestoreHandler",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Task ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved a Task",
+                        "schema": {
+                            "$ref": "#/definitions/models.Task"
+                        }
+                    },
+                    "404": {
+                        "description": "Task not found",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update the details of an existing Task using its ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Restore]"
+                ],
+                "summary": "Update an existing Task",
+                "operationId": "UpdateRestoreHandler",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Task ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Parameters required for updating a Task",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Schedule"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully updated the Task",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Task not found",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete an existing Task using its ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Restore]"
+                ],
+                "summary": "Delete a Task",
+                "operationId": "DeleteRestorekHandler",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Task ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully deleted the Task",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Task not found",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/schedule": {
+            "get": {
+                "description": "Retrieve a list of all Schedules in the system.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Schedule]"
+                ],
+                "summary": "Get all Schedules",
+                "operationId": "GetAllSchedulesHandler",
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved all Schedules",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Schedule"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new Schedule and store it in the system.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Schedule]"
+                ],
+                "summary": "Create a new Schedule",
+                "operationId": "CreateScheduleHandler",
+                "parameters": [
+                    {
+                        "description": "Parameters required for creating a Schedule",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Schedule"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully created a Schedule",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/schedule/{id}": {
+            "get": {
+                "description": "Get the details of a Schedule using its ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Schedule]"
+                ],
+                "summary": "Get a Schedule by ID",
+                "operationId": "GetScheduleHandler",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Schedule ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved a Schedule",
+                        "schema": {
+                            "$ref": "#/definitions/models.Schedule"
+                        }
+                    },
+                    "404": {
+                        "description": "Schedule not found",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update the details of an existing Schedule using its ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Schedule]"
+                ],
+                "summary": "Update an existing Schedule",
+                "operationId": "UpdateScheduleHandler",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Schedule ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Parameters required for updating a Schedule",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Schedule"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully updated the Schedule",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Schedule not found",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete an existing Schedule using its ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Schedule]"
+                ],
+                "summary": "Delete a Schedule",
+                "operationId": "DeleteScheduleHandler",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Schedule ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully deleted the Schedule",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Schedule not found",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/service/clearAll": {
+            "delete": {
+                "description": "Delete an All Service and Task.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[service]"
+                ],
+                "summary": "Delete a Task",
+                "operationId": "DeleteServiceAndTaskAllHandler",
+                "responses": {
+                    "200": {
+                        "description": "Successfully deleted the All Service",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Clear All Task , Failed",
                         "schema": {
                             "$ref": "#/definitions/models.BasicResponse"
                         }
@@ -2011,34 +1682,12 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "controllers.GenarateTask": {
-            "type": "object",
-            "properties": {
-                "inline": {
-                    "$ref": "#/definitions/models.Task"
-                },
-                "targetPoint": {
-                    "$ref": "#/definitions/models.GenTaskTarget"
-                }
-            }
-        },
-        "controllers.MigrateTask": {
-            "type": "object",
-            "properties": {
-                "operationId": {
-                    "type": "string"
-                },
-                "sourcePoint": {
-                    "$ref": "#/definitions/models.ProviderConfig"
-                },
-                "targetPoint": {
-                    "$ref": "#/definitions/models.ProviderConfig"
-                }
-            }
-        },
         "models.BackupTask": {
             "type": "object",
             "properties": {
+                "dummy": {
+                    "$ref": "#/definitions/models.GenFileParams"
+                },
                 "operationId": {
                     "type": "string"
                 },
@@ -2053,6 +1702,9 @@ const docTemplate = `{
         "models.BasicDataTask": {
             "type": "object",
             "properties": {
+                "dummy": {
+                    "$ref": "#/definitions/models.GenFileParams"
+                },
                 "sourcePoint": {
                     "$ref": "#/definitions/models.ProviderConfig"
                 },
@@ -2072,12 +1724,9 @@ const docTemplate = `{
                 }
             }
         },
-        "models.GenTaskTarget": {
+        "models.GenFileParams": {
             "type": "object",
             "properties": {
-                "bucket": {
-                    "type": "string"
-                },
                 "checkCSV": {
                     "type": "boolean"
                 },
@@ -2108,39 +1757,6 @@ const docTemplate = `{
                 "checkZIP": {
                     "type": "boolean"
                 },
-                "databaseId": {
-                    "type": "string"
-                },
-                "databaseName": {
-                    "type": "string"
-                },
-                "endpoint": {
-                    "type": "string"
-                },
-                "host": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "path": {
-                    "type": "string"
-                },
-                "port": {
-                    "type": "string"
-                },
-                "profileName": {
-                    "type": "string"
-                },
-                "projectId": {
-                    "type": "string"
-                },
-                "provider": {
-                    "type": "string"
-                },
-                "region": {
-                    "type": "string"
-                },
                 "sizeCSV": {
                     "type": "string"
                 },
@@ -2170,9 +1786,43 @@ const docTemplate = `{
                 },
                 "sizeZIP": {
                     "type": "string"
+                }
+            }
+        },
+        "models.GenarateTask": {
+            "type": "object",
+            "properties": {
+                "dummy": {
+                    "$ref": "#/definitions/models.GenFileParams"
                 },
-                "username": {
+                "operationId": {
                     "type": "string"
+                },
+                "tag": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "targetPoint": {
+                    "$ref": "#/definitions/models.ProviderConfig"
+                }
+            }
+        },
+        "models.MigrateTask": {
+            "type": "object",
+            "properties": {
+                "dummy": {
+                    "$ref": "#/definitions/models.GenFileParams"
+                },
+                "operationId": {
+                    "type": "string"
+                },
+                "sourcePoint": {
+                    "$ref": "#/definitions/models.ProviderConfig"
+                },
+                "targetPoint": {
+                    "$ref": "#/definitions/models.ProviderConfig"
                 }
             }
         },
@@ -2223,6 +1873,9 @@ const docTemplate = `{
         "models.RestoreTask": {
             "type": "object",
             "properties": {
+                "dummy": {
+                    "$ref": "#/definitions/models.GenFileParams"
+                },
                 "operationId": {
                     "type": "string"
                 },

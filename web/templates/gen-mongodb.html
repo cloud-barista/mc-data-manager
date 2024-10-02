@@ -14,7 +14,13 @@
     <div class="card-body">
         <!-- <form action="/generate/mongodb" method="POST"> -->
         <form id="genForm">
-           
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-user-secret"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gen-s3-profile" name="profileName" placeholder="profile name" required>
+                    <label for="gen-s3-profile">Profile</label>
+                </div>
+            </div>
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-house"></i></span>
                 <div class="form-floating">
@@ -56,7 +62,7 @@
             </div>
 
             <button type="submit" class="btn btn-primary" id="submitBtn">생성</button>
-            <input type="hidden" id="genTarget" value="mongodb">
+            <input type="hidden" id="genTarget" value="nrdbms">
             <input type="hidden" id="provider" value="ncp">
         </form>
     </div>

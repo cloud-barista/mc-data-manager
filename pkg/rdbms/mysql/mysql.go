@@ -29,10 +29,10 @@ import (
 
 // mysqlDBMS struct
 type MysqlDBMS struct {
-	provider        models.Provider
-	db              *sql.DB
-	tartgetProvider models.Provider
-	ctx             context.Context
+	provider       models.Provider
+	db             *sql.DB
+	targetProvider models.Provider
+	ctx            context.Context
 }
 
 type MysqlDBOption func(*MysqlDBMS)
@@ -46,11 +46,11 @@ func (d *MysqlDBMS) SetProvdier(provider models.Provider) {
 }
 
 func (d *MysqlDBMS) GetTargetProvdier() models.Provider {
-	return d.tartgetProvider
+	return d.targetProvider
 }
 
 func (d *MysqlDBMS) SetTargetProvdier(provider models.Provider) {
-	d.tartgetProvider = provider
+	d.targetProvider = provider
 }
 
 func New(provider models.Provider, sqlDB *sql.DB, opts ...MysqlDBOption) *MysqlDBMS {
@@ -69,11 +69,17 @@ func New(provider models.Provider, sqlDB *sql.DB, opts ...MysqlDBOption) *MysqlD
 
 // Functions that execute EXEC commands in sql
 func (d *MysqlDBMS) Exec(query string) error {
-
 	_, err := d.db.Exec(query)
 	if err != nil {
-		log.Error().Err(err).Str("query", query).Msg("Failed to execute SQL query")
+		log.Error().Err(err).Str("query", query).Str("query", query).Msg("Failed to execute SQL query")
+		FormatNCPDatabaseCreateSQL(d.targetProvider, &query)
+		_, retryErr := d.db.Exec(query)
+		if retryErr != nil {
+			log.Error().Err(retryErr).Str("query", query).Msg("Failed to execute transformed NCP SQL query")
+			return retryErr
+		}
 	}
+
 	log.Debug().Str("query", query).Msg("SQL query executed successfully")
 	return err
 }
@@ -167,12 +173,18 @@ func (d *MysqlDBMS) ShowCreateDBSql(dbName string, dbCreateSql *string) error {
 	*dbCreateSql = EnsureCharsetAndCollate(*dbCreateSql, extractCharacterSet(*dbCreateSql), extractCollation(*dbCreateSql))
 
 	// If the target provider is NCP, modify the SQL to use NCP's specific procedure
-	if d.tartgetProvider == models.NCP {
+	if d.targetProvider == models.NCP {
 		dbName, charSet, collate := extractDatabaseInfo(*dbCreateSql)
 		*dbCreateSql = fmt.Sprintf("CALL sys.ncp_create_db('%s', '%s', '%s');", dbName, charSet, collate)
 	}
-
 	return nil
+}
+
+func FormatNCPDatabaseCreateSQL(targetProvider models.Provider, dbCreateSql *string) {
+	if targetProvider == models.NCP {
+		dbName, charSet, collate := extractDatabaseInfo(*dbCreateSql)
+		*dbCreateSql = fmt.Sprintf("CALL sys.ncp_create_db('%s', '%s', '%s');", dbName, charSet, collate)
+	}
 }
 
 // Get table create sql

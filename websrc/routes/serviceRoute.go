@@ -22,20 +22,16 @@ import (
 )
 
 // TaskRoutes initializes the routes for the Task entity.
-func TaskRoutes(g *echo.Group, scheduleManager *task.FileScheduleManager) {
-	TaskRoot(g, scheduleManager)
+func ServiceRoutes(g *echo.Group, scheduleManager *task.FileScheduleManager) {
+	ServiceRoot(g, scheduleManager)
 }
 
 // TaskRoot defines the root routes for Task related operations.
-func TaskRoot(g *echo.Group, scheduleManager *task.FileScheduleManager) {
-	taskController := controllers.TaskController{
+func ServiceRoot(g *echo.Group, scheduleManager *task.FileScheduleManager) {
+	serviceController := controllers.TaskController{
 		TaskService: scheduleManager,
 	}
 
-	g.GET("", taskController.GetAllTasksHandler)       // Retrieve all tasks
-	g.GET("/:id", taskController.GetTaskHandler)       // Retrieve a single task by ID
-	g.POST("", taskController.CreateTaskHandler)       // Create a new task
-	g.PUT("/:id", taskController.UpdateTaskHandler)    // Update an existing task by ID
-	g.DELETE("/:id", taskController.DeleteTaskHandler) // Delete a task by ID
+	g.DELETE("/clearAll", serviceController.DeleteServiceAndTaskAllHandler)
 
 }

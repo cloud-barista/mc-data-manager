@@ -15,23 +15,25 @@ limitations under the License.
 */
 package controllers
 
+import "github.com/cloud-barista/mc-data-manager/models"
+
 // MigrationForm represents the form data required for migration processes.
 // @Description MigrationForm contains all the necessary fields for migrating data between different services.
 
-func GetMigrationParamsFormFormData(form MigrationMySQLForm) MigrationMySQLParams {
-	source := MySQLParams{
+func GetMigrationParamsFormFormData(form models.MigrationMySQLForm) models.MigrationMySQLParams {
+	source := models.MySQLParams{
 		Host:         form.SHost,
 		Port:         form.SPort,
 		User:         form.SUsername,
 		Password:     form.SPassword,
 		DatabaseName: form.SDatabaseName,
 	}
-	target := MySQLParams{
+	target := models.MySQLParams{
 		Host:         form.DProvider,
 		Port:         form.DPort,
 		User:         form.DUsername,
 		Password:     form.DPassword,
 		DatabaseName: form.DDatabaseName,
 	}
-	return MigrationMySQLParams{SourcePoint: source, TargetPoint: target}
+	return models.MigrationMySQLParams{SourcePoint: source, TargetPoint: target}
 }
