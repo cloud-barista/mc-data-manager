@@ -11,6 +11,7 @@ services:
     init: true
 # service app
   mc-data-manger:
+    container_name: mc-data-manager
     depends_on:
       - init-chown-volumes
     build:

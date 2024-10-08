@@ -139,12 +139,6 @@ func GenerateRDBMSPostHandler(ctx echo.Context) error {
 		})
 
 	}
-	params.TaskMeta.TaskID = params.OperationId
-	params.TaskMeta.TaskType = models.Generate
-	params.TaskMeta.ServiceType = models.RDBMS
-	dparam := models.CommandTask{}
-	if !getDataWithReBind(logger, start, ctx, &dparam) {
-	}
 
 	manager := task.GetFileScheduleManager()
 
@@ -208,21 +202,15 @@ func GenerateNRDBMSPostHandler(ctx echo.Context) error {
 		})
 
 	}
-	params.TaskMeta.TaskID = params.OperationId
-	params.TaskMeta.TaskType = models.Generate
-	params.TaskMeta.ServiceType = models.NRDBMS
-	dparam := models.CommandTask{}
-	if !getDataWithReBind(logger, start, ctx, &dparam) {
-	}
 
-	manager := task.GetFileScheduleManager()
+	// manager := task.GetFileScheduleManager()
 
-	if !manager.RunTaskOnce(params) {
-		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
-			Result: logstrings.String(),
-			Error:  nil,
-		})
-	}
+	// if !manager.RunTaskOnce(params) {
+	// 	return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
+	// 		Result: logstrings.String(),
+	// 		Error:  nil,
+	// 	})
+	// }
 
 	jobEnd(logger, "Dummy creation and import successful with NoSQLDB", start)
 	return ctx.JSON(http.StatusOK, models.BasicResponse{
@@ -371,7 +359,7 @@ func DeleteGeneratekHandler(ctx echo.Context) error {
 //	@Tags			[Generate]
 //	@Accept			json
 //	@Produce		json
-//	@Param			RequestBody	body		 models.GenarateTask			true	"Parameters required to generate test data"
+//	@Param			RequestBody	body		 models.DataTask			true	"Parameters required to generate test data"
 //	@Success		200			{object}	models.BasicResponse	"Successfully generated test data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
@@ -389,13 +377,14 @@ func GenerateLinuxPostHandler(ctx echo.Context) error {
 		})
 	}
 
-	params := models.GenarateTask{}
+	params := models.DataTask{}
 	if !getDataWithReBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
 			Error:  nil,
 		})
 	}
+
 	if !dummyCreate(logger, start, params.Dummy) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -418,7 +407,7 @@ func GenerateLinuxPostHandler(ctx echo.Context) error {
 //	@Tags			[Generate]
 //	@Accept			json
 //	@Produce		json
-//	@Param			RequestBody	body		 models.GenarateTask			true	"Parameters required to generate test data"
+//	@Param			RequestBody	body		 models.DataTask			true	"Parameters required to generate test data"
 //	@Success		200			{object}	models.BasicResponse	"Successfully generated test data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
@@ -437,7 +426,7 @@ func GenerateWindowsPostHandler(ctx echo.Context) error {
 
 	}
 
-	params := models.GenarateTask{}
+	params := models.DataTask{}
 	if !getDataWithReBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),

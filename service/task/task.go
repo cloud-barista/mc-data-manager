@@ -1334,7 +1334,7 @@ func (m *FileScheduleManager) ClearServiceAndTaskAll() error {
 			log.Debug().Msgf("Task ID: %s is already a delete task.", task.TaskMeta.TaskID)
 		}
 		if task.ServiceType == models.NRDBMS {
-			log.Debug().Msgf(" NRDB skip.", task.TaskMeta.TaskID)
+			log.Debug().Msgf(" NRDB skip.: %s", task.TaskMeta.TaskID)
 			m.tasks[i].Status = models.StatusInactive
 		}
 	}

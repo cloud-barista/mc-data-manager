@@ -29,7 +29,6 @@ import (
 )
 
 func genData(params models.GenFileParams, logger *zerolog.Logger) error {
-
 	if !hasAnyTrue(params.FileFormatParams) {
 		err := errors.New("no file format selected")
 		logger.Info().Msgf("%+v", params)

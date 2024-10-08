@@ -72,10 +72,10 @@ func (d *MysqlDBMS) Exec(query string) error {
 	_, err := d.db.Exec(query)
 	if err != nil {
 		log.Error().Err(err).Str("query", query).Str("query", query).Msg("Failed to execute SQL query")
-		FormatNCPDatabaseCreateSQL(d.targetProvider, &query)
+		FormatNCPDatabaseCreateSQL(d.provider, &query)
 		_, retryErr := d.db.Exec(query)
 		if retryErr != nil {
-			log.Error().Err(retryErr).Str("query", query).Msg("Failed to execute transformed NCP SQL query")
+			log.Error().Err(retryErr).Str("targetProvider", string(d.provider)).Str("query", query).Msg("Failed to execute transformed NCP SQL query")
 			return retryErr
 		}
 	}
@@ -183,6 +183,7 @@ func (d *MysqlDBMS) ShowCreateDBSql(dbName string, dbCreateSql *string) error {
 func FormatNCPDatabaseCreateSQL(targetProvider models.Provider, dbCreateSql *string) {
 	if targetProvider == models.NCP {
 		dbName, charSet, collate := extractDatabaseInfo(*dbCreateSql)
+		fmt.Println(*dbCreateSql, "-", dbName, charSet, collate)
 		*dbCreateSql = fmt.Sprintf("CALL sys.ncp_create_db('%s', '%s', '%s');", dbName, charSet, collate)
 	}
 }
@@ -335,32 +336,34 @@ func extractDatabaseInfo(sql string) (string, string, string) {
 
 // extract DBname
 func extractDatabaseName(sql string) string {
-	re := regexp.MustCompile(`CREATE\s+DATABASE\s+(?:/\*.*?\*/\s*)?(IF\s+NOT\s+EXISTS\s+)?\s*` + "`([^`]*)`")
+	re := regexp.MustCompile(`(?i)CREATE\s+DATABASE\s+(?:/\*.*?\*/\s*)?(?:IF\s+NOT\s+EXISTS\s+)?\s*` + `([^\s;]+)`)
 	match := re.FindStringSubmatch(sql)
-	if len(match) >= 3 {
-		return match[2]
+	if len(match) >= 2 {
+		// Remove any trailing semicolon if present
+		dbName := strings.TrimRight(match[1], ";")
+		return dbName
 	}
 	return ""
 }
 
 // extract Charset
 func extractCharacterSet(sql string) string {
-	re := regexp.MustCompile(`DEFAULT\s+CHARACTER\s+SET\s+([^\s]+)`)
+	re := regexp.MustCompile(`(?i)DEFAULT\s+CHARACTER\s+SET\s+([^\s;]+)`)
 	match := re.FindStringSubmatch(sql)
 	if len(match) >= 2 {
 		return match[1]
 	}
-	return ""
+	return "utf8mb4" // Return default if not specified
 }
 
 // extract Collation
 func extractCollation(sql string) string {
-	re := regexp.MustCompile(`(?:/\*.*?\*/\s*)?COLLATE\s+([^\s]+)`)
+	re := regexp.MustCompile(`(?i)COLLATE\s+([^\s;]+)`)
 	match := re.FindStringSubmatch(sql)
 	if len(match) >= 2 {
 		return match[1]
 	}
-	return ""
+	return "utf8mb4_general_ci" // Return default if not specified
 }
 
 // remove Sequence

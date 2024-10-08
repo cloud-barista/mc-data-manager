@@ -649,8 +649,6 @@ func getDataWithReBind(logger *zerolog.Logger, startTime time.Time, ctx echo.Con
 		return false
 	}
 
-	// logger.Debug().Msgf("%+v", string(bodyBytes))
-
 	ctx.Request().Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
 	if err := ctx.Bind(params); err != nil {

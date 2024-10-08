@@ -39,7 +39,7 @@ import (
 func RestoreOSPostHandler(ctx echo.Context) error {
 	start := time.Now()
 
-	logger, logstrings := pageLogInit(ctx, "Bakcup", "Bakcup linux objectstorage to objectstorage", start)
+	logger, logstrings := pageLogInit(ctx, "Restore", "Restore objectstorage", start)
 
 	params := models.DataTask{}
 	if !getDataWithReBind(logger, start, ctx, &params) {
@@ -60,7 +60,7 @@ func RestoreOSPostHandler(ctx echo.Context) error {
 		})
 	}
 	// backup success. Send result to client
-	jobEnd(logger, "Successfully Bakcup data", start)
+	jobEnd(logger, "Successfully Restore data", start)
 	return ctx.JSON(http.StatusOK, models.BasicResponse{
 		Result: logstrings.String(),
 		Error:  nil,
@@ -82,7 +82,7 @@ func RestoreOSPostHandler(ctx echo.Context) error {
 func RestoreRDBPostHandler(ctx echo.Context) error {
 	start := time.Now()
 
-	logger, logstrings := pageLogInit(ctx, "Restore", "Restore linux objectstorage to objectstorage", start)
+	logger, logstrings := pageLogInit(ctx, "Restore", "Restore RDBMS", start)
 
 	params := models.DataTask{}
 	if !getDataWithReBind(logger, start, ctx, &params) {
@@ -125,7 +125,7 @@ func RestoreRDBPostHandler(ctx echo.Context) error {
 func RestoreNRDBPostHandler(ctx echo.Context) error {
 	start := time.Now()
 
-	logger, logstrings := pageLogInit(ctx, "Restore", "Restore linux objectstorage to objectstorage", start)
+	logger, logstrings := pageLogInit(ctx, "Restore", "Restore NRDBMS", start)
 
 	params := models.DataTask{}
 	if !getDataWithReBind(logger, start, ctx, &params) {

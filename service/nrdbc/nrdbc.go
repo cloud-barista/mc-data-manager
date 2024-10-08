@@ -19,6 +19,7 @@ import (
 	"fmt"
 
 	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 type NRDBMS interface {
@@ -130,15 +131,17 @@ func (src *NRDBController) Copy(dst *NRDBController) error {
 		src.logWrite("Error", "ListTables error", err)
 		return err
 	}
-
+	log.Debug().Msgf("%+v", tableList)
 	for _, table := range tableList {
+		log.Debug().Msgf("%+v", table)
 		src.logWrite("Info", fmt.Sprintf("Migration start: %s", table), nil)
 		data := []map[string]interface{}{}
+		src.logWrite("Info", fmt.Sprintf("Extract start: %s", table), nil)
 		if err := src.Get(table, &data); err != nil {
 			src.logWrite("Error", "Get error", err)
 			return err
 		}
-
+		src.logWrite("Info", fmt.Sprintf("Import start: %s", table), nil)
 		if err := dst.Put(table, &data); err != nil {
 			src.logWrite("Error", "Put error", err)
 			return err

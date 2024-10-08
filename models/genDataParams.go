@@ -30,7 +30,7 @@ type GenDataParams struct {
 
 type GenFileParams struct {
 	Directory string `json:"Directory,omitempty" swaggerignore:"true"`
-	DummyPath string `json:"path,omitempty" swaggerignore:"true"`
+	DummyPath string `json:"dummyPath,omitempty" swaggerignore:"true"`
 	FileFormatParams
 	FileSizeParams
 }
