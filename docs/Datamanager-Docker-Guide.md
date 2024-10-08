@@ -64,7 +64,8 @@
 2. Linux에서 Docker 커맨드 실행
 
     - Docker run
-        -실행 
+
+        - 실행
             ```shell
             docker run -d \
                 -p 3300:3300 \
