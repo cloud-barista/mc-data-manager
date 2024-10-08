@@ -63,14 +63,19 @@
 
 2. Linux에서 Docker 커맨드 실행
 
-    - Docker run 
-        ```shell
-        docker run -d \
-            -p 3300:3300 \
-            -v data:/app/data \
-            --name mc-data-manager \
-            cloudbaristaorg/mc-data-manager
-        ```
+    - Docker run
+        -실행 
+            ```shell
+            docker run -d \
+                -p 3300:3300 \
+                -v data:/app/data \
+                --name mc-data-manager \
+                cloudbaristaorg/mc-data-manager
+            ```
+        - 인증 프로필 카피
+            ```shell
+            docker  cp  profile.json  mc-data-manager:/app/data/var/run/data-manager/profile/profile.json
+            ```
 
     - Docker compose
         - docker-compose yaml 파일 생성  
@@ -90,6 +95,6 @@
             ```
         - 인증 프로필 카피
             ```shell
-            docker compose cp  profile.json  mc-data-manager:/app/data/var/run/profile/profile.json
+            docker compose cp  profile.json  mc-data-manager:/app/data/var/run/data-manager/profile/profile.json
             ```
 
