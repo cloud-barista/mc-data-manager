@@ -39,7 +39,7 @@ import (
 func BackupOSPostHandler(ctx echo.Context) error {
 	start := time.Now()
 
-	logger, logstrings := pageLogInit(ctx, "Bakcup", "Bakcup linux objectstorage to objectstorage", start)
+	logger, logstrings := pageLogInit(ctx, "Bakcup", "Bakcup Objectstorage", start)
 
 	params := models.DataTask{}
 	if !getDataWithReBind(logger, start, ctx, &params) {
@@ -82,7 +82,7 @@ func BackupOSPostHandler(ctx echo.Context) error {
 func BackupRDBPostHandler(ctx echo.Context) error {
 	start := time.Now()
 
-	logger, logstrings := pageLogInit(ctx, "Bakcup", "Bakcup linux RDBMS to RDBMS", start)
+	logger, logstrings := pageLogInit(ctx, "Bakcup", "Bakcup RDBMS", start)
 
 	params := models.DataTask{}
 	if !getDataWithReBind(logger, start, ctx, &params) {
@@ -125,7 +125,7 @@ func BackupRDBPostHandler(ctx echo.Context) error {
 func BackupNRDBPostHandler(ctx echo.Context) error {
 	start := time.Now()
 
-	logger, logstrings := pageLogInit(ctx, "Bakcup", "Bakcup linux NRDBMS to NRDBMS", start)
+	logger, logstrings := pageLogInit(ctx, "Bakcup", "Bakcup NRDBMS", start)
 
 	params := models.DataTask{}
 	if !getDataWithReBind(logger, start, ctx, &params) {

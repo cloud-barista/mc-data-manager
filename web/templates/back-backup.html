@@ -51,8 +51,8 @@
                 <span class="input-group-text"><i class="fa-solid fa-cloud"></i></span>
                 <select class="form-select" id="srcService" name="srcService">
                     <option value="objectstorage">ObjectStorage</option>
-                    <option value="rdb">RDB</option>
-                    <option value="nrdb">NRDB</option>
+                    <option value="rdbms">RDB</option>
+                    <option value="nrdbms">NRDB</option>
                     <!-- <option value="on-premise">On-premise</option> -->
                 </select>
             </div>
@@ -127,7 +127,7 @@
                 </div>
             </div>
 
-            <div class="form-section" id="rdb" style="display:none;">
+            <div class="form-section" id="rdbms" style="display:none;">
                 <label class="form-label">RDB Settings</label>
                 <div class="input-group mb-3">
                     <span class="input-group-text"><i class="fa-solid fa-house"></i></span>
@@ -163,44 +163,44 @@
             </div>
 
 
-            <div class="form-section" id="aws-nrdb" style="display:none;">
+            <div class="form-section" id="aws-nrdbms" style="display:none;">
                 <!-- <label class="form-label">AWS NRDB Settings</label> -->
                 <div class="mb-3">    
                     <div class="form-floating">
-                        <select class="form-select form-select-sm" id="nrdb-aws-region" name="sourcePoint[region]">
+                        <select class="form-select form-select-sm" id="nrdbms-aws-region" name="sourcePoint[region]">
                         {{ range $index, $value := .AWSRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}
                         </select>
-                        <label for="nrdb-aws-region">Region</label>
+                        <label for="nrdbms-aws-region">Region</label>
                     </div>
                 </div>
             </div>
 
-            <div class="form-section" id="gcp-nrdb" style="display:none;">
+            <div class="form-section" id="gcp-nrdbms" style="display:none;">
                 <!-- <label class="form-label">GCP NRDB Settings</label> -->
                 <div class="mb-3">    
                     <div class="form-floating">
-                        <select class="form-select form-select-sm" id="nrdb-gcp-region" name="sourcePoint[region]">
+                        <select class="form-select form-select-sm" id="nrdbms-gcp-region" name="sourcePoint[region]">
                         {{ range $index, $value := .GCPRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}
                         </select>
-                        <label for="nrdb-gcp-region">Region</label>
+                        <label for="nrdbms-gcp-region">Region</label>
                     </div>
                 </div>
             </div>
 
-            <div class="form-section" id="ncp-nrdb" style="display:none;">
+            <div class="form-section" id="ncp-nrdbms" style="display:none;">
                 <!-- <label class="form-label">NCP NRDB Settings</label> -->
                 <div class="mb-3">    
                     <div class="form-floating">
-                        <select class="form-select form-select-sm" id="nrdb-ncp-region" name="sourcePoint[region]">
+                        <select class="form-select form-select-sm" id="nrdbms-ncp-region" name="sourcePoint[region]">
                         {{ range $index, $value := .NCPRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}
                         </select>
-                        <label for="nrdb-ncp-region">Region</label>
+                        <label for="nrdbms-ncp-region">Region</label>
                     </div>
                 </div>
                 <label class="form-label">RDB Settings</label>
@@ -244,7 +244,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary" id="submitBtn">실행</button>
+            <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
         </form>
     </div>
 </div>
@@ -255,8 +255,8 @@
         var service = document.getElementById('srcService').value;
         var idToShow = provider + '-' + service;
 
-        if (service === 'rdb') {
-            idToShow = 'rdb';
+        if (service === 'rdbms') {
+            idToShow = 'rdbms';
         }
 
         var allInputs = document.querySelectorAll('.form-section input, .form-section select, .form-section textarea');

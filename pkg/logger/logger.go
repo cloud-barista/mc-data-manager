@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"strconv"
 	"sync"
+	"time"
 
 	"github.com/cloud-barista/mc-data-manager/config"
 	"github.com/rs/zerolog"
@@ -96,6 +97,16 @@ func NewLogger(config Config) *zerolog.Logger {
 			Compress:   config.File.Compress,
 		}
 
+		// Ensure the log file directory exists before creating the log file
+		dir := filepath.Dir(config.File.Path)
+		if _, err := os.Stat(dir); os.IsNotExist(err) {
+			// Create the directory if it does not exist
+			err = os.MkdirAll(dir, 0755) // Set permissions as needed
+			if err != nil {
+				log.Fatal().Msgf("Failed to create log directory: %v", err)
+			}
+		}
+
 		// Ensure the log file exists before changing its permissions
 		if _, err := os.Stat(config.File.Path); os.IsNotExist(err) {
 			// Create the log file if it does not exist
@@ -152,7 +163,7 @@ func getLogLevel(logLevel string) zerolog.Level {
 // configureWriter sets up the logger based on the writer type
 func configureWriter(logWriter string, level zerolog.Level) *zerolog.Logger {
 	var logger zerolog.Logger
-	multi := zerolog.MultiLevelWriter(sharedLogFile, zerolog.ConsoleWriter{Out: os.Stdout})
+	multi := zerolog.MultiLevelWriter(sharedLogFile, zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339})
 
 	switch logWriter {
 	case "both":
@@ -160,7 +171,7 @@ func configureWriter(logWriter string, level zerolog.Level) *zerolog.Logger {
 	case "file":
 		logger = zerolog.New(sharedLogFile).Level(level).With().Timestamp().Caller().Logger()
 	case "stdout":
-		logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stdout}).Level(level).With().Timestamp().Caller().Logger()
+		logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339}).Level(level).With().Timestamp().Caller().Logger()
 	default:
 		log.Warn().Msgf("Invalid log writer: %s. Using default value: both", logWriter)
 		logger = zerolog.New(multi).Level(level).With().Timestamp().Caller().Logger()

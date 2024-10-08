@@ -65,7 +65,11 @@
 
     - Docker run 
         ```shell
-        docker run -d -p 3300:3300 cloudbaristaorg/mc-data-manager
+        docker run -d \
+            -p 3300:3300 \
+            -v data:/app/data \
+            --name mc-data-manager \
+            cloudbaristaorg/mc-data-manager
         ```
 
     - Docker compose
@@ -73,13 +77,19 @@
             ```yaml
             services:
                 mc-data-manager:
+                    container_name: mc-data-manager
                     image: cloudbaristaorg/mc-data-manager
                     ports:
-                    - "3300:3300"
+                        - "3300:3300"
+                    volumes:
+                        - ./data:/app/data/
             ```
         - 실행
             ```shell
             docker compose -f <filename>.yaml up -d
             ```
-
+        - 인증 프로필 카피
+            ```shell
+            docker compose cp  profile.json  mc-data-manager:/app/data/var/run/profile/profile.json
+            ```
 

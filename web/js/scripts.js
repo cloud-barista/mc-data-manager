@@ -377,10 +377,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-
-
 // for m-cmp/mc-web-console
-
 
 // message  Info
 // {
