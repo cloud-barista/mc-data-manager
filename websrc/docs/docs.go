@@ -352,7 +352,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.GenarateTask"
+                            "$ref": "#/definitions/models.DataTask"
                         }
                     }
                 ],
@@ -540,7 +540,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.GenarateTask"
+                            "$ref": "#/definitions/models.DataTask"
                         }
                     }
                 ],
@@ -980,6 +980,33 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Task not found",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/readyZ": {
+            "get": {
+                "description": "Get System Ready",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Already Check System]"
+                ],
+                "summary": "Get System Ready Handler",
+                "operationId": "GetSystemReadyHandler",
+                "responses": {
+                    "200": {
+                        "description": "System is Ready",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Profile Load , Failed: err",
                         "schema": {
                             "$ref": "#/definitions/models.BasicResponse"
                         }
@@ -1466,7 +1493,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "[service]"
+                    "[Service]"
                 ],
                 "summary": "Delete a Task",
                 "operationId": "DeleteServiceAndTaskAllHandler",
@@ -1721,6 +1748,23 @@ const docTemplate = `{
                 },
                 "Result": {
                     "type": "string"
+                }
+            }
+        },
+        "models.DataTask": {
+            "type": "object",
+            "properties": {
+                "dummy": {
+                    "$ref": "#/definitions/models.GenFileParams"
+                },
+                "operationId": {
+                    "type": "string"
+                },
+                "sourcePoint": {
+                    "$ref": "#/definitions/models.ProviderConfig"
+                },
+                "targetPoint": {
+                    "$ref": "#/definitions/models.ProviderConfig"
                 }
             }
         },

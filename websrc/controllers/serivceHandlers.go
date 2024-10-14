@@ -28,7 +28,7 @@ import (
 //	@ID 			DeleteServiceAndTaskAllHandler
 //	@Summary		Delete a Task
 //	@Description	Delete an All Service and Task.
-//	@Tags			[service]
+//	@Tags			[Service]
 //	@Produce		json
 //	@Success		200		{object}	models.BasicResponse	"Successfully deleted the All Service"
 //	@Failure		404		{object}	models.BasicResponse	"Clear All Task , Failed"

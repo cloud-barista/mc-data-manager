@@ -29,7 +29,7 @@ import (
 //	@ID 			GetSystemReadyHandler
 //	@Summary		Get System Ready Handler
 //	@Description	Get System Ready
-//	@Tags			[Ready]
+//	@Tags			[Already Check System]
 //	@Produce		json
 //	@Success		200		{object}	models.BasicResponse	"System is Ready"
 //	@Failure		404		{object}	models.BasicResponse	"Profile Load , Failed: err"
