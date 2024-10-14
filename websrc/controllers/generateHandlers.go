@@ -139,6 +139,9 @@ func GenerateRDBMSPostHandler(ctx echo.Context) error {
 		})
 
 	}
+	params.TaskMeta.TaskID = params.OperationId
+	params.TaskMeta.TaskType = models.Generate
+	params.TaskMeta.ServiceType = models.RDBMS
 
 	manager := task.GetFileScheduleManager()
 
@@ -203,14 +206,18 @@ func GenerateNRDBMSPostHandler(ctx echo.Context) error {
 
 	}
 
-	// manager := task.GetFileScheduleManager()
+	params.TaskMeta.TaskID = params.OperationId
+	params.TaskMeta.TaskType = models.Generate
+	params.TaskMeta.ServiceType = models.NRDBMS
 
-	// if !manager.RunTaskOnce(params) {
-	// 	return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
-	// 		Result: logstrings.String(),
-	// 		Error:  nil,
-	// 	})
-	// }
+	manager := task.GetFileScheduleManager()
+
+	if !manager.RunTaskOnce(params) {
+		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
+			Result: logstrings.String(),
+			Error:  nil,
+		})
+	}
 
 	jobEnd(logger, "Dummy creation and import successful with NoSQLDB", start)
 	return ctx.JSON(http.StatusOK, models.BasicResponse{
