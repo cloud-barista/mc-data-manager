@@ -27,6 +27,17 @@ definitions:
       Result:
         type: string
     type: object
+  models.DataTask:
+    properties:
+      dummy:
+        $ref: '#/definitions/models.GenFileParams'
+      operationId:
+        type: string
+      sourcePoint:
+        $ref: '#/definitions/models.ProviderConfig'
+      targetPoint:
+        $ref: '#/definitions/models.ProviderConfig'
+    type: object
   models.GenFileParams:
     properties:
       checkCSV:
@@ -495,7 +506,7 @@ paths:
         name: RequestBody
         required: true
         schema:
-          $ref: '#/definitions/models.GenarateTask'
+          $ref: '#/definitions/models.DataTask'
       produces:
       - application/json
       responses:
@@ -619,7 +630,7 @@ paths:
         name: RequestBody
         required: true
         schema:
-          $ref: '#/definitions/models.GenarateTask'
+          $ref: '#/definitions/models.DataTask'
       produces:
       - application/json
       responses:
@@ -835,6 +846,24 @@ paths:
       summary: Migrate data from RDBMS to RDBMS
       tags:
       - '[Migrate]'
+  /readyZ:
+    get:
+      description: Get System Ready
+      operationId: GetSystemReadyHandler
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: System is Ready
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "404":
+          description: 'Profile Load , Failed: err'
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Get System Ready Handler
+      tags:
+      - '[Already Check System]'
   /restore:
     get:
       description: Retrieve a list of all Tasks in the system.
@@ -1167,7 +1196,7 @@ paths:
             $ref: '#/definitions/models.BasicResponse'
       summary: Delete a Task
       tags:
-      - '[service]'
+      - '[Service]'
   /task:
     get:
       description: Retrieve a list of all Tasks in the system.
