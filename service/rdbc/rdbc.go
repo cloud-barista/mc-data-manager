@@ -63,6 +63,7 @@ func WithLogger(logger *zerolog.Logger) Option {
 }
 
 func New(rdb RDBMS, opts ...Option) (*RDBController, error) {
+
 	rdbc := &RDBController{
 		client: rdb,
 		logger: nil,
@@ -98,7 +99,7 @@ func (rdb *RDBController) Put(sql string) error {
 		if line != "" {
 			err = rdb.client.Exec(line)
 			if err != nil {
-				rdb.logger.Error().Msgf("err Line : %+v", line)
+				log.Error().Msgf("err Line : %+v", line)
 				rdb.logWrite("Error", "sql exec error", err)
 				return err
 			}
@@ -116,7 +117,7 @@ func (rdb *RDBController) Put(sql string) error {
 func (rdb *RDBController) PutDoc(sql string) error {
 	err := rdb.client.Exec(sql)
 	if err != nil {
-		rdb.logger.Error().Msgf("err SQL : %+v", sql)
+		log.Error().Msgf("err SQL : %+v", sql)
 		rdb.logWrite("Error", "sql exec error", err)
 		return err
 	}
@@ -131,7 +132,6 @@ func (rdb *RDBController) Copy(dst *RDBController) error {
 		rdb.logWrite("Error", "ListDB error", err)
 		return err
 	}
-
 	for _, db := range dbList {
 		sql = ""
 		rdb.client.SetTargetProvdier(dst.client.GetProvdier())
@@ -223,9 +223,9 @@ func (rdbc *RDBController) logWrite(logLevel, msg string, err error) {
 	if rdbc.logger != nil {
 		switch logLevel {
 		case "Info":
-			rdbc.logger.Info().Msg(msg)
+			log.Info().Msg(msg)
 		case "Error":
-			rdbc.logger.Error().Msgf("%s : %v", msg, err)
+			log.Error().Msgf("%s : %v", msg, err)
 		}
 	}
 }

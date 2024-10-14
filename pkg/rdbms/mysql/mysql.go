@@ -75,7 +75,7 @@ func (d *MysqlDBMS) Exec(query string) error {
 		FormatNCPDatabaseCreateSQL(d.provider, &query)
 		_, retryErr := d.db.Exec(query)
 		if retryErr != nil {
-			log.Error().Err(retryErr).Str("targetProvider", string(d.provider)).Str("query", query).Msg("Failed to execute transformed NCP SQL query")
+			log.Error().Err(retryErr).Str("Provider", string(d.provider)).Str("tagetProvider", string(d.provider)).Str("query", query).Msg("Failed to execute transformed NCP SQL query")
 			return retryErr
 		}
 	}
@@ -336,7 +336,7 @@ func extractDatabaseInfo(sql string) (string, string, string) {
 
 // extract DBname
 func extractDatabaseName(sql string) string {
-	re := regexp.MustCompile(`(?i)CREATE\s+DATABASE\s+(?:/\*.*?\*/\s*)?(?:IF\s+NOT\s+EXISTS\s+)?\s*` + `([^\s;]+)`)
+	re := regexp.MustCompile(`(?i)CREATE\s+DATABASE\s+(?:/\*.*?\*/\s*)?(?:IF\s+NOT\s+EXISTS\s+)?\s*` + "`?" + `([^\s;` + "`" + `]+)` + "`?")
 	match := re.FindStringSubmatch(sql)
 	if len(match) >= 2 {
 		// Remove any trailing semicolon if present
