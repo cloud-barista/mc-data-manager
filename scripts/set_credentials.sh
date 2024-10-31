@@ -4,6 +4,8 @@
 AWS_SECRETS_FILE="./data/var/run/data-manager/template/example/AWS/BUILDER/secrets.tfvars"
 NCP_SECRETS_FILE="./data/var/run/data-manager/template/example/NCP/BUILDER/secrets.tfvars"
 GCP_SECRETS_FILE="./data/var/run/data-manager/template/example/GCP/BUILDER/secrets.json"
+GCP_DUMMY_FILE="./data/var/run/data-manager/template/example/GCP/BUILDER/secrets.tfvars"
+
 DEFAULT_PROFILE_FILE="./data/var/run/data-manager/profile/profile.json"
 
 # Function to determine the profile.json file path
@@ -62,6 +64,7 @@ EOF
 create_gcp_secrets_file() {
   echo "$gcp_credentials" > "$GCP_SECRETS_FILE"
   echo "GCP credentials saved to: $GCP_SECRETS_FILE"
+  touch $GCP_DUMMY_FILE
 }
 
 # Function to copy profile.json to the default path if it was used from the current directory
