@@ -3,8 +3,10 @@
 
 ## 목차
 
-- [사전 준비](#사전-준비)
-- [Linux에서 Docker 설치 및 실행](#linux에서-docker-설치-및-실행)
+- [Data Manager Docker install 가이드](#data-manager-docker-install-가이드)
+  - [목차](#목차)
+  - [사전 준비](#사전-준비)
+  - [Linux에서 Docker 설치 및 실행](#linux에서-docker-설치-및-실행)
 
 
 ## 사전 준비
@@ -89,6 +91,7 @@
                         - "3300:3300"
                     volumes:
                         - ./data:/app/data/
+                        - ./scripts:/app/scripts/
             ```
         - 실행
             ```shell
