@@ -1179,6 +1179,24 @@ paths:
       summary: Update an existing Schedule
       tags:
       - '[Schedule]'
+  /service/apply:
+    post:
+      description: Execute the apply.sh script to set up resources.
+      operationId: applyResourceHandler
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully applied resources
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Failed to apply resources
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Apply Resources
+      tags:
+      - '[Service]'
   /service/clearAll:
     delete:
       description: Delete an All Service and Task.
@@ -1195,6 +1213,24 @@ paths:
           schema:
             $ref: '#/definitions/models.BasicResponse'
       summary: Delete a Task
+      tags:
+      - '[Service]'
+  /service/destroy:
+    delete:
+      description: Execute the destroy.sh script to destroy resources.
+      operationId: destroyResourceHandler
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully destroyed resources
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Failed to destroy resources
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Destroy Resources
       tags:
       - '[Service]'
   /task:

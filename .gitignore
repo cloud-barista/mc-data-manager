@@ -30,3 +30,37 @@ mc-data-manager
 
 # Credential
 profile.json
+secrets.json
+gcp.json
+*.tfvars
+
+
+
+# Local .terraform directories
+.terraform/
+.terraform*
+terraform.tfstate
+terraform.tfstate.*
+crash.log
+crash.*
+*.tfvars
+*.tfstate
+*.tfstate.*
+
+# Sensitive variable definition files
+secrets.tfvars
+terraform.tfvars
+*.auto.tfvars
+
+# Ignore override files as they are usually machine-specific
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Ignore CLI configuration files
+.terraformrc
+terraform.rc
+
+# Ignore plan output files
+*.tfplan

@@ -1486,6 +1486,33 @@ const docTemplate = `{
                 }
             }
         },
+        "/service/apply": {
+            "post": {
+                "description": "Execute the apply.sh script to set up resources.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Service]"
+                ],
+                "summary": "Apply Resources",
+                "operationId": "applyResourceHandler",
+                "responses": {
+                    "200": {
+                        "description": "Successfully applied resources",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to apply resources",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/service/clearAll": {
             "delete": {
                 "description": "Delete an All Service and Task.",
@@ -1506,6 +1533,33 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Clear All Task , Failed",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/service/destroy": {
+            "delete": {
+                "description": "Execute the destroy.sh script to destroy resources.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Service]"
+                ],
+                "summary": "Destroy Resources",
+                "operationId": "destroyResourceHandler",
+                "responses": {
+                    "200": {
+                        "description": "Successfully destroyed resources",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to destroy resources",
                         "schema": {
                             "$ref": "#/definitions/models.BasicResponse"
                         }

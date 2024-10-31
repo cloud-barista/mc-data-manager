@@ -377,6 +377,84 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const genServiceLink = document.getElementById('genServiceLink');
+
+    if (genServiceLink) {
+        genServiceLink.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            const userConfirmed = confirm('정말로 데이터 관련 서비스를 생성하시겠습니까?');
+            if (!userConfirmed) {
+                return;
+            }
+
+            fetch('/service/apply', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('서비스 생성 요청이 전달 되었습니다.');
+                    } else {
+                        return response.json().then(data => {
+                            throw new Error(data.message || '서비스 생성 요청 중 오류가 발생했습니다.');
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert(`오류: ${error.message}`);
+                });
+        });
+    } else {
+        console.error('Gen Service 링크를 찾을 수 없습니다.');
+    }
+});
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const delServiceLink = document.getElementById('delServiceLink');
+
+    if (delServiceLink) {
+        delServiceLink.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            const userConfirmed = confirm('정말로 데이터 관련 서비스를 제거하시겠습니까?');
+            if (!userConfirmed) {
+                return;
+            }
+
+            fetch('/service/destroy', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('서비스 제거 요청이 전달 되었습니다.');
+                    } else {
+                        return response.json().then(data => {
+                            throw new Error(data.message || '서비스 제거 요청 중 오류가 발생했습니다.');
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert(`오류: ${error.message}`);
+                });
+        });
+    } else {
+        console.error('Del Service 링크를 찾을 수 없습니다.');
+    }
+});
+
 // for m-cmp/mc-web-console
 
 // message  Info
