@@ -78,6 +78,7 @@ func (d *MysqlDBMS) Exec(query string) error {
 			log.Error().Err(retryErr).Str("Provider", string(d.provider)).Str("tagetProvider", string(d.provider)).Str("query", query).Msg("Failed to execute transformed NCP SQL query")
 			return retryErr
 		}
+		err = nil // If retry query Not Failed 
 	}
 
 	log.Debug().Str("query", query).Msg("SQL query executed successfully")

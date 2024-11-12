@@ -20,6 +20,14 @@
             <label for="mig-mongodb-host" class="form-label">MongoDB</label>
 
             <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-user-secret"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gen-s3-profile" name="sourcePoint[profileName]" placeholder="profile name" required>
+                    <label for="mig-s3-profile">Profile</label>
+                </div>
+            </div>
+            
+            <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-house"></i></span>
                 <div class="form-floating">
                     <input type="text" class="form-control" id="mig-mongodb-host" name="sourcePoint[host]" placeholder="호스트명 / IP" required>
