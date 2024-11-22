@@ -29,9 +29,9 @@ services:
       - "3300:3300"
     restart : always
     volumes:
-      - ./data:/app/data/
-      - ./scripts:/app/scripts/
-      - /etc/localtime:/etc/localtime:ro
+      - ./data:/app/data/ # container-volume
+      - ./scripts:/app/scripts/ # container-volume
+      - /etc/localtime:/etc/localtime:ro # timezone
     env_file:
       - .env
     # Health check configuration      

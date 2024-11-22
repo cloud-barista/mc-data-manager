@@ -38,6 +38,8 @@ RUN chown -R ${USER}:${GROUP} /app
 USER ${USER}
 COPY --from=builder --chown=${USER}:${GROUP} /opt/app /app/app
 COPY --from=builder --chown=${USER}:${GROUP} /opt/web /app/web
+COPY --from=builder --chown=${USER}:${GROUP} /opt/data /app/data
+COPY --from=builder --chown=${USER}:${GROUP} /opt/scripts /app/scripts
 #-------------------------------------------------------------
 # Add entrypoint script
 COPY --chown=${USER}:${GROUP} entrypoint.sh /app/entrypoint.sh
