@@ -1,10 +1,12 @@
 # Cloud-Migrator Data Manager
 
-Data Manager 데이터 마이그레이션 기술의 검증을 위한 환경을 구축하고, 데이터 마이그레이션에 필요한 테스트 데이터를 생성하는 도구이다.
-이를 위해 아래와 같은 주요 기능을 제공한다.
-1. 데이터 저장소(스토리지 또는 데이터베이스)를 목표 및 소스 컴퓨팅 환경에 생성한다. 
-2. 생성된 소스 데이터 저장소에 테스트 데이터를 생성 및 저장한다.
-3. 소스에서 목표 컴퓨팅 환경으로 데이터 복제/마이그레이션을 수행하며, 이때 데이터 전/후처리 작업을 수행한다.
+Data Manager is a tool designed to validate data migration technologies by setting up a testing environment and generating the necessary test data for migration.
+
+It provides the following key features:
+
+1. Creates data storage (either storage or database) in the source and target computing environments.
+2. Generates and stores test data in the created source data storage.
+3. Performs data replication/migration from the source to the target computing environment, including data pre/post-processing operations during the transfer.
 
 
 ## Environments:
@@ -14,9 +16,9 @@ Data Manager 데이터 마이그레이션 기술의 검증을 위한 환경을 �
 
 ## Installation and Testing Guide
 
-해당 가이드는 Ubuntu 22.04 대상으로 설치 및 명령어 사용방법을 작성한 가이드입니다.
+This guide explains installation and command usage for Ubuntu 22.04.
 
-* [Data Manager API 가이드](https://m-cmp.github.io/api/?url=https://raw.githubusercontent.com/cloud-barista/mc-data-manager/main/websrc/docs/swagger.yaml)
-* [Data Manager 사용가이드](docs/Datamanager-Usage-Guide.md)
-* [Data Manager 도커가이드](docs/Datamanager-Docker-Guide.md)
-* [Data Manager 데모가이드](docs/Datamanager-Demo-Guide.md)
+* [Data Manager API Guide](https://m-cmp.github.io/api/?url=https://raw.githubusercontent.com/cloud-barista/mc-data-manager/main/websrc/docs/swagger.yaml)
+* [Data Manager User Guide](docs/Datamanager-Usage-Guide.md)
+* [Data Manager Docker Guide](docs/Datamanager-Docker-Guide.md)
+* [Data Manager Demo Guide](docs/Datamanager-Demo-Guide.md)
