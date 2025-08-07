@@ -34,14 +34,27 @@ services:
       - /etc/localtime:/etc/localtime:ro # timezone
     env_file:
       - .env
-    # Health check configuration      
+    # Health check configuration
     # OK [ 2xx ,3xx}, ERR [4xx,5xx,...etc]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3300/readyZ"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 10s
+  mc-data-manger-db:
+    image: mariadb:latest
+    container_name: mc-data-manger-db
+    command:
+      - --skip-character-set-client-handshake
+    ports:
+      - target: 3306
+        published: 3306
+        protocol: tcp
+    volumes:
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized"]
+      <<: *default-health-check
+
 
 ##################
 ##   OPTIONAL   ##
