@@ -46,11 +46,12 @@ services:
     container_name: mc-data-manger-db
     command:
       - --skip-character-set-client-handshake
+    volumes:
+      - ./data/mariadb/data:/data/
     ports:
       - target: 3306
         published: 3306
         protocol: tcp
-    volumes:
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized"]
       <<: *default-health-check
