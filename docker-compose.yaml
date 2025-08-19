@@ -47,7 +47,7 @@ services:
     command:
       - --skip-character-set-client-handshake
     volumes:
-      - ./data/mariadb/data:/data/
+      - ./data/mariadb:/var/lib/mysql
     ports:
       - target: 3306
         published: 3306
