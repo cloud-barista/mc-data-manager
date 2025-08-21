@@ -50,7 +50,7 @@ services:
       - ./data/mariadb:/var/lib/mysql
     ports:
       - target: 3306
-        published: 3306
+        published: 3301
         protocol: tcp
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized"]
