@@ -54,7 +54,6 @@ services:
         protocol: tcp
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized"]
-      <<: *default-health-check
 
 
 ##################
