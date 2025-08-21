@@ -41,7 +41,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-  mc-data-manger-db:
+  mc-data-manager-db:
     image: mariadb:latest
     container_name: mc-data-manger-db
     command:
@@ -50,13 +50,18 @@ services:
       - ./data/mariadb:/var/lib/mysql
     ports:
       - target: 3306
-        published: 3306
+        published: 3301
         protocol: tcp
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized"]
       interval: 30s
       timeout: 10s
       retries: 3
+    environment:
+      - MYSQL_DATABASE=mcmp
+      - MYSQL_USER=mcmp
+      - MYSQL_PASSWORD=mcmp
+      - MYSQL_ROOT_PASSWORD=mcmp
 
 
 ##################

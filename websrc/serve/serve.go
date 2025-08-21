@@ -23,11 +23,17 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/cloud-barista/mc-data-manager/config"
+	"github.com/cloud-barista/mc-data-manager/models"
+
 	"github.com/cloud-barista/mc-data-manager/service/task"
 	"github.com/cloud-barista/mc-data-manager/websrc/controllers"
 	"github.com/cloud-barista/mc-data-manager/websrc/middlewares"
 	"github.com/cloud-barista/mc-data-manager/websrc/routes"
 	"github.com/rs/zerolog/log"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	// REST API (echo)
 	"github.com/labstack/echo/v4"
@@ -129,6 +135,22 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 	}
 	e.Renderer = renderer
 
+	// 데이터베이스 초기화
+	dbConfig := config.NewDatabaseConfig()
+	db, err := gorm.Open(mysql.Open(dbConfig.GetDSN()), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Error), // 에러가 발생할 때만 로깅
+	})
+	if err != nil {
+		log.Error().Msgf("Failed to initialize database: %v", err)
+	}
+
+	// 데이터베이스 마이그레이션 실행
+	if err := db.AutoMigrate(
+		&models.Credential{},
+	); err != nil {
+		log.Error().Msgf("Failed to migrate database: %v", err)
+	}
+
 	// go cron
 	scheduleManager := task.InitFileScheduleManager()
 
@@ -158,6 +180,9 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 
 	serviceGroup := e.Group("/service")
 	routes.ServiceRoutes(serviceGroup, scheduleManager)
+
+	credentialGroup := e.Group("/credetials")
+	routes.CredentialRoutes(credentialGroup, db)
 
 	selfEndpoint := "localhost" + ":" + port
 	website := " http://" + selfEndpoint

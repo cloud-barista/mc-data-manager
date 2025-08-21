@@ -19,7 +19,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/cloud-barista/mc-data-manager/config"
 	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/labstack/echo/v4"
 )
@@ -37,16 +36,19 @@ import (
 func GetSystemReadyHandler(ctx echo.Context) error {
 	start := time.Now()
 	logger, logstrings := pageLogInit(ctx, "healthcheck-task", "Ready?", start)
-	credentailManger := config.NewProfileManager()
-	err := credentailManger.ValidateProfiles()
-	if err != nil {
-		errStr := "Profile Load , Failed : " + err.Error()
-		logger.Error().Msg(errStr)
-		return ctx.JSON(http.StatusNotFound, models.BasicResponse{
-			Result: logstrings.String(),
-			Error:  &errStr,
-		})
-	}
+
+	// TODO - db 헬스체크 추가 예정
+
+	// credentailManger := config.NewProfileManager()
+	// err := credentailManger.ValidateProfiles()
+	// if err != nil {
+	// 	errStr := "Profile Load , Failed : " + err.Error()
+	// 	logger.Error().Msg(errStr)
+	// 	return ctx.JSON(http.StatusNotFound, models.BasicResponse{
+	// 		Result: logstrings.String(),
+	// 		Error:  &errStr,
+	// 	})
+	// }
 	jobEnd(logger, "System is Ready", start)
 	return ctx.JSON(http.StatusOK, models.BasicResponse{
 		Result: logstrings.String(),
