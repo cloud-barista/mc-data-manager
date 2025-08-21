@@ -47,8 +47,8 @@ func (c *DatabaseConfig) GetDSN() string {
 		return dsn
 	}
 
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s",
-		c.Host, c.Port, c.User, c.Password, c.DBName)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+		c.User, c.Password, c.Host, c.Port, c.DBName)
 	log.Printf("Generated DSN: %s", dsn)
 	return dsn
 }
