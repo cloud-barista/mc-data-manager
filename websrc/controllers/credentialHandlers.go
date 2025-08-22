@@ -22,6 +22,20 @@ func NewCredentialHandler(db *gorm.DB) *CredentialHandler {
 	}
 }
 
+// CreateCredentialHandler godoc
+//
+//	@ID 			CreateCredentialHandler
+//	@Summary		saved credential.
+//	@Description	saved credential.
+//	@Tags			[Credential]
+//	@Accept			json
+//	@Produce		json
+//	@Param			RequestBody		body	models.MigrateTask	true	"Parameters required for migration"
+//	@Success		200			{object}	models.BasicResponse	"Successfully saved credential"
+//	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
+//	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
+//	@Router			/migrate/rdbms [post]
+//
 // POST /credentials
 func (c *CredentialHandler) CreateCredentialHandler(ctx echo.Context) error {
 	start := time.Now()
@@ -44,11 +58,20 @@ func (c *CredentialHandler) CreateCredentialHandler(ctx echo.Context) error {
 		})
 	}
 
-	jobEnd(logger, "Successfully created credential", start)
+	jobEnd(logger, "Successfully saved credential", start)
 	return ctx.JSON(http.StatusOK, credential)
 }
 
-// GET /credentials
+// ListCredentialsHandler godoc
+//
+//	@ID 			ListCredentialsHandler
+//	@Summary		Get all credentials
+//	@Description	Retrieve a list of all credentials in the system.
+//	@Tags			[Credential]
+//	@Produce		json
+//	@Success		200		{array}		models.Task	"Successfully retrieved all credentials"
+//	@Failure		500		{object}	models.BasicResponse	"Internal Server Error"
+//	@Router			/credentials [get]
 func (c *CredentialHandler) ListCredentialsHandler(ctx echo.Context) error {
 	start := time.Now()
 	logger, logstrings := pageLogInit(ctx, "credential", "get all credentials", start)
@@ -62,11 +85,22 @@ func (c *CredentialHandler) ListCredentialsHandler(ctx echo.Context) error {
 		})
 	}
 
-	jobEnd(logger, "Successfully get all credentials", start)
+	jobEnd(logger, "Successfully retrieved all credentials", start)
 	return ctx.JSON(http.StatusOK, credential)
 }
 
-// GET /credentials/:id
+// GetCredentialHandler godoc
+//
+//	@ID 			GetCredentialHandler
+//	@Summary		Get a Credential by ID
+//	@Description	Get the details of a Credential using its ID.
+//	@Tags			[Credential]
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path	string	true	"Credential ID"
+//	@Success		200		{object}	models.Task	"Successfully retrieved credential"
+//	@Failure		404		{object}	models.BasicResponse	"Task not found"
+//	@Router			/credentials/{id} [get]
 func (c *CredentialHandler) GetCredentialHandler(ctx echo.Context) error {
 	start := time.Now()
 	logger, logstrings := pageLogInit(ctx, "credential", "get credential", start)
@@ -80,7 +114,7 @@ func (c *CredentialHandler) GetCredentialHandler(ctx echo.Context) error {
 		})
 	}
 
-	jobEnd(logger, "Successfully get credential", start)
+	jobEnd(logger, "Successfully retrieved credential", start)
 	return ctx.JSON(http.StatusOK, credential)
 }
 
@@ -110,7 +144,17 @@ func (c *CredentialHandler) UpdateCredentialHandler(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, credential)
 }
 
-// DELETE /credentials/:id
+// DeleteCredentialHandler godoc
+//
+//	@ID 			DeleteCredentialHandler
+//	@Summary		Delete a credential
+//	@Description	Delete an existing credential using its ID.
+//	@Tags			[Credential]
+//	@Produce		json
+//	@Param			id		path	string	true	"Credential ID"
+//	@Success		200		{object}	models.BasicResponse	"Successfully deleted Credential"
+//	@Failure		404		{object}	models.BasicResponse	"Credential not found"
+//	@Router			/credentials/{id} [delete]
 func (c *CredentialHandler) DeleteCredentialHandler(ctx echo.Context) error {
 	start := time.Now()
 	logger, logstrings := pageLogInit(ctx, "credential", "get credential", start)
@@ -123,6 +167,6 @@ func (c *CredentialHandler) DeleteCredentialHandler(ctx echo.Context) error {
 		})
 	}
 
-	jobEnd(logger, "Successfully deleted credential", start)
+	jobEnd(logger, "Successfully deleted Credential", start)
 	return ctx.JSON(http.StatusOK, map[string]string{"deleted": id})
 }
