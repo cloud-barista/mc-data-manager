@@ -17,6 +17,14 @@ package models
 
 import "time"
 
+type CredentialCreateRequest struct {
+	CspType string         `json:"cspType"`
+	Name    string         `json:"name,omitempty"`
+	AWS     AWSCredentials `json:"aws,omitempty"`
+	NCP     NCPCredentials `json:"ncp,omitempty"`
+	GCP     GCPCredentials `json:"gcp,omitempty"`
+}
+
 type Credential struct {
 	CredentialId   uint64    `gorm:"column:credentialId;primaryKey;autoIncrement" json:"credentialId"`
 	CspType        string    `gorm:"column:cspType;size:50;not null" json:"cspType"`
@@ -29,4 +37,17 @@ type Credential struct {
 // TableName 명시 (Go struct -> DB 테이블명 매핑)
 func (Credential) TableName() string {
 	return "tbCredential"
+}
+
+func (cr *CredentialCreateRequest) GetCredential() interface{} {
+	switch cr.CspType {
+	case "aws":
+		return cr.AWS
+	case "ncp":
+		return cr.NCP
+	case "gcp":
+		return cr.GCP
+	default:
+		return nil
+	}
 }

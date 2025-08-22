@@ -27,7 +27,7 @@ func (c *CredentialHandler) CreateCredentialHandler(ctx echo.Context) error {
 	start := time.Now()
 	logger, logstrings := pageLogInit(ctx, "credential", "create credential", start)
 
-	params := models.Credential{}
+	params := models.CredentialCreateRequest{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),

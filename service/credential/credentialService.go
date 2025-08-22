@@ -1,6 +1,7 @@
 package service
 
 import (
+	"encoding/json"
 	"errors"
 
 	"github.com/cloud-barista/mc-data-manager/models"
@@ -22,11 +23,14 @@ func NewCredentialService(db *gorm.DB) *CredentialService {
 	}
 }
 
-func (c *CredentialService) CreateCredential(req models.Credential) (*models.Credential, error) {
+func (c *CredentialService) CreateCredential(req models.CredentialCreateRequest) (*models.Credential, error) {
+	jsonBytes, _ := json.Marshal(req.GetCredential())
+	jsonStr := string(jsonBytes)
+
 	cred := models.Credential{
 		Name:           req.Name,
 		CspType:        req.CspType,
-		CredentialJson: req.CredentialJson, // 암호화된 JSON 문자열
+		CredentialJson: jsonStr, // TODO - 암호화된 JSON 문자열
 	}
 
 	if err := c.credentialRepository.CreateCredential(&cred); err != nil {
