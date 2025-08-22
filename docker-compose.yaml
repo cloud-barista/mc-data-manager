@@ -10,10 +10,11 @@ services:
       - .env
     init: true
 # service app
-  mc-data-manger:
+  mc-data-manager:
     container_name: mc-data-manager
     depends_on:
       - init-chown-volumes
+      - mc-data-manager-db
     build:
       context: .
       dockerfile: Dockerfile  
@@ -43,7 +44,7 @@ services:
       retries: 3
   mc-data-manager-db:
     image: mariadb:latest
-    container_name: mc-data-manger-db
+    container_name: mc-data-manager-db
     command:
       - --skip-character-set-client-handshake
     volumes:

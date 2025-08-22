@@ -23,7 +23,7 @@ func (c *CredentialRepository) CreateCredential(cred *models.Credential) error {
 func (c *CredentialRepository) GetCredentialByID(id string) (*models.Credential, error) {
 	var cred models.Credential
 
-	if err := c.db.First(&cred, "credential_id = ?", id).Error; err != nil {
+	if err := c.db.First(&cred, "credentialId = ?", id).Error; err != nil {
 		return nil, err
 	}
 	return &cred, nil
@@ -42,5 +42,5 @@ func (c *CredentialRepository) UpdateCredential(cred *models.Credential) error {
 }
 
 func (c *CredentialRepository) DeleteCredential(id string) error {
-	return c.db.Delete(&models.Credential{}, "credential_id = ?", id).Error
+	return c.db.Delete(&models.Credential{}, "credentialId = ?", id).Error
 }

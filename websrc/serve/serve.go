@@ -181,7 +181,7 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 	serviceGroup := e.Group("/service")
 	routes.ServiceRoutes(serviceGroup, scheduleManager)
 
-	credentialGroup := e.Group("/credetials")
+	credentialGroup := e.Group("/credentials")
 	routes.CredentialRoutes(credentialGroup, db)
 
 	selfEndpoint := "localhost" + ":" + port

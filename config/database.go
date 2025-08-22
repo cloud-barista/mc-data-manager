@@ -47,7 +47,7 @@ func (c *DatabaseConfig) GetDSN() string {
 		return dsn
 	}
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
 		c.User, c.Password, c.Host, c.Port, c.DBName)
 	log.Printf("Generated DSN: %s", dsn)
 	return dsn
@@ -68,7 +68,7 @@ func InitDB() (*sql.DB, error) {
 		return db, nil
 	}
 
-	msqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s",
+	msqlInfo := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
 		host, port, user, password, dbname)
 
 	db, err := sql.Open("mysql", msqlInfo)
