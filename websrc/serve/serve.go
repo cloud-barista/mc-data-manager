@@ -156,9 +156,10 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 
 	// Route for system management
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
-
 	e.GET("/", controllers.MainGetHandler)
-	e.GET("/readyZ", controllers.GetSystemReadyHandler)
+
+	HealthHandler := controllers.NewHealthHandler(db)
+	e.GET("/readyZ", HealthHandler.GetSystemReadyHandler)
 
 	migrationGroup := e.Group("/migrate")
 	routes.MigrationRoutes(migrationGroup)
