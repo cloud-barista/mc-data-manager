@@ -16,7 +16,7 @@ func TestMain(m *testing.M) {
 
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
-		log.Fatal().MsgF("Failed to get current file path")
+		log.Fatalf("Failed to get current file path")
 	}
 	rootDir := filepath.Join(filepath.Dir(filename), "../../..")
 
