@@ -16,7 +16,8 @@ ARG GID=0
 ARG USER=root
 ARG GROUP=root
 # #-------------------------------------------------------------
-# RUN apt-get update && apt-get upgrade  
+RUN apt-get update && apt-get upgrade  
+RUN apt-get install -y  curl
 # RUN apt-get install -y ca-certificates curl jq gnupg software-properties-common wget lsb-release && rm -rf /var/lib/apt/lists/*
 
 # #-------------------------------------------------------------

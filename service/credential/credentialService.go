@@ -27,6 +27,7 @@ func NewCredentialService(db *gorm.DB) *CredentialService {
 	}
 }
 
+// TODO - 이름 중복 체크 추가
 func (c *CredentialService) CreateCredential(req models.CredentialCreateRequest) (*models.Credential, error) {
 	jsonBytes, _ := json.Marshal(req.GetCredential())
 	encoded, err := c.aesConverter.EncryptAESGCM(string(jsonBytes))
@@ -37,7 +38,7 @@ func (c *CredentialService) CreateCredential(req models.CredentialCreateRequest)
 	cred := models.Credential{
 		Name:           req.Name,
 		CspType:        req.CspType,
-		CredentialJson: encoded, // TODO - 암호화된 JSON 문자열
+		CredentialJson: encoded,
 	}
 
 	if err := c.credentialRepository.CreateCredential(&cred); err != nil {
