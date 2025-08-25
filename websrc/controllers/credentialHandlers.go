@@ -25,18 +25,16 @@ func NewCredentialHandler(db *gorm.DB) *CredentialHandler {
 // CreateCredentialHandler godoc
 //
 //	@ID 			CreateCredentialHandler
-//	@Summary		saved credential.
-//	@Description	saved credential.
+//	@Summary		save encrypted credential.
+//	@Description	save encrypted credential.
 //	@Tags			[Credential]
 //	@Accept			json
 //	@Produce		json
-//	@Param			RequestBody		body	models.MigrateTask	true	"Parameters required for migration"
+//	@Param			RequestBody		body	models.CredentialCreateRequest	true	"Parameters required for Credential"
 //	@Success		200			{object}	models.BasicResponse	"Successfully saved credential"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/migrate/rdbms [post]
-//
-// POST /credentials
+//	@Router			/credentials [post]
 func (c *CredentialHandler) CreateCredentialHandler(ctx echo.Context) error {
 	start := time.Now()
 	logger, logstrings := pageLogInit(ctx, "credential", "create credential", start)

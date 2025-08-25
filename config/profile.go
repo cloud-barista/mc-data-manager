@@ -182,6 +182,27 @@ func (fpm *FileProfileManager) LoadCredentialsByProfile(profileName string, prov
 	}
 }
 
+// func (fpm *FileProfileManager) LoadCredentialsById(credentialId uint64, provider string) (interface{}, error) {
+// 	profiles, err := fpm.LoadAllProfiles()
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	credentials, exists := profiles[profileName]
+// 	if !exists {
+// 		return nil, errors.New("profile not found")
+// 	}
+// 	switch provider {
+// 	case "aws":
+// 		return credentials.AWS, nil
+// 	case "ncp":
+// 		return credentials.NCP, nil
+// 	case "gcp":
+// 		return credentials.GCP, nil
+// 	default:
+// 		return nil, errors.New("unsupported provider")
+// 	}
+// }
+
 // ValidateProfiles checks that at least one profile exists, each profile has at least one credential,
 // and that all provided credentials have non-empty required fields.
 func (fpm *FileProfileManager) ValidateProfiles() error {

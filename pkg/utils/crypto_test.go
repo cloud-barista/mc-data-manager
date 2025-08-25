@@ -6,14 +6,16 @@ import (
 )
 
 func TestEncryptDecryptAESGCM(t *testing.T) {
-	key := "12345678901234567890123456789012" // 32 bytes = AES-256
+	// key := "12345678901234567890123456789012" // 32 bytes = AES-256
 	original := `{
   		"access_key": "AKIAxxxxxxxxx",
   		"secret_key": "xxxxxxxxxxxxxxxxxxx"
 		}`
 
+	aesConverter := NewAESConverter()
+
 	// 암호화
-	encrypted, err := EncryptAESGCM(key, original)
+	encrypted, err := aesConverter.EncryptAESGCM(original)
 	if err != nil {
 		t.Fatalf("encryption failed: %v", err)
 	}
@@ -21,7 +23,7 @@ func TestEncryptDecryptAESGCM(t *testing.T) {
 	fmt.Println("Encrypted:", encrypted)
 
 	// 복호화
-	decrypted, err := DecryptAESGCM(key, encrypted)
+	decrypted, err := aesConverter.DecryptAESGCM(encrypted)
 	if err != nil {
 		t.Fatalf("decryption failed: %v", err)
 	}

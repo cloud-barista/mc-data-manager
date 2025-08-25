@@ -7,11 +7,23 @@ import (
 	"encoding/base64"
 	"errors"
 	"io"
+	"os"
 )
 
+type AESconverter struct {
+	secretKey string
+}
+
+func NewAESConverter() *AESconverter {
+	key := os.Getenv("ENCODING_SECRET_KEY")
+	return &AESconverter{
+		secretKey: key,
+	}
+}
+
 // AES-GCM 암호화
-func EncryptAESGCM(key, plaintext string) (string, error) {
-	block, err := aes.NewCipher([]byte(key))
+func (a *AESconverter) EncryptAESGCM(plaintext string) (string, error) {
+	block, err := aes.NewCipher([]byte(a.secretKey))
 	if err != nil {
 		return "", err
 	}
@@ -31,13 +43,13 @@ func EncryptAESGCM(key, plaintext string) (string, error) {
 }
 
 // AES-GCM 복호화
-func DecryptAESGCM(key, cryptoText string) (string, error) {
+func (a *AESconverter) DecryptAESGCM(cryptoText string) (string, error) {
 	ciphertext, err := base64.StdEncoding.DecodeString(cryptoText)
 	if err != nil {
 		return "", err
 	}
 
-	block, err := aes.NewCipher([]byte(key))
+	block, err := aes.NewCipher([]byte(a.secretKey))
 	if err != nil {
 		return "", err
 	}

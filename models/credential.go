@@ -25,6 +25,12 @@ type CredentialCreateRequest struct {
 	GCP     GCPCredentials `json:"gcp,omitempty"`
 }
 
+type CredentialListResponse struct {
+	CredentialId uint64 `json:"credentialId"`
+	CspType      string `json:"cspType"`
+	Name         string `json:"name,omitempty"`
+}
+
 type Credential struct {
 	CredentialId   uint64    `gorm:"column:credentialId;primaryKey;autoIncrement" json:"credentialId"`
 	CspType        string    `gorm:"column:cspType;size:50;not null" json:"cspType"`
