@@ -1,8 +1,11 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"time"
+
+	"strconv"
 
 	"github.com/cloud-barista/mc-data-manager/models"
 	service "github.com/cloud-barista/mc-data-manager/service/credential"
@@ -102,8 +105,10 @@ func (c *CredentialHandler) ListCredentialsHandler(ctx echo.Context) error {
 func (c *CredentialHandler) GetCredentialHandler(ctx echo.Context) error {
 	start := time.Now()
 	logger, logstrings := pageLogInit(ctx, "credential", "get credential", start)
-
-	id := ctx.Param("id")
+	id, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
+	if err != nil {
+		return fmt.Errorf("invalid number: %w", err)
+	}
 	credential, err := c.credetialService.GetCredentialById(id)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
@@ -121,7 +126,10 @@ func (c *CredentialHandler) UpdateCredentialHandler(ctx echo.Context) error {
 	start := time.Now()
 	logger, logstrings := pageLogInit(ctx, "credential", "get credential", start)
 
-	credentialId := ctx.Param("id")
+	credentialId, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
+	if err != nil {
+		return fmt.Errorf("invalid number: %w", err)
+	}
 	params := models.Credential{}
 	if !getDataWithBind(logger, start, ctx, &params) {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
@@ -157,7 +165,11 @@ func (c *CredentialHandler) DeleteCredentialHandler(ctx echo.Context) error {
 	start := time.Now()
 	logger, logstrings := pageLogInit(ctx, "credential", "get credential", start)
 
-	id := ctx.Param("id")
+	id, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
+	if err != nil {
+		return fmt.Errorf("invalid number: %w", err)
+	}
+
 	if err := c.credetialService.DeleteCredential(id); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
 			Result: logstrings.String(),
@@ -166,5 +178,5 @@ func (c *CredentialHandler) DeleteCredentialHandler(ctx echo.Context) error {
 	}
 
 	jobEnd(logger, "Successfully deleted Credential", start)
-	return ctx.JSON(http.StatusOK, map[string]string{"deleted": id})
+	return ctx.JSON(http.StatusOK, map[string]uint64{"deleted": id})
 }
