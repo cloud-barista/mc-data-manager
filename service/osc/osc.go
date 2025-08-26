@@ -26,6 +26,9 @@ type OSFS interface {
 	CreateBucket() error
 	DeleteBucket() error
 	ObjectList() ([]*models.Object, error)
+	// TODO - 여기다가 추가해서 gcpfs.go 와 s3fs.go 에 필터링 메서드를 추가해야될 듯
+	// applyFilter(필터링 조건)? 하고 필터링
+	// 혹은 ObjectList에 필터링 로직을 추가하는 것도 나쁘지 않을 것 같다.
 
 	Open(name string) (io.ReadCloser, error)
 	Create(name string) (io.WriteCloser, error)

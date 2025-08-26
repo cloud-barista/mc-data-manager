@@ -13,8 +13,10 @@ services:
   mc-data-manager:
     container_name: mc-data-manager
     depends_on:
-      - init-chown-volumes
-      - mc-data-manager-db
+      init-chown-volumes:
+        condition: service_completed_successfully
+      mc-data-manager-db:
+        condition: service_healthy
     build:
       context: .
       dockerfile: Dockerfile  
