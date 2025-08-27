@@ -3,6 +3,7 @@ package service
 import (
 	"encoding/json"
 	"errors"
+
 	// "fmt"
 	// "strings"
 	"github.com/cloud-barista/mc-data-manager/models"
@@ -14,7 +15,7 @@ import (
 type CredentialService struct {
 	db                   *gorm.DB
 	credentialRepository *repository.CredentialRepository
-	aesConverter         *utils.AESconverter
+	AesConverter         *utils.AESconverter
 }
 
 func NewCredentialService(db *gorm.DB) *CredentialService {
@@ -24,19 +25,19 @@ func NewCredentialService(db *gorm.DB) *CredentialService {
 	return &CredentialService{
 		db:                   db,
 		credentialRepository: credentialRepository,
-		aesConverter:         aesConverter,
+		AesConverter:         aesConverter,
 	}
 }
 
 // TODO - 이름 중복 체크 추가
 func (c *CredentialService) CreateCredential(req models.CredentialCreateRequest) (*models.Credential, error) {
 	// if existing, err := c.credentialRepository.FindByName(req.Name); err == nil && existing != nil {
-    //     return nil, fmt.Errorf("credential with name '%s' already exists", req.Name)
-    // } else if !errors.Is(err, gorm.ErrRecordNotFound) {
-    //     return nil, err
-    // }
+	//     return nil, fmt.Errorf("credential with name '%s' already exists", req.Name)
+	// } else if !errors.Is(err, gorm.ErrRecordNotFound) {
+	//     return nil, err
+	// }
 	jsonBytes, _ := json.Marshal(req.GetCredential())
-	encoded, err := c.aesConverter.EncryptAESGCM(string(jsonBytes))
+	encoded, err := c.AesConverter.EncryptAESGCM(string(jsonBytes))
 	if err != nil {
 		return nil, err
 	}
@@ -48,12 +49,12 @@ func (c *CredentialService) CreateCredential(req models.CredentialCreateRequest)
 
 	if err := c.credentialRepository.CreateCredential(&cred); err != nil {
 		// if errors.Is(err, gorm.ErrDuplicatedKey) {
-        //     return nil, fmt.Errorf("credential name '%s' already exists", req.Name)
-        // }
+		//     return nil, fmt.Errorf("credential name '%s' already exists", req.Name)
+		// }
 
-        // if strings.Contains(err.Error(), "duplicate key") {
-        //     return nil, fmt.Errorf("credential name '%s' already exists", req.Name)
-        // }
+		// if strings.Contains(err.Error(), "duplicate key") {
+		//     return nil, fmt.Errorf("credential name '%s' already exists", req.Name)
+		// }
 		return nil, err
 	}
 

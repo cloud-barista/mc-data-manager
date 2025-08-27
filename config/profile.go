@@ -187,15 +187,13 @@ func (fpm *FileProfileManager) LoadCredentialsByProfile(profileName string, prov
 
 func (fpm *FileProfileManager) LoadCredentialsById(credentialId uint64, provider string) (interface{}, error) {
 
-	// credentialService := controllers.NewCredentialHandler()
-
 	credential, err := fpm.credentialService.GetCredentialById(credentialId)
 
 	if err != nil {
 		return nil, fmt.Errorf("credential info not found")
 	}
 
-	decryptedJson, err := c.aesConverter.DecryptAESGCM(credential.CredentialJson)
+	decryptedJson, err := fpm.credentialService.AesConverter.DecryptAESGCM(credential.CredentialJson)
 	if err != nil {
 		return nil, err
 	}
@@ -207,11 +205,11 @@ func (fpm *FileProfileManager) LoadCredentialsById(credentialId uint64, provider
 
 	switch provider {
 	case "aws":
-		return creds.(map[string]interface{})["AWS"], nil
+		return creds.(models.AWSCredentials), nil
 	case "ncp":
-		return creds.(map[string]interface{})["NCP"], nil
+		return creds.(models.NCPCredentials), nil
 	case "gcp":
-		return creds.(map[string]interface{})["GCP"], nil
+		return creds.(models.GCPCredentials), nil
 	default:
 		return nil, errors.New("unsupported provider")
 	}
