@@ -2,7 +2,7 @@ services:
 # chown vomlume bind mode 
   init-chown-volumes:
     image: busybox
-    command: ["sh", "-c", "chown -R ${UID:-0}:${GID:-0} /app/data"]
+    command: ["sh", "-c", "chown -R ${UID:-0}:${GID:-0} /app/data/var"]
     volumes:
       - ./data:/app/data/
     user: root
