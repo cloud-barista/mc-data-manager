@@ -25,15 +25,14 @@ import (
 
 	"github.com/cloud-barista/mc-data-manager/config"
 	"github.com/cloud-barista/mc-data-manager/models"
+	"github.com/cloud-barista/mc-data-manager/pkg/utils"
 
+	credsvc "github.com/cloud-barista/mc-data-manager/service/credential"
 	"github.com/cloud-barista/mc-data-manager/service/task"
 	"github.com/cloud-barista/mc-data-manager/websrc/controllers"
 	"github.com/cloud-barista/mc-data-manager/websrc/middlewares"
 	"github.com/cloud-barista/mc-data-manager/websrc/routes"
 	"github.com/rs/zerolog/log"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 
 	// REST API (echo)
 	"github.com/labstack/echo/v4"
@@ -136,20 +135,40 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 	e.Renderer = renderer
 
 	// 데이터베이스 초기화
-	dbConfig := config.NewDatabaseConfig()
-	db, err := gorm.Open(mysql.Open(dbConfig.GetDSN()), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Error), // 에러가 발생할 때만 로깅
-	})
-	if err != nil {
-		log.Error().Msgf("Failed to initialize database: %v", err)
-	}
+	// dbConfig := config.NewDatabaseConfig()
+	// db, err := gorm.Open(mysql.Open(dbConfig.GetDSN()), &gorm.Config{
+	// 	Logger: logger.Default.LogMode(logger.Error), // 에러가 발생할 때만 로깅
+	// })
+	// if err != nil {
+	// 	log.Error().Msgf("Failed to initialize database: %v", err)
+	// }
+
+	// DB 초기화
+	config.InitDB()
 
 	// 데이터베이스 마이그레이션 실행
-	if err := db.AutoMigrate(
+	if err := config.DB.AutoMigrate(
 		&models.Credential{},
 	); err != nil {
 		log.Error().Msgf("Failed to migrate database: %v", err)
 	}
+
+	// credential service 에 DB 의존성 주입
+	csvc := credsvc.NewCredentialService(config.DB)
+	// 암/복호화 키 주입
+	csvc.AesConverter = utils.NewAESConverter()
+
+	// FileProfileManager에 NewCredentialService 주입
+	config.DefaultProfileManager = &config.FileProfileManager{
+		CredentialService: csvc,
+	}
+
+	pm := config.DefaultProfileManager
+
+	log.Info().
+		Bool("pm_set", pm != nil).
+		Bool("svc_set", pm != nil && pm.CredentialService != nil).
+		Msg("credential wiring check")
 
 	// go cron
 	scheduleManager := task.InitFileScheduleManager()
@@ -158,7 +177,7 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	e.GET("/", controllers.MainGetHandler)
 
-	HealthHandler := controllers.NewHealthHandler(db)
+	HealthHandler := controllers.NewHealthHandler(config.DB)
 	e.GET("/readyZ", HealthHandler.GetSystemReadyHandler)
 
 	migrationGroup := e.Group("/migrate")
@@ -183,7 +202,7 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 	routes.ServiceRoutes(serviceGroup, scheduleManager)
 
 	credentialGroup := e.Group("/credentials")
-	routes.CredentialRoutes(credentialGroup, db)
+	routes.CredentialRoutes(credentialGroup, config.DB)
 
 	selfEndpoint := "localhost" + ":" + port
 	website := " http://" + selfEndpoint

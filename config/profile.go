@@ -7,10 +7,12 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 
 	"github.com/cloud-barista/mc-data-manager/models"
 	service "github.com/cloud-barista/mc-data-manager/service/credential"
+	"github.com/rs/zerolog/log"
 )
 
 type ProfileManager interface {
@@ -23,13 +25,16 @@ type ProfileManager interface {
 }
 
 type FileProfileManager struct {
-	credentialService *service.CredentialService
+	CredentialService *service.CredentialService
 	profileFilePath   string
 	mu                sync.Mutex
 }
 
 // todo : profileopath -> credentialService 으로 변경 필요
 func NewProfileManager(profileFilePath ...string) *FileProfileManager {
+	if DefaultProfileManager != nil {
+		return DefaultProfileManager
+	}
 	var path string
 	if len(profileFilePath) > 0 && profileFilePath[0] != "" {
 		path = profileFilePath[0]
@@ -186,30 +191,77 @@ func (fpm *FileProfileManager) LoadCredentialsByProfile(profileName string, prov
 }
 
 func (fpm *FileProfileManager) LoadCredentialsById(credentialId uint64, provider string) (interface{}, error) {
+	log.Debug().
+		Uint64("credentialId", credentialId).
+		Str("provider", provider).
+		Msg("LoadCredentialsById: fetching credential")
 
-	credential, err := fpm.credentialService.GetCredentialById(credentialId)
+	credential, err := fpm.CredentialService.GetCredentialById(credentialId)
 
 	if err != nil {
 		return nil, fmt.Errorf("credential info not found")
 	}
 
-	decryptedJson, err := fpm.credentialService.AesConverter.DecryptAESGCM(credential.CredentialJson)
+	log.Debug().
+		Uint64("credentialId", credential.CredentialId).
+		Str("cspType", credential.CspType).
+		Str("name", credential.Name).
+		Str("jsonLen", credential.CredentialJson).
+		Time("latency", credential.CreatedAt).
+		Msg("GetCredentialById ok")
+
+	decryptedJson, err := fpm.CredentialService.AesConverter.DecryptAESGCM(credential.CredentialJson)
 	if err != nil {
 		return nil, err
 	}
 
-	var creds interface{}
-	if err := json.Unmarshal([]byte(decryptedJson), &creds); err != nil {
-		return nil, fmt.Errorf("failed to parse credential json: %w", err)
-	}
+	log.Debug().
+		RawJSON("decryptedCredential", []byte(decryptedJson)).
+		Msg("DecryptAESGCM ok")
 
-	switch provider {
+	// var creds interface{}
+	// if err := json.Unmarshal([]byte(decryptedJson), &creds); err != nil {
+	// 	return nil, fmt.Errorf("failed to parse credential json: %w", err)
+	// }
+
+	// switch provider {
+	// case "aws":
+	// 	return creds.(models.AWSCredentials), nil
+	// case "ncp":
+	// 	return creds.(models.NCPCredentials), nil
+	// case "gcp":
+	// 	return creds.(models.GCPCredentials), nil
+	// default:
+	// 	return nil, errors.New("unsupported provider")
+	// }
+
+	switch strings.ToLower(provider) {
 	case "aws":
-		return creds.(models.AWSCredentials), nil
+		var out models.AWSCredentials
+		if err := json.Unmarshal([]byte(decryptedJson), &out); err != nil {
+			return nil, fmt.Errorf("failed to parse aws credential json: %w", err)
+		} else {
+			log.Debug().
+				Str("access_key", out.AccessKey).
+				Str("secret_key", out.SecretKey).
+				Msg("get aws key ok")
+		}
+		return out, nil
+
 	case "ncp":
-		return creds.(models.NCPCredentials), nil
+		var out models.NCPCredentials
+		if err := json.Unmarshal([]byte(decryptedJson), &out); err != nil {
+			return nil, fmt.Errorf("failed to parse ncp credential json: %w", err)
+		}
+		return out, nil
+
 	case "gcp":
-		return creds.(models.GCPCredentials), nil
+		var out models.GCPCredentials
+		if err := json.Unmarshal([]byte(decryptedJson), &out); err != nil {
+			return nil, fmt.Errorf("failed to parse gcp credential json: %w", err)
+		}
+		return out, nil
+
 	default:
 		return nil, errors.New("unsupported provider")
 	}

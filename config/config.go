@@ -13,6 +13,7 @@ import (
 )
 
 var Settings InitConfig
+var DefaultProfileManager *FileProfileManager
 
 type InitConfig struct {
 	Profile ProfileConfig `mapstructure:"profile"`

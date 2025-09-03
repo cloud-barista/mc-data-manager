@@ -21,6 +21,7 @@ type BaseParams struct {
 	ProviderParams
 	RegionParams
 	ProfileParams
+	CredentialParams
 }
 
 type ProviderParams struct {
@@ -33,6 +34,10 @@ type RegionParams struct {
 
 type ProfileParams struct {
 	ProfileName string `json:"profileName" form:"profileName"`
+}
+
+type CredentialParams struct {
+	CredentialId int64 `json:"credentialId" form:"credentialId"`
 }
 
 type MySQLParams struct {
