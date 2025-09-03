@@ -1,6 +1,6 @@
 module github.com/cloud-barista/mc-data-manager
 
-go 1.23
+go 1.23.0
 
 require (
 	cloud.google.com/go/firestore v1.16.0
@@ -31,7 +31,6 @@ require (
 require (
 	github.com/go-co-op/gocron v1.37.0
 	github.com/rs/zerolog v1.33.0
-	github.com/sirupsen/logrus v1.9.3
 	github.com/swaggo/swag v1.16.3
 )
 
@@ -120,7 +119,7 @@ require (
 	github.com/xdg-go/stringprep v1.0.4 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
 	go.opencensus.io v0.24.0 // indirect
-	golang.org/x/oauth2 v0.22.0 // indirect
+	golang.org/x/oauth2 v0.27.0 // indirect
 	golang.org/x/sync v0.8.0 // indirect
 	golang.org/x/time v0.6.0 // indirect
 	google.golang.org/genproto v0.0.0-20240822170219-fc7c04adadcd // indirect
