@@ -1,7 +1,6 @@
 module github.com/cloud-barista/mc-data-manager
 
-go 1.23
-toolchain go1.24.1
+go 1.23.0
 
 require (
 	cloud.google.com/go/firestore v1.16.0
@@ -120,7 +119,7 @@ require (
 	github.com/xdg-go/stringprep v1.0.4 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
 	go.opencensus.io v0.24.0 // indirect
-	golang.org/x/oauth2 v0.22.0 // indirect
+	golang.org/x/oauth2 v0.27.0 // indirect
 	golang.org/x/sync v0.12.0 // indirect
 	golang.org/x/time v0.6.0 // indirect
 	google.golang.org/genproto v0.0.0-20240822170219-fc7c04adadcd // indirect
