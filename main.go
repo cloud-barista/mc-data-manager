@@ -16,19 +16,32 @@ limitations under the License.
 package main
 
 import (
-	"github.com/cloud-barista/mc-data-manager/cmd"
+	"fmt"
+	"os"
+
 	"github.com/cloud-barista/mc-data-manager/config"
 	"github.com/cloud-barista/mc-data-manager/pkg/logger"
+	"github.com/cloud-barista/mc-data-manager/websrc/serve"
 	"github.com/rs/zerolog/log"
 )
 
 func main() {
-	cmd.Execute()
-}
-
-func init() {
+	// cmd.Execute()
 	config.Init()
 	loggerConfig := logger.Config{LogConfig: config.Settings.Logger}
 	logger := logger.NewLogger(loggerConfig)
 	log.Logger = *logger
+
+	port := os.Getenv("MC_DATA_MANAGER_PORT")
+	ip := fmt.Sprintf("%s/%s", os.Getenv("MC_DATA_MANAGER_IP"), os.Getenv("MC_DATA_MANAGER_CIDR"))
+	log.Debug().Str("ip", ip).Str("port", port).Msg("server ip info")
+	rt := serve.InitServer(port, ip)
+	serve.Run(rt, port)
 }
+
+// func init() {
+// 	config.Init()
+// 	loggerConfig := logger.Config{LogConfig: config.Settings.Logger}
+// 	logger := logger.NewLogger(loggerConfig)
+// 	log.Logger = *logger
+// }

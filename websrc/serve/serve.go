@@ -159,11 +159,11 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 	csvc.AesConverter = utils.NewAESConverter()
 
 	// FileProfileManager에 NewCredentialService 주입
-	config.DefaultProfileManager = &config.FileProfileManager{
+	config.AuthManager = &config.CredentialManager{
 		CredentialService: csvc,
 	}
 
-	pm := config.DefaultProfileManager
+	pm := config.AuthManager
 
 	log.Info().
 		Bool("pm_set", pm != nil).

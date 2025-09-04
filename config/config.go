@@ -13,7 +13,7 @@ import (
 )
 
 var Settings InitConfig
-var DefaultProfileManager *FileProfileManager
+var AuthManager *CredentialManager
 
 type InitConfig struct {
 	Profile ProfileConfig `mapstructure:"profile"`

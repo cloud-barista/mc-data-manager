@@ -30,11 +30,13 @@ type FileProfileManager struct {
 	mu                sync.Mutex
 }
 
+type CredentialManager struct {
+	CredentialService *service.CredentialService
+	mu                sync.Mutex
+}
+
 // todo : profileopath -> credentialService 으로 변경 필요
 func NewProfileManager(profileFilePath ...string) *FileProfileManager {
-	if DefaultProfileManager != nil {
-		return DefaultProfileManager
-	}
 	var path string
 	if len(profileFilePath) > 0 && profileFilePath[0] != "" {
 		path = profileFilePath[0]
@@ -42,6 +44,10 @@ func NewProfileManager(profileFilePath ...string) *FileProfileManager {
 		path = filepath.Join(".", "data", "var", "run", "data-manager", "profile", "profile.json")
 	}
 	return &FileProfileManager{profileFilePath: path}
+}
+
+func NewAuthManager(profileFilePath ...string) *CredentialManager {
+	return AuthManager
 }
 
 func NewProfileManagerDefault() *FileProfileManager {
@@ -190,13 +196,13 @@ func (fpm *FileProfileManager) LoadCredentialsByProfile(profileName string, prov
 	}
 }
 
-func (fpm *FileProfileManager) LoadCredentialsById(credentialId uint64, provider string) (interface{}, error) {
+func (cred *CredentialManager) LoadCredentialsById(credentialId uint64, provider string) (interface{}, error) {
 	log.Debug().
 		Uint64("credentialId", credentialId).
 		Str("provider", provider).
 		Msg("LoadCredentialsById: fetching credential")
 
-	credential, err := fpm.CredentialService.GetCredentialById(credentialId)
+	credential, err := cred.CredentialService.GetCredentialById(credentialId)
 
 	if err != nil {
 		return nil, fmt.Errorf("credential info not found")
@@ -210,7 +216,7 @@ func (fpm *FileProfileManager) LoadCredentialsById(credentialId uint64, provider
 		Time("latency", credential.CreatedAt).
 		Msg("GetCredentialById ok")
 
-	decryptedJson, err := fpm.CredentialService.AesConverter.DecryptAESGCM(credential.CredentialJson)
+	decryptedJson, err := cred.CredentialService.AesConverter.DecryptAESGCM(credential.CredentialJson)
 	if err != nil {
 		return nil, err
 	}
