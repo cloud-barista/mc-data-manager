@@ -1,5 +1,12 @@
 basePath: /
 definitions:
+  models.AWSCredentials:
+    properties:
+      accessKey:
+        type: string
+      secretKey:
+        type: string
+    type: object
   models.BackupTask:
     properties:
       dummy:
@@ -27,6 +34,19 @@ definitions:
       Result:
         type: string
     type: object
+  models.CredentialCreateRequest:
+    properties:
+      aws:
+        $ref: '#/definitions/models.AWSCredentials'
+      cspType:
+        type: string
+      gcp:
+        $ref: '#/definitions/models.GCPCredentials'
+      name:
+        type: string
+      ncp:
+        $ref: '#/definitions/models.NCPCredentials'
+    type: object
   models.DataTask:
     properties:
       dummy:
@@ -37,6 +57,31 @@ definitions:
         $ref: '#/definitions/models.ProviderConfig'
       targetPoint:
         $ref: '#/definitions/models.ProviderConfig'
+    type: object
+  models.GCPCredentials:
+    properties:
+      auth_provider_x509_cert_url:
+        type: string
+      auth_uri:
+        type: string
+      client_email:
+        type: string
+      client_id:
+        type: string
+      client_x509_cert_url:
+        type: string
+      private_key:
+        type: string
+      private_key_id:
+        type: string
+      project_id:
+        type: string
+      token_uri:
+        type: string
+      type:
+        type: string
+      universe_domain:
+        type: string
     type: object
   models.GenFileParams:
     properties:
@@ -105,6 +150,13 @@ definitions:
       targetPoint:
         $ref: '#/definitions/models.ProviderConfig'
     type: object
+  models.NCPCredentials:
+    properties:
+      accessKey:
+        type: string
+      secretKey:
+        type: string
+    type: object
   models.ProviderConfig:
     properties:
       bucket:
@@ -123,8 +175,8 @@ definitions:
         type: string
       port:
         type: string
-      profileName:
-        type: string
+      credentialId:
+        type: integer
       projectId:
         type: string
       provider:
@@ -390,6 +442,105 @@ paths:
       summary: Export data from MySQL
       tags:
       - '[Backup]'
+  /credentials:
+    get:
+      description: Retrieve a list of all credentials in the system.
+      operationId: ListCredentialsHandler
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved all credentials
+          schema:
+            items:
+              $ref: '#/definitions/models.Task'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Get all credentials
+      tags:
+      - '[Credential]'
+    post:
+      consumes:
+      - application/json
+      description: save encrypted credential.
+      operationId: CreateCredentialHandler
+      parameters:
+      - description: Parameters required for Credential
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.CredentialCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully saved credential
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "400":
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: save encrypted credential.
+      tags:
+      - '[Credential]'
+  /credentials/{id}:
+    delete:
+      description: Delete an existing credential using its ID.
+      operationId: DeleteCredentialHandler
+      parameters:
+      - description: Credential ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted Credential
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "404":
+          description: Credential not found
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Delete a credential
+      tags:
+      - '[Credential]'
+    get:
+      consumes:
+      - application/json
+      description: Get the details of a Credential using its ID.
+      operationId: GetCredentialHandler
+      parameters:
+      - description: Credential ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved credential
+          schema:
+            $ref: '#/definitions/models.Task'
+        "404":
+          description: Task not found
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Get a Credential by ID
+      tags:
+      - '[Credential]'
   /generate:
     get:
       description: Retrieve a list of all Tasks in the system.

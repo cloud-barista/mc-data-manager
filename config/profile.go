@@ -7,9 +7,12 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 
 	"github.com/cloud-barista/mc-data-manager/models"
+	service "github.com/cloud-barista/mc-data-manager/service/credential"
+	"github.com/rs/zerolog/log"
 )
 
 type ProfileManager interface {
@@ -22,10 +25,17 @@ type ProfileManager interface {
 }
 
 type FileProfileManager struct {
-	profileFilePath string
-	mu              sync.Mutex
+	CredentialService *service.CredentialService
+	profileFilePath   string
+	mu                sync.Mutex
 }
 
+type CredentialManager struct {
+	CredentialService *service.CredentialService
+	mu                sync.Mutex
+}
+
+// todo : profileopath -> credentialService 으로 변경 필요
 func NewProfileManager(profileFilePath ...string) *FileProfileManager {
 	var path string
 	if len(profileFilePath) > 0 && profileFilePath[0] != "" {
@@ -34,6 +44,10 @@ func NewProfileManager(profileFilePath ...string) *FileProfileManager {
 		path = filepath.Join(".", "data", "var", "run", "data-manager", "profile", "profile.json")
 	}
 	return &FileProfileManager{profileFilePath: path}
+}
+
+func NewAuthManager(profileFilePath ...string) *CredentialManager {
+	return AuthManager
 }
 
 func NewProfileManagerDefault() *FileProfileManager {
@@ -182,86 +196,156 @@ func (fpm *FileProfileManager) LoadCredentialsByProfile(profileName string, prov
 	}
 }
 
+func (cred *CredentialManager) LoadCredentialsById(credentialId uint64) (interface{}, error) {
+	log.Debug().
+		Uint64("credentialId", credentialId).
+		Msg("LoadCredentialsById: fetching credential")
+
+	credential, err := cred.CredentialService.GetCredentialById(credentialId)
+
+	if err != nil {
+		return nil, fmt.Errorf("credential info not found")
+	}
+
+	log.Debug().
+		Uint64("credentialId", credential.CredentialId).
+		Str("cspType", credential.CspType).
+		Str("name", credential.Name).
+		Str("jsonLen", credential.CredentialJson).
+		Time("latency", credential.CreatedAt).
+		Msg("GetCredentialById ok")
+
+	decryptedJson, err := cred.CredentialService.AesConverter.DecryptAESGCM(credential.CredentialJson)
+	if err != nil {
+		return nil, err
+	}
+
+	// var creds interface{}
+	// if err := json.Unmarshal([]byte(decryptedJson), &creds); err != nil {
+	// 	return nil, fmt.Errorf("failed to parse credential json: %w", err)
+	// }
+
+	// switch provider {
+	// case "aws":
+	// 	return creds.(models.AWSCredentials), nil
+	// case "ncp":
+	// 	return creds.(models.NCPCredentials), nil
+	// case "gcp":
+	// 	return creds.(models.GCPCredentials), nil
+	// default:
+	// 	return nil, errors.New("unsupported provider")
+	// }
+
+	switch strings.ToLower(credential.CspType) {
+	case "aws":
+		var out models.AWSCredentials
+		if err := json.Unmarshal([]byte(decryptedJson), &out); err != nil {
+			return nil, fmt.Errorf("failed to parse aws credential json: %w", err)
+		} else {
+			log.Debug().
+				Msg("get aws key ok")
+		}
+		return out, nil
+
+	case "ncp":
+		var out models.NCPCredentials
+		if err := json.Unmarshal([]byte(decryptedJson), &out); err != nil {
+			return nil, fmt.Errorf("failed to parse ncp credential json: %w", err)
+		}
+		return out, nil
+
+	case "gcp":
+		var out models.GCPCredentials
+		if err := json.Unmarshal([]byte(decryptedJson), &out); err != nil {
+			return nil, fmt.Errorf("failed to parse gcp credential json: %w", err)
+		}
+		return out, nil
+
+	default:
+		return nil, errors.New("unsupported provider")
+	}
+}
+
 // ValidateProfiles checks that at least one profile exists, each profile has at least one credential,
 // and that all provided credentials have non-empty required fields.
-func (fpm *FileProfileManager) ValidateProfiles() error {
-	fpm.mu.Lock()
-	defer fpm.mu.Unlock()
+// func (fpm *FileProfileManager) ValidateProfiles() error {
+// 	fpm.mu.Lock()
+// 	defer fpm.mu.Unlock()
 
-	// Open the profile file
-	file, err := os.Open(fpm.profileFilePath)
-	if err != nil {
-		return fmt.Errorf("unable to open profile file: %v", err)
-	}
-	defer file.Close()
+// 	// Open the profile file
+// 	file, err := os.Open(fpm.profileFilePath)
+// 	if err != nil {
+// 		return fmt.Errorf("unable to open profile file: %v", err)
+// 	}
+// 	defer file.Close()
 
-	// Read the file content
-	data, err := io.ReadAll(file)
-	if err != nil {
-		return fmt.Errorf("unable to read profile file: %v", err)
-	}
+// 	// Read the file content
+// 	data, err := io.ReadAll(file)
+// 	if err != nil {
+// 		return fmt.Errorf("unable to read profile file: %v", err)
+// 	}
 
-	// Unmarshal JSON data into profiles
-	var profiles []struct {
-		ProfileName string                    `json:"profileName"`
-		Credentials models.ProfileCredentials `json:"credentials"`
-	}
+// 	// Unmarshal JSON data into profiles
+// 	var profiles []struct {
+// 		ProfileName string                    `json:"profileName"`
+// 		Credentials models.ProfileCredentials `json:"credentials"`
+// 	}
 
-	if err := json.Unmarshal(data, &profiles); err != nil {
-		return fmt.Errorf("unable to parse profile JSON: %v", err)
-	}
+// 	if err := json.Unmarshal(data, &profiles); err != nil {
+// 		return fmt.Errorf("unable to parse profile JSON: %v", err)
+// 	}
 
-	// Check if there are any profiles
-	if len(profiles) == 0 {
-		return errors.New("no profiles found")
-	}
+// 	// Check if there are any profiles
+// 	if len(profiles) == 0 {
+// 		return errors.New("no profiles found")
+// 	}
 
-	// Validate each profile's credentials
-	for _, profile := range profiles {
-		if profile.ProfileName == "" {
-			return errors.New("a profile has an empty name")
-		}
+// 	// Validate each profile's credentials
+// 	for _, profile := range profiles {
+// 		if profile.ProfileName == "" {
+// 			return errors.New("a profile has an empty name")
+// 		}
 
-		creds := profile.Credentials
+// 		creds := profile.Credentials
 
-		// Flag to check if at least one credential is present
-		hasAtLeastOneCredential := false
+// 		// Flag to check if at least one credential is present
+// 		hasAtLeastOneCredential := false
 
-		// Validate AWS credentials if present
-		if creds.AWS.AccessKey != "" || creds.AWS.SecretKey != "" {
-			hasAtLeastOneCredential = true
-			if creds.AWS.AccessKey == "" {
-				return fmt.Errorf("AWS AccessKey for profile '%s' is missing", profile.ProfileName)
-			}
-			if creds.AWS.SecretKey == "" {
-				return fmt.Errorf("AWS SecretKey for profile '%s' is missing", profile.ProfileName)
-			}
-		}
+// 		// Validate AWS credentials if present
+// 		if creds.AWS.AccessKey != "" || creds.AWS.SecretKey != "" {
+// 			hasAtLeastOneCredential = true
+// 			if creds.AWS.AccessKey == "" {
+// 				return fmt.Errorf("AWS AccessKey for profile '%s' is missing", profile.ProfileName)
+// 			}
+// 			if creds.AWS.SecretKey == "" {
+// 				return fmt.Errorf("AWS SecretKey for profile '%s' is missing", profile.ProfileName)
+// 			}
+// 		}
 
-		// Validate NCP credentials if present
-		if creds.NCP.AccessKey != "" || creds.NCP.SecretKey != "" {
-			hasAtLeastOneCredential = true
-			if creds.NCP.AccessKey == "" {
-				return fmt.Errorf("NCP AccessKey for profile '%s' is missing", profile.ProfileName)
-			}
-			if creds.NCP.SecretKey == "" {
-				return fmt.Errorf("NCP SecretKey for profile '%s' is missing", profile.ProfileName)
-			}
-		}
+// 		// Validate NCP credentials if present
+// 		if creds.NCP.AccessKey != "" || creds.NCP.SecretKey != "" {
+// 			hasAtLeastOneCredential = true
+// 			if creds.NCP.AccessKey == "" {
+// 				return fmt.Errorf("NCP AccessKey for profile '%s' is missing", profile.ProfileName)
+// 			}
+// 			if creds.NCP.SecretKey == "" {
+// 				return fmt.Errorf("NCP SecretKey for profile '%s' is missing", profile.ProfileName)
+// 			}
+// 		}
 
-		// Validate GCP credentials if present
-		if creds.GCP.PrivateKeyID != "" {
-			hasAtLeastOneCredential = true
-			if creds.GCP.PrivateKeyID == "" {
-				return fmt.Errorf("GCP PrivateKeyID for profile '%s' is missing", profile.ProfileName)
-			}
-		}
+// 		// Validate GCP credentials if present
+// 		if creds.GCP.PrivateKeyID != "" {
+// 			hasAtLeastOneCredential = true
+// 			if creds.GCP.PrivateKeyID == "" {
+// 				return fmt.Errorf("GCP PrivateKeyID for profile '%s' is missing", profile.ProfileName)
+// 			}
+// 		}
 
-		// Ensure that at least one credential is present
-		if !hasAtLeastOneCredential {
-			return fmt.Errorf("profile '%s' must have at least one set of credentials (AWS, NCP, or GCP)", profile.ProfileName)
-		}
-	}
+// 		// Ensure that at least one credential is present
+// 		if !hasAtLeastOneCredential {
+// 			return fmt.Errorf("profile '%s' must have at least one set of credentials (AWS, NCP, or GCP)", profile.ProfileName)
+// 		}
+// 	}
 
-	return nil
-}
+// 	return nil
+// }

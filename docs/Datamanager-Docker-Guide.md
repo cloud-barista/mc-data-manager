@@ -64,6 +64,24 @@
         ```
 
 2. Linux에서 Docker 커맨드 실행
+    - Docker 환경변수 설정
+
+        - .env 환경변수 설정
+            ```shell
+            // 인증 관련 데이터베이스 설정
+            MC_DATA_MANAGER_DATABASE_HOST=
+            MC_DATA_MANAGER_DATABASE_PORT=
+            MC_DATA_MANAGER_DATABASE_USER=
+            MC_DATA_MANAGER_DATABASE_PASSWORD=
+            MC_DATA_MANAGER_DATABASE_NAME=
+
+            // 암/복호화 관련 키 설정
+            ENCODING_SECRET_KEY=
+
+            // mc-data-manager 서버 설정
+            MC_DATA_MANAGER_PORT=
+            MC_DATA_MANAGER_ALLOW_IP_RANGE= //허용 CIDR ex. 0.0.0.0/0
+            ```
 
     - Docker run
 
@@ -74,10 +92,6 @@
                 -v data:/app/data \
                 --name mc-data-manager \
                 cloudbaristaorg/mc-data-manager
-            ```
-        - 인증 프로필 카피
-            ```shell
-            docker  cp  profile.json  mc-data-manager:/app/data/var/run/data-manager/profile/profile.json
             ```
 
     - Docker compose
@@ -96,9 +110,5 @@
         - 실행
             ```shell
             docker compose -f <filename>.yaml up -d
-            ```
-        - 인증 프로필 카피
-            ```shell
-            docker compose cp  profile.json  mc-data-manager:/app/data/var/run/data-manager/profile/profile.json
             ```
 
