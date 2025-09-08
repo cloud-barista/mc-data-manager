@@ -2179,8 +2179,8 @@ const docTemplate = `{
                 "port": {
                     "type": "string"
                 },
-                "profileName": {
-                    "type": "string"
+                "credentialId": {
+                    "type": "integer"
                 },
                 "projectId": {
                     "type": "string"
