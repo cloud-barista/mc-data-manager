@@ -33,9 +33,9 @@ func main() {
 	log.Logger = *logger
 
 	port := os.Getenv("MC_DATA_MANAGER_PORT")
-	ip := fmt.Sprintf("%s/%s", os.Getenv("MC_DATA_MANAGER_IP"), os.Getenv("MC_DATA_MANAGER_CIDR"))
-	log.Debug().Str("ip", ip).Str("port", port).Msg("server ip info")
-	rt := serve.InitServer(port, ip)
+	allowIp := fmt.Sprintf("%s/%s", os.Getenv("MC_DATA_MANAGER_ALLOW_IP_RANGE"))
+	log.Debug().Str("ip", allowIp).Str("port", port).Msg("server ip info")
+	rt := serve.InitServer(port, allowIp)
 	serve.Run(rt, port)
 }
 
