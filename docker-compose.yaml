@@ -2,7 +2,7 @@ services:
 # chown vomlume bind mode 
   init-chown-volumes:
     image: busybox
-    command: ["sh", "-c", "chown -R ${UID:-0}:${GID:-0} /app/data"]
+    command: ["sh", "-c", "chown -R ${UID:-0}:${GID:-0} /app/data/var"]
     volumes:
       - ./data:/app/data/
     user: root
@@ -10,10 +10,13 @@ services:
       - .env
     init: true
 # service app
-  mc-data-manger:
+  mc-data-manager:
     container_name: mc-data-manager
     depends_on:
-      - init-chown-volumes
+      init-chown-volumes:
+        condition: service_completed_successfully
+      mc-data-manager-db:
+        condition: service_healthy
     build:
       context: .
       dockerfile: Dockerfile  
@@ -34,14 +37,35 @@ services:
       - /etc/localtime:/etc/localtime:ro # timezone
     env_file:
       - .env
-    # Health check configuration      
+    # Health check configuration
     # OK [ 2xx ,3xx}, ERR [4xx,5xx,...etc]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3300/readyZ"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 10s
+  mc-data-manager-db:
+    image: mariadb:latest
+    container_name: mc-data-manager-db
+    command:
+      - --skip-character-set-client-handshake
+    volumes:
+      - ./data/mariadb:/var/lib/mysql
+    ports:
+      - target: 3306
+        published: 3301
+        protocol: tcp
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    environment:
+      - MYSQL_DATABASE=mcmp
+      - MYSQL_USER=mcmp
+      - MYSQL_PASSWORD=mcmp
+      - MYSQL_ROOT_PASSWORD=mcmp
+
 
 ##################
 ##   OPTIONAL   ##

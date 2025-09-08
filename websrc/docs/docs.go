@@ -301,6 +301,154 @@ const docTemplate = `{
                 }
             }
         },
+        "/credentials": {
+            "get": {
+                "description": "Retrieve a list of all credentials in the system.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Credential]"
+                ],
+                "summary": "Get all credentials",
+                "operationId": "ListCredentialsHandler",
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved all credentials",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Task"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "save encrypted credential.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Credential]"
+                ],
+                "summary": "save encrypted credential.",
+                "operationId": "CreateCredentialHandler",
+                "parameters": [
+                    {
+                        "description": "Parameters required for Credential",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CredentialCreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully saved credential",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/credentials/{id}": {
+            "get": {
+                "description": "Get the details of a Credential using its ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Credential]"
+                ],
+                "summary": "Get a Credential by ID",
+                "operationId": "GetCredentialHandler",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Credential ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved credential",
+                        "schema": {
+                            "$ref": "#/definitions/models.Task"
+                        }
+                    },
+                    "404": {
+                        "description": "Task not found",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete an existing credential using its ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[Credential]"
+                ],
+                "summary": "Delete a credential",
+                "operationId": "DeleteCredentialHandler",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Credential ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully deleted Credential",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Credential not found",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/generate": {
             "get": {
                 "description": "Retrieve a list of all Tasks in the system.",
@@ -1763,6 +1911,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "models.AWSCredentials": {
+            "type": "object",
+            "properties": {
+                "accessKey": {
+                    "type": "string"
+                },
+                "secretKey": {
+                    "type": "string"
+                }
+            }
+        },
         "models.BackupTask": {
             "type": "object",
             "properties": {
@@ -1805,6 +1964,26 @@ const docTemplate = `{
                 }
             }
         },
+        "models.CredentialCreateRequest": {
+            "type": "object",
+            "properties": {
+                "aws": {
+                    "$ref": "#/definitions/models.AWSCredentials"
+                },
+                "cspType": {
+                    "type": "string"
+                },
+                "gcp": {
+                    "$ref": "#/definitions/models.GCPCredentials"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "ncp": {
+                    "$ref": "#/definitions/models.NCPCredentials"
+                }
+            }
+        },
         "models.DataTask": {
             "type": "object",
             "properties": {
@@ -1819,6 +1998,44 @@ const docTemplate = `{
                 },
                 "targetPoint": {
                     "$ref": "#/definitions/models.ProviderConfig"
+                }
+            }
+        },
+        "models.GCPCredentials": {
+            "type": "object",
+            "properties": {
+                "auth_provider_x509_cert_url": {
+                    "type": "string"
+                },
+                "auth_uri": {
+                    "type": "string"
+                },
+                "client_email": {
+                    "type": "string"
+                },
+                "client_id": {
+                    "type": "string"
+                },
+                "client_x509_cert_url": {
+                    "type": "string"
+                },
+                "private_key": {
+                    "type": "string"
+                },
+                "private_key_id": {
+                    "type": "string"
+                },
+                "project_id": {
+                    "type": "string"
+                },
+                "token_uri": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "universe_domain": {
+                    "type": "string"
                 }
             }
         },
@@ -1921,6 +2138,17 @@ const docTemplate = `{
                 },
                 "targetPoint": {
                     "$ref": "#/definitions/models.ProviderConfig"
+                }
+            }
+        },
+        "models.NCPCredentials": {
+            "type": "object",
+            "properties": {
+                "accessKey": {
+                    "type": "string"
+                },
+                "secretKey": {
+                    "type": "string"
                 }
             }
         },

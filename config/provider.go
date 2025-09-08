@@ -53,6 +53,7 @@ func newAWSConfig(accesskey, secretkey, region string) (*aws.Config, error) {
 	return &cfg, nil
 }
 
+// todo : deprecated 확인 후 변경 필요
 func newAWSConfigWithEndpoint(serviceID, accesskey, secretkey, region, endpoint string) (*aws.Config, error) {
 	customResolver := aws.EndpointResolverFunc(func(service, region string) (aws.Endpoint, error) {
 		if service == serviceID {

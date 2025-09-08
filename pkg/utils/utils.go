@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -116,7 +117,7 @@ func validateCronExpression(cronExpr string) error {
 			return err
 		}
 		if !matched {
-			return errors.New("invalid cron expression in field " + string(i+1))
+			return errors.New("invalid cron expression in field " + strconv.Itoa(i+1))
 		}
 	}
 

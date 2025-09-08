@@ -64,3 +64,6 @@ terraform.rc
 
 # Ignore plan output files
 *.tfplan
+
+# Ignore db data
+data/mariadb
