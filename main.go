@@ -16,7 +16,6 @@ limitations under the License.
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/cloud-barista/mc-data-manager/config"
@@ -33,7 +32,7 @@ func main() {
 	log.Logger = *logger
 
 	port := os.Getenv("MC_DATA_MANAGER_PORT")
-	allowIp := fmt.Sprintf("%s/%s", os.Getenv("MC_DATA_MANAGER_ALLOW_IP_RANGE"))
+	allowIp := os.Getenv("MC_DATA_MANAGER_ALLOW_IP_RANGE")
 	log.Debug().Str("ip", allowIp).Str("port", port).Msg("server ip info")
 	rt := serve.InitServer(port, allowIp)
 	serve.Run(rt, port)

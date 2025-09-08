@@ -119,6 +119,7 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 
 	allowIP := []string{"127.0.0.1", "::1"}
 	allowIP = append(allowIP, addIP...)
+	fmt.Println("Allow IPs:", allowIP)
 
 	// Middleware
 	e.Use(TrustedProxiesMiddleware(allowIP))
