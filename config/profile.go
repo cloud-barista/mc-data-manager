@@ -196,10 +196,9 @@ func (fpm *FileProfileManager) LoadCredentialsByProfile(profileName string, prov
 	}
 }
 
-func (cred *CredentialManager) LoadCredentialsById(credentialId uint64, provider string) (interface{}, error) {
+func (cred *CredentialManager) LoadCredentialsById(credentialId uint64) (interface{}, error) {
 	log.Debug().
 		Uint64("credentialId", credentialId).
-		Str("provider", provider).
 		Msg("LoadCredentialsById: fetching credential")
 
 	credential, err := cred.CredentialService.GetCredentialById(credentialId)
@@ -221,10 +220,6 @@ func (cred *CredentialManager) LoadCredentialsById(credentialId uint64, provider
 		return nil, err
 	}
 
-	log.Debug().
-		RawJSON("decryptedCredential", []byte(decryptedJson)).
-		Msg("DecryptAESGCM ok")
-
 	// var creds interface{}
 	// if err := json.Unmarshal([]byte(decryptedJson), &creds); err != nil {
 	// 	return nil, fmt.Errorf("failed to parse credential json: %w", err)
@@ -241,15 +236,13 @@ func (cred *CredentialManager) LoadCredentialsById(credentialId uint64, provider
 	// 	return nil, errors.New("unsupported provider")
 	// }
 
-	switch strings.ToLower(provider) {
+	switch strings.ToLower(credential.CspType) {
 	case "aws":
 		var out models.AWSCredentials
 		if err := json.Unmarshal([]byte(decryptedJson), &out); err != nil {
 			return nil, fmt.Errorf("failed to parse aws credential json: %w", err)
 		} else {
 			log.Debug().
-				Str("access_key", out.AccessKey).
-				Str("secret_key", out.SecretKey).
 				Msg("get aws key ok")
 		}
 		return out, nil

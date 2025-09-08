@@ -3,6 +3,7 @@ package service
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	// "fmt"
 	// "strings"
@@ -31,11 +32,19 @@ func NewCredentialService(db *gorm.DB) *CredentialService {
 
 // TODO - 이름 중복 체크 추가
 func (c *CredentialService) CreateCredential(req models.CredentialCreateRequest) (*models.Credential, error) {
+
 	// if existing, err := c.credentialRepository.FindByName(req.Name); err == nil && existing != nil {
-	//     return nil, fmt.Errorf("credential with name '%s' already exists", req.Name)
+	// 	return nil, fmt.Errorf("credential with name '%s' already exists", req.Name)
 	// } else if !errors.Is(err, gorm.ErrRecordNotFound) {
-	//     return nil, err
+	// 	return nil, err
 	// }
+
+	if existing, err := c.credentialRepository.CheckNameDuplicate(req.Name, req.CspType); err == nil && existing != nil {
+		return nil, fmt.Errorf("credential with name '%s' already exists", req.Name)
+	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, err
+	}
+
 	jsonBytes, _ := json.Marshal(req.GetCredential())
 	encoded, err := c.AesConverter.EncryptAESGCM(string(jsonBytes))
 	if err != nil {

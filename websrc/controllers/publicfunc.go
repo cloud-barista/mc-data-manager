@@ -159,7 +159,7 @@ func getS3OSC(logger *zerolog.Logger, startTime time.Time, jobType string, param
 	var awsOSC *osc.OSController
 	logger.Info().Msg("Get S3 Client")
 	credentailManger := config.AuthManager
-	creds, err := credentailManger.LoadCredentialsById(uint64(gparam.CredentialId), gparam.Provider)
+	creds, err := credentailManger.LoadCredentialsById(uint64(gparam.CredentialId))
 	if err != nil {
 		end := time.Now()
 		logger.Error().Err(err).Msg("credentail load failed")
@@ -212,7 +212,7 @@ func getS3COSC(logger *zerolog.Logger, startTime time.Time, jobType string, para
 
 	logger.Info().Msg("Get S3 Compataible Client")
 	credentailManger := config.AuthManager
-	creds, err := credentailManger.LoadCredentialsById(uint64(gparam.CredentialId), gparam.Provider)
+	creds, err := credentailManger.LoadCredentialsById(uint64(gparam.CredentialId))
 	if err != nil {
 		end := time.Now()
 		logger.Error().Err(err).Msg("S3 credentail load failed")
@@ -255,7 +255,7 @@ func getGCPCOSC(logger *zerolog.Logger, startTime time.Time, jobType string, par
 
 	logger.Info().Msg("Get GCP Client")
 	credentailManger := config.AuthManager
-	creds, err := credentailManger.LoadCredentialsById(uint64(gparam.CredentialId), gparam.Provider)
+	creds, err := credentailManger.LoadCredentialsById(uint64(gparam.CredentialId))
 	if err != nil {
 		end := time.Now()
 		logger.Error().Err(err).Msg("gcp credentail load failed")
@@ -342,7 +342,7 @@ func getDynamoNRDBC(logger *zerolog.Logger, startTime time.Time, jobType string,
 
 	logger.Info().Msg("Get DynamoDB Client")
 	credentailManger := config.AuthManager
-	creds, err := credentailManger.LoadCredentialsById(uint64(gparam.CredentialId), gparam.Provider)
+	creds, err := credentailManger.LoadCredentialsById(uint64(gparam.CredentialId))
 	if err != nil {
 		end := time.Now()
 		logger.Error().Err(err).Msg("aws credentail load failed")
@@ -394,7 +394,7 @@ func getFirestoreNRDBC(logger *zerolog.Logger, startTime time.Time, jobType stri
 	logger.Info().Msg("Get FirestoreDB Client")
 
 	credentailManger := config.AuthManager
-	creds, err := credentailManger.LoadCredentialsById(uint64(gparam.CredentialId), gparam.Provider)
+	creds, err := credentailManger.LoadCredentialsById(uint64(gparam.CredentialId))
 	if err != nil {
 		end := time.Now()
 		logger.Error().Err(err).Msg("gcp credentail load failed")

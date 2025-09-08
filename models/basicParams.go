@@ -20,7 +20,7 @@ import "time"
 type BaseParams struct {
 	ProviderParams
 	RegionParams
-	ProfileParams
+	// ProfileParams
 	CredentialParams
 }
 
@@ -32,9 +32,9 @@ type RegionParams struct {
 	Region string `json:"region" form:"region"`
 }
 
-type ProfileParams struct {
-	ProfileName string `json:"profileName" form:"profileName"`
-}
+// type ProfileParams struct {
+// 	ProfileName string `json:"profileName" form:"profileName"`
+// }
 
 type CredentialParams struct {
 	CredentialId int64 `json:"credentialId" form:"credentialId"`

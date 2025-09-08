@@ -45,10 +45,19 @@ func (c *CredentialRepository) DeleteCredential(id uint64) error {
 	return c.db.Delete(&models.Credential{}, "credentialId = ?", id).Error
 }
 
-// func(c *CredentialRepository) FindByName(name string) (*models.Credential, error) {
-// 	var cred models.Credential
-// 	if err := c.db.Where("name = ?", name).First(&cred).Error; err != nil {
-// 		return nil, err
-// 	}
-// 	return &cred, nil
-// }
+func(c *CredentialRepository) FindByName(name string) (*models.Credential, error) {
+	var cred models.Credential
+	if err := c.db.Where("name = ?", name).First(&cred).Error; err != nil {
+		return nil, err
+	}
+	return &cred, nil
+}
+
+func(c *CredentialRepository) CheckNameDuplicate(name string, cspType string) (*models.Credential, error) {
+	var cred models.Credential
+	if err := c.db.Where("name = ? AND cspType = ?", name, cspType).First(&cred).Error; err != nil {
+		return nil, err
+	}
+	return &cred, nil
+}
+
