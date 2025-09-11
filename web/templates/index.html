@@ -2,11 +2,11 @@
 <html lang="en">
 {{ template "header.html" . }}
 
-<div id="layoutSidenav">
-    <div id="layoutSidenav_nav">
+<!-- <div id="layoutSidenav"> -->
+    <!-- <div id="layoutSidenav_nav">
         <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
             <div class="sb-sidenav-menu">
-                <div class="nav">
+                <div class="nav"> -->
 
                     <!-- 대쉬보드 사이드 메뉴 -->
                     <!-- <div class="sb-sidenav-menu-heading">Core</div>
@@ -16,7 +16,7 @@
                             </a> -->
 
                     <!-- 테스트 데이터 생성 사이드 메뉴 -->
-                    <div class="sb-sidenav-menu-heading">Generate</div>
+                    <!-- <div class="sb-sidenav-menu-heading">Generate</div>
                     <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
                         data-bs-target="#collapseOnpremiseGenerate" aria-expanded="false"
                         aria-controls="collapseOnpremiseGenerate">
@@ -75,10 +75,10 @@
                             <a class="nav-link" href="/generate/firestore">Google Firestore</a>
                             <a class="nav-link" href="/generate/mongodb">Naver MongoDB</a>
                         </nav>
-                    </div>
+                    </div> -->
 
                     <!-- 마이그레이션 사이드 메뉴 -->
-                    <div class="sb-sidenav-menu-heading">Migration</div>
+                    <!-- <div class="sb-sidenav-menu-heading">Migration</div> -->
 
                     <!-- 온프레미스 마이그레이션 사이드 메뉴 -->
                     <!-- <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
@@ -125,7 +125,7 @@
                     </div> -->
 
                     <!-- 오프젝트 스토리지 사이드 메뉴 -->
-                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                    <!-- <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
                         data-bs-target="#collapseObjectStorageMigration" aria-expanded="false"
                         aria-controls="collapseObjectStorageMigration">
                         <div class="sb-nav-link-icon"><i class="fa-solid fa-box-archive"></i></div>
@@ -143,13 +143,13 @@
                             </a>
                             <div class="collapse" id="migrateCollapseaws"
                                 data-bs-parent="#sidenavAccordionObjectStorageMigration">
-                                <nav class="sb-sidenav-menu-nested nav">
+                                <nav class="sb-sidenav-menu-nested nav"> -->
                                     <!-- {{if eq .OS "linux"}}
                                     <a class="nav-link" href="/migrate/aws/linux">Linux</a>
                                     {{else}}
                                     <a class="nav-link" href="/migrate/aws/windows">Windows</a>
                                     {{end}} -->
-                                    <a class="nav-link" href="/migrate/aws/gcp">Google Cloud Storage</a>
+                                    <!-- <a class="nav-link" href="/migrate/aws/gcp">Google Cloud Storage</a>
                                     <a class="nav-link" href="/migrate/aws/ncp">Naver Object Storage</a>
                                 </nav>
                             </div>
@@ -162,13 +162,13 @@
                             </a>
                             <div class="collapse" id="migrateCollapseGCP"
                                 data-bs-parent="#sidenavAccordionObjectStorageMigration">
-                                <nav class="sb-sidenav-menu-nested nav">
+                                <nav class="sb-sidenav-menu-nested nav"> -->
                                     <!-- {{if eq .OS "linux"}}
                                     <a class="nav-link" href="/migrate/gcp/linux">Linux</a>
                                     {{else}}
                                     <a class="nav-link" href="/migrate/gcp/windows">Windows</a>
                                     {{end}} -->
-                                    <a class="nav-link" href="/migrate/gcp/aws">AWS S3</a>
+                                    <!-- <a class="nav-link" href="/migrate/gcp/aws">AWS S3</a>
                                     <a class="nav-link" href="/migrate/gcp/ncp">Naver Object Storage</a>
                                 </nav>
                             </div>
@@ -181,22 +181,22 @@
                             </a>
                             <div class="collapse" id="migrateCollapseNCP"
                                 data-bs-parent="#sidenavAccordionObjectStorageMigration">
-                                <nav class="sb-sidenav-menu-nested nav">
+                                <nav class="sb-sidenav-menu-nested nav"> -->
                                     <!-- {{if eq .OS "linux"}}
                                     <a class="nav-link" href="/migrate/ncp/linux">Linux</a>
                                     {{else}}
                                     <a class="nav-link" href="/migrate/ncp/windows">Windows</a>
                                     {{end}} -->
-                                    <a class="nav-link" href="/migrate/ncp/aws">AWS S3</a>
+                                    <!-- <a class="nav-link" href="/migrate/ncp/aws">AWS S3</a>
                                     <a class="nav-link" href="/migrate/ncp/gcp">Google Cloud Storage</a>
                                 </nav>
                             </div>
                         </nav>
-                    </div>
+                    </div> -->
 
                     <!-- SQL 마이그레이션 사이드 메뉴 -->
 
-                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                    <!-- <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
                         data-bs-target="#collapseSQLMigration" aria-expanded="false"
                         aria-controls="collapseSQLMigration">
                         <div class="sb-nav-link-icon"><i class="fa-solid fa-code"></i></div>
@@ -207,11 +207,11 @@
                         <nav class="sb-sidenav-menu-nested nav">
                             <a class="nav-link" href="/migrate/mysql">MySQL</a>
                         </nav>
-                    </div>
+                    </div> -->
 
                     <!-- No-SQL 마이그레이션 사이드 메뉴 -->
 
-                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                    <!-- <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
                         data-bs-target="#collapseNoSQLMigration" aria-expanded="false"
                         aria-controls="collapseNoSQLMigration">
                         <div class="sb-nav-link-icon"><i class="fa-solid fa-laptop-code"></i></div>
@@ -263,42 +263,60 @@
                                 </nav>
                             </div>
                         </nav>
-                    </div>
+                    </div> -->
 
                     <!-- 백업 사이드 메뉴 -->
-                    <div class="sb-sidenav-menu-heading">Back Up</div>
+                    <!-- <div class="sb-sidenav-menu-heading">Back Up</div> -->
 
                     <!-- 백업 사이드 메뉴 -->
 
-                    <a class="nav-link collapsed" href="/backup/register">
+                    <!-- <a class="nav-link collapsed" href="/backup/register">
                         <div class="sb-nav-link-icon"><i class="fa-solid fa-clone"></i></div>
                         Back up
-                    </a>
+                    </a> -->
 
                     <!-- 복구 사이드 메뉴 -->
-                    <div class="sb-sidenav-menu-heading">Restore</div>
+                    <!-- <div class="sb-sidenav-menu-heading">Restore</div> -->
 
                     <!-- 복구 사이드 메뉴 -->
 
-                    <a class="nav-link collapsed" href="/restore/register">
+                    <!-- <a class="nav-link collapsed" href="/restore/register">
                         <div class="sb-nav-link-icon"><i class="fa-solid fa-clone"></i></div>
                         Restore
                     </a>
 
-                </div>
-            </div> <!-- sb-sidenav-menu END -->
+                </div> -->
+            <!--</div>--> <!-- sb-sidenav-menu END -->
 
             <!-- sidebar bottom -->
-            <div class="sb-sidenav-footer">
+            <!-- <div class="sb-sidenav-footer">
                 <div class="small">Logged in as:</div>
                 m-cmp
             </div>
         </nav>
-    </div>
+    </div> -->
 
     {{ template "content.html" . }}
 
     {{ template "footer.html" . }}
+
+    <script>
+        // 1depth 메뉴에 마우스 오버 시 파란색 밑줄 추가
+        document.querySelectorAll('.navbar-nav .nav-item.dropdown').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                // 모든 1depth 메뉴에서 active-depth1 클래스 제거
+                document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+                    link.classList.remove('active-depth1');
+                });
+                // 현재 마우스 오버된 1depth 메뉴에 active-depth1 클래스 추가
+                this.querySelector('.nav-link').classList.add('active-depth1');
+            });
+            item.addEventListener('mouseleave', function() {
+                // 마우스가 떠나면 active-depth1 클래스 제거
+                this.querySelector('.nav-link').classList.remove('active-depth1');
+            });
+        });
+    </script>
 
     </body>
 
