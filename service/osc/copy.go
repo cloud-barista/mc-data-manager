@@ -16,24 +16,31 @@ limitations under the License.
 package osc
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+	"strings"
 	"sync"
 
 	"github.com/cloud-barista/mc-data-manager/models"
+	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/filtering"
 )
 
-func (src *OSController) Copy(dst *OSController) error {
+func (src *OSController) Copy(dst *OSController, flt *filtering.ObjectFilter) error {
 	if err := dst.osfs.CreateBucket(); err != nil {
 		src.logWrite("Error", "CreateBucket error", err)
 		return err
 	}
 
-	srcObjList, err := src.osfs.ObjectList()
+	srcObjList, err := src.ObjectListWithFilter(flt)
 	if err != nil {
 		src.logWrite("Error", "source objectList error", err)
 		return err
+	}
+
+	if b, err := json.MarshalIndent(srcObjList, "", "  "); err == nil {
+		fmt.Println("Filtered Objects:", string(b))
 	}
 
 	dstObjList, err := dst.osfs.ObjectList()
@@ -42,7 +49,12 @@ func (src *OSController) Copy(dst *OSController) error {
 		return err
 	}
 
-	copyList, skipList := getDownloadList(dstObjList, srcObjList, "")
+	prefix := ""
+	if flt != nil && flt.Prefix != "" {
+		prefix = strings.TrimPrefix(flt.Prefix, "/")
+	}
+
+	copyList, skipList := getDownloadList(dstObjList, srcObjList, prefix)
 
 	for _, skip := range skipList {
 		src.logWrite("Info", fmt.Sprintf("skip file : %s", skip.Key), nil)

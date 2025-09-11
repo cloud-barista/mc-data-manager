@@ -204,3 +204,7 @@ func mGetWorker(osc *OSController, dirPath string, jobs chan models.Object, resu
 		resultChan <- ret
 	}
 }
+
+// func GetDatabaseList(provider, databaseType, region, endpoint, creds){
+
+// }

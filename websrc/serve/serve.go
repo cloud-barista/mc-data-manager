@@ -204,6 +204,7 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 
 	credentialGroup := e.Group("/credentials")
 	routes.CredentialRoutes(credentialGroup, config.DB)
+	
 
 	selfEndpoint := "localhost" + ":" + port
 	website := " http://" + selfEndpoint
