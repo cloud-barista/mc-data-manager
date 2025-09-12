@@ -320,7 +320,7 @@ func (f *S3FS) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*models.Obje
 				LastModified: c.LastModified,
 				Size:         c.Size,
 				StorageClass: string(o.StorageClass),
-				Provider:     models.Provider("aws"),
+				Provider:     f.provider,
 			})
 		}
 

@@ -1,10 +1,15 @@
 package filtering
 
 import (
+	"math"
 	"path"
 	"strings"
 	"time"
+
+    "github.com/rs/zerolog/log"
 )
+
+const MiB = int64(1024 * 1024)
 
 type Candidate struct {
 	Key          string
@@ -65,11 +70,23 @@ func MatchCandidate(flt *ObjectFilter, c Candidate) bool {
 		return false
 	}
 
-	// Size
-	if flt.MinSize != nil && c.Size < *flt.MinSize {
+	mb := float64(c.Size) / (1024 * 1024)
+	roundedMB := math.Round(mb*10) / 10
+	byteSize := int64(roundedMB * 1024 * 1024)
+
+	log.Debug().
+		Int64("original_bytes", c.Size).
+		Float64("original_mb", mb).
+		Float64("rounded_mb", roundedMB).
+		Int64("rounded_bytes", byteSize).
+		Msg("[Filter] Size comparison info")
+
+	rbytes := roundedDisplayBytes(c.Size)
+
+	if flt.MinSize != nil && rbytes < *flt.MinSize {
 		return false
 	}
-	if flt.MaxSize != nil && c.Size > *flt.MaxSize {
+	if flt.MaxSize != nil && rbytes > *flt.MaxSize {
 		return false
 	}
 
@@ -82,4 +99,10 @@ func MatchCandidate(flt *ObjectFilter, c Candidate) bool {
 	}
 
 	return true
+}
+
+
+func roundedDisplayBytes(sizeBytes int64) int64 {
+	tenthsMiB := (sizeBytes*10 + MiB/2) / MiB 
+	return (tenthsMiB * MiB) / 10
 }
