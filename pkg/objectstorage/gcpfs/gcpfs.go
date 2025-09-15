@@ -21,7 +21,9 @@ import (
 
 	"cloud.google.com/go/storage"
 	"github.com/cloud-barista/mc-data-manager/models"
+	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/filtering"
 	"google.golang.org/api/iterator"
+	"github.com/rs/zerolog/log"
 )
 
 type GCPfs struct {
@@ -106,6 +108,46 @@ func (f *GCPfs) ObjectList() ([]*models.Object, error) {
 			Size:         objAttrs.Size,
 			StorageClass: objAttrs.StorageClass,
 		})
+	}
+	return objList, nil
+}
+
+func (f *GCPfs) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*models.Object, error) {
+	log.Debug().Msg("[GCP] filtering")
+	var objList []*models.Object
+	it := f.bktclient.Objects(f.ctx, nil)
+	for {
+		objAttrs, err := it.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+
+		candidate := filtering.Candidate{
+			Key:          objAttrs.Name,
+			Size:         objAttrs.Size,
+			LastModified: objAttrs.Created,
+		}
+
+		log.Debug().
+		Str("gcp key", candidate.Key).
+		Int64("gcp bytes", candidate.Size).
+		Time("gcp date", candidate.LastModified).
+		Msg("gcp value")
+
+		// filtering.MatchCandidate() 호출
+		if filtering.MatchCandidate(flt, candidate) {
+			objList = append(objList, &models.Object{
+				ETag:         objAttrs.Etag,
+				Key:          objAttrs.Name,
+				LastModified: objAttrs.Created,
+				Size:         objAttrs.Size,
+				StorageClass: objAttrs.StorageClass,
+				Provider: f.provider,
+			})
+		}
 	}
 	return objList, nil
 }

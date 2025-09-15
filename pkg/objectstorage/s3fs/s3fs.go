@@ -268,6 +268,7 @@ func New(provider models.Provider, client *s3.Client, bucketName, region string)
 }
 
 func (f *S3FS) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*models.Object, error) {
+	log.Debug().Msg("[S3FS] filtering")
 	var out []*models.Object
 	var token *string
 
@@ -276,11 +277,6 @@ func (f *S3FS) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*models.Obje
 		pre := strings.TrimPrefix(flt.Prefix, "/")
 		prefix = aws.String(pre)
 	}
-
-	log.Info().Str("bucket", f.bucketName).
-		Str("region", f.region).
-		Str("prefix", aws.ToString(prefix)).
-		Msg("[S3FS] ListObjectsV2 start")
 
 	for {
 		resp, err := f.client.ListObjectsV2(f.ctx, &s3.ListObjectsV2Input{
@@ -309,6 +305,7 @@ func (f *S3FS) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*models.Obje
 						Str("key", c.Key).
 						Str("prefix", aws.ToString(prefix)).
 						Strs("exact", flt.Exact).
+						Str("modifiedDate", c.LastModified.String()).
 						Msg("[S3FS] filtered out")
 				}
 				continue

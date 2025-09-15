@@ -826,6 +826,7 @@ func handleObjectStorageMigrateTask(params models.BasicDataTask) models.Status {
             "maxSize":  flt.MaxSize,
             "modifiedAfter":  func() string { if flt.ModifiedAfter != nil { return flt.ModifiedAfter.UTC().Format(time.RFC3339) }; return "" }(),
             "modifiedBefore": func() string { if flt.ModifiedBefore != nil { return flt.ModifiedBefore.UTC().Format(time.RFC3339) }; return "" }(),
+			"sizeFilteringUnit" : flt.SizeFilteringUnit,
         }
         if b, err := json.MarshalIndent(compiled, "", "  "); err == nil {
             log.Debug().RawJSON("sourceFilter_compiled", b).Msg("compiled sourceFilter")

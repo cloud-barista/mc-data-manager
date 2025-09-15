@@ -47,5 +47,6 @@ func FromParams(p *models.ObjectFilterParams) (*ObjectFilter, error) {
 		MaxSize:        p.MaxSize,
 		ModifiedAfter:  after,
 		ModifiedBefore: before,
+		SizeFilteringUnit: p.SizeFilteringUnit,
 	}, nil
 }

@@ -6,10 +6,8 @@ import (
 	"strings"
 	"time"
 
-    "github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/log"
 )
-
-const MiB = int64(1024 * 1024)
 
 type Candidate struct {
 	Key          string
@@ -55,7 +53,7 @@ func MatchCandidate(flt *ObjectFilter, c Candidate) bool {
 	if len(flt.Contains) > 0 {
 		ok := false
 		for _, v := range flt.Contains {
-			if strings.Contains(c.Key, v) {
+			if strings.Contains(strings.ToLower(c.Key), strings.ToLower(v)) {
 				ok = true
 				break
 			}
@@ -70,18 +68,14 @@ func MatchCandidate(flt *ObjectFilter, c Candidate) bool {
 		return false
 	}
 
-	mb := float64(c.Size) / (1024 * 1024)
-	roundedMB := math.Round(mb*10) / 10
-	byteSize := int64(roundedMB * 1024 * 1024)
+	rbytes := math.Round(roundedUnit(c.Size, flt.SizeFilteringUnit)*10) / 10
 
 	log.Debug().
+		Str("key", c.Key).
 		Int64("original_bytes", c.Size).
-		Float64("original_mb", mb).
-		Float64("rounded_mb", roundedMB).
-		Int64("rounded_bytes", byteSize).
-		Msg("[Filter] Size comparison info")
-
-	rbytes := roundedDisplayBytes(c.Size)
+		Str("unit", strings.ToUpper(flt.SizeFilteringUnit)).
+		Float64("value_in_unit", rbytes).
+		Msg("[Filter] size (rounded-in-unit) compare")
 
 	if flt.MinSize != nil && rbytes < *flt.MinSize {
 		return false
@@ -101,8 +95,16 @@ func MatchCandidate(flt *ObjectFilter, c Candidate) bool {
 	return true
 }
 
-
-func roundedDisplayBytes(sizeBytes int64) int64 {
-	tenthsMiB := (sizeBytes*10 + MiB/2) / MiB 
-	return (tenthsMiB * MiB) / 10
+func roundedUnit(sizeBytes int64, unit string) float64 {
+	log.Debug().Str("sizeUnit", unit).Msg("[data filtering size unit]")
+	switch strings.ToUpper(unit) {
+	case "GB":
+		return float64(sizeBytes) / (1024 * 1024 * 1024)
+	case "MB", "":
+		return float64(sizeBytes) / (1024 * 1024)
+	case "KB":
+		return float64(sizeBytes) / 1024
+	default:
+		return float64(sizeBytes)
+	}
 }
