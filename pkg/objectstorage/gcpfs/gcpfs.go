@@ -103,7 +103,6 @@ func (f *GCPfs) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*models.Obj
 		query = &storage.Query{Prefix: pre}
 	}
 
-	log.Debug().Str("path", query.Prefix).Msg("[gcp path filtering]")
 	it := f.bktclient.Objects(f.ctx, query)
 	for {
 		objAttrs, err := it.Next()
