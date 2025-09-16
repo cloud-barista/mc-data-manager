@@ -15,14 +15,17 @@ limitations under the License.
 */
 package models
 
-import "time"
+import (
+	"encoding/json"
+	"errors"
+	"fmt"
+	"time"
+)
 
 type CredentialCreateRequest struct {
-	CspType string         `json:"cspType"`
-	Name    string         `json:"name,omitempty"`
-	AWS     AWSCredentials `json:"aws,omitempty"`
-	NCP     NCPCredentials `json:"ncp,omitempty"`
-	GCP     GCPCredentials `json:"gcp,omitempty"`
+	CspType        string          `json:"cspType"`
+	Name           string          `json:"name,omitempty"`
+	CredentialJson json.RawMessage `json:"credentialJson,omitempty"`
 }
 
 type CredentialListResponse struct {
@@ -45,15 +48,38 @@ func (Credential) TableName() string {
 	return "tbCredential"
 }
 
-func (cr *CredentialCreateRequest) GetCredential() interface{} {
+func (cr *CredentialCreateRequest) GetCredential() (string, error) {
+	if len(cr.CredentialJson) == 0 {
+		return "", errors.New("credentialJson is empty")
+	}
+
 	switch cr.CspType {
 	case "aws":
-		return cr.AWS
+		var aws AWSCredentials
+		if err := json.Unmarshal(cr.CredentialJson, &aws); err != nil {
+			return "", fmt.Errorf("invalid aws credential json: %w", err)
+		}
+
+		b, _ := json.Marshal(aws)
+		return string(b), nil
 	case "ncp":
-		return cr.NCP
+		var ncp NCPCredentials
+		if err := json.Unmarshal(cr.CredentialJson, &ncp); err != nil {
+			return "", fmt.Errorf("invalid ncp credential json: %w", err)
+		}
+
+		b, _ := json.Marshal(ncp)
+		return string(b), nil
 	case "gcp":
-		return cr.GCP
+		var gcp GCPCredentials
+		if err := json.Unmarshal(cr.CredentialJson, &gcp); err != nil {
+			return "", fmt.Errorf("invalid gcp credential json: %w", err)
+		}
+
+		b, _ := json.Marshal(gcp)
+		return string(b), nil
+
 	default:
-		return nil
+		return "", fmt.Errorf("unsupported cspType: %q", cr.CspType)
 	}
 }
