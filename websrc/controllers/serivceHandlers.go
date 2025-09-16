@@ -22,12 +22,19 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"sync"
 	"time"
 
 	"github.com/cloud-barista/mc-data-manager/models"
+	service "github.com/cloud-barista/mc-data-manager/service/credential"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 )
+
+type CredentialManager struct {
+	CredentialService *service.CredentialService
+	mu                sync.Mutex
+}
 
 // DeleteServiceAndTaskAllHandler godoc
 //
@@ -211,3 +218,60 @@ func asyncRunCommandWait(scriptPath string) (string, error) {
 	log.Info().Msgf("Script %s executed successfully", scriptPath)
 	return <-outputChan, nil
 }
+
+// func (cred *CredentialManager) GetDatabaseList(c echo.Context) error {
+// 	credIDStr := c.QueryParam("credentialId")
+// 	credID, err := strconv.ParseUint(credIDStr, 10, 64)
+// 	if err != nil {
+// 		return c.JSON(http.StatusBadRequest, map[string]string{
+// 			"error": "invalid credentialId",
+// 		})
+// 	}
+
+// 	databaseType := strings.ToLower(c.QueryParam("databaseType"))
+// 	region := c.QueryParam("region")
+// 	endpoint := c.QueryParam("endpoint")
+// 	ctx, cancel := context.WithTimeout(c.Request().Context(), 10*time.Second)
+// 	defer cancel()
+
+// 	credential, err := cred.CredentialService.GetCredentialById(credID)
+// 	if err != nil {
+//         return c.JSON(http.StatusInternalServerError, map[string]string{
+//             "error": "failed to load credential meta: " + err.Error(),
+//         })
+//     }
+
+// 	credentailManager := config.NewAuthManager()
+// 	creds, err := credentailManager.LoadCredentialsById(credID)
+// 	if err != nil {
+//         return c.JSON(http.StatusInternalServerError, map[string]string{
+//             "error": "failed to load credential secret: " + err.Error(),
+//         })
+//     }
+
+// 	provider := strings.ToLower(credential.CspType)
+
+// 	switch databaseType {
+// 	case "objectstorage":
+// 		items, err := osc.GetDatabaseList(ctx, provider, databaseType, region, endpoint, creds)
+// 		if err != nil {
+// 			return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+// 		}
+// 		return c.JSON(http.StatusOK, items)
+
+// 	case "nrdbms":
+// 		return c.JSON(http.StatusNotImplemented, map[string]string{
+// 			"error": "nrdbms listing is not implemented yet",
+// 		})
+
+// 	case "rdbms":
+// 		return c.JSON(http.StatusNotImplemented, map[string]string{
+// 			"error": "rdbms listing is not implemented yet",
+// 		})
+
+// 	default:
+// 		return c.JSON(http.StatusBadRequest, map[string]string{
+// 			"error": "unsupported databaseType: " + databaseType,
+// 		})
+// 	}
+// }

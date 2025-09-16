@@ -31,7 +31,6 @@ func ServiceRoot(g *echo.Group, scheduleManager *task.FileScheduleManager) {
 	serviceController := controllers.TaskController{
 		TaskService: scheduleManager,
 	}
-
 	// Route to clear all services and tasks
 	g.DELETE("/clearAll", serviceController.DeleteServiceAndTaskAllHandler)
 

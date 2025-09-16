@@ -1,7 +1,6 @@
 package service
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -45,8 +44,11 @@ func (c *CredentialService) CreateCredential(req models.CredentialCreateRequest)
 		return nil, err
 	}
 
-	jsonBytes, _ := json.Marshal(req.GetCredential())
-	encoded, err := c.AesConverter.EncryptAESGCM(string(jsonBytes))
+	credStr, err := req.GetCredential()
+	if err != nil {
+		return nil, err
+	}
+	encoded, err := c.AesConverter.EncryptAESGCM(credStr)
 	if err != nil {
 		return nil, err
 	}

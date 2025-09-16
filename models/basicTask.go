@@ -77,10 +77,11 @@ type GenTaskTarget struct {
 }
 type BasicDataTask struct {
 	BasicTask
-	Directory   string         `json:"Directory,omitempty" swaggerignore:"true"`
-	Dummy       GenFileParams  `json:"dummy"`
-	SourcePoint ProviderConfig `json:"sourcePoint,omitempty"`
-	TargetPoint ProviderConfig `json:"targetPoint,omitempty"`
+	Directory    string              `json:"Directory,omitempty" swaggerignore:"true"`
+	Dummy        GenFileParams       `json:"dummy"`
+	SourcePoint  ProviderConfig      `json:"sourcePoint,omitempty"`
+	TargetPoint  ProviderConfig      `json:"targetPoint,omitempty"`
+	SourceFilter *ObjectFilterParams `json:"sourceFilter,omitempty"`
 }
 type DataTask struct {
 	OperationParams
