@@ -33,16 +33,16 @@ var importOSCmd = &cobra.Command{
 	},
 }
 
-var exportOSCmd = &cobra.Command{
-	Use:     "objectstorage",
-	Aliases: []string{"obj"},
-	Run: func(cmd *cobra.Command, args []string) {
-		auth.PreRun("objectstorage", &commandTask, cmd.Parent().Use)
-		if err := auth.ExportOSFunc(&commandTask); err != nil {
-			os.Exit(1)
-		}
-	},
-}
+// var exportOSCmd = &cobra.Command{
+// 	Use:     "objectstorage",
+// 	Aliases: []string{"obj"},
+// 	Run: func(cmd *cobra.Command, args []string) {
+// 		auth.PreRun("objectstorage", &commandTask, cmd.Parent().Use)
+// 		if err := auth.ExportOSFunc(&commandTask); err != nil {
+// 			os.Exit(1)
+// 		}
+// 	},
+// }
 
 // var migrationOSCmd = &cobra.Command{
 // 	Use:     "objectstorage",
@@ -68,7 +68,7 @@ var deleteOSCmd = &cobra.Command{
 
 func init() {
 	importCmd.AddCommand(importOSCmd)
-	exportCmd.AddCommand(exportOSCmd)
+	// exportCmd.AddCommand(exportOSCmd)
 	// migrationCmd.AddCommand(migrationOSCmd)
 	deleteCmd.AddCommand(deleteOSCmd)
 

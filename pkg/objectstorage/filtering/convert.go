@@ -38,15 +38,15 @@ func FromParams(p *models.ObjectFilterParams) (*ObjectFilter, error) {
 	}
 
 	return &ObjectFilter{
-		Prefix:         p.Prefix,
-		Contains:       p.Contains,
-		Suffixes:       p.Suffixes,
-		Exact:          p.Exact,
-		Regex:          re,
-		MinSize:        p.MinSize,
-		MaxSize:        p.MaxSize,
-		ModifiedAfter:  after,
-		ModifiedBefore: before,
+		Path:              p.Path,
+		Contains:          p.Contains,
+		Suffixes:          p.Suffixes,
+		Exact:             p.Exact,
+		Regex:             re,
+		MinSize:           p.MinSize,
+		MaxSize:           p.MaxSize,
+		ModifiedAfter:     after,
+		ModifiedBefore:    before,
 		SizeFilteringUnit: p.SizeFilteringUnit,
 	}, nil
 }

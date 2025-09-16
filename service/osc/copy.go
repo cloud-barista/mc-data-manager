@@ -50,8 +50,8 @@ func (src *OSController) Copy(dst *OSController, flt *filtering.ObjectFilter) er
 	}
 
 	prefix := ""
-	if flt != nil && flt.Prefix != "" {
-		prefix = strings.TrimPrefix(flt.Prefix, "/")
+	if flt != nil && flt.Path != "" {
+		prefix = strings.TrimPrefix(flt.Path, "/")
 	}
 
 	copyList, skipList := getDownloadList(dstObjList, srcObjList, prefix)

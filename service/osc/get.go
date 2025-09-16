@@ -25,10 +25,11 @@ import (
 	"sync"
 
 	"github.com/cloud-barista/mc-data-manager/models"
+	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/filtering"
 	"github.com/cloud-barista/mc-data-manager/pkg/utils"
 )
 
-func (osc *OSController) MGet(dirPath string) error {
+func (osc *OSController) MGet(dirPath string, flt *filtering.ObjectFilter) error {
 	if utils.FileExists(dirPath) {
 		err := errors.New("directory does not exist")
 		osc.logWrite("Error", "FileExists error", err)
@@ -40,6 +41,12 @@ func (osc *OSController) MGet(dirPath string) error {
 		osc.logWrite("Error", "MkdirAll error", err)
 		return err
 	}
+
+	srcObjList, err := osc.ObjectListWithFilter(flt)
+	if err != nil {
+        osc.logWrite("Error", "ObjectListWithFilter error", err)
+        return err
+    }
 
 	var fileList []*models.Object
 
@@ -67,13 +74,13 @@ func (osc *OSController) MGet(dirPath string) error {
 		return err
 	}
 
-	objList, err := osc.osfs.ObjectList()
-	if err != nil {
-		osc.logWrite("Error", "ObjectList error", err)
-		return err
-	}
+	// objList, err := osc.osfs.ObjectList()
+	// if err != nil {
+	// 	osc.logWrite("Error", "ObjectList error", err)
+	// 	return err
+	// }
 
-	downlaodList, skipList := getDownloadList(fileList, objList, dirPath)
+	downlaodList, skipList := getDownloadList(fileList, srcObjList, dirPath)
 
 	for _, skip := range skipList {
 		osc.logWrite("Info", fmt.Sprintf("skip file : %s", skip.Key), nil)

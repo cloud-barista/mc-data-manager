@@ -42,24 +42,24 @@ func ImportOSFunc(params *models.CommandTask) error {
 	return nil
 }
 
-func ExportOSFunc(params *models.CommandTask) error {
-	var OSC *osc.OSController
-	var err error
-	log.Info().Msgf("User Information")
-	OSC, err = GetOS(&params.TargetPoint)
-	if err != nil {
-		log.Error().Msgf("OSController error importing into objectstorage : %v", err)
-		return err
-	}
+// func ExportOSFunc(params *models.CommandTask) error {
+// 	var OSC *osc.OSController
+// 	var err error
+// 	log.Info().Msgf("User Information")
+// 	OSC, err = GetOS(&params.TargetPoint)
+// 	if err != nil {
+// 		log.Error().Msgf("OSController error importing into objectstorage : %v", err)
+// 		return err
+// 	}
 
-	log.Info().Msgf("Launch OSController MGet")
-	if err := OSC.MGet(params.Directory); err != nil {
-		log.Error().Msgf("MGet error exporting into objectstorage : %v", err)
-		return err
-	}
-	log.Info().Msgf("successfully exported : %s", params.Directory)
-	return nil
-}
+// 	log.Info().Msgf("Launch OSController MGet")
+// 	if err := OSC.MGet(params.Directory); err != nil {
+// 		log.Error().Msgf("MGet error exporting into objectstorage : %v", err)
+// 		return err
+// 	}
+// 	log.Info().Msgf("successfully exported : %s", params.Directory)
+// 	return nil
+// }
 
 // func MigrationOSFunc(params *models.CommandTask) error {
 // 	var src *osc.OSController

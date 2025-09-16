@@ -273,10 +273,11 @@ func (f *S3FS) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*models.Obje
 	var token *string
 
 	var prefix *string
-	if flt != nil && flt.Prefix != "" {
-		pre := strings.TrimPrefix(flt.Prefix, "/")
+	if flt != nil && flt.Path != "" {
+		pre := strings.TrimPrefix(flt.Path, "/")
 		prefix = aws.String(pre)
 	}
+
 
 	for {
 		resp, err := f.client.ListObjectsV2(f.ctx, &s3.ListObjectsV2Input{

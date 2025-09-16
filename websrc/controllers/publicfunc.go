@@ -37,6 +37,7 @@ import (
 	"github.com/cloud-barista/mc-data-manager/pkg/nrdbms/awsdnmdb"
 	"github.com/cloud-barista/mc-data-manager/pkg/nrdbms/gcpfsdb"
 	"github.com/cloud-barista/mc-data-manager/pkg/nrdbms/ncpmgdb"
+	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/filtering"
 	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/gcpfs"
 	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/s3fs"
 	"github.com/cloud-barista/mc-data-manager/pkg/rdbms/mysql"
@@ -574,9 +575,9 @@ func oscImport(logger *zerolog.Logger, startTime time.Time, osType string, osc *
 	return true
 }
 
-func oscExport(logger *zerolog.Logger, startTime time.Time, osType string, osc *osc.OSController, dstDir string) bool {
+func oscExport(logger *zerolog.Logger, startTime time.Time, osType string, osc *osc.OSController, dstDir string, flt *filtering.ObjectFilter) bool {
 	logger.Info().Msgf("Start Export with %s", osType)
-	if err := osc.MGet(dstDir); err != nil {
+	if err := osc.MGet(dstDir, flt); err != nil {
 		end := time.Now()
 		logger.Error().Err(err).Msgf("OSController export failed: %v", err)
 		logger.Info().Str("end time", end.Format("2006-01-02T15:04:05-07:00"))

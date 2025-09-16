@@ -100,7 +100,7 @@ func roundedUnit(sizeBytes int64, unit string) float64 {
 	switch strings.ToUpper(unit) {
 	case "GB":
 		return float64(sizeBytes) / (1024 * 1024 * 1024)
-	case "MB", "":
+	case "MB":
 		return float64(sizeBytes) / (1024 * 1024)
 	case "KB":
 		return float64(sizeBytes) / 1024

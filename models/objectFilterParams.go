@@ -1,7 +1,7 @@
 package models
 
 type ObjectFilterParams struct {
-	Prefix            string   `json:"prefix"`
+	Path              string   `json:"path"`
 	Contains          []string `json:"contains"`
 	Suffixes          []string `json:"suffixes"`
 	Exact             []string `json:"exact"`
@@ -10,5 +10,5 @@ type ObjectFilterParams struct {
 	MaxSize           *float64 `json:"maxSize"`
 	ModifiedAfter     *string  `json:"modifiedAfter"`
 	ModifiedBefore    *string  `json:"modifiedBefore"`
-	SizeFilteringUnit string  `json:"sizeFilteringUnit"`
+	SizeFilteringUnit string   `json:"sizeFilteringUnit"`
 }

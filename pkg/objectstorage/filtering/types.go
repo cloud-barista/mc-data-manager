@@ -6,7 +6,7 @@ import (
 )
 
 type ObjectFilter struct {
-	Prefix            string
+	Path              string
 	Contains          []string
 	Suffixes          []string
 	Exact             []string
