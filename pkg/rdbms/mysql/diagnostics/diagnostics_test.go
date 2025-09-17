@@ -19,7 +19,7 @@ func TestMain(t *testing.T) {
 	ctx := context.Background()
 	collector := diagnostics.NewCollector(sqlDB)
 	// res2, err := collector.RunTimed(ctx, "mcmp", 30*time.Second)
-	res2, err := collector.WithDiagnostic(ctx, "inventory", func(ctx context.Context) error {
+	res2, err := collector.WithDiagnostic(ctx, func(ctx context.Context) error {
 		// 여기서 실제 기능 실행: 예) 배치 작업, 마이그레이션, 대량 업데이트 등
 		count()
 
@@ -32,12 +32,12 @@ func TestMain(t *testing.T) {
 	diagnostics.PrintBufferReport(res2.Buffer)
 	diagnostics.PrintLockReport(res2.Lock, res2.Elapsed)
 	diagnostics.PrintIOReport(res2.IO, res2.Elapsed)
-	diagnostics.PrintWorkloadReport(res2.Work)
+	diagnostics.PrintWorkloadReport(res2.Work, res2.Elapsed)
 	diagnostics.PrintThreadReport(res2.Thread)
 }
 
 func count() {
-	for i := 1; i <= 10; i++ {
+	for i := 1; i <= 5; i++ {
 		fmt.Printf("%d \n", i)
 		time.Sleep(time.Second * 1)
 	}

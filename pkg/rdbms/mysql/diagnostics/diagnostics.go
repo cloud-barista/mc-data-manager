@@ -52,23 +52,23 @@ type TimedResult struct {
 	Lock   []TableLockDelta
 	IO     []TableIODelta
 	Buffer DatabaseBufferStat
-	Work   WorkloadDelta
+	Work   []WorkloadDelta
 	Thread DatabaseThreadStat
 	// 공통 경과시간: 두 수집기의 elapsed 가 다를 일은 거의 없음
 	Elapsed time.Duration
 }
 
-func (c *Collector) RunTimed(ctx context.Context, schema string, d time.Duration) (TimedResult, error) {
+func (c *Collector) RunTimed(ctx context.Context, d time.Duration) (TimedResult, error) {
 	// 시작 스냅샷
-	lockBefore, err := c.Lock.Snapshot(ctx, schema)
+	lockBefore, err := c.Lock.Snapshot(ctx)
 	if err != nil {
 		return TimedResult{}, err
 	}
-	ioBefore, err := c.IO.Snapshot(ctx, schema)
+	ioBefore, err := c.IO.Snapshot(ctx)
 	if err != nil {
 		return TimedResult{}, err
 	}
-	workBefore, err := c.Work.Snapshot(ctx, schema)
+	workBefore, err := c.Work.Snapshot(ctx)
 	if err != nil {
 		return TimedResult{}, err
 	}
@@ -82,15 +82,15 @@ func (c *Collector) RunTimed(ctx context.Context, schema string, d time.Duration
 	}
 
 	// 종료 스냅샷
-	lockAfter, err := c.Lock.Snapshot(ctx, schema)
+	lockAfter, err := c.Lock.Snapshot(ctx)
 	if err != nil {
 		return TimedResult{}, err
 	}
-	ioAfter, err := c.IO.Snapshot(ctx, schema)
+	ioAfter, err := c.IO.Snapshot(ctx)
 	if err != nil {
 		return TimedResult{}, err
 	}
-	workAfter, err := c.Work.Snapshot(ctx, schema)
+	workAfter, err := c.Work.Snapshot(ctx)
 	if err != nil {
 		return TimedResult{}, err
 	}
@@ -121,16 +121,16 @@ func (c *Collector) RunTimed(ctx context.Context, schema string, d time.Duration
 }
 
 // 모드 B: 다른 기능 실행 전후로 스냅샷 차분
-func (c *Collector) WithDiagnostic(ctx context.Context, schema string, fn func(context.Context) error) (TimedResult, error) {
-	lockBefore, err := c.Lock.Snapshot(ctx, schema)
+func (c *Collector) WithDiagnostic(ctx context.Context, fn func(context.Context) error) (TimedResult, error) {
+	lockBefore, err := c.Lock.Snapshot(ctx)
 	if err != nil {
 		return TimedResult{}, err
 	}
-	ioBefore, err := c.IO.Snapshot(ctx, schema)
+	ioBefore, err := c.IO.Snapshot(ctx)
 	if err != nil {
 		return TimedResult{}, err
 	}
-	workBefore, err := c.Work.Snapshot(ctx, schema)
+	workBefore, err := c.Work.Snapshot(ctx)
 	if err != nil {
 		return TimedResult{}, err
 	}
@@ -139,15 +139,15 @@ func (c *Collector) WithDiagnostic(ctx context.Context, schema string, fn func(c
 		return TimedResult{}, err
 	}
 
-	lockAfter, err := c.Lock.Snapshot(ctx, schema)
+	lockAfter, err := c.Lock.Snapshot(ctx)
 	if err != nil {
 		return TimedResult{}, err
 	}
-	ioAfter, err := c.IO.Snapshot(ctx, schema)
+	ioAfter, err := c.IO.Snapshot(ctx)
 	if err != nil {
 		return TimedResult{}, err
 	}
-	workAfter, err := c.Work.Snapshot(ctx, schema)
+	workAfter, err := c.Work.Snapshot(ctx)
 	if err != nil {
 		return TimedResult{}, err
 	}
@@ -200,17 +200,20 @@ func PrintIOReport(d []TableIODelta, elapsed time.Duration) {
 	}
 }
 
-func PrintWorkloadReport(w WorkloadDelta) {
-	fmt.Printf("[Workload] schema=%s interval=%s\n", w.Schema, w.Elapsed)
-	fmt.Printf("  queries: %d (QPS: %.2f)\n", w.TotalQueries, float64(w.TotalQueries)/w.Elapsed.Seconds())
-	fmt.Printf("  latency: total=%s avg/stmt=%s",
-		(time.Duration(w.TotalLatencyPS/1000) * time.Nanosecond).String(),
-		w.AvgLatency().String(),
-	)
-	if w.MaxLatencyPS > 0 {
-		fmt.Printf(" max=%s (new max observed)\n", w.MaxLatency().String())
-	} else {
-		fmt.Printf(" max=? (no new record; exact max in interval unknown)\n")
+func PrintWorkloadReport(w []WorkloadDelta, elapsed time.Duration) {
+	fmt.Printf("[Workload] interval=%s\n", elapsed)
+	for _, a := range w {
+		fmt.Printf("  schema  : %s\n", a.Schema)
+		fmt.Printf("  queries : %d (QPS: %.2f)\n", a.TotalQueries, float64(a.TotalQueries)/a.Elapsed.Seconds())
+		fmt.Printf("  latency : total=%s avg/stmt=%s",
+			(time.Duration(a.TotalLatencyPS/1000) * time.Nanosecond).String(),
+			a.AvgLatency().String(),
+		)
+		if a.MaxLatencyPS > 0 {
+			fmt.Printf(" max=%s (new max observed)\n", a.MaxLatency().String())
+		} else {
+			fmt.Printf(" max=? (no new record; exact max in interval unknown)\n")
+		}
 	}
 }
 

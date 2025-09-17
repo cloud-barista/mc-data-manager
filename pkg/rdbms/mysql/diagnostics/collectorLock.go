@@ -6,6 +6,16 @@ import (
 	"time"
 )
 
+const LockQuery string = `
+SELECT
+    OBJECT_SCHEMA,
+    OBJECT_NAME,
+    COUNT_STAR       AS lock_wait_count,
+    SUM_TIMER_WAIT   AS total_wait_time_ps
+ FROM performance_schema.table_lock_waits_summary_by_table
+WHERE OBJECT_SCHEMA NOT IN ('performance_schema', 'mysql');
+`
+
 type TableLockStat struct {
 	Schema        string
 	Table         string
@@ -43,16 +53,6 @@ func (d TableLockDelta) WaitTimePerSec() time.Duration {
 	return time.Duration(nsPerSec) * time.Nanosecond
 }
 
-const LockQuery string = `
-SELECT
-    OBJECT_SCHEMA,
-    OBJECT_NAME,
-    COUNT_STAR       AS lock_wait_count,
-    SUM_TIMER_WAIT   AS total_wait_time_ps
- FROM performance_schema.table_lock_waits_summary_by_table
-WHERE OBJECT_SCHEMA = ?
-`
-
 type LockWaitsCollector struct {
 	DB *sql.DB
 }
@@ -63,8 +63,8 @@ func NewLockWaitsCollector(db *sql.DB) *LockWaitsCollector {
 	}
 }
 
-func (c *LockWaitsCollector) Snapshot(ctx context.Context, schema string) (Snapshot[TableLockStat], error) {
-	rows, err := c.DB.QueryContext(ctx, LockQuery, schema)
+func (c *LockWaitsCollector) Snapshot(ctx context.Context) (Snapshot[TableLockStat], error) {
+	rows, err := c.DB.QueryContext(ctx, LockQuery)
 	if err != nil {
 		return Snapshot[TableLockStat]{}, err
 	}

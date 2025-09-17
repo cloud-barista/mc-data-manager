@@ -15,7 +15,7 @@ SELECT
 	SUM(COUNT_UPDATE) AS rows_updated,
 	SUM(COUNT_DELETE) AS rows_deleted
  FROM performance_schema.table_io_waits_summary_by_table
-WHERE OBJECT_SCHEMA=?
+WHERE OBJECT_SCHEMA NOT IN ('performance_schema', 'mysql')
 GROUP BY OBJECT_SCHEMA, OBJECT_NAME;
 `
 
@@ -48,14 +48,17 @@ func NewTableIOCollector(db *sql.DB) *TableIOCollector {
 	}
 }
 
-func (c *TableIOCollector) Snapshot(ctx context.Context, schema string) (Snapshot[TableIOStat], error) {
-	rows, err := c.DB.QueryContext(ctx, IOQuery, schema)
+func (c *TableIOCollector) Snapshot(ctx context.Context) (Snapshot[TableIOStat], error) {
+	rows, err := c.DB.QueryContext(ctx, IOQuery)
 	if err != nil {
 		return Snapshot[TableIOStat]{}, err
 	}
 	defer rows.Close()
 
-	snap := Snapshot[TableIOStat]{TakenAt: time.Now(), Items: make(map[string]TableIOStat)}
+	snap := Snapshot[TableIOStat]{
+		TakenAt: time.Now(),
+		Items:   make(map[string]TableIOStat),
+	}
 	for rows.Next() {
 		var s TableIOStat
 		if err := rows.Scan(&s.Schema, &s.Table, &s.RowsRead, &s.RowsInserted, &s.RowsUpdated, &s.RowsDeleted); err != nil {

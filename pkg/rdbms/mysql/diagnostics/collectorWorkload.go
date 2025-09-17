@@ -9,19 +9,20 @@ import (
 // 특정 스키마만 합산
 const qWorkloadBySchema = `
 SELECT
-    ?                       AS schema_name,
+    SCHEMA_NAME,
     SUM(COUNT_STAR)         AS total_queries,
     SUM(SUM_TIMER_WAIT)     AS total_latency_ps,
     MAX(MAX_TIMER_WAIT)     AS max_latency_ps
-FROM performance_schema.events_statements_summary_by_digest
-WHERE SCHEMA_NAME = ?
-  AND DIGEST_TEXT NOT LIKE 'SET ` + "`autocommit`" + `%'
-  AND DIGEST_TEXT NOT LIKE 'SET NAMES%'
+ FROM performance_schema.events_statements_summary_by_digest
+WHERE SCHEMA_NAME NOT IN ('performance_schema', 'mysql')
   AND DIGEST_TEXT NOT LIKE 'COMMIT%'
   AND DIGEST_TEXT NOT LIKE 'ROLLBACK%'
   AND DIGEST_TEXT NOT LIKE 'START TRANSACTION%'
   AND DIGEST_TEXT NOT LIKE 'SELECT @@%'
-  AND DIGEST_TEXT NOT LIKE 'BEGIN%';
+  AND DIGEST_TEXT NOT LIKE 'SET%'
+  AND DIGEST_TEXT NOT LIKE 'SHOW WARNINGS%'
+  AND DIGEST_TEXT NOT LIKE 'BEGIN%'
+GROUP BY SCHEMA_NAME ;
 `
 
 type WorkloadStat struct {
@@ -86,65 +87,76 @@ func NewWorkloadCollector(db *sql.DB) *WorkloadCollector {
 	}
 }
 
-func (c *WorkloadCollector) Snapshot(ctx context.Context, schema string) (Snapshot[WorkloadStat], error) {
-	row := c.DB.QueryRowContext(ctx, qWorkloadBySchema, schema, schema)
-
-	var w WorkloadStat
-	if err := row.Scan(&w.Schema, &w.TotalQueries, &w.TotalLatencyPS, &w.MaxLatencyPS); err != nil {
+func (c *WorkloadCollector) Snapshot(ctx context.Context) (Snapshot[WorkloadStat], error) {
+	rows, err := c.DB.QueryContext(ctx, qWorkloadBySchema)
+	if err != nil {
 		return Snapshot[WorkloadStat]{}, err
 	}
+	defer rows.Close()
 
 	snap := Snapshot[WorkloadStat]{
 		TakenAt: time.Now(),
-		Items:   map[string]WorkloadStat{schema: w}, // 키를 스키마 단위로
+		Items:   make(map[string]WorkloadStat), // 키를 스키마 단위로
 	}
-	return snap, nil
+
+	for rows.Next() {
+		var w WorkloadStat
+		if err := rows.Scan(&w.Schema, &w.TotalQueries, &w.TotalLatencyPS, &w.MaxLatencyPS); err != nil {
+			return Snapshot[WorkloadStat]{}, err
+		}
+		// 결과에 나온 스키마명을 키로 사용 (GROUP BY일 때 여러 개)
+		snap.Items[w.Schema] = w
+	}
+	return snap, rows.Err()
 }
 
-func DiffWorkload(before, after Snapshot[WorkloadStat]) (WorkloadDelta, time.Duration) {
+func DiffWorkload(before, after Snapshot[WorkloadStat]) ([]WorkloadDelta, time.Duration) {
 	elapsed := after.TakenAt.Sub(before.TakenAt)
-	b := one(before.Items)
-	a := one(after.Items)
+	out := make([]WorkloadDelta, 0, len(after.Items))
+	for schema, a := range after.Items {
+		b, ok := before.Items[schema]
 
-	dq, dps := uint64(0), uint64(0)
-	if a.TotalQueries >= b.TotalQueries {
-		dq = a.TotalQueries - b.TotalQueries
-	}
-	if a.TotalLatencyPS >= b.TotalLatencyPS {
-		dps = a.TotalLatencyPS - b.TotalLatencyPS
+		var dq, dps uint64
+		if ok {
+			if a.TotalQueries >= b.TotalQueries {
+				dq = a.TotalQueries - b.TotalQueries
+			}
+			if a.TotalLatencyPS >= b.TotalLatencyPS {
+				dps = a.TotalLatencyPS - b.TotalLatencyPS
+			}
+		} else {
+			// 새로 등장한 스키마로 간주 → 그 구간의 절대치로 취급
+			dq = a.TotalQueries
+			dps = a.TotalLatencyPS
+		}
+
+		// 평균 지연(정확): ΔSUM / ΔCOUNT
+		var avgPS uint64
+		if dq > 0 {
+			avgPS = dps / dq
+		}
+
+		// (옵션) 구간 최대 지연 근사: 누적 최대가 증가했을 때만 after 값을 사용
+		var maxPS uint64
+		if ok && a.MaxLatencyPS > b.MaxLatencyPS {
+			maxPS = a.MaxLatencyPS
+		} else if !ok {
+			// 처음 관측된 스키마라면 보수적으로 해당 값 채택하거나 0으로 둘지 정책 선택
+			// 여기선 관측값 사용
+			maxPS = a.MaxLatencyPS
+		} else {
+			maxPS = 0 // 증가 없으면 구간 내 최대를 확정하기 어려움
+		}
+
+		out = append(out, WorkloadDelta{
+			Schema:         schema,
+			TotalQueries:   dq,
+			TotalLatencyPS: dps,
+			AvgLatencyPS:   avgPS,
+			MaxLatencyPS:   maxPS,
+			Elapsed:        elapsed,
+		})
 	}
 
-	// 평균 지연(정확): ΔSUM / ΔCOUNT
-	avgPS := uint64(0)
-	if dq > 0 {
-		avgPS = dps / dq
-	}
-
-	// 최댓값(근사, 아래 설명 참고)
-	// MAX_TIMER_WAIT은 “서버 재시작 이후 관측된 최대”라 누적 지표입니다.
-	// 구간 내 새로운 최대가 발생했다면 after.Max > before.Max 가 됩니다.
-	// 이 경우, “그 구간에서 관측된 최대”를 after.Max 로 간주(보수적 근사)합니다.
-	var maxPS uint64
-	if a.MaxLatencyPS > b.MaxLatencyPS {
-		maxPS = a.MaxLatencyPS
-	} else {
-		maxPS = 0 // 새 최대가 없다면 구간 내 최대를 확정할 수 없어 0으로 두고, 설명을 함께 표기
-	}
-
-	return WorkloadDelta{
-		Schema:         a.Schema,
-		TotalQueries:   dq,
-		TotalLatencyPS: dps,
-		AvgLatencyPS:   avgPS,
-		MaxLatencyPS:   maxPS,
-		Elapsed:        elapsed,
-	}, elapsed
-}
-
-func one[M any](m map[string]M) M {
-	for _, v := range m {
-		return v
-	}
-	var z M
-	return z
+	return out, elapsed
 }
