@@ -28,12 +28,12 @@ func NewDatabaseThreadCollector(db *sql.DB) *DatabaseThreadCollector {
 	}
 }
 
-func (b *DatabaseThreadCollector) Collect() DatabaseThreadStat {
+func (b *DatabaseThreadCollector) Collect() (DatabaseThreadStat, error) {
 	var threadStat DatabaseThreadStat
 	err := b.DB.QueryRow(ThreadQuery).Scan(&threadStat.threadConnected, &threadStat.threadRunning)
 	if err != nil {
-		return DatabaseThreadStat{}
+		return DatabaseThreadStat{}, err
 	}
 
-	return threadStat
+	return threadStat, nil
 }

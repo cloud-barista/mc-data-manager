@@ -30,13 +30,13 @@ func NewDatabaseBufferCollector(db *sql.DB) *DatabaseBufferCollector {
 	}
 }
 
-func (b *DatabaseBufferCollector) Collect() DatabaseBufferStat {
+func (b *DatabaseBufferCollector) Collect() (DatabaseBufferStat, error) {
 	var hitRatio float64
 	err := b.DB.QueryRow(BufferCacheQuery).Scan(&hitRatio)
 	if err != nil {
-		return DatabaseBufferStat{}
+		return DatabaseBufferStat{}, err
 	}
 
 	stat := DatabaseBufferStat{BufferPoolHitRatio: hitRatio}
-	return stat
+	return stat, nil
 }

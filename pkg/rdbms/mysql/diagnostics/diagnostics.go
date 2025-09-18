@@ -47,30 +47,33 @@ func NewCollector(db *sql.DB) *Collector {
 	}
 }
 
-// 모드 A: 지정 시간 대기 후 두 스냅샷 차분
 type TimedResult struct {
-	Lock   []TableLockDelta
-	IO     []TableIODelta
-	Buffer DatabaseBufferStat
-	Work   []WorkloadDelta
-	Thread DatabaseThreadStat
-	// 공통 경과시간: 두 수집기의 elapsed 가 다를 일은 거의 없음
+	Lock    []TableLockDelta
+	IO      []TableIODelta
+	Buffer  DatabaseBufferStat
+	Work    []WorkloadDelta
+	Thread  DatabaseThreadStat
 	Elapsed time.Duration
+
+	// 수집 단계에서 발생한 에러 기록
+	Errors map[string]error
 }
 
 func (c *Collector) RunTimed(ctx context.Context, d time.Duration) (TimedResult, error) {
+	res := TimedResult{Errors: make(map[string]error)}
+
 	// 시작 스냅샷
 	lockBefore, err := c.Lock.Snapshot(ctx)
 	if err != nil {
-		return TimedResult{}, err
+		res.Errors["lock_before"] = err
 	}
 	ioBefore, err := c.IO.Snapshot(ctx)
 	if err != nil {
-		return TimedResult{}, err
+		res.Errors["io_before"] = err
 	}
 	workBefore, err := c.Work.Snapshot(ctx)
 	if err != nil {
-		return TimedResult{}, err
+		res.Errors["work_before"] = err
 	}
 
 	t := time.NewTimer(d)
@@ -84,95 +87,135 @@ func (c *Collector) RunTimed(ctx context.Context, d time.Duration) (TimedResult,
 	// 종료 스냅샷
 	lockAfter, err := c.Lock.Snapshot(ctx)
 	if err != nil {
-		return TimedResult{}, err
+		res.Errors["lock_after"] = err
 	}
 	ioAfter, err := c.IO.Snapshot(ctx)
 	if err != nil {
-		return TimedResult{}, err
+		res.Errors["io_after"] = err
 	}
 	workAfter, err := c.Work.Snapshot(ctx)
 	if err != nil {
-		return TimedResult{}, err
+		res.Errors["work_after"] = err
 	}
 
-	lDelta, lElapsed := DiffLock(lockBefore, lockAfter)
-	iDelta, iElapsed := DiffIO(ioBefore, ioAfter)
-	bStat := c.Buffer.Collect()
-	workDelta, wElapsed := DiffWorkload(workBefore, workAfter)
-	tStat := c.Thread.Collect()
+	var (
+		lDelta   []TableLockDelta
+		lElapsed time.Duration
+		iDelta   []TableIODelta
+		iElapsed time.Duration
+		wDelta   []WorkloadDelta
+		wElapsed time.Duration
+	)
 
-	// 두 elapsed 중 큰 값 사용(거의 동일)
-	elapsed := lElapsed
-	if iElapsed > elapsed {
-		elapsed = iElapsed
+	if res.Errors["lock_before"] == nil && res.Errors["lock_after"] == nil {
+		lDelta, lElapsed = DiffLock(lockBefore, lockAfter)
 	}
-	if wElapsed > elapsed {
-		elapsed = wElapsed
+	if res.Errors["io_before"] == nil && res.Errors["io_after"] == nil {
+		iDelta, iElapsed = DiffIO(ioBefore, ioAfter)
+	}
+	if res.Errors["work_before"] == nil && res.Errors["work_after"] == nil {
+		wDelta, wElapsed = DiffWorkload(workBefore, workAfter)
 	}
 
-	return TimedResult{
-		Lock:    lDelta,
-		IO:      iDelta,
-		Buffer:  bStat,
-		Work:    workDelta,
-		Thread:  tStat,
-		Elapsed: elapsed,
-	}, nil
+	// Buffer / Thread는 수집 실패해도 빈값
+	if bStat, berr := c.Buffer.Collect(); berr != nil {
+		res.Errors["buffer_collect"] = berr
+	} else {
+		res.Buffer = bStat
+	}
+	if t, terr := c.Thread.Collect(); terr != nil {
+		res.Errors["thread_collect"] = terr
+	} else {
+		res.Thread = t
+	}
+
+	// Elapsed: 사용 가능한 것들 중 최댓값
+	res.Elapsed = maxDuration(lElapsed, iElapsed, wElapsed)
+
+	// 결과 채우기
+	res.Lock = lDelta
+	res.IO = iDelta
+	res.Work = wDelta
+
+	return res, nil
 }
 
 // 모드 B: 다른 기능 실행 전후로 스냅샷 차분
 func (c *Collector) WithDiagnostic(ctx context.Context, fn func(context.Context) error) (TimedResult, error) {
+	res := TimedResult{Errors: make(map[string]error)}
+
+	// ---------- BEFORE snapshots ----------
 	lockBefore, err := c.Lock.Snapshot(ctx)
 	if err != nil {
-		return TimedResult{}, err
+		res.Errors["lock_before"] = err
 	}
 	ioBefore, err := c.IO.Snapshot(ctx)
 	if err != nil {
-		return TimedResult{}, err
+		res.Errors["io_before"] = err
 	}
 	workBefore, err := c.Work.Snapshot(ctx)
 	if err != nil {
-		return TimedResult{}, err
+		res.Errors["work_before"] = err
 	}
 
-	if err := fn(ctx); err != nil {
-		return TimedResult{}, err
-	}
+	// ---------- RUN the operation ----------
+	opErr := fn(ctx) // 에러만 WithDiagnostic의 반환
 
+	// ---------- AFTER snapshots ----------
 	lockAfter, err := c.Lock.Snapshot(ctx)
 	if err != nil {
-		return TimedResult{}, err
+		res.Errors["lock_after"] = err
 	}
 	ioAfter, err := c.IO.Snapshot(ctx)
 	if err != nil {
-		return TimedResult{}, err
+		res.Errors["io_after"] = err
 	}
 	workAfter, err := c.Work.Snapshot(ctx)
 	if err != nil {
-		return TimedResult{}, err
+		res.Errors["work_after"] = err
 	}
 
-	lDelta, lElapsed := DiffLock(lockBefore, lockAfter)
-	iDelta, iElapsed := DiffIO(ioBefore, ioAfter)
-	bStat := c.Buffer.Collect()
-	workDelta, wElapsed := DiffWorkload(workBefore, workAfter)
-	tStat := c.Thread.Collect()
+	var (
+		lDelta   []TableLockDelta
+		lElapsed time.Duration
+		iDelta   []TableIODelta
+		iElapsed time.Duration
+		wDelta   []WorkloadDelta
+		wElapsed time.Duration
+	)
 
-	elapsed := lElapsed
-	if iElapsed > elapsed {
-		elapsed = iElapsed
+	if res.Errors["lock_before"] == nil && res.Errors["lock_after"] == nil {
+		lDelta, lElapsed = DiffLock(lockBefore, lockAfter)
 	}
-	if wElapsed > elapsed {
-		elapsed = wElapsed
+	if res.Errors["io_before"] == nil && res.Errors["io_after"] == nil {
+		iDelta, iElapsed = DiffIO(ioBefore, ioAfter)
 	}
-	return TimedResult{
-		Lock:    lDelta,
-		IO:      iDelta,
-		Buffer:  bStat,
-		Work:    workDelta,
-		Thread:  tStat,
-		Elapsed: elapsed,
-	}, nil
+	if res.Errors["work_before"] == nil && res.Errors["work_after"] == nil {
+		wDelta, wElapsed = DiffWorkload(workBefore, workAfter)
+	}
+
+	// Buffer / Thread는 수집 실패해도 빈값
+	if bStat, berr := c.Buffer.Collect(); berr != nil {
+		res.Errors["buffer_collect"] = berr
+	} else {
+		res.Buffer = bStat
+	}
+	if t, terr := c.Thread.Collect(); terr != nil {
+		res.Errors["thread_collect"] = terr
+	} else {
+		res.Thread = t
+	}
+
+	// ---------- Elapsed: 사용 가능한 것들 중 최댓값 ----------
+	res.Elapsed = maxDuration(lElapsed, iElapsed, wElapsed)
+
+	// 결과 채우기
+	res.Lock = lDelta
+	res.IO = iDelta
+	res.Work = wDelta
+
+	// 반환 error는 오직 fn(ctx)에서 난 것만
+	return res, opErr
 }
 
 /************** 4) 간단 리포트 출력(옵셔널) **************/
@@ -225,4 +268,14 @@ func PrintThreadReport(d DatabaseThreadStat) {
 
 func key(schema, table string) string {
 	return fmt.Sprintf("%s.%s", schema, table)
+}
+
+func maxDuration(ds ...time.Duration) time.Duration {
+	var m time.Duration
+	for _, d := range ds {
+		if d > m {
+			m = d
+		}
+	}
+	return m
 }
