@@ -23,6 +23,7 @@ import (
 	"strings"
 
 	"github.com/cloud-barista/mc-data-manager/models"
+	"github.com/cloud-barista/mc-data-manager/pkg/rdbms/mysql/diagnostics"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/rs/zerolog/log"
 )
@@ -33,6 +34,7 @@ type MysqlDBMS struct {
 	db             *sql.DB
 	targetProvider models.Provider
 	ctx            context.Context
+	collector      diagnostics.Collector
 }
 
 type MysqlDBOption func(*MysqlDBMS)
@@ -55,9 +57,10 @@ func (d *MysqlDBMS) SetTargetProvdier(provider models.Provider) {
 
 func New(provider models.Provider, sqlDB *sql.DB, opts ...MysqlDBOption) *MysqlDBMS {
 	dms := &MysqlDBMS{
-		provider: provider,
-		db:       sqlDB,
-		ctx:      context.TODO(),
+		provider:  provider,
+		db:        sqlDB,
+		ctx:       context.TODO(),
+		collector: *diagnostics.NewCollector(sqlDB),
 	}
 
 	for _, opt := range opts {
@@ -78,7 +81,7 @@ func (d *MysqlDBMS) Exec(query string) error {
 			log.Error().Err(retryErr).Str("Provider", string(d.provider)).Str("tagetProvider", string(d.provider)).Str("query", query).Msg("Failed to execute transformed NCP SQL query")
 			return retryErr
 		}
-		err = nil // If retry query Not Failed 
+		err = nil // If retry query Not Failed
 	}
 
 	log.Debug().Str("query", query).Msg("SQL query executed successfully")
