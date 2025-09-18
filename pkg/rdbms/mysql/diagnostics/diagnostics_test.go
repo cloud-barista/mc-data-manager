@@ -34,10 +34,11 @@ func TestMain(t *testing.T) {
 	fmt.Println(diagnostics.PrintThreadReport(res2.Thread))
 	fmt.Println(diagnostics.PrintLockReport(res2.Lock, res2.Elapsed))
 	fmt.Println(diagnostics.PrintIOReport(res2.IO, res2.Elapsed))
+	fmt.Println(res2.Report.String())
 }
 
 func count() {
-	for i := 1; i <= 5; i++ {
+	for i := 1; i <= 20; i++ {
 		fmt.Printf("%d \n", i)
 		time.Sleep(time.Second * 1)
 	}
