@@ -29,11 +29,11 @@ func TestMain(t *testing.T) {
 		panic(err)
 	}
 
-	diagnostics.PrintBufferReport(res2.Buffer)
-	diagnostics.PrintLockReport(res2.Lock, res2.Elapsed)
-	diagnostics.PrintIOReport(res2.IO, res2.Elapsed)
-	diagnostics.PrintWorkloadReport(res2.Work, res2.Elapsed)
-	diagnostics.PrintThreadReport(res2.Thread)
+	fmt.Println(diagnostics.PrintBufferReport(res2.Buffer))
+	fmt.Println(diagnostics.PrintWorkloadReport(res2.Work, res2.Elapsed))
+	fmt.Println(diagnostics.PrintThreadReport(res2.Thread))
+	fmt.Println(diagnostics.PrintLockReport(res2.Lock, res2.Elapsed))
+	fmt.Println(diagnostics.PrintIOReport(res2.IO, res2.Elapsed))
 }
 
 func count() {

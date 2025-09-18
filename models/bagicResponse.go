@@ -15,6 +15,8 @@ limitations under the License.
 */
 package models
 
+import "github.com/cloud-barista/mc-data-manager/pkg/rdbms/mysql/diagnostics"
+
 type BasicPageResponse struct {
 	Content string  `json:"Content"`
 	Error   *string `json:"Error"`
@@ -30,4 +32,10 @@ type BasicPageResponse struct {
 type BasicResponse struct {
 	Result string  `json:"Result"`
 	Error  *string `json:"Error"`
+}
+
+type DiagnoseResponse struct {
+	Result      string                  `json:"Result"`
+	Diagnostics diagnostics.TimedResult `json:"Diagnostics"`
+	Error       *string                 `json:"Error"`
 }

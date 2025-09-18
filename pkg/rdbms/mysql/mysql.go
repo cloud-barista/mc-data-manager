@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/pkg/rdbms/mysql/diagnostics"
@@ -34,7 +35,7 @@ type MysqlDBMS struct {
 	db             *sql.DB
 	targetProvider models.Provider
 	ctx            context.Context
-	collector      diagnostics.Collector
+	Collector      diagnostics.Collector
 }
 
 type MysqlDBOption func(*MysqlDBMS)
@@ -60,7 +61,7 @@ func New(provider models.Provider, sqlDB *sql.DB, opts ...MysqlDBOption) *MysqlD
 		provider:  provider,
 		db:        sqlDB,
 		ctx:       context.TODO(),
-		collector: *diagnostics.NewCollector(sqlDB),
+		Collector: *diagnostics.NewCollector(sqlDB),
 	}
 
 	for _, opt := range opts {
@@ -281,6 +282,11 @@ func (d *MysqlDBMS) GetInsert(dbName, tableName string, insertSql *[]string) err
 	}
 
 	return nil
+}
+
+// Get table create sql
+func (d *MysqlDBMS) Diagnose() (diagnostics.TimedResult, error) {
+	return d.Collector.RunTimed(d.ctx, time.Second*60)
 }
 
 // addCollateIfMissing adds COLLATE to DEFAULT CHARACTER SET if it's missing

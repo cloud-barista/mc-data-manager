@@ -21,6 +21,7 @@ import (
 	"strings"
 
 	"github.com/cloud-barista/mc-data-manager/models"
+	"github.com/cloud-barista/mc-data-manager/pkg/rdbms/mysql/diagnostics"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -46,10 +47,11 @@ type RDBMS interface {
 	ShowCreateDBSql(dbName string, dbCreateSql *string) error
 	ShowCreateTableSql(dbName, tableName string, tableCreateSql *string) error
 	GetInsert(dbName, tableName string, insertSql *[]string) error
+	Diagnose() (diagnostics.TimedResult, error)
 }
 
 type RDBController struct {
-	client RDBMS
+	Client RDBMS
 
 	logger *zerolog.Logger
 }
@@ -65,7 +67,7 @@ func WithLogger(logger *zerolog.Logger) Option {
 func New(rdb RDBMS, opts ...Option) (*RDBController, error) {
 
 	rdbc := &RDBController{
-		client: rdb,
+		Client: rdb,
 		logger: nil,
 	}
 
@@ -78,7 +80,7 @@ func New(rdb RDBMS, opts ...Option) (*RDBController, error) {
 
 // Return db list
 func (rdb *RDBController) ListDB(dst *[]string) error {
-	err := rdb.client.ListDB(dst)
+	err := rdb.Client.ListDB(dst)
 	if err != nil {
 		log.Error().Err(err).Msgf("RDB %v", *dst)
 		return err
@@ -97,7 +99,7 @@ func (rdb *RDBController) Put(sql string) error {
 		line := scanner.Text()
 		line = strings.ReplaceAll(line, "\n", "")
 		if line != "" {
-			err = rdb.client.Exec(line)
+			err = rdb.Client.Exec(line)
 			if err != nil {
 				log.Error().Msgf("err Line : %+v", line)
 				rdb.logWrite("Error", "sql exec error", err)
@@ -115,7 +117,7 @@ func (rdb *RDBController) Put(sql string) error {
 
 // sql import by .sql
 func (rdb *RDBController) PutDoc(sql string) error {
-	err := rdb.client.Exec(sql)
+	err := rdb.Client.Exec(sql)
 	if err != nil {
 		log.Error().Msgf("err SQL : %+v", sql)
 		rdb.logWrite("Error", "sql exec error", err)
@@ -134,7 +136,7 @@ func (rdb *RDBController) Copy(dst *RDBController) error {
 	}
 	for _, db := range dbList {
 		sql = ""
-		rdb.client.SetTargetProvdier(dst.client.GetProvdier())
+		rdb.Client.SetTargetProvdier(dst.Client.GetProvdier())
 		if err := rdb.Get(db, &sql); err != nil {
 			rdb.logWrite("Error", "Get error", err)
 			return err
@@ -152,7 +154,7 @@ func (rdb *RDBController) Copy(dst *RDBController) error {
 // Export all data in database
 func (rdb *RDBController) Get(dbName string, sql *string) error {
 	var sqlTemp string
-	if err := rdb.client.ShowCreateDBSql(dbName, &sqlTemp); err != nil {
+	if err := rdb.Client.ShowCreateDBSql(dbName, &sqlTemp); err != nil {
 		log.Error().Msgf("ERR DB")
 		return err
 	}
@@ -160,7 +162,7 @@ func (rdb *RDBController) Get(dbName string, sql *string) error {
 	sqlWrite(sql, fmt.Sprintf("USE %s;", dbName))
 
 	var tableList []string
-	if err := rdb.client.ListTable(dbName, &tableList); err != nil {
+	if err := rdb.Client.ListTable(dbName, &tableList); err != nil {
 		log.Error().Msgf("ERR List TB")
 
 		return err
@@ -169,7 +171,7 @@ func (rdb *RDBController) Get(dbName string, sql *string) error {
 	for _, table := range tableList {
 		sqlWrite(sql, fmt.Sprintf("DROP TABLE IF EXISTS %s;", table))
 
-		if err := rdb.client.ShowCreateTableSql(dbName, table, &sqlTemp); err != nil {
+		if err := rdb.Client.ShowCreateTableSql(dbName, table, &sqlTemp); err != nil {
 			log.Error().Msgf("ERR Creatte TB")
 
 			return err
@@ -179,7 +181,7 @@ func (rdb *RDBController) Get(dbName string, sql *string) error {
 
 	for _, table := range tableList {
 		var insertData []string
-		if err := rdb.client.GetInsert(dbName, table, &insertData); err != nil {
+		if err := rdb.Client.GetInsert(dbName, table, &insertData); err != nil {
 			log.Error().Msgf("Insert quer err")
 			return err
 		}
@@ -212,7 +214,7 @@ func splitLine(data []byte, atEOF bool) (int, []byte, error) {
 
 func (rdb *RDBController) DeleteDB(dbName ...string) error {
 	for _, db := range dbName {
-		if err := rdb.client.DeleteDB(db); err != nil {
+		if err := rdb.Client.DeleteDB(db); err != nil {
 			return err
 		}
 	}

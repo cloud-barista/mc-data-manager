@@ -220,50 +220,61 @@ func (c *Collector) WithDiagnostic(ctx context.Context, fn func(context.Context)
 
 /************** 4) 간단 리포트 출력(옵셔널) **************/
 
-func PrintBufferReport(d DatabaseBufferStat) {
-	fmt.Printf("[Buffer hit ratio]\n")
-	fmt.Printf("%-35s %-10f\n", "buffer pool hit ratio pecentage", d.BufferPoolHitRatio)
+func PrintBufferReport(d DatabaseBufferStat) string {
+	s := "[Buffer hit ratio]\n"
+	s += fmt.Sprintf("%-35s %-10f\n", "buffer pool hit ratio percentage", d.BufferPoolHitRatio)
+
+	return s
 }
 
-func PrintLockReport(d []TableLockDelta, elapsed time.Duration) {
-	fmt.Printf("[Lock waits] interval=%s\n", elapsed)
-	fmt.Printf("%-30s %-10s %10s %18s %16s\n", "table", "schema", "waits", "wait_time", "waits/s")
+func PrintLockReport(d []TableLockDelta, elapsed time.Duration) string {
+	s := fmt.Sprintf("[Lock waits] interval=%s\n", elapsed)
+	s += fmt.Sprintf("%-30s %-10s %10s %18s %16s\n", "table", "schema", "waits", "wait_time", "waits/s")
+
 	for _, x := range d {
-		fmt.Printf("%-30s %-10s %10d %18s %16.2f\n",
+		s += fmt.Sprintf("%-30s %-10s %10d %18s %16.2f\n",
 			x.Table, x.Schema, x.LockWaitCount, x.TotalWait(), x.WaitsPerSec())
 	}
+
+	return s
 }
 
-func PrintIOReport(d []TableIODelta, elapsed time.Duration) {
-	fmt.Printf("[Table IO] interval=%s\n", elapsed)
-	fmt.Printf("%-30s %-10s %12s %12s %12s %12s\n", "table", "schema", "read", "insert", "update", "delete")
+func PrintIOReport(d []TableIODelta, elapsed time.Duration) string {
+	s := fmt.Sprintf("[Table IO] interval=%s\n", elapsed)
+	s += fmt.Sprintf("%-30s %-10s %12s %12s %12s %12s\n", "table", "schema", "read", "insert", "update", "delete")
 	for _, x := range d {
-		fmt.Printf("%-30s %-10s %12d %12d %12d %12d\n",
+		s += fmt.Sprintf("%-30s %-10s %12d %12d %12d %12d\n",
 			x.Table, x.Schema, x.RowsRead, x.RowsInserted, x.RowsUpdated, x.RowsDeleted)
 	}
+
+	return s
 }
 
-func PrintWorkloadReport(w []WorkloadDelta, elapsed time.Duration) {
-	fmt.Printf("[Workload] interval=%s\n", elapsed)
+func PrintWorkloadReport(w []WorkloadDelta, elapsed time.Duration) string {
+	s := fmt.Sprintf("[Workload] interval=%s\n", elapsed)
 	for _, a := range w {
-		fmt.Printf("  schema  : %s\n", a.Schema)
-		fmt.Printf("  queries : %d (QPS: %.2f)\n", a.TotalQueries, float64(a.TotalQueries)/a.Elapsed.Seconds())
-		fmt.Printf("  latency : total=%s avg/stmt=%s",
+		s += fmt.Sprintf("schema  : %s\n", a.Schema)
+		s += fmt.Sprintf("queries : %d (QPS: %.2f)\n", a.TotalQueries, float64(a.TotalQueries)/a.Elapsed.Seconds())
+		s += fmt.Sprintf("latency : total=%s avg/stmt=%s",
 			(time.Duration(a.TotalLatencyPS/1000) * time.Nanosecond).String(),
 			a.AvgLatency().String(),
 		)
 		if a.MaxLatencyPS > 0 {
-			fmt.Printf(" max=%s (new max observed)\n", a.MaxLatency().String())
+			s += fmt.Sprintf(" max=%s (new max observed)\n", a.MaxLatency().String())
 		} else {
-			fmt.Printf(" max=? (no new record; exact max in interval unknown)\n")
+			s += " max=? (no new record; exact max in interval unknown)\n"
 		}
 	}
+
+	return s
 }
 
-func PrintThreadReport(d DatabaseThreadStat) {
-	fmt.Printf("[Thread count]\n")
-	fmt.Printf("%-10s %-10s\n", "threads_connected", "threads_running")
-	fmt.Printf("%-17d %-10d\n", d.threadConnected, d.threadRunning)
+func PrintThreadReport(d DatabaseThreadStat) string {
+	s := "[Thread count]\n"
+	s += fmt.Sprintf("%-10s %-10s\n", "threads_connected", "threads_running")
+	s += fmt.Sprintf("%-17d %-10d\n", d.threadConnected, d.threadRunning)
+
+	return s
 }
 
 func key(schema, table string) string {
