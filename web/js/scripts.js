@@ -33,12 +33,18 @@ window.addEventListener('DOMContentLoaded', event => {
     }
     if (document.getElementById('migForm')) {
         migrationFormSubmit();
+        loadProfileList();
+        setPicker();
     }
     if (document.getElementById('backForm')) {
         backUpFormSubmit();
     }
     if (document.getElementById('restoreForm')) {
         RestoreFormSubmit();
+    }
+
+    if (document.getElementById('credentialForm')) {
+        credentialFormSubmit();
     }
 
 });
@@ -166,6 +172,219 @@ function generateFormSubmit() {
     });
 }
 
+function credentialFormSubmit() {
+    const form = document.getElementById('credentialForm');
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        loadingButtonOn();
+        resultCollpase();
+
+        const payload = new FormData(form);
+        let tempObject = Object.fromEntries(payload);
+        const { cspType, name, accessKey, secretKey  } = tempObject;
+        let jsonData = {
+            cspType,
+            name,
+            credentialJson: {
+                accessKey,
+                secretKey
+            }
+        }
+        // jsonData = convertCheckboxParams(jsonData)
+        // jsonData.targetPoint = {
+        //     ...jsonData
+        // };
+        console.log('credentialFormSubmit jsonData: ', jsonData)
+        // jsonData.targetPoint.provider = document.getElementById('provider').value;
+        // const target = document.getElementById('genTarget').value;
+        // jsonData.dummy = jsonData.targetPoint
+        // if ((jsonData.targetPoint.provider == "ncp") && (jsonData.targetPoint.endpoint == "")) {
+        //     jsonData.targetPoint.endpoint = "https://kr.object.ncloudstorage.com"
+        // }
+        const url = "/credentials";
+
+        let req;
+
+        req = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        };
+
+        fetch(url, req)
+            .then(response => {
+                console.log(response);
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(json => {
+                const resultText = document.getElementById('resultText');
+                // resultText.value = json.Result;
+                resultText.value = json && 'Success';
+                console.log(json);
+                console.log("Generate done.");
+            })
+            .catch(reason => {
+                console.error("Error during generate:", reason);
+                alert(reason.message || reason);
+            })
+            .finally(() => {
+                loadingButtonOff();
+            });
+
+        console.log("Generate progressing...");
+    });
+}
+
+function setPicker() {
+    $( function() {
+        // $("#datepicker1").datepicker();
+        // $("#datepicker2").datepicker();
+        $("#datepicker1").datetimepicker({ 
+            format: "Y-m-d H:i:s",
+            step: 1,
+        });
+        $("#datepicker2").datetimepicker({ 
+            format: "Y-m-d H:i:s",
+            step: 1,
+        });
+    } );
+}
+
+function loadProfileList() {
+    let url = "/credentials";
+
+    let req;
+
+        req = {
+            method: 'GET',
+            // headers: {
+            //     'Content-Type': 'application/json'
+            // },
+            // body: JSON.stringify(jsonData)
+        };
+
+        fetch(url, req)
+            .then(response => {
+                return response.json();
+            })
+            .then(json => {
+                // const resultText = document.getElementById('resultText');
+                // resultText.value = json.Result;
+                console.log(json);
+
+                const awsOptions = json
+                .filter((item) => item.cspType === 'aws' )
+                .map((item) => {
+                    return {
+                        label: item.name,
+                        value: item.credentialId
+                    }
+                });
+
+                const awsSelect = document.getElementById("awsProfileSelect");
+
+                if (awsSelect) {
+                    // placeholder 역할 옵션 추가
+                    const placeholder = document.createElement("option");
+                    placeholder.textContent = "Select Credential";
+                    placeholder.disabled = true;
+                    placeholder.selected = true;
+                    awsSelect.appendChild(placeholder);
+
+                    awsOptions.forEach(optionData => {
+                        const option = document.createElement("option");
+                        option.value = optionData.value;
+                        option.textContent = optionData.label;
+                        awsSelect.appendChild(option);
+                    });
+                }
+
+                const gcpOptions = json
+                .filter((item) => item.cspType === 'gcp' )
+                .map((item) => {
+                    return {
+                        label: item.name,
+                        value: item.credentialId
+                    }
+                });
+
+                const gcpSelect = document.getElementById("gcpProfileSelect");
+
+                if (gcpSelect) {
+                    // placeholder 역할 옵션 추가
+                    const placeholder = document.createElement("option");
+                    placeholder.textContent = "Select Credential";
+                    placeholder.disabled = true;
+                    placeholder.selected = true;
+                    gcpSelect.appendChild(placeholder);
+
+                    gcpOptions.forEach(optionData => {
+                        const option = document.createElement("option");
+                        option.value = optionData.value;
+                        option.textContent = optionData.label;
+                        gcpSelect.appendChild(option);
+                    });
+                }
+
+                console.log('awsOptions: ', awsOptions);
+                console.log('gcpOptions: ', gcpOptions);
+
+                const capSelect = document.getElementById("mig-filter-sizeFilteringUnit");
+
+                const capOptions = [
+                    {
+                        label: 'KB',
+                        value: 'KB',
+                    },
+                    {
+                        label: 'MB',
+                        value: 'MB',
+                    },
+                    {
+                        label: 'GB',
+                        value: 'GB',
+                    },
+                ]
+
+                if (capSelect) {
+                    // placeholder 역할 옵션 추가
+                    const placeholder = document.createElement("option");
+                    placeholder.textContent = "Select Unit";
+                    placeholder.disabled = true;
+                    placeholder.selected = true;
+                    capSelect.appendChild(placeholder);
+
+                    capOptions.forEach(optionData => {
+                        const option = document.createElement("option");
+                        option.value = optionData.value;
+                        option.textContent = optionData.label;
+                        capSelect.appendChild(option);
+                    });
+                }
+                
+
+                // window.mcmpData = {                    
+                //     profileList: json,
+                //     profileOptions: options
+                // };                
+
+                // console.log('window mcmpData: ', window.mcmpData);
+                
+                // console.log("migration done.");
+            })
+            .catch(reason => {
+                console.log(reason);
+                alert(reason);
+            });
+}
+
 function migrationFormSubmit() {
     const form = document.getElementById('migForm');
 
@@ -183,6 +402,53 @@ function migrationFormSubmit() {
         jsonData.targetPoint.provider = getInputValue('targetPoint[provider]');
         jsonData.sourcePoint.provider = getInputValue('sourcePoint[provider]');
 
+        jsonData.targetPoint.credentialId = parseInt(jsonData.targetPoint.credentialId);
+        jsonData.sourcePoint.credentialId = parseInt(jsonData.sourcePoint.credentialId);
+
+        if (jsonData.sourceFilter.minSize) {
+            // jsonData.sourceFilter.minSize = parseInt(jsonData.sourceFilter.minSize);
+            jsonData.sourceFilter.minSize = isNaN(parseFloat(jsonData.sourceFilter.minSize)) 
+            ? null 
+            : parseFloat(jsonData.sourceFilter.minSize);
+        }
+
+        if (jsonData.sourceFilter.maxSize) {
+            // jsonData.sourceFilter.maxSize = parseInt(jsonData.sourceFilter.maxSize);
+            jsonData.sourceFilter.maxSize = isNaN(parseFloat(jsonData.sourceFilter.maxSize)) 
+            ? null 
+            : parseFloat(jsonData.sourceFilter.maxSize);
+        }
+
+        if (jsonData.sourceFilter.modifiedAfter && jsonData.sourceFilter.modifiedAfter.trim() !== "") {
+            jsonData.sourceFilter.modifiedAfter = jsonData.sourceFilter.modifiedAfter.replace(" ", "T") + "Z";
+        } else {
+            jsonData.sourceFilter.modifiedAfter = null;
+        }
+        
+        if (jsonData.sourceFilter.modifiedBefore && jsonData.sourceFilter.modifiedBefore.trim() !== "") {
+            jsonData.sourceFilter.modifiedBefore = jsonData.sourceFilter.modifiedBefore.replace(" ", "T") + "Z";
+        } else {
+            jsonData.sourceFilter.modifiedBefore = null;
+        }
+
+        if (jsonData.sourceFilter.contains === "") {
+            jsonData.sourceFilter.contains = null;
+        }
+        if (jsonData.sourceFilter.suffixes === "") {
+            jsonData.sourceFilter.suffixes = null;
+        }
+        if (jsonData.sourceFilter.exact === "") {
+            jsonData.sourceFilter.exact = null;
+        }
+
+        console.log(
+            "minSize type:", typeof jsonData.sourceFilter.minSize, 
+            "value:", jsonData.sourceFilter.minSize
+        );
+        console.log(
+            "maxSize type:", typeof jsonData.sourceFilter.maxSize, 
+            "value:", jsonData.sourceFilter.maxSize
+        );
 
         let url = "/migrate/" + service;
 
@@ -192,6 +458,8 @@ function migrationFormSubmit() {
         if ((jsonData.sourcePoint.provider == "ncp") && (jsonData.sourcePoint.endpoint == "")) {
             jsonData.sourcePoint.endpoint = "https://kr.object.ncloudstorage.com"
         }
+
+        console.log('jsonData: ', jsonData);        
 
         console.log(url);
 
