@@ -92,6 +92,10 @@ func (c *Collector) RunTimed(ctx context.Context, d time.Duration) (TimedResult,
 	if err != nil {
 		res.Errors["work_before"] = err
 	}
+	digestBefore, err := c.Digest.Snapshot(ctx, "")
+	if err != nil {
+		res.Errors["digest_before"] = err
+	}
 
 	t := time.NewTimer(d)
 	defer t.Stop()
@@ -114,6 +118,10 @@ func (c *Collector) RunTimed(ctx context.Context, d time.Duration) (TimedResult,
 	if err != nil {
 		res.Errors["work_after"] = err
 	}
+	digestAfter, err := c.Digest.Snapshot(ctx, "")
+	if err != nil {
+		res.Errors["digest_after"] = err
+	}
 
 	var (
 		lDelta   []TableLockDelta
@@ -122,6 +130,8 @@ func (c *Collector) RunTimed(ctx context.Context, d time.Duration) (TimedResult,
 		iElapsed time.Duration
 		wDelta   []WorkloadDelta
 		wElapsed time.Duration
+		dDelta   []DigestDelta
+		dElapsed time.Duration
 	)
 
 	if res.Errors["lock_before"] == nil && res.Errors["lock_after"] == nil {
@@ -132,6 +142,9 @@ func (c *Collector) RunTimed(ctx context.Context, d time.Duration) (TimedResult,
 	}
 	if res.Errors["work_before"] == nil && res.Errors["work_after"] == nil {
 		wDelta, wElapsed = DiffWorkload(workBefore, workAfter)
+	}
+	if res.Errors["digest_before"] == nil && res.Errors["digest_after"] == nil {
+		dDelta, dElapsed, _ = DiffDigest(digestBefore, digestAfter)
 	}
 
 	// Buffer / Thread는 수집 실패해도 빈값
@@ -146,13 +159,14 @@ func (c *Collector) RunTimed(ctx context.Context, d time.Duration) (TimedResult,
 		res.Thread = t
 	}
 
-	// Elapsed: 사용 가능한 것들 중 최댓값
-	res.Elapsed = maxDuration(lElapsed, iElapsed, wElapsed)
+	// ---------- Elapsed: 사용 가능한 것들 중 최댓값 ----------
+	res.Elapsed = maxDuration(lElapsed, iElapsed, wElapsed, dElapsed)
 
 	// 결과 채우기
 	res.Lock = lDelta
 	res.IO = iDelta
 	res.Work = wDelta
+	res.Report = BuildSysbenchDigestReport(wDelta, dDelta, res.Elapsed)
 
 	return res, nil
 }

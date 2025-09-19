@@ -66,4 +66,5 @@ func logAll(logger *zerolog.Logger, result diagnostics.TimedResult) {
 	logger.Info().Msg(diagnostics.PrintLockReport(result.Lock, result.Elapsed))
 	logger.Info().Msg(diagnostics.PrintIOReport(result.IO, result.Elapsed))
 	logger.Info().Msg(diagnostics.PrintWorkloadReport(result.Work, result.Elapsed))
+	logger.Info().Msg(result.Report.String())
 }
