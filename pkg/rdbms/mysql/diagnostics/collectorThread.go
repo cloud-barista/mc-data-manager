@@ -14,8 +14,8 @@ WHERE VARIABLE_NAME IN ('Threads_connected', 'Threads_running');
 // FROM performance_schema.global_status; // MySQL;
 
 type DatabaseThreadStat struct {
-	threadConnected int64
-	threadRunning   int64
+	ThreadConnected int64
+	ThreadRunning   int64
 }
 
 type DatabaseThreadCollector struct {
@@ -30,7 +30,7 @@ func NewDatabaseThreadCollector(db *sql.DB) *DatabaseThreadCollector {
 
 func (b *DatabaseThreadCollector) Collect() (DatabaseThreadStat, error) {
 	var threadStat DatabaseThreadStat
-	err := b.DB.QueryRow(ThreadQuery).Scan(&threadStat.threadConnected, &threadStat.threadRunning)
+	err := b.DB.QueryRow(ThreadQuery).Scan(&threadStat.ThreadConnected, &threadStat.ThreadRunning)
 	if err != nil {
 		return DatabaseThreadStat{}, err
 	}

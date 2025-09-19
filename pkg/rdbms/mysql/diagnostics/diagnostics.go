@@ -374,7 +374,7 @@ func PrintWorkloadReport(w []WorkloadDelta, elapsed time.Duration) string {
 func PrintThreadReport(d DatabaseThreadStat) string {
 	s := "[Thread count]\n"
 	s += fmt.Sprintf("%-10s %-10s\n", "threads_connected", "threads_running")
-	s += fmt.Sprintf("%-17d %-10d\n", d.threadConnected, d.threadRunning)
+	s += fmt.Sprintf("%-17d %-10d\n", d.ThreadConnected, d.ThreadRunning)
 
 	return s
 }
