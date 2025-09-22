@@ -5,9 +5,28 @@ import "time"
 type OperationParams struct {
 	OperationId string `json:"operationId" form:"operationId"`
 }
+
+type SysbenchParams struct {
+	TargetType  string              `json:"targetType"`
+	RdbmsParams MySQLSysbenchParams `json:"rdbms"`
+}
+
+type MySQLSysbenchParams struct {
+	MysqlHost     string `json:"mysqlHost"`
+	MysqlPort     string `json:"mysqlPort"`
+	MysqlUser     string `json:"mysqlUser"`
+	MysqlPassword string `json:"mysqlPassword"`
+	MysqlDatabase string `json:"mysqlDatabase"`
+	TableCount    int64  `json:"tableCount"`
+	TableSize     int64  `json:"tableSize"`
+	ThreadsCount  int64  `json:"threadsCount"`
+	Time          int64  `json:"time"`
+}
+
 type TagParams struct {
 	Tag []string `json:"tag,omitempty"`
 }
+
 type TaskMeta struct {
 	ServiceType CloudServiceType `json:"serviceType"`
 	TaskType    TaskType         `json:"taskType" `
@@ -82,6 +101,9 @@ type BasicDataTask struct {
 	SourcePoint  ProviderConfig      `json:"sourcePoint,omitempty"`
 	TargetPoint  ProviderConfig      `json:"targetPoint,omitempty"`
 	SourceFilter *ObjectFilterParams `json:"sourceFilter,omitempty"`
+}
+type DiagnosticTask struct {
+	SysbenchParams
 }
 type DataTask struct {
 	OperationParams

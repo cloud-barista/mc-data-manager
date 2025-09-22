@@ -1,12 +1,14 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/cloud-barista/mc-data-manager/internal/auth"
 	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/pkg/rdbms/mysql/diagnostics"
+	"github.com/cloud-barista/mc-data-manager/pkg/sysbench"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog"
 )
@@ -18,9 +20,9 @@ func NewDiagnoseHandler() *DiagnoseHandler {
 	return &DiagnoseHandler{}
 }
 
-func (d *DiagnoseHandler) PostDiagnose(ctx echo.Context) error {
+func (d *DiagnoseHandler) PostStatusDiagnose(ctx echo.Context) error {
 	start := time.Now()
-	logger, logstrings := pageLogInit(ctx, "Diagnose-task", "Diagnose MySQL", start)
+	logger, logstrings := pageLogInit(ctx, "Diagnose-task", "Diagnose MySQL status", start)
 	params := models.DataTask{}
 	if !getDataWithReBind(logger, start, ctx, &params) {
 		errStr := "Invalid request data"
@@ -51,7 +53,7 @@ func (d *DiagnoseHandler) PostDiagnose(ctx echo.Context) error {
 		})
 	}
 
-	logAll(logger, result)
+	logDiagnose(logger, result)
 
 	return ctx.JSON(http.StatusOK, models.DiagnoseResponse{
 		Result:      logstrings.String(),
@@ -60,11 +62,113 @@ func (d *DiagnoseHandler) PostDiagnose(ctx echo.Context) error {
 	})
 }
 
-func logAll(logger *zerolog.Logger, result diagnostics.TimedResult) {
+func (d *DiagnoseHandler) PostSysbenchDiagnose(ctx echo.Context) error {
+	start := time.Now()
+	logger, logstrings := pageLogInit(ctx, "Diagnose-task", "Diagnose MySQL sysbench", start)
+	params := models.DiagnosticTask{}
+	if !getDataWithReBind(logger, start, ctx, &params) {
+		errStr := "Invalid request data"
+		logger.Error().Msg(errStr)
+		return ctx.JSON(http.StatusBadRequest, models.SysbenchResponse{
+			Result: logstrings.String(),
+			Error:  &errStr,
+		})
+	}
+
+	_, prepareErr := sysbench.RunSysbench(ctx.Request().Context(),
+		"mysql",
+		false,
+		"oltp_read_write",
+		"--db-driver=mysql",
+		"--mysql-host="+params.RdbmsParams.MysqlHost,
+		"--mysql-port="+params.RdbmsParams.MysqlPort,
+		"--mysql-user="+params.RdbmsParams.MysqlUser,
+		"--mysql-password="+params.RdbmsParams.MysqlPassword,
+		"--mysql-db="+params.RdbmsParams.MysqlDatabase,
+		fmt.Sprintf("--tables=%d", params.RdbmsParams.TableCount),
+		fmt.Sprintf("--table-size=%d", params.RdbmsParams.TableSize),
+		fmt.Sprintf("--threads=%d", params.RdbmsParams.ThreadsCount),
+		fmt.Sprintf("--time=%d", params.RdbmsParams.Time),
+		"prepare",
+	)
+	if prepareErr != nil {
+		errStr := prepareErr.Error()
+		logger.Error().Msg(errStr)
+		return ctx.JSON(http.StatusBadRequest, models.SysbenchResponse{
+			Result: logstrings.String(),
+			Error:  &errStr,
+		})
+	}
+
+	// 예: sysbench oltp_read_write --threads=8 --time=10 --report-interval=1 run
+	res, err := sysbench.RunSysbench(ctx.Request().Context(),
+		"mysql",
+		true,
+		"oltp_read_write",
+		"--db-driver=mysql",
+		"--mysql-host="+params.RdbmsParams.MysqlHost,
+		"--mysql-port="+params.RdbmsParams.MysqlPort,
+		"--mysql-user="+params.RdbmsParams.MysqlUser,
+		"--mysql-password="+params.RdbmsParams.MysqlPassword,
+		"--mysql-db="+params.RdbmsParams.MysqlDatabase,
+		fmt.Sprintf("--tables=%d", params.RdbmsParams.TableCount),
+		fmt.Sprintf("--table-size=%d", params.RdbmsParams.TableSize),
+		fmt.Sprintf("--threads=%d", params.RdbmsParams.ThreadsCount),
+		fmt.Sprintf("--time=%d", params.RdbmsParams.Time),
+		"run",
+	)
+	if err != nil {
+		errStr := err.Error()
+		logger.Error().Msg(errStr)
+		return ctx.JSON(http.StatusBadRequest, models.SysbenchResponse{
+			Result: logstrings.String(),
+			Error:  &errStr,
+		})
+	}
+
+	_, cleanErr := sysbench.RunSysbench(ctx.Request().Context(),
+		"mysql",
+		false,
+		"oltp_read_write",
+		"--db-driver=mysql",
+		"--mysql-host="+params.RdbmsParams.MysqlHost,
+		"--mysql-port="+params.RdbmsParams.MysqlPort,
+		"--mysql-user="+params.RdbmsParams.MysqlUser,
+		"--mysql-password="+params.RdbmsParams.MysqlPassword,
+		"--mysql-db="+params.RdbmsParams.MysqlDatabase,
+		fmt.Sprintf("--tables=%d", params.RdbmsParams.TableCount),
+		fmt.Sprintf("--table-size=%d", params.RdbmsParams.TableSize),
+		fmt.Sprintf("--threads=%d", params.RdbmsParams.ThreadsCount),
+		fmt.Sprintf("--time=%d", params.RdbmsParams.Time),
+		"cleanup",
+	)
+	if cleanErr != nil {
+		errStr := cleanErr.Error()
+		logger.Error().Msg(errStr)
+		return ctx.JSON(http.StatusBadRequest, models.SysbenchResponse{
+			Result: logstrings.String(),
+			Error:  &errStr,
+		})
+	}
+
+	logSysbench(logger, res)
+
+	return ctx.JSON(http.StatusOK, models.SysbenchResponse{
+		Result:         logstrings.String(),
+		SysbenchResult: res,
+		Error:          nil,
+	})
+}
+
+func logDiagnose(logger *zerolog.Logger, result diagnostics.TimedResult) {
 	logger.Info().Msg(diagnostics.PrintBufferReport(result.Buffer))
 	logger.Info().Msg(diagnostics.PrintThreadReport(result.Thread))
 	logger.Info().Msg(diagnostics.PrintLockReport(result.Lock, result.Elapsed))
 	logger.Info().Msg(diagnostics.PrintIOReport(result.IO, result.Elapsed))
 	logger.Info().Msg(diagnostics.PrintWorkloadReport(result.Work, result.Elapsed))
 	logger.Info().Msg(result.Report.String())
+}
+
+func logSysbench(logger *zerolog.Logger, result sysbench.SysbenchParsed) {
+	logger.Info().Msg(result.FormatSysbenchLike())
 }
