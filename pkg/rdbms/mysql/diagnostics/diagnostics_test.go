@@ -15,7 +15,7 @@ func TestMain(t *testing.T) {
 	mysql_port := "3306"
 	mysql_user := "root"
 	mysql_password := "N@mutech7^^7"
-	// mysql_database := "inventory"
+	mysql_database := "inventory"
 
 	sqlDB, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", mysql_user, mysql_password, mysql_host, mysql_port))
 	if err != nil {
@@ -25,7 +25,7 @@ func TestMain(t *testing.T) {
 	ctx := context.Background()
 	collector := diagnostics.NewCollector(sqlDB)
 	// res2, err := collector.RunTimed(ctx, "mcmp", 30*time.Second)
-	res2, err := collector.WithDiagnostic(ctx, func(ctx context.Context) error {
+	res2, err := collector.WithDiagnostic(ctx, mysql_database, func(ctx context.Context) error {
 		// 여기서 실제 기능 실행: 예) 배치 작업, 마이그레이션, 대량 업데이트 등
 		count()
 

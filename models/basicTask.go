@@ -11,6 +11,11 @@ type SysbenchParams struct {
 	RdbmsParams MySQLSysbenchParams `json:"rdbms"`
 }
 
+type StatusParams struct {
+	TargetPoint ProviderConfig `json:"targetPoint,omitempty"`
+	Time        int64          `json:"time"`
+}
+
 type MySQLSysbenchParams struct {
 	MysqlHost     string `json:"mysqlHost"`
 	MysqlPort     string `json:"mysqlPort"`
@@ -104,6 +109,7 @@ type BasicDataTask struct {
 }
 type DiagnosticTask struct {
 	SysbenchParams
+	StatusParams
 }
 type DataTask struct {
 	OperationParams

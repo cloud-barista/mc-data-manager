@@ -76,23 +76,23 @@ type TimedResult struct {
 	Errors map[string]error
 }
 
-func (c *Collector) RunTimed(ctx context.Context, d time.Duration) (TimedResult, error) {
+func (c *Collector) RunTimed(ctx context.Context, schema string, d time.Duration) (TimedResult, error) {
 	res := TimedResult{Errors: make(map[string]error)}
 
 	// 시작 스냅샷
-	lockBefore, err := c.Lock.Snapshot(ctx)
+	lockBefore, err := c.Lock.Snapshot(ctx, schema)
 	if err != nil {
 		res.Errors["lock_before"] = err
 	}
-	ioBefore, err := c.IO.Snapshot(ctx)
+	ioBefore, err := c.IO.Snapshot(ctx, schema)
 	if err != nil {
 		res.Errors["io_before"] = err
 	}
-	workBefore, err := c.Work.Snapshot(ctx)
+	workBefore, err := c.Work.Snapshot(ctx, schema)
 	if err != nil {
 		res.Errors["work_before"] = err
 	}
-	digestBefore, err := c.Digest.Snapshot(ctx, "")
+	digestBefore, err := c.Digest.Snapshot(ctx, schema)
 	if err != nil {
 		res.Errors["digest_before"] = err
 	}
@@ -106,19 +106,19 @@ func (c *Collector) RunTimed(ctx context.Context, d time.Duration) (TimedResult,
 	}
 
 	// 종료 스냅샷
-	lockAfter, err := c.Lock.Snapshot(ctx)
+	lockAfter, err := c.Lock.Snapshot(ctx, schema)
 	if err != nil {
 		res.Errors["lock_after"] = err
 	}
-	ioAfter, err := c.IO.Snapshot(ctx)
+	ioAfter, err := c.IO.Snapshot(ctx, schema)
 	if err != nil {
 		res.Errors["io_after"] = err
 	}
-	workAfter, err := c.Work.Snapshot(ctx)
+	workAfter, err := c.Work.Snapshot(ctx, schema)
 	if err != nil {
 		res.Errors["work_after"] = err
 	}
-	digestAfter, err := c.Digest.Snapshot(ctx, "")
+	digestAfter, err := c.Digest.Snapshot(ctx, schema)
 	if err != nil {
 		res.Errors["digest_after"] = err
 	}
@@ -172,23 +172,23 @@ func (c *Collector) RunTimed(ctx context.Context, d time.Duration) (TimedResult,
 }
 
 // 모드 B: 다른 기능 실행 전후로 스냅샷 차분
-func (c *Collector) WithDiagnostic(ctx context.Context, fn func(context.Context) error) (TimedResult, error) {
+func (c *Collector) WithDiagnostic(ctx context.Context, schema string, fn func(context.Context) error) (TimedResult, error) {
 	res := TimedResult{Errors: make(map[string]error)}
 
 	// ---------- BEFORE snapshots ----------
-	lockBefore, err := c.Lock.Snapshot(ctx)
+	lockBefore, err := c.Lock.Snapshot(ctx, schema)
 	if err != nil {
 		res.Errors["lock_before"] = err
 	}
-	ioBefore, err := c.IO.Snapshot(ctx)
+	ioBefore, err := c.IO.Snapshot(ctx, schema)
 	if err != nil {
 		res.Errors["io_before"] = err
 	}
-	workBefore, err := c.Work.Snapshot(ctx)
+	workBefore, err := c.Work.Snapshot(ctx, schema)
 	if err != nil {
 		res.Errors["work_before"] = err
 	}
-	digestBefore, err := c.Digest.Snapshot(ctx, "")
+	digestBefore, err := c.Digest.Snapshot(ctx, schema)
 	if err != nil {
 		res.Errors["digest_before"] = err
 	}
@@ -197,19 +197,19 @@ func (c *Collector) WithDiagnostic(ctx context.Context, fn func(context.Context)
 	opErr := fn(ctx) // 에러만 WithDiagnostic의 반환
 
 	// ---------- AFTER snapshots ----------
-	lockAfter, err := c.Lock.Snapshot(ctx)
+	lockAfter, err := c.Lock.Snapshot(ctx, schema)
 	if err != nil {
 		res.Errors["lock_after"] = err
 	}
-	ioAfter, err := c.IO.Snapshot(ctx)
+	ioAfter, err := c.IO.Snapshot(ctx, schema)
 	if err != nil {
 		res.Errors["io_after"] = err
 	}
-	workAfter, err := c.Work.Snapshot(ctx)
+	workAfter, err := c.Work.Snapshot(ctx, schema)
 	if err != nil {
 		res.Errors["work_after"] = err
 	}
-	digestAfter, err := c.Digest.Snapshot(ctx, "")
+	digestAfter, err := c.Digest.Snapshot(ctx, schema)
 	if err != nil {
 		res.Errors["digest_after"] = err
 	}

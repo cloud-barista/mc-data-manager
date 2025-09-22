@@ -6,7 +6,7 @@ const ThreadQuery string = `
 SELECT
     MAX(CASE WHEN VARIABLE_NAME = 'Threads_connected' THEN VARIABLE_VALUE END) AS threads_connected,
     MAX(CASE WHEN VARIABLE_NAME = 'Threads_running'   THEN VARIABLE_VALUE END) AS threads_running
- FROM information_schema.GLOBAL_STATUS
+ FROM performance_schema.global_status
 WHERE VARIABLE_NAME IN ('Threads_connected', 'Threads_running');
 `
 

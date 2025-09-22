@@ -23,7 +23,7 @@ func NewDiagnoseHandler() *DiagnoseHandler {
 func (d *DiagnoseHandler) PostStatusDiagnose(ctx echo.Context) error {
 	start := time.Now()
 	logger, logstrings := pageLogInit(ctx, "Diagnose-task", "Diagnose MySQL status", start)
-	params := models.DataTask{}
+	params := models.DiagnosticTask{}
 	if !getDataWithReBind(logger, start, ctx, &params) {
 		errStr := "Invalid request data"
 		logger.Error().Msg(errStr)
@@ -43,7 +43,7 @@ func (d *DiagnoseHandler) PostStatusDiagnose(ctx echo.Context) error {
 		})
 	}
 
-	result, err := rdb.Client.Diagnose()
+	result, err := rdb.Client.Diagnose(params.TargetPoint.DatabaseName, params.Time)
 	if err != nil {
 		errStr := "failed to diagnose"
 		logger.Error().Msg(errStr)

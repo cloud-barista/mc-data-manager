@@ -47,7 +47,7 @@ type RDBMS interface {
 	ShowCreateDBSql(dbName string, dbCreateSql *string) error
 	ShowCreateTableSql(dbName, tableName string, tableCreateSql *string) error
 	GetInsert(dbName, tableName string, insertSql *[]string) error
-	Diagnose() (diagnostics.TimedResult, error)
+	Diagnose(schema string, time int64) (diagnostics.TimedResult, error)
 }
 
 type RDBController struct {
