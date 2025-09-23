@@ -7,25 +7,15 @@ type OperationParams struct {
 }
 
 type SysbenchParams struct {
-	TargetType  string              `json:"targetType"`
-	RdbmsParams MySQLSysbenchParams `json:"rdbms"`
+	TargetType   string `json:"targetType"`
+	TableCount   int64  `json:"tableCount"`
+	TableSize    int64  `json:"tableSize"`
+	ThreadsCount int64  `json:"threadsCount"`
+	MySQLParams
 }
 
 type StatusParams struct {
 	TargetPoint ProviderConfig `json:"targetPoint,omitempty"`
-	Time        int64          `json:"time"`
-}
-
-type MySQLSysbenchParams struct {
-	MysqlHost     string `json:"mysqlHost"`
-	MysqlPort     string `json:"mysqlPort"`
-	MysqlUser     string `json:"mysqlUser"`
-	MysqlPassword string `json:"mysqlPassword"`
-	MysqlDatabase string `json:"mysqlDatabase"`
-	TableCount    int64  `json:"tableCount"`
-	TableSize     int64  `json:"tableSize"`
-	ThreadsCount  int64  `json:"threadsCount"`
-	Time          int64  `json:"time"`
 }
 
 type TagParams struct {
@@ -110,6 +100,7 @@ type BasicDataTask struct {
 type DiagnosticTask struct {
 	SysbenchParams
 	StatusParams
+	Time int64 `json:"time"`
 }
 type DataTask struct {
 	OperationParams
