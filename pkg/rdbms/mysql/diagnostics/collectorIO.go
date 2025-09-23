@@ -6,7 +6,20 @@ import (
 	"time"
 )
 
-const IOQuery string = `
+const IOQueryBySchema string = `
+SELECT 
+	OBJECT_SCHEMA, 
+	OBJECT_NAME,
+	SUM(COUNT_READ + COUNT_FETCH) AS rows_read,
+	SUM(COUNT_INSERT) AS rows_inserted,
+	SUM(COUNT_UPDATE) AS rows_updated,
+	SUM(COUNT_DELETE) AS rows_deleted
+ FROM performance_schema.table_io_waits_summary_by_table
+WHERE OBJECT_SCHEMA = ?
+GROUP BY OBJECT_SCHEMA, OBJECT_NAME;
+`
+
+const IOQueryAllUserSchemas string = `
 SELECT 
 	OBJECT_SCHEMA, 
 	OBJECT_NAME,
@@ -48,8 +61,14 @@ func NewTableIOCollector(db *sql.DB) *TableIOCollector {
 	}
 }
 
-func (c *TableIOCollector) Snapshot(ctx context.Context) (Snapshot[TableIOStat], error) {
-	rows, err := c.DB.QueryContext(ctx, IOQuery)
+func (c *TableIOCollector) Snapshot(ctx context.Context, schema string) (Snapshot[TableIOStat], error) {
+	var rows *sql.Rows
+	var err error
+	if schema == "" {
+		rows, err = c.DB.QueryContext(ctx, IOQueryAllUserSchemas)
+	} else {
+		rows, err = c.DB.QueryContext(ctx, IOQueryBySchema, schema)
+	}
 	if err != nil {
 		return Snapshot[TableIOStat]{}, err
 	}

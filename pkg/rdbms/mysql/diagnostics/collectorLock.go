@@ -6,7 +6,17 @@ import (
 	"time"
 )
 
-const LockQuery string = `
+const LockQueryBySchema string = `
+SELECT
+    OBJECT_SCHEMA,
+    OBJECT_NAME,
+    COUNT_STAR       AS lock_wait_count,
+    SUM_TIMER_WAIT   AS total_wait_time_ps
+ FROM performance_schema.table_lock_waits_summary_by_table
+WHERE OBJECT_SCHEMA = ?;
+`
+
+const LockQueryAllUserSchemas string = `
 SELECT
     OBJECT_SCHEMA,
     OBJECT_NAME,
@@ -63,8 +73,14 @@ func NewLockWaitsCollector(db *sql.DB) *LockWaitsCollector {
 	}
 }
 
-func (c *LockWaitsCollector) Snapshot(ctx context.Context) (Snapshot[TableLockStat], error) {
-	rows, err := c.DB.QueryContext(ctx, LockQuery)
+func (c *LockWaitsCollector) Snapshot(ctx context.Context, schema string) (Snapshot[TableLockStat], error) {
+	var rows *sql.Rows
+	var err error
+	if schema == "" {
+		rows, err = c.DB.QueryContext(ctx, LockQueryAllUserSchemas)
+	} else {
+		rows, err = c.DB.QueryContext(ctx, LockQueryBySchema, schema)
+	}
 	if err != nil {
 		return Snapshot[TableLockStat]{}, err
 	}

@@ -14,6 +14,24 @@ SELECT
     SUM(SUM_TIMER_WAIT)     AS total_latency_ps,
     MAX(MAX_TIMER_WAIT)     AS max_latency_ps
  FROM performance_schema.events_statements_summary_by_digest
+WHERE OBJECT_SCHEMA = ?
+  AND DIGEST_TEXT NOT LIKE 'COMMIT%'
+  AND DIGEST_TEXT NOT LIKE 'ROLLBACK%'
+  AND DIGEST_TEXT NOT LIKE 'START TRANSACTION%'
+  AND DIGEST_TEXT NOT LIKE 'SELECT @@%'
+  AND DIGEST_TEXT NOT LIKE 'SET%'
+  AND DIGEST_TEXT NOT LIKE 'SHOW WARNINGS%'
+  AND DIGEST_TEXT NOT LIKE 'BEGIN%'
+GROUP BY SCHEMA_NAME;
+`
+
+const qWorkloadAllUserSchemas = `
+SELECT
+    SCHEMA_NAME,
+    SUM(COUNT_STAR)         AS total_queries,
+    SUM(SUM_TIMER_WAIT)     AS total_latency_ps,
+    MAX(MAX_TIMER_WAIT)     AS max_latency_ps
+ FROM performance_schema.events_statements_summary_by_digest
 WHERE SCHEMA_NAME NOT IN ('performance_schema', 'mysql')
   AND DIGEST_TEXT NOT LIKE 'COMMIT%'
   AND DIGEST_TEXT NOT LIKE 'ROLLBACK%'
@@ -22,7 +40,7 @@ WHERE SCHEMA_NAME NOT IN ('performance_schema', 'mysql')
   AND DIGEST_TEXT NOT LIKE 'SET%'
   AND DIGEST_TEXT NOT LIKE 'SHOW WARNINGS%'
   AND DIGEST_TEXT NOT LIKE 'BEGIN%'
-GROUP BY SCHEMA_NAME ;
+GROUP BY SCHEMA_NAME;
 `
 
 type WorkloadStat struct {
@@ -87,8 +105,14 @@ func NewWorkloadCollector(db *sql.DB) *WorkloadCollector {
 	}
 }
 
-func (c *WorkloadCollector) Snapshot(ctx context.Context) (Snapshot[WorkloadStat], error) {
-	rows, err := c.DB.QueryContext(ctx, qWorkloadBySchema)
+func (c *WorkloadCollector) Snapshot(ctx context.Context, schema string) (Snapshot[WorkloadStat], error) {
+	var rows *sql.Rows
+	var err error
+	if schema == "" {
+		rows, err = c.DB.QueryContext(ctx, qWorkloadAllUserSchemas)
+	} else {
+		rows, err = c.DB.QueryContext(ctx, qWorkloadBySchema, schema)
+	}
 	if err != nil {
 		return Snapshot[WorkloadStat]{}, err
 	}

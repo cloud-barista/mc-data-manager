@@ -27,5 +27,6 @@ func DiagnoseRoutes(g *echo.Group) {
 
 func DiagnoseRoot(g *echo.Group) {
 	handler := controllers.NewDiagnoseHandler()
-	g.POST("", handler.PostDiagnose)
+	g.POST("/status", handler.PostStatusDiagnose)
+	g.POST("/sysbench", handler.PostSysbenchDiagnose)
 }

@@ -285,8 +285,8 @@ func (d *MysqlDBMS) GetInsert(dbName, tableName string, insertSql *[]string) err
 }
 
 // Get table create sql
-func (d *MysqlDBMS) Diagnose() (diagnostics.TimedResult, error) {
-	return d.Collector.RunTimed(d.ctx, time.Second*60)
+func (d *MysqlDBMS) Diagnose(schema string, timeInput int64) (diagnostics.TimedResult, error) {
+	return d.Collector.RunTimed(d.ctx, schema, time.Duration(timeInput)*time.Second)
 }
 
 // addCollateIfMissing adds COLLATE to DEFAULT CHARACTER SET if it's missing

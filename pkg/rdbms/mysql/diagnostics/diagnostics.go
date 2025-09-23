@@ -19,6 +19,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -35,6 +36,7 @@ type Collector struct {
 	Buffer *DatabaseBufferCollector
 	Work   *WorkloadCollector
 	Thread *DatabaseThreadCollector
+	Digest *DigestCollector
 }
 
 func NewCollector(db *sql.DB) *Collector {
@@ -44,7 +46,21 @@ func NewCollector(db *sql.DB) *Collector {
 		Buffer: NewDatabaseBufferCollector(db),
 		Work:   NewWorkloadCollector(db),
 		Thread: NewDatabaseThreadCollector(db),
+		Digest: NewDigestCollector(db),
 	}
+}
+
+type SysbenchDigestReport struct {
+	Read  uint64
+	Write uint64
+	Other uint64
+	Total uint64
+
+	AvgMs float64 // ΔSUM/ΔCOUNT (ms)
+	SumMs float64 // ΔSUM (ms)
+	QPS   float64
+	// TPS: 옵션 (아래 주석 참고)
+	Elapsed time.Duration
 }
 
 type TimedResult struct {
@@ -53,27 +69,32 @@ type TimedResult struct {
 	Buffer  DatabaseBufferStat
 	Work    []WorkloadDelta
 	Thread  DatabaseThreadStat
+	Report  SysbenchDigestReport
 	Elapsed time.Duration
 
 	// 수집 단계에서 발생한 에러 기록
 	Errors map[string]error
 }
 
-func (c *Collector) RunTimed(ctx context.Context, d time.Duration) (TimedResult, error) {
+func (c *Collector) RunTimed(ctx context.Context, schema string, d time.Duration) (TimedResult, error) {
 	res := TimedResult{Errors: make(map[string]error)}
 
 	// 시작 스냅샷
-	lockBefore, err := c.Lock.Snapshot(ctx)
+	lockBefore, err := c.Lock.Snapshot(ctx, schema)
 	if err != nil {
 		res.Errors["lock_before"] = err
 	}
-	ioBefore, err := c.IO.Snapshot(ctx)
+	ioBefore, err := c.IO.Snapshot(ctx, schema)
 	if err != nil {
 		res.Errors["io_before"] = err
 	}
-	workBefore, err := c.Work.Snapshot(ctx)
+	workBefore, err := c.Work.Snapshot(ctx, schema)
 	if err != nil {
 		res.Errors["work_before"] = err
+	}
+	digestBefore, err := c.Digest.Snapshot(ctx, schema)
+	if err != nil {
+		res.Errors["digest_before"] = err
 	}
 
 	t := time.NewTimer(d)
@@ -85,17 +106,21 @@ func (c *Collector) RunTimed(ctx context.Context, d time.Duration) (TimedResult,
 	}
 
 	// 종료 스냅샷
-	lockAfter, err := c.Lock.Snapshot(ctx)
+	lockAfter, err := c.Lock.Snapshot(ctx, schema)
 	if err != nil {
 		res.Errors["lock_after"] = err
 	}
-	ioAfter, err := c.IO.Snapshot(ctx)
+	ioAfter, err := c.IO.Snapshot(ctx, schema)
 	if err != nil {
 		res.Errors["io_after"] = err
 	}
-	workAfter, err := c.Work.Snapshot(ctx)
+	workAfter, err := c.Work.Snapshot(ctx, schema)
 	if err != nil {
 		res.Errors["work_after"] = err
+	}
+	digestAfter, err := c.Digest.Snapshot(ctx, schema)
+	if err != nil {
+		res.Errors["digest_after"] = err
 	}
 
 	var (
@@ -105,6 +130,8 @@ func (c *Collector) RunTimed(ctx context.Context, d time.Duration) (TimedResult,
 		iElapsed time.Duration
 		wDelta   []WorkloadDelta
 		wElapsed time.Duration
+		dDelta   []DigestDelta
+		dElapsed time.Duration
 	)
 
 	if res.Errors["lock_before"] == nil && res.Errors["lock_after"] == nil {
@@ -116,82 +143,8 @@ func (c *Collector) RunTimed(ctx context.Context, d time.Duration) (TimedResult,
 	if res.Errors["work_before"] == nil && res.Errors["work_after"] == nil {
 		wDelta, wElapsed = DiffWorkload(workBefore, workAfter)
 	}
-
-	// Buffer / Thread는 수집 실패해도 빈값
-	if bStat, berr := c.Buffer.Collect(); berr != nil {
-		res.Errors["buffer_collect"] = berr
-	} else {
-		res.Buffer = bStat
-	}
-	if t, terr := c.Thread.Collect(); terr != nil {
-		res.Errors["thread_collect"] = terr
-	} else {
-		res.Thread = t
-	}
-
-	// Elapsed: 사용 가능한 것들 중 최댓값
-	res.Elapsed = maxDuration(lElapsed, iElapsed, wElapsed)
-
-	// 결과 채우기
-	res.Lock = lDelta
-	res.IO = iDelta
-	res.Work = wDelta
-
-	return res, nil
-}
-
-// 모드 B: 다른 기능 실행 전후로 스냅샷 차분
-func (c *Collector) WithDiagnostic(ctx context.Context, fn func(context.Context) error) (TimedResult, error) {
-	res := TimedResult{Errors: make(map[string]error)}
-
-	// ---------- BEFORE snapshots ----------
-	lockBefore, err := c.Lock.Snapshot(ctx)
-	if err != nil {
-		res.Errors["lock_before"] = err
-	}
-	ioBefore, err := c.IO.Snapshot(ctx)
-	if err != nil {
-		res.Errors["io_before"] = err
-	}
-	workBefore, err := c.Work.Snapshot(ctx)
-	if err != nil {
-		res.Errors["work_before"] = err
-	}
-
-	// ---------- RUN the operation ----------
-	opErr := fn(ctx) // 에러만 WithDiagnostic의 반환
-
-	// ---------- AFTER snapshots ----------
-	lockAfter, err := c.Lock.Snapshot(ctx)
-	if err != nil {
-		res.Errors["lock_after"] = err
-	}
-	ioAfter, err := c.IO.Snapshot(ctx)
-	if err != nil {
-		res.Errors["io_after"] = err
-	}
-	workAfter, err := c.Work.Snapshot(ctx)
-	if err != nil {
-		res.Errors["work_after"] = err
-	}
-
-	var (
-		lDelta   []TableLockDelta
-		lElapsed time.Duration
-		iDelta   []TableIODelta
-		iElapsed time.Duration
-		wDelta   []WorkloadDelta
-		wElapsed time.Duration
-	)
-
-	if res.Errors["lock_before"] == nil && res.Errors["lock_after"] == nil {
-		lDelta, lElapsed = DiffLock(lockBefore, lockAfter)
-	}
-	if res.Errors["io_before"] == nil && res.Errors["io_after"] == nil {
-		iDelta, iElapsed = DiffIO(ioBefore, ioAfter)
-	}
-	if res.Errors["work_before"] == nil && res.Errors["work_after"] == nil {
-		wDelta, wElapsed = DiffWorkload(workBefore, workAfter)
+	if res.Errors["digest_before"] == nil && res.Errors["digest_after"] == nil {
+		dDelta, dElapsed, _ = DiffDigest(digestBefore, digestAfter)
 	}
 
 	// Buffer / Thread는 수집 실패해도 빈값
@@ -207,15 +160,164 @@ func (c *Collector) WithDiagnostic(ctx context.Context, fn func(context.Context)
 	}
 
 	// ---------- Elapsed: 사용 가능한 것들 중 최댓값 ----------
-	res.Elapsed = maxDuration(lElapsed, iElapsed, wElapsed)
+	res.Elapsed = maxDuration(lElapsed, iElapsed, wElapsed, dElapsed)
 
 	// 결과 채우기
 	res.Lock = lDelta
 	res.IO = iDelta
 	res.Work = wDelta
+	res.Report = BuildSysbenchDigestReport(wDelta, dDelta, res.Elapsed)
+
+	return res, nil
+}
+
+// 모드 B: 다른 기능 실행 전후로 스냅샷 차분
+func (c *Collector) WithDiagnostic(ctx context.Context, schema string, fn func(context.Context) error) (TimedResult, error) {
+	res := TimedResult{Errors: make(map[string]error)}
+
+	// ---------- BEFORE snapshots ----------
+	lockBefore, err := c.Lock.Snapshot(ctx, schema)
+	if err != nil {
+		res.Errors["lock_before"] = err
+	}
+	ioBefore, err := c.IO.Snapshot(ctx, schema)
+	if err != nil {
+		res.Errors["io_before"] = err
+	}
+	workBefore, err := c.Work.Snapshot(ctx, schema)
+	if err != nil {
+		res.Errors["work_before"] = err
+	}
+	digestBefore, err := c.Digest.Snapshot(ctx, schema)
+	if err != nil {
+		res.Errors["digest_before"] = err
+	}
+
+	// ---------- RUN the operation ----------
+	opErr := fn(ctx) // 에러만 WithDiagnostic의 반환
+
+	// ---------- AFTER snapshots ----------
+	lockAfter, err := c.Lock.Snapshot(ctx, schema)
+	if err != nil {
+		res.Errors["lock_after"] = err
+	}
+	ioAfter, err := c.IO.Snapshot(ctx, schema)
+	if err != nil {
+		res.Errors["io_after"] = err
+	}
+	workAfter, err := c.Work.Snapshot(ctx, schema)
+	if err != nil {
+		res.Errors["work_after"] = err
+	}
+	digestAfter, err := c.Digest.Snapshot(ctx, schema)
+	if err != nil {
+		res.Errors["digest_after"] = err
+	}
+
+	var (
+		lDelta   []TableLockDelta
+		lElapsed time.Duration
+		iDelta   []TableIODelta
+		iElapsed time.Duration
+		wDelta   []WorkloadDelta
+		wElapsed time.Duration
+		dDelta   []DigestDelta
+		dElapsed time.Duration
+	)
+
+	if res.Errors["lock_before"] == nil && res.Errors["lock_after"] == nil {
+		lDelta, lElapsed = DiffLock(lockBefore, lockAfter)
+	}
+	if res.Errors["io_before"] == nil && res.Errors["io_after"] == nil {
+		iDelta, iElapsed = DiffIO(ioBefore, ioAfter)
+	}
+	if res.Errors["work_before"] == nil && res.Errors["work_after"] == nil {
+		wDelta, wElapsed = DiffWorkload(workBefore, workAfter)
+	}
+	if res.Errors["digest_before"] == nil && res.Errors["digest_after"] == nil {
+		dDelta, dElapsed, _ = DiffDigest(digestBefore, digestAfter)
+	}
+
+	// Buffer / Thread는 수집 실패해도 빈값
+	if bStat, berr := c.Buffer.Collect(); berr != nil {
+		res.Errors["buffer_collect"] = berr
+	} else {
+		res.Buffer = bStat
+	}
+	if t, terr := c.Thread.Collect(); terr != nil {
+		res.Errors["thread_collect"] = terr
+	} else {
+		res.Thread = t
+	}
+
+	// ---------- Elapsed: 사용 가능한 것들 중 최댓값 ----------
+	res.Elapsed = maxDuration(lElapsed, iElapsed, wElapsed, dElapsed)
+
+	// 결과 채우기
+	res.Lock = lDelta
+	res.IO = iDelta
+	res.Work = wDelta
+	res.Report = BuildSysbenchDigestReport(wDelta, dDelta, res.Elapsed)
 
 	// 반환 error는 오직 fn(ctx)에서 난 것만
 	return res, opErr
+}
+
+func BuildSysbenchDigestReport(work []WorkloadDelta, digests []DigestDelta, elapsed time.Duration) SysbenchDigestReport {
+	var r SysbenchDigestReport
+	r.Elapsed = elapsed
+
+	// 1) read/write/other/total : DIGEST_TEXT 첫 토큰으로 분류
+	for _, d := range digests {
+		verb := firstVerb(d.Text) // SELECT / INSERT / UPDATE / DELETE / ...
+		switch verb {
+		case "SELECT":
+			r.Read += d.Count
+		case "INSERT", "UPDATE", "DELETE", "REPLACE", "LOAD":
+			r.Write += d.Count
+		default:
+			r.Other += d.Count
+		}
+	}
+	r.Total = r.Read + r.Write + r.Other
+
+	// 2) avg / sum latency : WorkloadDelta 합산(스키마별일 수 있으니 모두 더함)
+	var totalQueries uint64
+	var totalLatencyPS uint64
+	for _, w := range work {
+		totalQueries += w.TotalQueries
+		totalLatencyPS += w.TotalLatencyPS
+	}
+	if totalQueries > 0 {
+		r.AvgMs = (float64(totalLatencyPS) / float64(totalQueries)) / 1e9
+	}
+	r.SumMs = float64(totalLatencyPS) / 1e9
+
+	// 3) QPS
+	sec := elapsed.Seconds()
+	if sec > 0 {
+		r.QPS = float64(r.Total) / sec
+	}
+
+	// 4) TPS (옵션)
+	// 정확도를 높이려면 'COMMIT/ROLLBACK'을 관리성 제외에서 **한시적으로** 해제한
+	// digest 또는 event_name summary로 Δ카운트를 구해 r.TPS = trxDelta / sec 로 채우세요.
+
+	return r
+}
+
+func firstVerb(digestText string) string {
+	// DIGEST_TEXT는 대부분 대문자 시작(정규화). 혹시 몰라 trim + 대문자화.
+	s := strings.TrimSpace(digestText)
+	if s == "" {
+		return ""
+	}
+	// 첫 단어 추출
+	i := strings.IndexAny(s, " \t\n\r(")
+	if i < 0 {
+		i = len(s)
+	}
+	return strings.ToUpper(s[:i])
 }
 
 /************** 4) 간단 리포트 출력(옵셔널) **************/
@@ -272,9 +374,34 @@ func PrintWorkloadReport(w []WorkloadDelta, elapsed time.Duration) string {
 func PrintThreadReport(d DatabaseThreadStat) string {
 	s := "[Thread count]\n"
 	s += fmt.Sprintf("%-10s %-10s\n", "threads_connected", "threads_running")
-	s += fmt.Sprintf("%-17d %-10d\n", d.threadConnected, d.threadRunning)
+	s += fmt.Sprintf("%-17d %-10d\n", d.ThreadConnected, d.ThreadRunning)
 
 	return s
+}
+
+// 보기 좋은 출력 포맷
+func (r SysbenchDigestReport) String() string {
+	return fmt.Sprintf(
+		`SQL statistics (digest Δ-based):
+    queries performed:
+        read:                            %d
+        write:                           %d
+        other:                           %d
+        total:                           %d
+    queries:                             %d  (%.2f per sec.)
+
+General statistics:
+    total time:                          %s
+
+Latency (avg only, ms):
+         avg:                            %.2f
+         sum:                            %.2f
+`,
+		r.Read, r.Write, r.Other, r.Total,
+		r.Total, r.QPS,
+		r.Elapsed,
+		r.AvgMs, r.SumMs,
+	)
 }
 
 func key(schema, table string) string {

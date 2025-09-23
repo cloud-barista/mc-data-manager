@@ -10,7 +10,7 @@ SELECT
 		(SUM(IF(variable_name='Innodb_buffer_pool_read_requests', variable_value,  0))
 		/ (SUM(IF(variable_name IN ('Innodb_buffer_pool_read_requests', 'Innodb_buffer_pool_reads'), variable_value, 0)))
 	) * 100, 2) AS buffer_pool_hit_ratio_pct
-FROM information_schema.GLOBAL_STATUS;
+FROM performance_schema.global_status;
 `
 
 // FROM information_schema.GLOBAL_STATUS; // MariaDB
