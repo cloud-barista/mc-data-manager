@@ -4,7 +4,7 @@
     <li class="breadcrumb-item">Object Storage</li>
     <li class="breadcrumb-item active">GCP to Windows</li>
 </ol>
-<h1 class="mb-4">마이그레이션 Google Cloud Storage</h1>
+<h1 class="mb-4">Migration Google Cloud Storage</h1>
 
 <div class="card mb-4 col-auto">
     <div class="card-header">
@@ -26,12 +26,12 @@
                     <option value="{{ $value }}">{{ $value }}</option>
                     {{ end }}
                     </select>
-                    <label for="mig-gcp-region">리전 선택</label>
+                    <label for="mig-gcp-region">Select Region</label>
                 </div>
             </div>
            
             <div class="mb-3">
-                <label for="mig-gcp-credential" class="form-label">Credentials 파일</label>
+                <label for="mig-gcp-credential" class="form-label">Credentials file</label>
                 <input class="form-control" type="file" id="mig-gcp-credential" name="gcpCredential" required>
             </div>
 
@@ -52,13 +52,13 @@
             </div>
 
             <div class="mb-3">
-                <label for="mig-windows-path" class="form-label">Windows 마이그레이션 목표 데이터 경로</label>
+                <label for="mig-windows-path" class="form-label">Target data path for Windows migration</label>
 
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-folder"></i></span>
                     <div class="form-floating">
-                      <input type="text" class="form-control" id="mig-windows-path" name="path" value={{ .tmpPath }} placeholder="디렉토리 경로">
-                      <label for="mig-windows-path">디렉토리 경로</label>
+                      <input type="text" class="form-control" id="mig-windows-path" name="path" value={{ .tmpPath }} placeholder="Target Path">
+                      <label for="mig-windows-path">Target Path</label>
                     </div>
                 </div>
             </div>

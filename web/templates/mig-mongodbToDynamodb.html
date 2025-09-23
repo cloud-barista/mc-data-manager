@@ -4,7 +4,7 @@
     <li class="breadcrumb-item">No-SQL</li>
     <li class="breadcrumb-item active">NCP MongoDB to AWS DynamoDB</li>
 </ol>
-<h1 class="mb-4">마이그레이션 MongoDB</h1>
+<h1 class="mb-4">Migration MongoDB</h1>
 
 <div class="card mb-4 col-auto">
     <div class="card-header">
@@ -32,40 +32,40 @@
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-house"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-mongodb-host" name="sourcePoint[host]" placeholder="호스트명 / IP" required>
-                    <label for="mig-mongodb-host">호스트명 / IP</label>
+                    <input type="text" class="form-control" id="mig-mongodb-host" name="sourcePoint[host]" placeholder="Host / IP" required>
+                    <label for="mig-mongodb-host">Host / IP</label>
                 </div>
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-flag"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-mongodb-port" name="sourcePoint[port]" placeholder="포트" required>
-                    <label for="mig-mongodb-port">포트</label>
+                    <input type="text" class="form-control" id="mig-mongodb-port" name="sourcePoint[port]" placeholder="Port" required>
+                    <label for="mig-mongodb-port">Port</label>
                 </div>
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-mongodb-username" name="sourcePoint[username]" placeholder="사용자" required>
-                    <label for="mig-mongodb-username">사용자</label>
+                    <input type="text" class="form-control" id="mig-mongodb-username" name="sourcePoint[username]" placeholder="Username" required>
+                    <label for="mig-mongodb-username">Username</label>
                 </div>
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
                 <div class="form-floating">
-                    <input type="password" class="form-control" id="mig-mongodb-password" name="sourcePoint[password]" placeholder="패스워드" required>
-                    <label for="mig-mongodb-password">패스워드</label>
+                    <input type="password" class="form-control" id="mig-mongodb-password" name="sourcePoint[password]" placeholder="Password" required>
+                    <label for="mig-mongodb-password">Password</label>
                 </div>
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-database"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-mongodb-databaseName" name="sourcePoint[databaseName]" placeholder="DB 이름" required>
-                    <label for="mig-mongodb-databaseName">데이터베이스 이름</label>
+                    <input type="text" class="form-control" id="mig-mongodb-databaseName" name="sourcePoint[databaseName]" placeholder="DB Name" required>
+                    <label for="mig-mongodb-databaseName">Database Name</label>
                 </div>
             </div>
 
@@ -79,7 +79,7 @@
                     <option value="{{ $value }}">{{ $value }}</option>
                     {{ end }}
                     </select>
-                    <label for="mig-aws-region">리전 선택</label>
+                    <label for="mig-aws-region">Select Region</label>
                 </div>
             </div>
             <div class="input-group mb-3">

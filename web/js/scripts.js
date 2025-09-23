@@ -35,6 +35,7 @@ window.addEventListener('DOMContentLoaded', event => {
         migrationFormSubmit();
         loadProfileList();
         setPicker();
+        setFilterAccordion();
     }
     if (document.getElementById('backForm')) {
         backUpFormSubmit();
@@ -44,7 +45,8 @@ window.addEventListener('DOMContentLoaded', event => {
     }
 
     if (document.getElementById('credentialForm')) {
-        credentialFormSubmit();
+        setSelectBox();
+        credentialFormSubmit();        
     }
 
 });
@@ -52,13 +54,13 @@ window.addEventListener('DOMContentLoaded', event => {
 function loadingButtonOn() {
     let btn = document.getElementById('submitBtn');
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;진행 중..';
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;In progress..';
 }
 
 function loadingButtonOff() {
     let btn = document.getElementById('submitBtn');
     btn.disabled = false;
-    btn.innerHTML = '생성';
+    btn.innerHTML = 'generate';
 }
 
 function resultCollpase() {
@@ -172,6 +174,51 @@ function generateFormSubmit() {
     });
 }
 
+function setSelectBox() {
+    $("#select-credential-csp").change(function() {
+        const selected = $(this).val();
+        let formHtml = "";
+
+        if (selected === "aws" || selected === "ncp") {
+          formHtml = `
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="mig-aws-accessKey" name="accessKey" placeholder="Access Key" required>
+                    <label for="mig-aws-accessKey">Access Key</label>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="mig-aws-secretKey" name="secretKey" placeholder="Secret Key" required>
+                    <label for="mig-aws-secretKey">Secret Key</label>
+                </div>
+            </div>
+          `;
+        } else if (selected === "gcp") {
+          formHtml = `
+            <div class="input-group mb-3">
+                <span class="input-group-text">Credential Json</span>
+                <div class="form-floating">                    
+                    <textarea rows="10" class="form-control" id="mig-gcp-json" name="gcpJson" placeholder="Input Credential Json" style="min-height: 300px; height: 300px" required></textarea>
+                    <label for="mig-gcp-json">Input Credential Json</label>
+                </div>
+            </div>
+          `;
+        }
+
+        $("#credential-dynamicForm").html(formHtml);
+      });
+}
+
+function setFilterAccordion() {
+    $("#btnFilterExpand").click(function() {
+        $("#filterContent").slideToggle("fast");
+    });
+}
+
 function credentialFormSubmit() {
     const form = document.getElementById('credentialForm');
 
@@ -181,14 +228,24 @@ function credentialFormSubmit() {
         resultCollpase();
 
         const payload = new FormData(form);
-        let tempObject = Object.fromEntries(payload);
-        const { cspType, name, accessKey, secretKey  } = tempObject;
-        let jsonData = {
-            cspType,
-            name,
-            credentialJson: {
-                accessKey,
-                secretKey
+        let tempObject = Object.fromEntries(payload);        
+        let jsonData = {};        
+        const { cspType, name, accessKey, secretKey, gcpJson } = tempObject;
+        if (accessKey) {            
+            jsonData = {
+                cspType,
+                name,
+                credentialJson: {
+                    accessKey,
+                    secretKey
+                }
+            }
+        } else {
+            // const { cspType, name, type, project_id, private_key_id, private_key, client_email, client_id, auth_uri, token_uri, auth_provider_x509_cert_url, client_x509_cert_url, universe_domain } = tempObject;
+            jsonData = {
+                cspType,
+                name,
+                credentialJson: JSON.parse(gcpJson)
             }
         }
         // jsonData = convertCheckboxParams(jsonData)
@@ -292,11 +349,11 @@ function loadProfileList() {
 
                 if (awsSelect) {
                     // placeholder 역할 옵션 추가
-                    const placeholder = document.createElement("option");
-                    placeholder.textContent = "Select Credential";
-                    placeholder.disabled = true;
-                    placeholder.selected = true;
-                    awsSelect.appendChild(placeholder);
+                    // const placeholder = document.createElement("option");
+                    // placeholder.textContent = "Select Credential";
+                    // placeholder.disabled = true;
+                    // placeholder.selected = true;
+                    // awsSelect.appendChild(placeholder);
 
                     awsOptions.forEach(optionData => {
                         const option = document.createElement("option");
@@ -319,11 +376,11 @@ function loadProfileList() {
 
                 if (gcpSelect) {
                     // placeholder 역할 옵션 추가
-                    const placeholder = document.createElement("option");
-                    placeholder.textContent = "Select Credential";
-                    placeholder.disabled = true;
-                    placeholder.selected = true;
-                    gcpSelect.appendChild(placeholder);
+                    // const placeholder = document.createElement("option");
+                    // placeholder.textContent = "Select Credential";
+                    // placeholder.disabled = true;
+                    // placeholder.selected = true;
+                    // gcpSelect.appendChild(placeholder);
 
                     gcpOptions.forEach(optionData => {
                         const option = document.createElement("option");
@@ -355,11 +412,11 @@ function loadProfileList() {
 
                 if (capSelect) {
                     // placeholder 역할 옵션 추가
-                    const placeholder = document.createElement("option");
-                    placeholder.textContent = "Select Unit";
-                    placeholder.disabled = true;
-                    placeholder.selected = true;
-                    capSelect.appendChild(placeholder);
+                    // const placeholder = document.createElement("option");
+                    // placeholder.textContent = "Select Unit";
+                    // placeholder.disabled = true;
+                    // placeholder.selected = true;
+                    // capSelect.appendChild(placeholder);
 
                     capOptions.forEach(optionData => {
                         const option = document.createElement("option");
@@ -614,7 +671,7 @@ document.addEventListener('DOMContentLoaded', function () {
         clearServiceLink.addEventListener('click', function (event) {
             event.preventDefault();
 
-            const userConfirmed = confirm('정말로 서비스를 클리어하시겠습니까?');
+            const userConfirmed = confirm('Are you sure you want to clear all services?');
             if (!userConfirmed) {
                 return;
             }
@@ -627,20 +684,20 @@ document.addEventListener('DOMContentLoaded', function () {
             })
                 .then(response => {
                     if (response.ok) {
-                        alert('서비스가 성공적으로 클리어되었습니다.');
+                        alert('The service has been successfully cleared.');
                     } else {
                         return response.json().then(data => {
-                            throw new Error(data.message || '서비스 클리어 중 오류가 발생했습니다.');
+                            throw new Error(data.message || 'An error occurred while clearing the service.');
                         });
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert(`오류: ${error.message}`);
+                    alert(`Error: ${error.message}`);
                 });
         });
     } else {
-        console.error('Clear Service 링크를 찾을 수 없습니다.');
+        console.error('Clear Service link not found.');
     }
 });
 
@@ -655,7 +712,7 @@ document.addEventListener('DOMContentLoaded', function () {
         genServiceLink.addEventListener('click', function (event) {
             event.preventDefault();
 
-            const userConfirmed = confirm('정말로 데이터 관련 서비스를 생성하시겠습니까?');
+            const userConfirmed = confirm('Are you sure you want to create a data-related service?');
             if (!userConfirmed) {
                 return;
             }
@@ -668,20 +725,20 @@ document.addEventListener('DOMContentLoaded', function () {
             })
                 .then(response => {
                     if (response.ok) {
-                        alert('서비스 생성 요청이 전달 되었습니다.');
+                        alert('Service creation request has been submitted.');
                     } else {
                         return response.json().then(data => {
-                            throw new Error(data.message || '서비스 생성 요청 중 오류가 발생했습니다.');
+                            throw new Error(data.message || 'An error occurred while submitting the service creation request.');
                         });
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert(`오류: ${error.message}`);
+                    alert(`Error: ${error.message}`);
                 });
         });
     } else {
-        console.error('Gen Service 링크를 찾을 수 없습니다.');
+        console.error('Gen Service link not found.');
     }
 });
 
@@ -693,7 +750,7 @@ document.addEventListener('DOMContentLoaded', function () {
         delServiceLink.addEventListener('click', function (event) {
             event.preventDefault();
 
-            const userConfirmed = confirm('정말로 데이터 관련 서비스를 제거하시겠습니까?');
+            const userConfirmed = confirm('Are you sure you want to remove the data-related service?');
             if (!userConfirmed) {
                 return;
             }
@@ -706,20 +763,20 @@ document.addEventListener('DOMContentLoaded', function () {
             })
                 .then(response => {
                     if (response.ok) {
-                        alert('서비스 제거 요청이 전달 되었습니다.');
+                        alert('Service removal request has been submitted.');
                     } else {
                         return response.json().then(data => {
-                            throw new Error(data.message || '서비스 제거 요청 중 오류가 발생했습니다.');
+                            throw new Error(data.message || 'An error occurred while submitting the service removal request.');
                         });
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert(`오류: ${error.message}`);
+                    alert(`Error: ${error.message}`);
                 });
         });
     } else {
-        console.error('Del Service 링크를 찾을 수 없습니다.');
+        console.error('Del Service link not found.');
     }
 });
 
