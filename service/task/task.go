@@ -15,6 +15,7 @@ import (
 
 	"github.com/cloud-barista/mc-data-manager/internal/auth"
 	"github.com/cloud-barista/mc-data-manager/models"
+	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/filtering"
 	"github.com/cloud-barista/mc-data-manager/pkg/utils"
 	"github.com/cloud-barista/mc-data-manager/service/nrdbc"
 	"github.com/cloud-barista/mc-data-manager/service/osc"
@@ -806,8 +807,45 @@ func handleObjectStorageMigrateTask(params models.BasicDataTask) models.Status {
 		return models.StatusFailed
 	}
 
+	flt, err := filtering.FromParams(params.SourceFilter)
+	if err != nil {
+		log.Error().Err(err).Msg("invalid sourceFilter")
+		return models.StatusFailed
+	}
+
+	if flt == nil {
+		log.Debug().Msg("compiled filter: <nil> (no filtering)")
+	} else {
+		compiled := map[string]any{
+			"path":     flt.Path,
+			"contains": flt.Contains,
+			"suffixes": flt.Suffixes,
+			"exact":    flt.Exact,
+			"minSize":  flt.MinSize,
+			"maxSize":  flt.MaxSize,
+			"modifiedAfter": func() string {
+				if flt.ModifiedAfter != nil {
+					return flt.ModifiedAfter.UTC().Format(time.RFC3339)
+				}
+				return ""
+			}(),
+			"modifiedBefore": func() string {
+				if flt.ModifiedBefore != nil {
+					return flt.ModifiedBefore.UTC().Format(time.RFC3339)
+				}
+				return ""
+			}(),
+			"sizeFilteringUnit": flt.SizeFilteringUnit,
+		}
+		if b, err := json.MarshalIndent(compiled, "", "  "); err == nil {
+			log.Debug().RawJSON("sourceFilter_compiled", b).Msg("compiled sourceFilter")
+		} else {
+			log.Debug().Interface("sourceFilter_compiled", compiled).Msg("compiled sourceFilter")
+		}
+	}
+
 	log.Info().Msg("Launch OSController Copy")
-	if err := src.Copy(dst); err != nil {
+	if err := src.Copy(dst, flt); err != nil {
 		log.Error().Err(err).Msg("Copy error copying into object storage")
 		return models.StatusFailed
 	}
@@ -826,8 +864,14 @@ func handleObjectStorageBackupTask(params models.BasicDataTask) models.Status {
 		return models.StatusFailed
 	}
 
+	flt, err := filtering.FromParams(params.SourceFilter)
+	if err != nil {
+		log.Error().Err(err).Msg("invalid sourceFilter")
+		return models.StatusFailed
+	}
+
 	log.Info().Msg("Launch OSController MGet")
-	if err := OSC.MGet(params.TargetPoint.Path); err != nil {
+	if err := OSC.MGet(params.TargetPoint.Path, flt); err != nil {
 		log.Error().Err(err).Msg("MGet error exporting into objectstorage ")
 		return models.StatusFailed
 	}

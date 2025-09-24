@@ -4,7 +4,7 @@
     <li class="breadcrumb-item">No-SQL</li>
     <li class="breadcrumb-item active">GCP Firestore to NCP MongoDB</li>
 </ol>
-<h1 class="mb-4">마이그레이션 Firestore</h1>
+<h1 class="mb-4">Migration Firestore</h1>
 
 <div class="card mb-4 col-auto">
     <div class="card-header">
@@ -19,7 +19,11 @@
             <input type="hidden" id="sourcePoint[provider]" value="gcp">
             <input type="hidden" id="targetPoint[provider]" value="ncp">
             <div class="mb-3">
-                <label for="mig-gcp-region" class="form-label">Google Cloud Firestore</label>
+                <label for="mig-gcp-region" class="form-label">
+                    <strong>
+                        Source (GCP Firestore)
+                    </strong>
+                </label>
 
                 <div class="form-floating">
                     <select class="form-select form-select-sm w-50" id="mig-gcp-region" name="sourcePoint[region]">
@@ -28,7 +32,7 @@
                     <option value="{{ $value }}">{{ $value }}</option>
                     {{ end }}
                     </select>
-                    <label for="mig-gcp-region">리전 선택</label>
+                    <label for="mig-gcp-region">Select Region</label>
                 </div>
             </div>
             <div class="input-group mb-3">
@@ -51,7 +55,11 @@
                 </div>
             </div> -->
 
-            <label for="mig-mongodb-host" class="form-label">MongoDB</label>
+            <label for="mig-mongodb-host" class="form-label">
+                <strong>
+                    Target (NCP MongoDB)
+                </strong>
+            </label>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-user-secret"></i></span>
@@ -64,40 +72,40 @@
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-house"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-mongodb-host" name="targetPoint[host]" placeholder="호스트명 / IP" required>
-                    <label for="mig-mongodb-host">호스트명 / IP</label>
+                    <input type="text" class="form-control" id="mig-mongodb-host" name="targetPoint[host]" placeholder="Host / IP" required>
+                    <label for="mig-mongodb-host">Host / IP</label>
                 </div>
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-flag"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-mongodb-port" name="targetPoint[port]" placeholder="포트" required>
-                    <label for="mig-mongodb-port">포트</label>
+                    <input type="text" class="form-control" id="mig-mongodb-port" name="targetPoint[port]" placeholder="Port" required>
+                    <label for="mig-mongodb-port">Port</label>
                 </div>
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-mongodb-username" name="targetPoint[username]" placeholder="사용자" required>
-                    <label for="mig-mongodb-username">사용자</label>
+                    <input type="text" class="form-control" id="mig-mongodb-username" name="targetPoint[username]" placeholder="Username" required>
+                    <label for="mig-mongodb-username">Username</label>
                 </div>
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
                 <div class="form-floating">
-                    <input type="password" class="form-control" id="mig-mongodb-password" name="targetPoint[password]" placeholder="패스워드" required>
-                    <label for="mig-mongodb-password">패스워드</label>
+                    <input type="password" class="form-control" id="mig-mongodb-password" name="targetPoint[password]" placeholder="Password" required>
+                    <label for="mig-mongodb-password">Password</label>
                 </div>
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-database"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-mongodb-databaseName" name="targetPoint[databaseName]" placeholder="DB 이름" required>
-                    <label for="mig-mongodb-databaseName">데이터베이스 이름</label>
+                    <input type="text" class="form-control" id="mig-mongodb-databaseName" name="targetPoint[databaseName]" placeholder="DB Name" required>
+                    <label for="mig-mongodb-databaseName">Database Name</label>
                 </div>
             </div>
 

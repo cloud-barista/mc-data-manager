@@ -51,6 +51,10 @@
             {{ if eq .Content "Generate-MongoDB" }}
                 {{ template "gen-mongodb.html" . }}
             {{ end }}
+
+            {{ if eq .Content "Generate-Credential" }}
+                {{ template "gen-credential.html" . }}
+            {{ end }}
             <!-- 백업 템플릿 -->
 
             {{ if eq .Content "Backup" }}

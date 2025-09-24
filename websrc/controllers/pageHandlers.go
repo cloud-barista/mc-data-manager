@@ -173,6 +173,16 @@ func GenerateMongoDBGetHandler(ctx echo.Context) error {
 	})
 }
 
+func GenerateCredentialGetHandler(ctx echo.Context) error {
+	logger := getLoggerFromContext(ctx)
+	logger.Info().Msg("gencredential get page accessed")
+	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
+		Content: "Generate-Credential",
+		OS:      runtime.GOOS,
+		Error:   nil,
+	})
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // Page handlers related to backup data
 

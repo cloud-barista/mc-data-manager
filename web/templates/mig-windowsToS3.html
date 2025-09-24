@@ -4,7 +4,7 @@
     <li class="breadcrumb-item">Object Storage</li>
     <li class="breadcrumb-item active">Windows to AWS S3</li>
 </ol>
-<h1 class="mb-4">마이그레이션 Windows</h1>
+<h1 class="mb-4">Migration Windows</h1>
 
 <div class="card mb-4 col-auto">
     <div class="card-header">
@@ -17,13 +17,13 @@
             <input type="hidden" id="migDest" value="s3">
 
             <div class="mb-3">
-                <label for="mig-windows-path" class="form-label">Windows 마이그레이션 대상 데이터 경로</label>
+                <label for="mig-windows-path" class="form-label">Source Windows Path for Migration</label>
 
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-folder"></i></span>
                     <div class="form-floating">
-                      <input type="text" class="form-control" id="mig-windows-path" name="path" value={{ .tmpPath }} placeholder="디렉토리 경로">
-                      <label for="mig-windows-path">디렉토리 경로</label>
+                      <input type="text" class="form-control" id="mig-windows-path" name="path" value={{ .tmpPath }} placeholder="Source Path">
+                      <label for="mig-windows-path">Source Path</label>
                     </div>
                 </div>
             </div>
@@ -38,7 +38,7 @@
                     <option value="{{ $value }}">{{ $value }}</option>
                     {{ end }}
                     </select>
-                    <label for="mig-aws-region">리전 선택</label>
+                    <label for="mig-aws-region">Select Region</label>
                 </div>
             </div>
 

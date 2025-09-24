@@ -4,7 +4,7 @@
     <li class="breadcrumb-item">SQL Database</li>
     <li class="breadcrumb-item active">MySQL</li>
 </ol>
-<h1 class="mb-4">마이그레이션 MySQL</h1>
+<h1 class="mb-4">Migration MySQL</h1>
 
 <div class="card mb-4 col-auto">
     <div class="card-header">
@@ -18,7 +18,11 @@
             <input type="hidden" id="migSource" value="mysql">
             <input type="hidden" id="migDest" value="mysql">
 
-            <label for="mig-mysql-srcHost" class="form-label">소스 MySQL</label>
+            <label for="mig-mysql-srcHost" class="form-label">
+                <strong>
+                    Source (MySQL)
+                </strong>
+            </label>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-cloud"></i></span>
@@ -33,36 +37,40 @@
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-house"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-mysql-srcHost" name="sourcePoint[host]" placeholder="호스트명 / IP" required>
-                    <label for="mig-mysql-host">호스트명 / IP</label>
+                    <input type="text" class="form-control" id="mig-mysql-srcHost" name="sourcePoint[host]" placeholder="Host / IP" required>
+                    <label for="mig-mysql-host">Host / IP</label>
                 </div>
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-flag"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-mysql-srcPort" name="sourcePoint[port]" placeholder="포트" required>
-                    <label for="mig-mysql-port">포트</label>
+                    <input type="text" class="form-control" id="mig-mysql-srcPort" name="sourcePoint[port]" placeholder="Port" required>
+                    <label for="mig-mysql-port">Port</label>
                 </div>
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-mysql-srcUsername" name="sourcePoint[username]" placeholder="사용자" required>
-                    <label for="mig-mysql-username">사용자</label>
+                    <input type="text" class="form-control" id="mig-mysql-srcUsername" name="sourcePoint[username]" placeholder="Username" required>
+                    <label for="mig-mysql-username">Username</label>
                 </div>
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
                 <div class="form-floating">
-                    <input type="password" class="form-control" id="mig-mysql-srcPassword" name="sourcePoint[password]" placeholder="패스워드" required>
-                    <label for="mig-mysql-password">패스워드</label>
+                    <input type="password" class="form-control" id="mig-mysql-srcPassword" name="sourcePoint[password]" placeholder="Password" required>
+                    <label for="mig-mysql-password">Password</label>
                 </div>
             </div>
 
-            <label for="mig-mysql-srcHost" class="form-label">목표 MySQL</label>
+            <label for="mig-mysql-srcHost" class="form-label">
+                <strong>
+                    Target (MySQL)
+                </strong>
+            </label>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-cloud"></i></span>
@@ -77,32 +85,32 @@
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-house"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-mysql-destHost" name="targetPoint[host]" placeholder="호스트명 / IP" required>
-                    <label for="mig-mysql-host">호스트명 / IP</label>
+                    <input type="text" class="form-control" id="mig-mysql-destHost" name="targetPoint[host]" placeholder="Host / IP" required>
+                    <label for="mig-mysql-host">Host / IP</label>
                 </div>
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-flag"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-mysql-destPort" name="targetPoint[port]" placeholder="포트" required>
-                    <label for="mig-mysql-port">포트</label>
+                    <input type="text" class="form-control" id="mig-mysql-destPort" name="targetPoint[port]" placeholder="Port" required>
+                    <label for="mig-mysql-port">Port</label>
                 </div>
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-mysql-destUsername" name="targetPoint[username]" placeholder="사용자" required>
-                    <label for="mig-mysql-username">사용자</label>
+                    <input type="text" class="form-control" id="mig-mysql-destUsername" name="targetPoint[username]" placeholder="Username" required>
+                    <label for="mig-mysql-username">Username</label>
                 </div>
             </div>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
                 <div class="form-floating">
-                    <input type="password" class="form-control" id="mig-mysql-destPassword" name="targetPoint[password]" placeholder="패스워드" required>
-                    <label for="mig-mysql-password">패스워드</label>
+                    <input type="password" class="form-control" id="mig-mysql-destPassword" name="targetPoint[password]" placeholder="Password" required>
+                    <label for="mig-mysql-password">Password</label>
                 </div>
             </div>
             

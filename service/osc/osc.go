@@ -19,6 +19,7 @@ import (
 	"io"
 
 	"github.com/cloud-barista/mc-data-manager/models"
+	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/filtering"
 	"github.com/rs/zerolog"
 )
 
@@ -39,6 +40,10 @@ type OSController struct {
 
 	logger  *zerolog.Logger
 	threads int
+}
+
+type FilterableOSFS interface {
+	ObjectListWithFilter(*filtering.ObjectFilter) ([]*models.Object, error)
 }
 
 type Result struct {
@@ -109,4 +114,22 @@ func (osc *OSController) logWrite(logLevel, msg string, err error) {
 			osc.logger.Error().Msgf("%s : %v", msg, err)
 		}
 	}
+}
+
+func (o *OSController) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*models.Object, error) {
+	if f, ok := o.osfs.(FilterableOSFS); ok {
+		return f.ObjectListWithFilter(flt)
+	}
+	objs, err := o.osfs.ObjectList()
+	if err != nil {
+		return nil, err
+	}
+	out := make([]*models.Object, 0, len(objs))
+	for _, m := range objs {
+		c := filtering.Candidate{Key: m.Key, Size: m.Size, LastModified: m.LastModified}
+		if filtering.MatchCandidate(flt, c) {
+			out = append(out, m)
+		}
+	}
+	return out, nil
 }

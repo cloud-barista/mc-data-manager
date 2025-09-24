@@ -21,8 +21,10 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/cloud-barista/mc-data-manager/models"
+	"github.com/cloud-barista/mc-data-manager/pkg/rdbms/mysql/diagnostics"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/rs/zerolog/log"
 )
@@ -33,6 +35,7 @@ type MysqlDBMS struct {
 	db             *sql.DB
 	targetProvider models.Provider
 	ctx            context.Context
+	Collector      diagnostics.Collector
 }
 
 type MysqlDBOption func(*MysqlDBMS)
@@ -55,9 +58,10 @@ func (d *MysqlDBMS) SetTargetProvdier(provider models.Provider) {
 
 func New(provider models.Provider, sqlDB *sql.DB, opts ...MysqlDBOption) *MysqlDBMS {
 	dms := &MysqlDBMS{
-		provider: provider,
-		db:       sqlDB,
-		ctx:      context.TODO(),
+		provider:  provider,
+		db:        sqlDB,
+		ctx:       context.TODO(),
+		Collector: *diagnostics.NewCollector(sqlDB),
 	}
 
 	for _, opt := range opts {
@@ -78,7 +82,7 @@ func (d *MysqlDBMS) Exec(query string) error {
 			log.Error().Err(retryErr).Str("Provider", string(d.provider)).Str("tagetProvider", string(d.provider)).Str("query", query).Msg("Failed to execute transformed NCP SQL query")
 			return retryErr
 		}
-		err = nil // If retry query Not Failed 
+		err = nil // If retry query Not Failed
 	}
 
 	log.Debug().Str("query", query).Msg("SQL query executed successfully")
@@ -278,6 +282,11 @@ func (d *MysqlDBMS) GetInsert(dbName, tableName string, insertSql *[]string) err
 	}
 
 	return nil
+}
+
+// Get table create sql
+func (d *MysqlDBMS) Diagnose(schema string, timeInput int64) (diagnostics.TimedResult, error) {
+	return d.Collector.RunTimed(d.ctx, schema, time.Duration(timeInput)*time.Second)
 }
 
 // addCollateIfMissing adds COLLATE to DEFAULT CHARACTER SET if it's missing

@@ -15,6 +15,11 @@ limitations under the License.
 */
 package models
 
+import (
+	"github.com/cloud-barista/mc-data-manager/pkg/rdbms/mysql/diagnostics"
+	"github.com/cloud-barista/mc-data-manager/pkg/sysbench"
+)
+
 type BasicPageResponse struct {
 	Content string  `json:"Content"`
 	Error   *string `json:"Error"`
@@ -30,4 +35,16 @@ type BasicPageResponse struct {
 type BasicResponse struct {
 	Result string  `json:"Result"`
 	Error  *string `json:"Error"`
+}
+
+type DiagnoseResponse struct {
+	Result      string                  `json:"Result"`
+	Diagnostics diagnostics.TimedResult `json:"Diagnostics,omitempty"`
+	Error       *string                 `json:"Error"`
+}
+
+type SysbenchResponse struct {
+	Result         string                  `json:"Result"`
+	SysbenchResult sysbench.SysbenchParsed `json:"SysbenchResult,omitempty"`
+	Error          *string                 `json:"Error"`
 }

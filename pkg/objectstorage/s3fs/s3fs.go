@@ -19,12 +19,14 @@ import (
 	"context"
 	"errors"
 	"io"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/cloud-barista/mc-data-manager/models"
+	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/filtering"
 	"github.com/rs/zerolog/log"
 )
 
@@ -214,41 +216,41 @@ func (f *S3FS) Create(name string) (io.WriteCloser, error) {
 }
 
 // Look up the list of objects in your bucket
-func (f *S3FS) ObjectList() ([]*models.Object, error) {
-	var objlist []*models.Object
-	var ContinuationToken *string
+// func (f *S3FS) ObjectList() ([]*models.Object, error) {
+// 	var objlist []*models.Object
+// 	var ContinuationToken *string
 
-	for {
-		LOut, err := f.client.ListObjectsV2(
-			f.ctx,
-			&s3.ListObjectsV2Input{
-				Bucket:            aws.String(f.bucketName),
-				ContinuationToken: ContinuationToken,
-			},
-		)
-		if err != nil {
-			return nil, err
-		}
+// 	for {
+// 		LOut, err := f.client.ListObjectsV2(
+// 			f.ctx,
+// 			&s3.ListObjectsV2Input{
+// 				Bucket:            aws.String(f.bucketName),
+// 				ContinuationToken: ContinuationToken,
+// 			},
+// 		)
+// 		if err != nil {
+// 			return nil, err
+// 		}
 
-		for _, obj := range LOut.Contents {
-			objlist = append(objlist, &models.Object{
-				ETag:         *obj.ETag,
-				Key:          *obj.Key,
-				LastModified: *obj.LastModified,
-				Size:         *obj.Size,
-				StorageClass: string(obj.StorageClass),
-			})
-		}
+// 		for _, obj := range LOut.Contents {
+// 			objlist = append(objlist, &models.Object{
+// 				ETag:         *obj.ETag,
+// 				Key:          *obj.Key,
+// 				LastModified: *obj.LastModified,
+// 				Size:         *obj.Size,
+// 				StorageClass: string(obj.StorageClass),
+// 			})
+// 		}
 
-		if LOut.NextContinuationToken == nil {
-			break
-		}
+// 		if LOut.NextContinuationToken == nil {
+// 			break
+// 		}
 
-		ContinuationToken = LOut.NextContinuationToken
-	}
+// 		ContinuationToken = LOut.NextContinuationToken
+// 	}
 
-	return objlist, nil
-}
+// 	return objlist, nil
+// }
 
 func New(provider models.Provider, client *s3.Client, bucketName, region string) *S3FS {
 	sfs := &S3FS{
@@ -263,4 +265,71 @@ func New(provider models.Provider, client *s3.Client, bucketName, region string)
 	sfs.downloader = *manager.NewDownloader(client, func(d *manager.Downloader) { d.Concurrency = 1; d.PartSize = 128 * 1024 * 1024 })
 
 	return sfs
+}
+
+func (f *S3FS) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*models.Object, error) {
+	log.Debug().Msg("[S3FS] filtering")
+	var out []*models.Object
+	var token *string
+
+	var prefix *string
+	if flt != nil && flt.Path != "" {
+		pre := strings.TrimPrefix(flt.Path, "/")
+		prefix = aws.String(pre)
+	}
+
+
+	for {
+		resp, err := f.client.ListObjectsV2(f.ctx, &s3.ListObjectsV2Input{
+			Bucket:            aws.String(f.bucketName),
+			ContinuationToken: token,
+			Prefix:            prefix,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		for _, o := range resp.Contents {
+			c := filtering.Candidate{
+				Key:          aws.ToString(o.Key),
+				Size:         aws.ToInt64(o.Size),
+				LastModified: aws.ToTime(o.LastModified),
+			}
+
+			log.Debug().Str("key", c.Key).Int64("size", c.Size).
+				Msg("[S3FS] candidate")
+
+			matched := filtering.MatchCandidate(flt, c)
+			if !matched {
+				if flt != nil {
+					log.Debug().
+						Str("key", c.Key).
+						Str("prefix", aws.ToString(prefix)).
+						Strs("exact", flt.Exact).
+						Str("modifiedDate", c.LastModified.String()).
+						Msg("[S3FS] filtered out")
+				}
+				continue
+			}
+
+			out = append(out, &models.Object{
+				ETag:         aws.ToString(o.ETag),
+				Key:          c.Key,
+				LastModified: c.LastModified,
+				Size:         c.Size,
+				StorageClass: string(o.StorageClass),
+				Provider:     f.provider,
+			})
+		}
+
+		if resp.NextContinuationToken == nil {
+			break
+		}
+		token = resp.NextContinuationToken
+	}
+	return out, nil
+}
+
+func (f *S3FS) ObjectList() ([]*models.Object, error) {
+	return f.ObjectListWithFilter(nil)
 }
