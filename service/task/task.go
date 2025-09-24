@@ -821,14 +821,8 @@ func handleObjectStorageMigrateTask(params models.BasicDataTask) models.Status {
 			"contains": flt.Contains,
 			"suffixes": flt.Suffixes,
 			"exact":    flt.Exact,
-			"regex": func() string {
-				if flt.Regex != nil {
-					return flt.Regex.String()
-				}
-				return ""
-			}(),
-			"minSize": flt.MinSize,
-			"maxSize": flt.MaxSize,
+			"minSize":  flt.MinSize,
+			"maxSize":  flt.MaxSize,
 			"modifiedAfter": func() string {
 				if flt.ModifiedAfter != nil {
 					return flt.ModifiedAfter.UTC().Format(time.RFC3339)

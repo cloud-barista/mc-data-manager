@@ -63,19 +63,7 @@ func MatchCandidate(flt *ObjectFilter, c Candidate) bool {
 		}
 	}
 
-	// Regex
-	if flt.Regex != nil && !flt.Regex.MatchString(c.Key) {
-		return false
-	}
-
 	rbytes := math.Round(roundedUnit(c.Size, flt.SizeFilteringUnit)*10) / 10
-
-	log.Debug().
-		Str("key", c.Key).
-		Int64("original_bytes", c.Size).
-		Str("unit", strings.ToUpper(flt.SizeFilteringUnit)).
-		Float64("value_in_unit", rbytes).
-		Msg("[Filter] size (rounded-in-unit) compare")
 
 	if flt.MinSize != nil && rbytes < *flt.MinSize {
 		return false
@@ -84,12 +72,18 @@ func MatchCandidate(flt *ObjectFilter, c Candidate) bool {
 		return false
 	}
 
-	// Modified range
-	if flt.ModifiedAfter != nil && !c.LastModified.After(*flt.ModifiedAfter) {
-		return false
+	if flt.ModifiedAfter != nil {
+		after := flt.ModifiedAfter.UTC()
+		if c.LastModified.UTC().Before(after) {
+			return false
+		}
 	}
-	if flt.ModifiedBefore != nil && !c.LastModified.Before(*flt.ModifiedBefore) {
-		return false
+	
+	if flt.ModifiedBefore != nil {
+		before := flt.ModifiedBefore.UTC()
+		if c.LastModified.UTC().After(before) {
+			return false
+		}
 	}
 
 	return true

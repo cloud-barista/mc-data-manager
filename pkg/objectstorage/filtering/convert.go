@@ -1,7 +1,6 @@
 package filtering
 
 import (
-	"regexp"
 	"time"
 
 	"github.com/cloud-barista/mc-data-manager/models"
@@ -10,15 +9,6 @@ import (
 func FromParams(p *models.ObjectFilterParams) (*ObjectFilter, error) {
 	if p == nil {
 		return nil, nil
-	}
-
-	var re *regexp.Regexp
-	var err error
-	if p.Regex != "" {
-		re, err = regexp.Compile(p.Regex)
-		if err != nil {
-			return nil, err
-		}
 	}
 
 	var after, before *time.Time
@@ -42,7 +32,6 @@ func FromParams(p *models.ObjectFilterParams) (*ObjectFilter, error) {
 		Contains:          p.Contains,
 		Suffixes:          p.Suffixes,
 		Exact:             p.Exact,
-		Regex:             re,
 		MinSize:           p.MinSize,
 		MaxSize:           p.MaxSize,
 		ModifiedAfter:     after,

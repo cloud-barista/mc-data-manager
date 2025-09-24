@@ -22,8 +22,8 @@
 
             </div>
             <button class="btn btn-secondary mt-2" onclick="beautifyCode()">Beautify</button>
-            <button class="btn btn-secondary mt-2" onclick="validateJSON()">검증</button>
-            <button class="btn btn-secondary mt-2" onclick="TaskJsonSubmit()">전송</button>
+            <button class="btn btn-secondary mt-2" onclick="validateJSON()">Validate</button>
+            <button class="btn btn-secondary mt-2" onclick="TaskJsonSubmit()">Submit</button>
         </div>
     </div>
     <p id="result" class="error"></p>
@@ -35,7 +35,7 @@ var editor = ace.edit("jsonEditor");
 editor.session.setMode("ace/mode/json"); 
 editor.setTheme("ace/theme/github"); 
 editor.session.setUseWrapMode(true); 
-editor.setValue('{ "sourcePoint": "홍길동", "targetPorint": 30 }', -1); // 초기 내용 설정
+editor.setValue('{ "sourcePoint": "james", "targetPorint": 30 }', -1); // 초기 내용 설정
 
 function beautifyCode() {
     var beautify = ace.require("ace/ext/beautify");
@@ -48,10 +48,10 @@ function validateJSON() {
     var result = document.getElementById('result');
     try {
         JSON.parse(jsonData);
-        result.textContent = "유효한 JSON 데이터입니다.";
+        result.textContent = "Valid JSON data.";
         result.style.color = "green";
     } catch (e) {
-        result.textContent = "잘못된 JSON 형식입니다.";
+        result.textContent = "Invalid JSON data.";
         result.style.color = "red";
     }
 }
@@ -86,7 +86,7 @@ function TaskJsonSubmit() {
             resultCollpase();
         });
     } catch (e) {
-        alert("유효한 JSON 형식이 아닙니다. 오류 메시지: " + e.message);
+        alert("Invalid JSON data. Error message: " + e.message);
     }
 }
 

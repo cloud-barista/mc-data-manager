@@ -4,7 +4,7 @@
     <li class="breadcrumb-item">No-SQL</li>
     <li class="breadcrumb-item active">AWS DynamoDB to GCP Firestore</li>
 </ol>
-<h1 class="mb-4">마이그레이션 DynamoDB</h1>
+<h1 class="mb-4">Migration DynamoDB</h1>
 
 <div class="card mb-4 col-auto">
     <div class="card-header">
@@ -20,7 +20,11 @@
             <input type="hidden" id="targetPoint[provider]" value="gcp">
 
             <div class="mb-3">
-                <label for="mig-aws-region" class="form-label">AWS DynamoDB</label>
+                <label for="mig-aws-region" class="form-label">
+                    <strong>
+                        Source (AWS DynamoDB)
+                    </strong>
+                </label>
 
                 <div class="form-floating">
                     <select class="form-select form-select-sm w-50" id="mig-aws-region" name="sourcePoint[region]">
@@ -29,7 +33,7 @@
                     <option value="{{ $value }}">{{ $value }}</option>
                     {{ end }}
                     </select>
-                    <label for="mig-aws-region">리전 선택</label>
+                    <label for="mig-aws-region">Select Region</label>
                 </div>
             </div>
             <div class="input-group mb-3">
@@ -41,7 +45,11 @@
             </div>
 
             <div class="mb-3">
-                <label for="mig-gcp-region" class="form-label">Google Cloud Firestore</label>
+                <label for="mig-gcp-region" class="form-label">
+                    <strong>
+                        Target (GCP Firestore)
+                    </strong>
+                </label>
 
                 <div class="form-floating">
                     <select class="form-select form-select-sm w-50" id="mig-gcp-region" name="targetPoint{region}">
@@ -50,7 +58,7 @@
                     <option value="{{ $value }}">{{ $value }}</option>
                     {{ end }}
                     </select>
-                    <label for="mig-gcp-region">리전 선택</label>
+                    <label for="mig-gcp-region">Select Region</label>
                 </div>
             </div>
             <div class="input-group mb-3">

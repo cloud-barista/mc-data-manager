@@ -48,7 +48,7 @@ func RestoreObjectStorage(g *echo.Group) {
 }
 func RestoreRDB(g *echo.Group) {
 	// g.GET("/rdb", controllers.RestoreRDBGetHandler)
-	g.POST("/rdb", controllers.RestoreRDBPostHandler)
+	g.POST("/rdbms", controllers.RestoreRDBPostHandler)
 }
 
 func RestoreNRDB(g *echo.Group) {
