@@ -20,7 +20,11 @@
             <input type="hidden" id="targetPoint[provider]" value="aws">
 
             <div class="mb-3">
-                <label for="mig-gcp-region" class="form-label">Google Cloud Storage</label>
+                <label for="mig-gcp-region" class="form-label">
+                    <strong>
+                        Source (GCP Firestore)
+                    </strong>
+                </label>
 
                 <div class="form-floating">
                     <select class="form-select form-select-sm w-50" id="mig-gcp-region" name="sourcePoint[region]">
@@ -64,7 +68,11 @@
             </div>
 
             <div class="mb-3">
-                <label for="mig-aws-region" class="form-label">AWS S3</label>
+                <label for="mig-aws-region" class="form-label">
+                    <strong>
+                        Target (AWS S3)
+                    </strong>
+                </label>
 
                 <div class="form-floating">
                     <select class="form-select form-select-sm w-50" id="mig-aws-region" name="targetPoint[region]">

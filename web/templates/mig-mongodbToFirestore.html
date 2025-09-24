@@ -18,7 +18,11 @@
             <input type="hidden" id="migDest" value="firestore">
             <input type="hidden" id="sourcePoint[provider]" value="ncp">
             <input type="hidden" id="targetPoint[provider]" value="gcp">
-            <label for="mig-mongodb-host" class="form-label">MongoDB</label>
+            <label for="mig-mongodb-host" class="form-label">
+                <strong>
+                    Source (NCP MongoDB)
+                </strong>
+            </label>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-user-secret"></i></span>
@@ -68,7 +72,11 @@
                 </div>
             </div>
             <div class="mb-3">
-                <label for="mig-gcp-region" class="form-label">Google Cloud Firestore</label>
+                <label for="mig-gcp-region" class="form-label">
+                    <strong>
+                        Target (GCP Firestore)
+                    </strong>
+                </label>
 
                 <div class="form-floating">
                     <select class="form-select form-select-sm w-50" id="mig-gcp-region" name="targetPoint[region]">

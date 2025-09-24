@@ -20,7 +20,11 @@
             <input type="hidden" id="targetPoint[provider]" value="ncp">
             
             <div class="mb-3">
-                <label for="mig-aws-region" class="form-label">AWS S3</label>
+                <label for="mig-aws-region" class="form-label">
+                    <strong>
+                        Source (AWS S3)
+                    </strong>
+                </label>
 
                 <div class="form-floating">
                     <select class="form-select form-select-sm w-50" id="mig-aws-region" name="sourcePoint[region]">
@@ -50,7 +54,11 @@
             </div>
             
             <div class="mb-3">
-                <label for="mig-ncp-region" class="form-label">Naver Object Storage</label>
+                <label for="mig-ncp-region" class="form-label">
+                    <strong>
+                        Target (NCP Object Storage)
+                    </strong>
+                </label>
 
                 <div class="form-floating">
                     <select class="form-select form-select-sm w-50" id="mig-ncp-region" name="ncpRegion">

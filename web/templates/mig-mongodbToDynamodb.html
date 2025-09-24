@@ -19,7 +19,11 @@
             <input type="hidden" id="sourcePoint[provider]" value="ncp">
             <input type="hidden" id="targetPoint[provider]" value="aws">
             
-            <label for="mig-mongodb-host" class="form-label">MongoDB</label>
+            <label for="mig-mongodb-host" class="form-label">
+                <strong>
+                    Source (NCP MongoDB)
+                </strong>
+            </label>
 
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="fa-solid fa-user-secret"></i></span>
@@ -70,7 +74,11 @@
             </div>
 
             <div class="mb-3">
-                <label for="mig-aws-region" class="form-label">AWS DynamoDB</label>
+                <label for="mig-aws-region" class="form-label">
+                    <strong>
+                        Target (AWS DynamoDB)
+                    </strong>
+                </label>
 
                 <div class="form-floating">
                     <select class="form-select form-select-sm w-50" id="mig-aws-region" name="targetPoint[region]">

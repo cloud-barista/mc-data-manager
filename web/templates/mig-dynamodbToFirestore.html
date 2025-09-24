@@ -20,7 +20,11 @@
             <input type="hidden" id="targetPoint[provider]" value="gcp">
 
             <div class="mb-3">
-                <label for="mig-aws-region" class="form-label">AWS DynamoDB</label>
+                <label for="mig-aws-region" class="form-label">
+                    <strong>
+                        Source (AWS DynamoDB)
+                    </strong>
+                </label>
 
                 <div class="form-floating">
                     <select class="form-select form-select-sm w-50" id="mig-aws-region" name="sourcePoint[region]">
@@ -41,7 +45,11 @@
             </div>
 
             <div class="mb-3">
-                <label for="mig-gcp-region" class="form-label">Google Cloud Firestore</label>
+                <label for="mig-gcp-region" class="form-label">
+                    <strong>
+                        Target (GCP Firestore)
+                    </strong>
+                </label>
 
                 <div class="form-floating">
                     <select class="form-select form-select-sm w-50" id="mig-gcp-region" name="targetPoint{region}">

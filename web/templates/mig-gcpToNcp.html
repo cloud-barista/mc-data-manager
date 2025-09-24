@@ -19,7 +19,11 @@
             <input type="hidden" id="sourcePoint[provider]" value="gcp">
             <input type="hidden" id="targetPoint[provider]" value="ncp">
             <div class="mb-3">
-                <label for="mig-gcp-region" class="form-label">Google Cloud Storage</label>
+                <label for="mig-gcp-region" class="form-label">
+                    <strong>
+                        Source (GCP Firestore)
+                    </strong>
+                </label>
 
                 <div class="form-floating">
                     <select class="form-select form-select-sm w-50" id="mig-gcp-region" name="sourcePoint[region]">
@@ -64,7 +68,11 @@
             </div>
 
             <div class="mb-3">
-                <label for="mig-ncp-region" class="form-label">Naver Object Storage</label>
+                <label for="mig-ncp-region" class="form-label">
+                    <strong>
+                        Target (NCP Object Storage)
+                    </strong>
+                </label>
 
                 <div class="form-floating">
                     <select class="form-select form-select-sm w-50" id="mig-ncp-region" name="targetPoint[region]">

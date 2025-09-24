@@ -202,8 +202,7 @@ function setSelectBox() {
             <div class="input-group mb-3">
                 <span class="input-group-text">Credential Json</span>
                 <div class="form-floating">                    
-                    <textarea rows="10" class="form-control" id="mig-gcp-json" name="gcpJson" placeholder="Input Credential Json" style="min-height: 300px; height: 300px" required></textarea>
-                    <label for="mig-gcp-json">Input Credential Json</label>
+                    <textarea rows="10" class="form-control" id="mig-gcp-json" name="gcpJson" placeholder="Input Credential Json" style="min-height: 300px; height: 300px" required></textarea>                   
                 </div>
             </div>
           `;
@@ -462,35 +461,40 @@ function migrationFormSubmit() {
         jsonData.targetPoint.credentialId = parseInt(jsonData.targetPoint.credentialId);
         jsonData.sourcePoint.credentialId = parseInt(jsonData.sourcePoint.credentialId);
 
-        if (jsonData.sourceFilter.minSize) {
-            // jsonData.sourceFilter.minSize = parseInt(jsonData.sourceFilter.minSize);
-            jsonData.sourceFilter.minSize = isNaN(parseFloat(jsonData.sourceFilter.minSize)) 
-            ? null 
-            : parseFloat(jsonData.sourceFilter.minSize);
+        if (jsonData.sourceFilter.path === "" || jsonData.sourceFilter.path === null) {
+            jsonData.sourceFilter.path = null;
+        } 
+
+        if (jsonData.sourceFilter.minSize === "" || jsonData.sourceFilter.minSize === null) {
+            jsonData.sourceFilter.minSize = null;
+        } else {
+            jsonData.sourceFilter.minSize = parseFloat(jsonData.sourceFilter.minSize);
         }
 
-        if (jsonData.sourceFilter.maxSize) {
-            // jsonData.sourceFilter.maxSize = parseInt(jsonData.sourceFilter.maxSize);
-            jsonData.sourceFilter.maxSize = isNaN(parseFloat(jsonData.sourceFilter.maxSize)) 
-            ? null 
-            : parseFloat(jsonData.sourceFilter.maxSize);
+        if (jsonData.sourceFilter.maxSize === "" || jsonData.sourceFilter.maxSize === null) {
+            jsonData.sourceFilter.maxSize = null;
+        } else {
+            jsonData.sourceFilter.maxSize = parseFloat(jsonData.sourceFilter.maxSize);
         }
-
+        
         if (jsonData.sourceFilter.modifiedAfter && jsonData.sourceFilter.modifiedAfter.trim() !== "") {
-            jsonData.sourceFilter.modifiedAfter = jsonData.sourceFilter.modifiedAfter.replace(" ", "T") + "Z";
+            jsonData.sourceFilter.modifiedAfter = jsonData.sourceFilter.modifiedAfter.replace(" ", "T") + "+09:00";
         } else {
             jsonData.sourceFilter.modifiedAfter = null;
         }
         
         if (jsonData.sourceFilter.modifiedBefore && jsonData.sourceFilter.modifiedBefore.trim() !== "") {
-            jsonData.sourceFilter.modifiedBefore = jsonData.sourceFilter.modifiedBefore.replace(" ", "T") + "Z";
+            jsonData.sourceFilter.modifiedBefore = jsonData.sourceFilter.modifiedBefore.replace(" ", "T") + "+09:00";
         } else {
             jsonData.sourceFilter.modifiedBefore = null;
         }
 
         if (jsonData.sourceFilter.contains === "") {
             jsonData.sourceFilter.contains = null;
+        } else {
+            jsonData.sourceFilter.contains = jsonData.sourceFilter.contains.replace(/ /g,"").split(',');
         }
+
         if (jsonData.sourceFilter.suffixes === "") {
             jsonData.sourceFilter.suffixes = null;
         }
@@ -506,6 +510,12 @@ function migrationFormSubmit() {
             "maxSize type:", typeof jsonData.sourceFilter.maxSize, 
             "value:", jsonData.sourceFilter.maxSize
         );
+
+        console.log(
+            "contains type:", typeof jsonData.sourceFilter.contains, 
+            "value:", jsonData.sourceFilter.contains
+        );
+
 
         let url = "/migrate/" + service;
 
