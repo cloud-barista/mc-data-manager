@@ -1,0 +1,250 @@
+<ol class="breadcrumb mb-1" style="margin-top: 66px;">
+    <li class="breadcrumb-item">Migration</li>
+</ol>
+<h2 class="page-title">Object Storage</h2>
+
+<div class="card rounded-3 mb-4 col-auto">
+    <ul class="nav nav-tabs pt-2 ps-2">
+        <li class="nav-item">
+            <a class="nav-link active" href="#">Object Storage</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/migrate/mysql">
+                SQL Database
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/migrate/no-sql">No-SQL</a>
+        </li>
+    </ul>
+    <div class="card-body">
+        <form id="migForm">
+            <input type="hidden" id="migService" value="objectstorage">
+            <input type="hidden" id="sourcePoint[provider]" value="none">
+            <input type="hidden" id="targetPoint[provider]" value="none">
+                <div class="card rounded-3 mb-4 p-3">
+    
+                    <!-- <div class="mt-2">
+                        <label for="mig-aws-region" class="form-label" id="sourcePointLabel">Source -</label>
+                    </div> -->
+                    <div class="input-group mb-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="sourcePointLabel" placeholder="Source" style="border: 0; background-color: white;" value="-" required disabled>
+                            <label for="sourcePointLabel">Source</label>
+                        </div>
+                    </div>
+        
+                    <div>
+                        <div class="input-group mb-3 me-1">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-user-secret"></i></span>
+                            <div class="form-floating">
+                                <select class="form-select form-select-sm rounded-end" id="sourceCredentialSelect" name="sourcePoint[credentialId]">
+                                    <option value="none" data-provider="none"> - </option>
+                                </select>
+                                <label for="sourceCredentialSelect">provider - credential name</label>
+                            </div>
+                        </div>
+                        <div class="input-group mb-3 me-1">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span>
+                            <div class="form-floating">
+                                <select class="form-select form-select-sm rounded-end" id="sourceRegionSelect" name="sourcePoint[region]">
+                                    <option value="none" selected> - </option>
+                                    <optgroup label="AWS regions" data-provider="aws" style="display: none;">
+                                        {{ range $index, $value := .AWSRegions }}
+                                            <option value="{{ $value }}">{{ $value }}</option>
+                                        {{ end }}
+                                    </optgroup>
+                                    <optgroup label="GCP regions" data-provider="gcp" style="display: none;">
+                                        {{ range $index, $value := .GCPRegions }}
+                                            <option value="{{ $value }}">{{ $value }}</option>
+                                        {{ end }}
+                                    </optgroup>
+                                    <optgroup label="NCP regions" data-provider="ncp" style="display: none;">
+                                        {{ range $index, $value := .NCPRegions }}
+                                            <option value="{{ $value }}">{{ $value }}</option>
+                                        {{ end }}
+                                    </optgroup>                            
+                                </select>
+                                <!-- <select class="form-select form-select-sm" id="regionSelect" name="sourcePoint[region]"> -->
+                                <!-- {{ range $index, $value := .AWSRegions }}
+                                <option value="{{ $value }}">{{ $value }}</option>
+                                {{ end }} -->
+                                <!-- </select> -->
+                                <label for="mig-aws-region">Select Region</label>
+                            </div>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
+                            <div class="form-floating">
+                                <input type="text" class="form-control rounded-end" id="mig-aws-bucket" name="sourcePoint[bucket]" placeholder="Bucket" required>
+                                <label for="mig-aws-bucket">Bucket</label>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <div class="mt-2 ms-3" style="display: flex; align-items: center;">
+                        <label for="mig-filter-path" class="form-label" style="margin-top: 0.5rem; margin-right: 0.5rem;">Filter</label>
+                        <button class="btn" id="btnFilterExpand" type="button"><i class="fa-solid fa-square-caret-down" style="font-size: 22px"></i></button>
+                    </div>
+        
+                    <div class="rounded-3 ms-2" id="filterContent" style="display:none; border: 1px solid #cccccc; padding: 25px;">
+                        <div class="d-flex flex-wrap gap-2">
+                        <!-- <div style="display: flex; flex-wrap: wrap; gap: 10px;"> -->
+                            <div class="input-group mb-4" style="max-width: 300px;">
+                            <!-- <div class="mb-4" style="display: flex"> -->
+                                <span class="input-group-text rounded-start text-center text-wrap" style="width: 80px; font-size: 0.9rem;">Path</span>
+                                <div class="form-floating">
+                                    <input type="text" class="form-control rounded-end" id="mig-filter-path" name="sourceFilter[path]" placeholder="Path">
+                                    <label for="mig-filter-path">Path</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                        <!-- <div style="display: flex; flex-wrap: wrap; gap: 10px;"> -->
+                            <div class="input-group mb-4" style="max-width: 300px;">
+                            <!-- <div class="mb-4" style="display: flex"> -->
+                                <span class="input-group-text rounded-start text-wrap" style="width: 80px; font-size: 0.9rem;">File Size</span>
+                                <div class="form-floating">
+                                    <input type="number" class="form-control rounded-end" id="mig-filter-minSize" name="sourceFilter[minSize]" placeholder="0" min="0">
+                                    <label for="mig-filter-minSize">Min</label>
+                                </div>
+                            </div>
+                            <div class="mb-4" style="padding-top: 15px"><div class="form-floating">~</div></div>
+                            <!-- <div class="mb-4" style="display: flex">                        
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" id="mig-filter-maxSize" name="sourceFilter[maxSize]" placeholder="MaxSize">
+                                    <label for="mig-filter-maxSize">Input Max File Size</label>
+                                </div>
+                            </div> -->
+                            <div class="input-group mb-4" style="max-width: 300px;">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control rounded-start" id="mig-filter-maxSize" name="sourceFilter[maxSize]" placeholder="0" min="0">
+                                    <label for="mig-filter-maxSize">Max</label>
+                                </div>
+                                <select class="form-select rounded-end bg-light" id="mig-filter-sizeFilteringUnit" name="sourceFilter[sizeFilteringUnit]" style="max-width: 80px;">
+                                </select>
+                            </div>
+                            <!-- <div class="mb-4">
+                                <div class="form-floating">
+                                    <select class="form-select form-select-sm" id="mig-filter-sizeFilteringUnit" name="sourceFilter[sizeFilteringUnit]">
+                                    </select>
+                                    <label for="mig-filter-sizeFilteringUnit">Select Unit</label>
+                                </div>
+                            </div>                     -->
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                        <!-- <div style="display: flex; flex-wrap: wrap; gap: 10px;"> -->
+                            <div class="input-group mb-4" style="max-width: 300px;">
+                            <!-- <div class="mb-4" style="display: flex"> -->
+                                <!-- <span class="input-group-text text-center text-wrap" style="width: 120px; font-size: 0.9rem;"> -->
+                                <span class="input-group-text rounded-start text-wrap" style="width: 80px; font-size: 0.9rem;">Date Range</span>
+                                <div class="form-floating">
+                                    <input type="text" id="datepicker1" class="form-control rounded-end" id="mig-filter-stdate" name="sourceFilter[modifiedAfter]" placeholder="Start Date">
+                                    <!-- <input type="text" class="form-control w-50" id="mig-filter-contains" name="sourceFilter[contains]" placeholder="Contains" required> -->
+                                    <label for="mig-filter-stdate">Start Date</label>
+                                </div>
+                            </div>
+                            <div class="mb-4" style="padding-top: 15px"><div class="form-floating">~</div></div>
+                            <div class="input-group mb-4" style="max-width: 300px;">
+                                <div class="form-floating">
+                                    <input type="text" id="datepicker2" class="form-control rounded-3" id="mig-filter-eddate" name="sourceFilter[modifiedBefore]" placeholder="End Date">
+                                    <!-- <input type="text" class="form-control w-50" id="mig-filter-contains" name="sourceFilter[contains]" placeholder="Contains" required> -->
+                                    <label for="mig-filter-eddate">End Date</label>
+                                </div>
+                            </div>                    
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                        <!-- <div style="display: flex; flex-wrap: wrap; gap: 10px;"> -->
+                            <div class="input-group" style="max-width: 300px;">
+                            <!-- <div class="mb-4" style="display: flex"> -->
+                                <span class="input-group-text rounded-start text-wrap" style="width: 80px; font-size: 0.9rem;">Contains</span>
+                                <div class="form-floating flex-grow-1">
+                                    <input type="text" class="form-control rounded-end" id="mig-filter-contains" name="sourceFilter[contains]" placeholder="Contains">
+                                    <label for="mig-filter-contains">Text to include</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+    
+                </div>
+    
+                <!-- <div class="text-center" style="font-size: 50px; margin-top: 10px">
+                    <i class="fa-solid fa-angles-down"></i>
+                </div> -->
+                <!-- <hr /> -->
+    
+                <div class="card rounded-3 mb-4 p-3">
+                    <!-- <div style="margin-top: 30px">
+                        <label for="mig-gcp-region" class="form-label" id="targetPointLabel">Target -</label>
+                    </div> -->
+                    <div class="input-group mb-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="targetPointLabel" placeholder="Target" style="border: 0; background-color: white;" value="-" required disabled>
+                            <label for="sourcePointLabel">Target</label>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="input-group mb-3 me-1">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-user-secret"></i></span>
+                            <div class="form-floating">
+                                <!-- <input type="text" class="form-control" id="gen-s3-profile" name="targetPoint[profileName]" placeholder="profile name" required>
+                                <label for="gen-s3-profile">Profile</label> -->
+                                <select class="form-select form-select-sm rounded-end" id="targetCredentialSelect" name="targetPoint[credentialId]">
+                                    <option value="none" data-provider="none"> - </option>
+                                </select>
+                                <label for="mig-gcp-region">provider - credential name</label>
+                            </div>
+                        </div>
+                        <div class="input-group mb-3 me-1">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span>
+                            <div class="form-floating">
+                                
+                                <select class="form-select form-select-sm rounded-end" id="targetRegionSelect" name="targetPoint[region]">
+                                    <option value="none" selected> - </option>
+                                    <optgroup label="AWS regions" data-provider="aws" style="display: none;">
+                                        {{ range $index, $value := .AWSRegions }}
+                                            <option value="{{ $value }}">{{ $value }}</option>
+                                        {{ end }}
+                                    </optgroup>
+                                    <optgroup label="GCP regions" data-provider="gcp" style="display: none;">
+                                        {{ range $index, $value := .GCPRegions }}
+                                            <option value="{{ $value }}">{{ $value }}</option>
+                                        {{ end }}
+                                    </optgroup>
+                                    <optgroup label="NCP regions" data-provider="ncp" style="display: none;">
+                                        {{ range $index, $value := .NCPRegions }}
+                                            <option value="{{ $value }}">{{ $value }}</option>
+                                        {{ end }}
+                                    </optgroup>                            
+                                </select>
+                                <label for="mig-gcp-region">Select Region</label>
+                            </div>
+                        </div>
+        
+                    
+                        <!-- <div class="mb-3">
+                            <label for="mig-gcp-credential" class="form-label">Credentials 파일</label>
+                            <input class="form-control" type="file" id="mig-gcp-credential" name="gcpCredential" required>
+                        </div>
+        
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="fa-solid fa-id-card"></i></span>
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="gen-gcp-projectid" name="projectid" placeholder="ProjectID" required>
+                                <label for="gen-gcp-projectid">ProjectID</label>
+                            </div>
+                        </div> -->
+        
+                        <div class="input-group mb-3">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
+                            <div class="form-floating">
+                                <input type="text" class="form-control rounded-end" id="mig-gcp-bucket" name="targetPoint[bucket]" placeholder="Bucket" required>
+                                <label for="mig-gcp-bucket">Bucket</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <button type="submit" class="btn btn-primary rounded-1" id="submitBtn">Submit</button>
+        </form>
+    </div>
+</div>

@@ -61,7 +61,7 @@ func preRunProfileE(pName, cmdName string, params *models.ProviderConfig) error 
 	// 	log.Info().Interface("credentials", srcCreds).Msg("initiate a profile scan")
 	// }
 
-	if srcCreds, err := credentailManager.LoadCredentialsById(uint64(params.CredentialId), ); err != nil {
+	if srcCreds, err := credentailManager.LoadCredentialsById(uint64(params.CredentialId)); err != nil {
 		return fmt.Errorf("get config error : %s", err)
 
 	} else {
@@ -185,7 +185,10 @@ func GetOS(params *models.ProviderConfig) (*osc.OSController, error) {
 		if err != nil {
 			return nil, fmt.Errorf("osc error : %v", err)
 		}
+	default:
+		return nil, fmt.Errorf("osc error : invalid provider")
 	}
+
 	return OSC, nil
 }
 func GetRDMS(params *models.ProviderConfig) (*rdbc.RDBController, error) {

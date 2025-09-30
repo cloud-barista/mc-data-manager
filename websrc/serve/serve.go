@@ -193,7 +193,7 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 	restoreGroup := e.Group("/restore")
 	routes.RestoreRoutes(restoreGroup)
 
-	taskGroup := e.Group("/task")
+	taskGroup := e.Group("/tasks")
 	routes.TaskRoutes(taskGroup, scheduleManager)
 
 	scheduleGroup := e.Group("/schedule")

@@ -1,120 +1,137 @@
 <ol class="breadcrumb mb-1" style="margin-top: 66px;">
-    <li class="breadcrumb-item">Data Migrations</li>
     <li class="breadcrumb-item">Migration</li>
-    <li class="breadcrumb-item">SQL Database</li>
-    <li class="breadcrumb-item active">MySQL</li>
 </ol>
-<h1 class="mb-4">Migration MySQL</h1>
+<h2 class="page-title">SQL Database</h2>
 
-<div class="card mb-4 col-auto">
-    <div class="card-header">
+<div class="card rounded-3 mb-4 col-auto">
+    <ul class="nav nav-tabs pt-2 ps-2">
+        <li class="nav-item">
+            <a class="nav-link" href="/migrate/objectstorage">Object Storage</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="#">
+                SQL Database
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/migrate/no-sql">No-SQL</a>
+        </li>
+    </ul>
+    <!-- <div class="card-header">
         <i class="fa-solid fa-database"></i>
         MySQL
-    </div>
+    </div> -->
     <div class="card-body">
         <!-- <form action="/migration/mysql" method="POST"> -->
         <form id="migForm">
             <input type="hidden" id="migService" value="rdbms">
             <input type="hidden" id="migSource" value="mysql">
             <input type="hidden" id="migDest" value="mysql">
-
-            <label for="mig-mysql-srcHost" class="form-label">
-                <strong>
-                    Source (MySQL)
-                </strong>
-            </label>
-
-            <div class="input-group mb-3">
-                <span class="input-group-text"><i class="fa-solid fa-cloud"></i></span>
-                <select class="form-select" id="sourcePoint[provider]" name="sourcePoint[provider]">
-                    <option value="aws">AWS</option>
-                    <option value="gcp">GCP</option>
-                    <option value="ncp">NCP</option>
-                    <option value="on-premise">On-premise</option>
-                </select>
-            </div>
-
-            <div class="input-group mb-3">
-                <span class="input-group-text"><i class="fa-solid fa-house"></i></span>
-                <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-mysql-srcHost" name="sourcePoint[host]" placeholder="Host / IP" required>
-                    <label for="mig-mysql-host">Host / IP</label>
+            <div class="card rounded-3 mb-4 p-3">
+                <div class="input-group mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="mig-mysql-srcHost" value="MySQL" style="border: 0; background-color: white;" value="-" required disabled>
+                        <label for="mig-mysql-srcHost">Source</label>
+                    </div>
+                </div>
+                <!-- <label for="mig-mysql-srcHost" class="form-label">Source MySQL</label> -->
+    
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-cloud"></i></span>
+                    <select class="form-select rounded-end" id="sourcePoint[provider]" name="sourcePoint[provider]">
+                        <option value="aws">AWS</option>
+                        <option value="gcp">GCP</option>
+                        <option value="ncp">NCP</option>
+                        <option value="on-premise">On-premise</option>
+                    </select>
+                </div>
+    
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control rounded-end" id="mig-mysql-srcHost" name="sourcePoint[host]" placeholder="Host / IP" required>
+                        <label for="mig-mysql-host">Host / IP</label>
+                    </div>
+                </div>
+    
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-flag"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control rounded-end" id="mig-mysql-srcPort" name="sourcePoint[port]" placeholder="Port" required>
+                        <label for="mig-mysql-port">Port</label>
+                    </div>
+                </div>
+    
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-user"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control rounded-end" id="mig-mysql-srcUsername" name="sourcePoint[username]" placeholder="Username" required>
+                        <label for="mig-mysql-username">Username</label>
+                    </div>
+                </div>
+    
+                <div class="input-group">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
+                    <div class="form-floating">
+                        <input type="password" class="form-control rounded-end" id="mig-mysql-srcPassword" name="sourcePoint[password]" placeholder="Password" required>
+                        <label for="mig-mysql-password">Password</label>
+                    </div>
                 </div>
             </div>
 
-            <div class="input-group mb-3">
-                <span class="input-group-text"><i class="fa-solid fa-flag"></i></span>
-                <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-mysql-srcPort" name="sourcePoint[port]" placeholder="Port" required>
-                    <label for="mig-mysql-port">Port</label>
+            <div class="card rounded-3 mb-4 p-3">
+                <div class="input-group mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="mig-mysql-targetHost" value="MySQL" style="border: 0; background-color: white;" value="-" required disabled>
+                        <label for="mig-mysql-targetHost">Target</label>
+                    </div>
                 </div>
-            </div>
-
-            <div class="input-group mb-3">
-                <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
-                <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-mysql-srcUsername" name="sourcePoint[username]" placeholder="Username" required>
-                    <label for="mig-mysql-username">Username</label>
+                <!-- <label for="mig-mysql-srcHost" class="form-label">Target MySQL</label> -->
+    
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-cloud"></i></span>
+                    <select class="form-select rounded-end" id="targetPoint[provider]" name="targetPoint[provider]">
+                        <option value="aws">AWS</option>
+                        <option value="gcp">GCP</option>
+                        <option value="ncp">NCP</option>
+                        <option value="onpremise">On-premise</option>
+                    </select>
                 </div>
-            </div>
-
-            <div class="input-group mb-3">
-                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
-                <div class="form-floating">
-                    <input type="password" class="form-control" id="mig-mysql-srcPassword" name="sourcePoint[password]" placeholder="Password" required>
-                    <label for="mig-mysql-password">Password</label>
+    
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control rounded-end" id="mig-mysql-destHost" name="targetPoint[host]" placeholder="Host / IP" required>
+                        <label for="mig-mysql-host">Host / IP</label>
+                    </div>
                 </div>
-            </div>
-
-            <label for="mig-mysql-srcHost" class="form-label">
-                <strong>
-                    Target (MySQL)
-                </strong>
-            </label>
-
-            <div class="input-group mb-3">
-                <span class="input-group-text"><i class="fa-solid fa-cloud"></i></span>
-                <select class="form-select" id="targetPoint[provider]" name="targetPoint[provider]">
-                    <option value="aws">AWS</option>
-                    <option value="gcp">GCP</option>
-                    <option value="ncp">NCP</option>
-                    <option value="onpremise">On-premise</option>
-                </select>
-            </div>
-
-            <div class="input-group mb-3">
-                <span class="input-group-text"><i class="fa-solid fa-house"></i></span>
-                <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-mysql-destHost" name="targetPoint[host]" placeholder="Host / IP" required>
-                    <label for="mig-mysql-host">Host / IP</label>
+    
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-flag"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control rounded-end" id="mig-mysql-destPort" name="targetPoint[port]" placeholder="Port" required>
+                        <label for="mig-mysql-port">Port</label>
+                    </div>
                 </div>
-            </div>
-
-            <div class="input-group mb-3">
-                <span class="input-group-text"><i class="fa-solid fa-flag"></i></span>
-                <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-mysql-destPort" name="targetPoint[port]" placeholder="Port" required>
-                    <label for="mig-mysql-port">Port</label>
+    
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-user"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control rounded-end" id="mig-mysql-destUsername" name="targetPoint[username]" placeholder="Username" required>
+                        <label for="mig-mysql-username">Username</label>
+                    </div>
                 </div>
-            </div>
-
-            <div class="input-group mb-3">
-                <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
-                <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-mysql-destUsername" name="targetPoint[username]" placeholder="Username" required>
-                    <label for="mig-mysql-username">Username</label>
-                </div>
-            </div>
-
-            <div class="input-group mb-3">
-                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
-                <div class="form-floating">
-                    <input type="password" class="form-control" id="mig-mysql-destPassword" name="targetPoint[password]" placeholder="Password" required>
-                    <label for="mig-mysql-password">Password</label>
+    
+                <div class="input-group">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
+                    <div class="form-floating">
+                        <input type="password" class="form-control rounded-end" id="mig-mysql-destPassword" name="targetPoint[password]" placeholder="Password" required>
+                        <label for="mig-mysql-password">Password</label>
+                    </div>
                 </div>
             </div>
             
-            <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
+            <button type="submit" class="btn btn-primary rounded-1" id="submitBtn">Submit</button>
         </form>
     </div>
 </div>

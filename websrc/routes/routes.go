@@ -21,11 +21,15 @@ import (
 )
 
 func GenerateRoutes(g *echo.Group) {
+	// g.GET("/on-premise", controllers.GenerateLinuxGetHandler)
 
 	g.GET("/linux", controllers.GenerateLinuxGetHandler)
-	g.POST("/linux", controllers.GenerateLinuxPostHandler)
-
 	g.GET("/windows", controllers.GenerateWindowsGetHandler)
+	g.GET("/objectstorage", controllers.GenerateObjectStorageGetHandler)
+	g.GET("/mysql", controllers.GenerateMySQLGetHandler)
+	g.GET("/no-sql", controllers.GenerateNoSQLGetHandler)
+
+	g.POST("/linux", controllers.GenerateLinuxPostHandler)
 	g.POST("/windows", controllers.GenerateWindowsPostHandler)
 
 	g.GET("/aws", controllers.GenerateS3GetHandler)
@@ -37,7 +41,6 @@ func GenerateRoutes(g *echo.Group) {
 	g.GET("/ncp", controllers.GenerateNCPGetHandler)
 	// g.POST("/ncp", controllers.GenerateNCPPostHandler)
 
-	g.GET("/mysql", controllers.GenerateMySQLGetHandler)
 	// g.POST("/mysql", controllers.GenerateMySQLPostHandler)
 
 	g.GET("/dynamodb", controllers.GenerateDynamoDBGetHandler)

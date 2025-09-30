@@ -1,0 +1,198 @@
+<ol class="breadcrumb mb-1" style="margin-top: 66px;">
+    <li class="breadcrumb-item">Migration</li>
+</ol>
+<h2 class="page-title">No-SQL</h2>
+
+<div class="card rounded-3 mb-4 col-auto">
+    <ul class="nav nav-tabs pt-2 ps-2">
+        <li class="nav-item">
+            <a class="nav-link" href="/migrate/objectstorage">Object Storage</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/migrate/mysql">
+                SQL Database
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="#">No-SQL</a>
+        </li>
+    </ul>
+    <!-- <div class="card-header">
+        NRDBMS Migration
+    </div> -->
+    <div class="card-body">
+        <!-- <form action="/migration/mongoDB/dynamodb" method="POST"> -->
+        <form id="migForm">
+            <input type="hidden" id="migService" value="nrdbms">
+            <input type="hidden" id="sourcePoint[provider]" value="none">
+            <input type="hidden" id="targetPoint[provider]" value="none">
+
+            <div class="card rounded-3 mb-4 p-3">
+                <div class="input-group mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="sourcePointLabel" placeholder="Source" style="border: 0; background-color: white;" value="-" required disabled>
+                        <label for="sourcePointLabel">Source</label>
+                    </div>
+                </div>
+                <!-- <label for="mig-aws-region" class="form-label" id="sourcePointLabel">Source -</label> -->
+                <div class="input-group mb-3 me-1">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-user-secret"></i></span>
+                    <div class="form-floating">
+                        <select class="form-select form-select-sm rounded-end" id="sourceCredentialSelect" name="sourcePoint[credentialId]">
+                            <option value="none" data-provider="none"> - </option>
+                        </select>
+                        <label for="sourceCredentialSelect">provider - credential name</label>
+                    </div>
+                </div>
+                <div class="form-floating" id="sourceRegionDiv">
+                    <select class="form-select form-select-sm rounded-3" id="sourceRegionSelect" name="sourcePoint[region]">
+                        <option value="none" selected> - </option>
+                        <optgroup label="AWS regions" data-provider="aws" style="display: none;">
+                            {{ range $index, $value := .AWSRegions }}
+                            <option value="{{ $value }}">{{ $value }}</option>
+                            {{ end }}
+                        </optgroup>
+                        <optgroup label="GCP regions" data-provider="gcp" style="display: none;">
+                            {{ range $index, $value := .GCPRegions }}
+                                <option value="{{ $value }}">{{ $value }}</option>
+                            {{ end }}
+                        </optgroup>
+                        <optgroup label="NCP regions" data-provider="ncp" style="display: none;">
+                            {{ range $index, $value := .NCPRegions }}
+                                <option value="{{ $value }}">{{ $value }}</option>
+                            {{ end }}
+                        </optgroup>                            
+                    </select>
+                    <label for="mig-source-region">Select Region</label>
+                </div>
+                <div id="sourceMongoDiv" style="display: none;">                        
+                    <div class="input-group mb-3">
+                        <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
+                        <div class="form-floating">
+                            <input type="text" class="form-control rounded-end" id="mig-source-mongodb-host" name="sourcePoint[host]" placeholder="Host / IP" required disabled>
+                            <label for="mig-source-mongodb-host">Host / IP</label>
+                        </div>
+                    </div>
+            
+                    <div class="input-group mb-3">
+                        <span class="input-group-text rounded-start"><i class="fa-solid fa-flag"></i></span>
+                        <div class="form-floating">
+                            <input type="text" class="form-control rounded-end" id="mig-source-mongodb-port" name="sourcePoint[port]" placeholder="Port" required disabled>
+                            <label for="mig-source-mongodb-port">Port</label>
+                        </div>
+                    </div>
+            
+                    <div class="input-group mb-3">
+                        <span class="input-group-text rounded-start"><i class="fa-solid fa-user"></i></span>
+                        <div class="form-floating">
+                            <input type="text" class="form-control rounded-end" id="mig-source-mongodb-username" name="sourcePoint[username]" placeholder="Username" required disabled>
+                            <label for="mig-source-mongodb-username">Username</label>
+                        </div>
+                    </div>
+            
+                    <div class="input-group mb-3">
+                        <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
+                        <div class="form-floating">
+                            <input type="password" class="form-control rounded-end" id="mig-source-mongodb-password" name="sourcePoint[password]" placeholder="Password" required disabled>
+                            <label for="mig-source-mongodb-password">Password</label>
+                        </div>
+                    </div>
+            
+                    <div class="input-group mb-3">
+                        <span class="input-group-text rounded-start"><i class="fa-solid fa-database"></i></span>
+                        <div class="form-floating">
+                            <input type="text" class="form-control rounded-end" id="mig-mongodb-databaseName" name="sourcePoint[databaseName]" placeholder="DB Name" required disabled>
+                            <label for="mig-mongodb-databaseName">Database Name</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="card rounded-3 mb-4 p-3">
+                <div class="input-group mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="targetPointLabel" placeholder="Target" style="border: 0; background-color: white;" value="-" required disabled>
+                        <label for="sourcePointLabel">Target</label>
+                    </div>
+                </div>
+                <!-- <label for="mig-gcp-region" class="form-label" id="targetPointLabel">Target -</label> -->
+                <div class="input-group mb-3 me-1">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-user-secret"></i></span>
+                    <div class="form-floating">
+                        <!-- <input type="text" class="form-control" id="gen-s3-profile" name="targetPoint[profileName]" placeholder="profile name" required>
+                        <label for="gen-s3-profile">Profile</label> -->
+                        <select class="form-select form-select-sm rounded-end" id="targetCredentialSelect" name="targetPoint[credentialId]">
+                            <option value="none" data-provider="none"> - </option>
+                        </select>
+                        <label for="mig-target-credential">provider - credential name</label>
+                    </div>
+                </div>
+                <div class="form-floating" id="targetRegionDiv">
+                    <select class="form-select form-select-sm rounded-3" id="targetRegionSelect" name="targetPoint[region]">
+                        <option value="none" selected> - </option>
+                        <optgroup label="AWS regions" data-provider="aws" style="display: none;">
+                            {{ range $index, $value := .AWSRegions }}
+                                <option value="{{ $value }}">{{ $value }}</option>
+                            {{ end }}
+                        </optgroup>
+                        <optgroup label="GCP regions" data-provider="gcp" style="display: none;">
+                            {{ range $index, $value := .GCPRegions }}
+                                <option value="{{ $value }}">{{ $value }}</option>
+                            {{ end }}
+                        </optgroup>
+                        <optgroup label="NCP regions" data-provider="ncp" style="display: none;">
+                            {{ range $index, $value := .NCPRegions }}
+                                <option value="{{ $value }}">{{ $value }}</option>
+                            {{ end }}
+                        </optgroup>                            
+                    </select>
+                    <label for="mig-target-region">Select Region</label>
+                </div>
+                <div id="targetMongoDiv" style="display: none;">    
+                    <div class="input-group mb-3">
+                        <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
+                        <div class="form-floating">
+                            <input type="text" class="form-control rounded-end" id="mig-target-mongodb-host" name="targetPoint[host]" placeholder="Host / IP" required disabled>
+                            <label for="mig-target-mongodb-host">Host / IP</label>
+                        </div>
+                    </div>
+            
+                    <div class="input-group mb-3">
+                        <span class="input-group-text rounded-start"><i class="fa-solid fa-flag"></i></span>
+                        <div class="form-floating">
+                            <input type="text" class="form-control rounded-end" id="mig-target-mongodb-port" name="targetPoint[port]" placeholder="Port" required disabled>
+                            <label for="mig-target-mongodb-port">Port</label>
+                        </div>
+                    </div>
+            
+                    <div class="input-group mb-3">
+                        <span class="input-group-text rounded-start"><i class="fa-solid fa-user"></i></span>
+                        <div class="form-floating">
+                            <input type="text" class="form-control rounded-end" id="mig-target-mongodb-username" name="targetPoint[username]" placeholder="Username" required disabled>
+                            <label for="mig-target-mongodb-username">Username</label>
+                        </div>
+                    </div>
+            
+                    <div class="input-group mb-3">
+                        <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
+                        <div class="form-floating">
+                            <input type="password" class="form-control rounded-end" id="mig-target-mongodb-password" name="targetPoint[password]" placeholder="Password" required disabled>
+                            <label for="mig-target-mongodb-password">Password</label>
+                        </div>
+                    </div>
+        
+                    <div class="input-group mb-3">
+                        <span class="input-group-text rounded-start"><i class="fa-solid fa-database"></i></span>
+                        <div class="form-floating">
+                            <input type="text" class="form-control rounded-end" id="mig-target-mongodb-databaseName" name="targetPoint[databaseName]" placeholder="DB Name" required disabled>
+                            <label for="mig-target-mongodb-databaseName">Database Name</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+    
+            <button type="submit" class="btn btn-primary rounded-1" id="submitBtn">Submit</button>
+        </form>
+    </div>
+</div>

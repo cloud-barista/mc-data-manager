@@ -1,66 +1,59 @@
 <ol class="breadcrumb mb-1" style="margin-top: 66px;">
-    <li class="breadcrumb-item">Data Migrations</li>    
-    <li class="breadcrumb-item active">Restore</li>
+    <li class="breadcrumb-item">Restore</li>
 </ol>
-<h1 class="mb-4">Restore</h1>
+<h2 class="page-title" id="title">Object Storage</h2>
 
-<div class="card mb-4 col-auto">
-    <div class="card-header">
-      <i class="fa-solid fa-clone"></i>
-        Restore
-    </div>
+<div class="card mb-4 rounded-3 col-auto">
+    <ul class="nav nav-tabs pt-2 ps-2" id="serviceTabs">
+        <li class="nav-item">
+          <a class="nav-link active" href="#">Object Storage</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">SQL Database</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">No-SQL</a>
+        </li>
+    </ul>
     <div class="card-body">
         <form id="restoreForm">
             <input type="hidden" id="backSource" value="restore">
             <input type="hidden" id="backDest" value="restore">
+            <input type="hidden" id="targetPoint[provider]" value="none">
+            <input type="hidden" id="srcService" value="objectstorage">
 
-            <label class="form-label">Restore</label>
+            <!-- <label class="form-label">Restore</label> -->
             <div class="input-group mb-3">
-                <span class="input-group-text"><i class="fa-solid fa-user-secret"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="res-profile" name="targetPoint[profileName]" placeholder="profile name" required>
-                    <label for="res-profile">Profile</label>
+                    <input type="text" class="form-control rounded-end" id="targetPointLabel" placeholder="Target" style="border: 0; background-color: white;" value="-" required disabled>
+                    <label for="targetPointLabel">Target</label>
+                </div>
+            </div>
+            <div class="input-group mb-3 me-1" id="credentialDiv">
+                <span class="input-group-text rounded-start"><i class="fa-solid fa-user-secret"></i></span>
+                <div class="form-floating">
+                    <select class="form-select form-select-sm rounded-end" id="targetCredentialSelect" name="targetPoint[credentialId]">
+                        <option value="none" data-provider="none"> - </option>
+                    </select>
+                    <label for="targetCredentialSelect">provider - credential name</label>
                 </div>
             </div>
 
             <div class="mb-3">
-                <label lass="form-label">Restore Path</label>
+                <label for="mig-linux-path" class="form-label">Restore Path</label>
 
                 <div class="input-group">
-                    <span class="input-group-text"><i class="fas fa-folder"></i></span>
+                    <span class="input-group-text rounded-start"><i class="fas fa-folder"></i></span>
                     <div class="form-floating">
-                      <input type="text" class="form-control" id="mig-linux-path" name="sourcePoint[path]" value="/tmp/dummy" placeholder="디렉토리 경로">
-                      <label for="mig-linux-path">restore Path</label>
+                      <input type="text" class="form-control rounded-end" id="mig-linux-path" name="sourcePoint[path]" value="/tmp/dummy" placeholder="디렉토리 경로">
+                      <label for="mig-linux-path">Path</label>
                     </div>
                 </div>
             </div>
-
-
-
-
-            <label class="form-label">restore Service</label>
-
-            <div class="input-group mb-3">
-                <span class="input-group-text"><i class="fa-solid fa-cloud"></i></span>
-                <select class="form-select" id="srcProvider" name="targetPoint[provider]">
-                    <option value="aws">AWS</option>
-                    <option value="gcp">GCP</option>
-                    <option value="ncp">NCP</option>
-                    <!-- <option value="on-premise">On-premise</option> -->
-                </select>
-                <span class="input-group-text"><i class="fa-solid fa-cloud"></i></span>
-                <select class="form-select" id="srcService" name="srcService">
-                    <option value="objectstorage">ObjectStorage</option>
-                    <option value="rdb">RDB</option>
-                    <option value="nrdb">NRDB</option>
-                    <!-- <option value="on-premise">On-premise</option> -->
-                </select>
-            </div>
-
             <div class="form-section" id="aws-objectstorage" style="display:none;">
                 <div class="mb-3">    
                     <div class="form-floating">
-                        <select class="form-select form-select-sm" id="mig-aws-region" name="targetPoint[region]">
+                        <select class="form-select form-select-sm rounded-3" id="mig-aws-region" name="targetPoint[region]">
                         {{ range $index, $value := .AWSRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}
@@ -69,9 +62,9 @@
                     </div>
                 </div>
                 <div class="input-group mb-3">
-                    <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="res-aws-bucket" name="targetPoint[bucket]" placeholder="Bucket" required>
+                        <input type="text" class="form-control rounded-end" id="res-aws-bucket" name="targetPoint[bucket]" placeholder="Bucket" required>
                         <label for="mig-aws-bucket">Bucket</label>
                     </div>
                 </div>
@@ -81,7 +74,7 @@
                 <!-- <label class="form-label">GCP ObjectStorage Settings</label> -->
                 <div class="mb-3">    
                     <div class="form-floating">
-                        <select class="form-select form-select-sm" id="mig-gcp-region" name="targetPoint[region]">
+                        <select class="form-select form-select-sm rounded-3" id="mig-gcp-region" name="targetPoint[region]">
                         {{ range $index, $value := .GCPRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}
@@ -91,9 +84,9 @@
                 </div>
                 
                 <div class="input-group mb-3">
-                    <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="gcp-objectstorage-bucket" name="targetPoint[bucket]" placeholder="Bucket" required>
+                        <input type="text" class="form-control rounded-end" id="gcp-objectstorage-bucket" name="targetPoint[bucket]" placeholder="Bucket" required>
                         <label for="gcp-objectstorage-bucket">Bucket</label>
                     </div>
                 </div>
@@ -103,7 +96,7 @@
                 <!-- <label class="form-label">NCP ObjectStorage Settings</label> -->
                 <div class="mb-3">    
                     <div class="form-floating">
-                        <select class="form-select form-select-sm" id="mig-ncp-region" name="targetPoint[region]">
+                        <select class="form-select form-select-sm rounded-3" id="mig-ncp-region" name="targetPoint[region]">
                         {{ range $index, $value := .NCPRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}
@@ -112,51 +105,59 @@
                     </div>
                 </div>
                 <div class="input-group mb-3">
-                    <span class="input-group-text"><i class="fa-solid fa-location-dot"></i></span>
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-location-dot"></i></span>
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="gen-ncp-endpoint" name="targetPoint[endpoint]" placeholder="Endpoint">
+                        <input type="text" class="form-control rounded-end" id="gen-ncp-endpoint" name="targetPoint[endpoint]" placeholder="Endpoint">
                         <label for="ncp-endpoint">Endpoint</label>
                     </div>
                 </div>
                 <div class="input-group mb-3">
-                    <span class="input-group-text"><i class="fa-solid fa-bucket"></i></span>
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="ncp-objectstorage-bucket" name="targetPoint[bucket]" placeholder="Bucket" required>
+                        <input type="text" class="form-control rounded-end" id="ncp-objectstorage-bucket" name="targetPoint[bucket]" placeholder="Bucket" required>
                         <label for="ncp-objectstorage-bucket">Bucket</label>
                     </div>
                 </div>
             </div>
 
-            <div class="form-section" id="rdb" style="display:none;">
+            <div class="form-section" id="rdbms" style="display:none;">
                 <label class="form-label">RDB Settings</label>
+                <div class="input-group mb-3" id="rdbmsProvider">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-cloud"></i></span>
+                    <select class="form-select rounded-end" id="provider" name="provider">
+                        <option value="aws">AWS</option>
+                        <option value="gcp">GCP</option>
+                        <option value="ncp">NCP</option>
+                    </select>
+                </div>
                 <div class="input-group mb-3">
-                    <span class="input-group-text"><i class="fa-solid fa-house"></i></span>
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="mysql-srcHost" name="targetPoint[host]" placeholder="Host / IP">
+                        <input type="text" class="form-control rounded-end" id="mysql-srcHost" name="targetPoint[host]" placeholder="Host / IP">
                         <label for="mysql-srcHost">Host / IP</label>
                     </div>
                 </div>
 
                 <div class="input-group mb-3">
-                    <span class="input-group-text"><i class="fa-solid fa-flag"></i></span>
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-flag"></i></span>
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="mysql-srcPort" name="targetPoint[port]" placeholder="Port">
+                        <input type="text" class="form-control rounded-end" id="mysql-srcPort" name="targetPoint[port]" placeholder="Port">
                         <label for="mysql-srcPort">Port</label>
                     </div>
                 </div>
 
                 <div class="input-group mb-3">
-                    <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-user"></i></span>
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="mysql-srcUsername" name="targetPoint[username]" placeholder="Username">
+                        <input type="text" class="form-control rounded-end" id="mysql-srcUsername" name="targetPoint[username]" placeholder="Username">
                         <label for="mysql-srcUsername">Username</label>
                     </div>
                 </div>
 
                 <div class="input-group mb-3">
-                    <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
                     <div class="form-floating">
-                        <input type="password" class="form-control" id="mysql-srcPassword" name="targetPoint[password]" placeholder="Password">
+                        <input type="password" class="form-control rounded-end" id="mysql-srcPassword" name="targetPoint[password]" placeholder="Password">
                         <label for="mysql-srcPassword">Password</label>
                     </div>
                 </div>
@@ -167,7 +168,7 @@
                 <!-- <label class="form-label">AWS NRDB Settings</label> -->
                 <div class="mb-3">    
                     <div class="form-floating">
-                        <select class="form-select form-select-sm" id="nrdb-aws-region" name="targetPoint[region]">
+                        <select class="form-select form-select-sm rounded-3" id="nrdb-aws-region" name="targetPoint[region]">
                         {{ range $index, $value := .AWSRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}
@@ -181,7 +182,7 @@
                 <!-- <label class="form-label">GCP NRDB Settings</label> -->
                 <div class="mb-3">    
                     <div class="form-floating">
-                        <select class="form-select form-select-sm" id="nrdb-gcp-region" name="targetPoint[region]">
+                        <select class="form-select form-select-sm rounded-3" id="nrdb-gcp-region" name="targetPoint[region]">
                         {{ range $index, $value := .GCPRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}
@@ -195,7 +196,7 @@
                 <!-- <label class="form-label">NCP NRDB Settings</label> -->
                 <div class="mb-3">    
                     <div class="form-floating">
-                        <select class="form-select form-select-sm" id="nrdb-ncp-region" name="targetPoint[region]">
+                        <select class="form-select form-select-sm rounded-3" id="nrdb-ncp-region" name="targetPoint[region]">
                         {{ range $index, $value := .NCPRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}
@@ -203,60 +204,141 @@
                         <label for="nrdb-ncp-region">Region</label>
                     </div>
                 </div>
-                <label class="form-label">RDB Settings</label>
+                <label class="form-label">NRDB Settings</label>
                 <div class="input-group mb-3">
-                    <span class="input-group-text"><i class="fa-solid fa-house"></i></span>
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="nosql-srcHost" name="targetPoint[host]" placeholder="Host / IP">
+                        <input type="text" class="form-control rounded-end" id="nosql-srcHost" name="targetPoint[host]" placeholder="Host / IP">
                         <label for="nosql-srcHost">Host / IP</label>
                     </div>
                 </div>
 
                 <div class="input-group mb-3">
-                    <span class="input-group-text"><i class="fa-solid fa-flag"></i></span>
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-flag"></i></span>
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="nosql-srcPort" name="targetPoint[port]" placeholder="Port">
+                        <input type="text" class="form-control rounded-end" id="nosql-srcPort" name="targetPoint[port]" placeholder="Port">
                         <label for="nosql-srcPort">Port</label>
                     </div>
                 </div>
 
                 <div class="input-group mb-3">
-                    <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-user"></i></span>
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="nosql-srcUsername" name="targetPoint[username]" placeholder="Username">
+                        <input type="text" class="form-control rounded-end" id="nosql-srcUsername" name="targetPoint[username]" placeholder="Username">
                         <label for="nosql-srcUsername">Username</label>
                     </div>
                 </div>
 
                 <div class="input-group mb-3">
-                    <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
                     <div class="form-floating">
-                        <input type="password" class="form-control" id="nosql-srcPassword" name="targetPoint[password]" placeholder="Password">
+                        <input type="password" class="form-control rounded-end" id="nosql-srcPassword" name="targetPoint[password]" placeholder="Password">
                         <label for="nosql-srcPassword">Password</label>
                     </div>
                 </div>
                 <div class="input-group mb-3">
-                    <span class="input-group-text"><i class="fa-solid fa-database"></i></span>
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-database"></i></span>
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="nosql-databaseName" name="targetPoint[databaseName]" placeholder="DataBase">
+                        <input type="text" class="form-control rounded-end" id="nosql-databaseName" name="targetPoint[databaseName]" placeholder="DataBase">
                         <label for="nosql-databaseName">DataBase Name</label>
                     </div>
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
+            <button type="submit" class="btn btn-primary rounded-1" id="submitBtn">Submit</button>
         </form>
     </div>
 </div>
 
 <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const tabs = document.querySelectorAll("#serviceTabs .nav-link");
+        const hiddenInput = document.getElementById("srcService");
+        // 텍스트 → 코드값 매핑
+        const serviceMap = {
+            "Object Storage": "objectstorage",
+            "SQL Database": "rdbms",
+            "No-SQL": "nrdbms"
+        };
+
+        tabs.forEach(tab => {
+            tab.addEventListener("click", e => {
+                e.preventDefault(); // a 태그 기본 이동 막기
+
+                // 모든 탭에서 active 제거
+                tabs.forEach(t => t.classList.remove("active"));
+
+                // 선택한 탭만 active 추가
+                tab.classList.add("active");
+
+                // hidden input 값 갱신 (텍스트 그대로 사용)
+                const key = tab.textContent.trim();
+                hiddenInput.value = serviceMap[key] || "";
+
+                updateFormVisibility()
+
+                document.getElementById("title").innerHTML = key
+            });
+        });
+        
+        document.getElementById('targetPoint[provider]').addEventListener('change', e => {
+            updateFormVisibility()
+        });
+    });    
+    
+    function updateLabel(provider, service) {
+        const serviceMap = {
+            nrdbms: {
+                aws: "AWS DynamoDB",
+                ncp: "Naver MongoDB",
+                gcp: "Google Firestore",
+            },
+            objectstorage: {
+                aws: "AWS S3",
+                ncp: "Naver Object Storage",
+                gcp: "Google Cloud Storage",
+            },
+            rdbms: {
+                default: "MySQL",
+            },
+        };
+
+        let serviceName = "-";
+        const providers = serviceMap[service];
+        if (providers) {
+            serviceName = providers[provider] || providers.default || "-";
+        } 
+
+        const select = document.getElementById("targetPointLabel");   // label 갱신
+        select.value = serviceName
+    }
+
     function updateFormVisibility() {
-        var provider = document.getElementById('srcProvider').value;
+        var provider = document.getElementById('targetPoint[provider]').value;
         var service = document.getElementById('srcService').value;
         var idToShow = provider + '-' + service;
-        console.log(provider, service)
-        if (service === 'rdb') {
-            idToShow = 'rdb';
+
+        updateLabel(provider, service)
+        
+        const credentialDiv = document.getElementById("credentialDiv")
+        if(service === 'rdbms') {
+            idToShow = 'rdbms';
+            credentialDiv.style.display = "none"
+            credentialDiv.querySelectorAll("select").forEach(input => {
+                input.selectedIndex = 0; 
+                input.setAttribute('disabled', '');
+                input.removeAttribute('required');
+            })
+
+            document.getElementById("rdbmsProvider").style.display = ""
+        } else {
+            credentialDiv.style.display = ""
+            credentialDiv.querySelectorAll("select").forEach(input => {
+                input.removeAttribute('disabled');
+                input.setAttribute('required', '');
+            })
+
+            document.getElementById("rdbmsProvider").style.display = "none"
         }
 
         var allInputs = document.querySelectorAll('.form-section input, .form-section select, .form-section textarea');
@@ -292,9 +374,6 @@
             }
         }
     }
-
-    document.getElementById('srcProvider').addEventListener('change', updateFormVisibility);
-    document.getElementById('srcService').addEventListener('change', updateFormVisibility);
 
     updateFormVisibility();
 </script>
