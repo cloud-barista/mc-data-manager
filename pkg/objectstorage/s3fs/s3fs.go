@@ -278,7 +278,6 @@ func (f *S3FS) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*models.Obje
 		prefix = aws.String(pre)
 	}
 
-
 	for {
 		resp, err := f.client.ListObjectsV2(f.ctx, &s3.ListObjectsV2Input{
 			Bucket:            aws.String(f.bucketName),

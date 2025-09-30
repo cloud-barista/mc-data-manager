@@ -1,7 +1,8 @@
 <div id="layoutSidenav_content">
     <main>
         <!-- <main class="w-75"></main> -->
-        <div class="container-fluid px-4">
+        <div class="container-xl">
+        <!-- <div class="container-fluid px-4"> -->
             {{ if eq .Content "main" }}
                 {{ template "main.html" }}
             {{ end }}
@@ -24,6 +25,18 @@
                 {{ template "gen-windows.html" . }}
             {{ end }}
 
+            {{ if eq .Content "Generate-Object-Storage" }}
+                {{ template "gen-object-storage.html" . }}
+            {{ end }}
+        
+            {{ if eq .Content "Generate-MySQL" }}
+                {{ template "gen-mysql.html" . }}
+            {{ end }}
+            
+            {{ if eq .Content "Generate-No-SQL" }}
+                {{ template "gen-no-sql.html" . }}
+            {{ end }}
+
             {{ if eq .Content "Generate-S3" }}
                 {{ template "gen-s3.html" . }}
             {{ end }}
@@ -34,10 +47,6 @@
         
             {{ if eq .Content "Generate-NCP" }}
                 {{ template "gen-ncp.html" . }}
-            {{ end }}
-        
-            {{ if eq .Content "Generate-MySQL" }}
-                {{ template "gen-mysql.html" . }}
             {{ end }}
             
             {{ if eq .Content "Generate-DynamoDB" }}
@@ -67,115 +76,19 @@
             {{ end }}
 
             <!-- 마이그레이션 템플릿 -->
-
-            {{ if eq .Content "Migration-Linux-S3" }}
-                {{ template "mig-linuxToS3.html" . }}
+            {{ if eq .Content "Migration-Object-Storage" }}
+                {{ template "mig-object-storage.html" . }}
             {{ end }}
 
-            {{ if eq .Content "Migration-Linux-GCP" }}
-                {{ template "mig-linuxToGcp.html" . }}
-            {{ end }}
-
-            {{ if eq .Content "Migration-Linux-NCP" }}
-                {{ template "mig-linuxToNcp.html" . }}
-            {{ end }}
-
-            {{ if eq .Content "Migration-Windows-S3" }}
-                {{ template "mig-windowsToS3.html" . }}
-            {{ end }}
-
-            {{ if eq .Content "Migration-Windows-GCP" }}
-                {{ template "mig-windowsToGcp.html" . }}
-            {{ end }}
-
-            {{ if eq .Content "Migration-Windows-NCP" }}
-                {{ template "mig-windowsToNcp.html" . }}
-            {{ end }}
-
+            <!-- SQL Database 마이그레이션 템플릿 -->
             {{ if eq .Content "Migration-MySQL" }}
                 {{ template "mig-mysql.html" . }}
             {{ end }}
 
-
-            <!-- 마이그레이션 오브젝트 스토리지 템플릿 -->
-            <!-- FROM AWS S3 -->
-            {{ if eq .Content "Migration-S3-Linux" }}
-                {{ template "mig-s3ToLinux.html" . }}
-            {{ end }}
-
-            {{ if eq .Content "Migration-S3-Windows" }}
-                {{ template "mig-s3ToWindows.html" . }}
-            {{ end }}         
-            
-            {{ if eq .Content "Migration-S3-GCP" }}
-                {{ template "mig-s3ToGcp.html" . }}
-            {{ end }}
-
-            {{ if eq .Content "Migration-S3-NCP" }}
-                {{ template "mig-s3ToNcp.html" . }}
-            {{ end }}
-
-            <!-- FROM Google Cloud Storage -->
-            {{ if eq .Content "Migration-GCP-Linux" }}
-                {{ template "mig-gcpToLinux.html" . }}
-            {{ end }}
-
-            {{ if eq .Content "Migration-GCP-Windows" }}
-                {{ template "mig-gcpToWindows.html" . }}
-            {{ end }}
-
-            {{ if eq .Content "Migration-GCP-S3" }}
-                {{ template "mig-gcpToS3.html" . }}
-            {{ end }}
-
-            {{ if eq .Content "Migration-GCP-NCP" }}
-                {{ template "mig-gcpToNcp.html" . }}
-            {{ end }}
-
-            <!-- FROM Naver Object Storage -->
-            {{ if eq .Content "Migration-NCP-Linux" }}
-                {{ template "mig-ncpToLinux.html" . }}
-            {{ end }}
-
-            {{ if eq .Content "Migration-NCP-Windows" }}
-                {{ template "mig-ncpToWindows.html" . }}
-            {{ end }}
-
-            {{ if eq .Content "Migration-NCP-S3" }}
-                {{ template "mig-ncpToS3.html" . }}
-            {{ end }}
-
-            {{ if eq .Content "Migration-NCP-GCP" }}
-                {{ template "mig-ncpToGcp.html" . }}
-            {{ end }}
-
-
             <!-- No-SQL 마이그레이션 템플릿 -->
-
-            {{ if eq .Content "Migration-DynamoDB-Firestore" }}
-                {{ template "mig-dynamodbToFirestore.html" . }}
+            {{ if eq .Content "Migration-No-SQL" }}
+                {{ template "mig-no-sql.html" . }}
             {{ end }}
-
-            {{ if eq .Content "Migration-DynamoDB-MongoDB" }}
-                {{ template "mig-dynamodbToMongodb.html" . }}
-            {{ end }}
-
-            {{ if eq .Content "Migration-Firestore-DynamoDB" }}
-                {{ template "mig-firestoreToDynamodb.html" . }}
-            {{ end }}
-
-            {{ if eq .Content "Migration-Firestore-MongoDB" }}
-                {{ template "mig-firestoreToMongodb.html" . }}
-            {{ end }}
-
-            {{ if eq .Content "Migration-MongoDB-DynamoDB" }}
-                {{ template "mig-mongodbToDynamodb.html" . }}
-            {{ end }}
-
-            {{ if eq .Content "Migration-MongoDB-Firestore" }}
-                {{ template "mig-mongodbToFirestore.html" . }}
-            {{ end }}
-
 
             {{ if ne .Content "main" }}
                 {{ template "result.html" . }}
