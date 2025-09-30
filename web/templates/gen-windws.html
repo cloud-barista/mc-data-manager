@@ -1,37 +1,47 @@
 {{ define "gen-windows.html" }}
 
 <ol class="breadcrumb mb-1" style="margin-top: 66px;">
-    <li class="breadcrumb-item">Data Migrations</li>
     <li class="breadcrumb-item">Generate</li>
-    <li class="breadcrumb-item">On-Premise</li>
-    <li class="breadcrumb-item active">Windows</li>
 </ol>
-<h1 class="mb-4">Windows Data Generate</h1>
+<h2 class="page-title">On-Premise</h2>
 
-<div class="card mb-4 col-auto">
-    <div class="card-header">
-        <i class="fab fa-windows"></i>
-        Windows
-    </div>
+<div class="card mb-4 rounded-3 col-auto">
+    <ul class="nav nav-tabs pt-2 ps-2" id="serviceTabs">
+        <li class="nav-item">
+            <a class="nav-link active" href="#">On-Premise</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/generate/objectstorage">Object Storage</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/generate/mysql">SQL Database</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/generate/no-sql">No-SQL</a>
+        </li>
+    </ul>
     <div class="card-body">
         <!-- <form action="/generate/windows" method="POST"> -->
         <form id="genForm">
-            
+            <div class="input-group mb-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="gent-targetHost" value="Windows" style="border: 0; background-color: white;" value="-" required disabled>
+                    <label for="gent-targetHost">Target</label>
+                </div>
+            </div>
             <div class="mb-3">
-                <label for="gen-windows-path" class="form-label">Path to generate test data</label>
-
                 <div class="input-group">
-                    <span class="input-group-text"><i class="fas fa-folder"></i></span>
+                    <span class="input-group-text rounded-start"><i class="fas fa-folder"></i></span>
                     <div class="form-floating">
-                      <input type="text" class="form-control" id="gen-windows-path" name="path" value={{ .TmpPath }} placeholder="Generate Path">
-                      <label for="gen-windows-path">Generate Path</label>
+                        <input type="text" class="form-control rounded-end" id="gen-windows-path" name="path" value={{ .TmpPath }} placeholder="Generate Path">
+                        <label for="gen-windows-path">Generate Path</label>
                     </div>
                 </div>
             </div>
 
             {{ template "gen-data.html" . }}
 
-            <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
+            <button type="submit" class="btn btn-primary rounded-1" id="submitBtn">Submit</button>
             <input type="hidden" id="genTarget" value="windows">
         </form>
     </div>

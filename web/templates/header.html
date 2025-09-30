@@ -39,123 +39,16 @@
                 <div class="container-fluid">
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle active-depth1" href="#" role="button" data-bs-toggle="dropdown">Generate</a>
-                            <ul class="dropdown-menu">
-                                <li class="dropdown-submenu">
-                                    <a class="dropdown-item dropdown-toggle" href="#">On-Premise</a>
-                                    <ul class="dropdown-menu">
-                                        {{if eq .OS "linux"}}
-                                        <li><a class="dropdown-item" href="/generate/linux">Linux</a></li>
-                                        {{else}}
-                                        <li><a class="dropdown-item" href="/generate/windows">Windows</a></li>
-                                        {{end}}
-                                    </ul>
-                                </li>
-                                <li><hr class="dropdown-divider" /></li>
-                                <li class="dropdown-submenu">
-                                    <a class="dropdown-item dropdown-toggle" href="#">Object Storage</a>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="/generate/aws">AWS S3</a></li>
-                                        <li><hr class="dropdown-divider" /></li>
-                                        <li><a class="dropdown-item" href="/generate/gcp">GCP Storage</a></li>
-                                        <li><hr class="dropdown-divider" /></li>
-                                        <li><a class="dropdown-item" href="/generate/ncp">NCP Object Storage</a></li>
-                                    </ul>
-                                </li>
-                                <li><hr class="dropdown-divider" /></li>
-                                <li class="dropdown-submenu">
-                                    <a class="dropdown-item dropdown-toggle" href="#">SQL Database</a>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="/generate/mysql">MySQL</a></li>
-                                    </ul>
-                                </li>
-                                <li><hr class="dropdown-divider" /></li>
-                                <li class="dropdown-submenu">
-                                    <a class="dropdown-item dropdown-toggle" href="#">No-SQL Database</a>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="/generate/dynamodb">AWS DynamoDB</a></li>
-                                        <li><hr class="dropdown-divider" /></li>
-                                        <li><a class="dropdown-item" href="/generate/firestore">GCP Firestore</a></li>
-                                        <li><hr class="dropdown-divider" /></li>
-                                        <li><a class="dropdown-item" href="/generate/mongodb">NCP MongoDB</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
+                            {{if eq .OS "linux"}}
+                            <a class="nav-link" href="/generate/linux">Generate</a>
+                            {{else}}
+                            <a class="nav-link" href="/generate/windows">Generate</a>
+                            {{end}}
+                            <!-- <a class="nav-link" href="/generate/on-premise">Generate</a> -->
+                            <!-- <a class="nav-link dropdown-toggle active-depth1" href="#" role="button" data-bs-toggle="dropdown">Generate</a> -->
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Migration</a>
-                            <ul class="dropdown-menu">
-                                <li class="dropdown-submenu">
-                                    <a class="dropdown-item dropdown-toggle" href="#">Object Storage</a>
-                                    <ul class="dropdown-menu">
-                                        <li class="dropdown-submenu">
-                                            <a class="dropdown-item dropdown-toggle" href="#">AWS S3 to</a>
-                                            <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" href="/migrate/aws/gcp">GCP Storage</a></li>
-                                                <li><hr class="dropdown-divider" /></li>
-                                                <li><a class="dropdown-item" href="/migrate/aws/ncp">NCP Object Storage</a></li>
-                                            </ul>
-                                        </li>
-                                        <li><hr class="dropdown-divider" /></li>
-                                        <li class="dropdown-submenu">
-                                            <a class="dropdown-item dropdown-toggle" href="#">GCP Storage to</a>
-                                            <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" href="/migrate/gcp/aws">AWS S3</a></li>
-                                                <li><hr class="dropdown-divider" /></li>
-                                                <li><a class="dropdown-item" href="/migrate/gcp/ncp">NCP Object Storage</a></li>
-                                            </ul>
-                                        </li>
-                                        <li><hr class="dropdown-divider" /></li>
-                                        <li class="dropdown-submenu">
-                                            <a class="dropdown-item dropdown-toggle" href="#">NCP Object Storage to</a>
-                                            <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" href="/migrate/gcp/aws">AWS S3</a></li>
-                                                <li><hr class="dropdown-divider" /></li>
-                                                <li><a class="dropdown-item" href="/migrate/gcp/gcp">GCP Storage</a></li>
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li><hr class="dropdown-divider" /></li>
-                                <li class="dropdown-submenu">
-                                    <a class="dropdown-item dropdown-toggle" href="#">SQL Database</a>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="/migrate/mysql">MySQL</a></li>
-                                    </ul>
-                                </li>
-                                <li><hr class="dropdown-divider" /></li>
-                                <li class="dropdown-submenu">
-                                    <a class="dropdown-item dropdown-toggle" href="#">No-SQL</a>
-                                    <ul class="dropdown-menu">
-                                        <li class="dropdown-submenu">
-                                            <a class="dropdown-item dropdown-toggle" href="#">AWS DynamoDB to</a>
-                                            <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" href="/migrate/dynamodb/firestore">GCP Firestore</a></li>
-                                                <li><hr class="dropdown-divider" /></li>
-                                                <li><a class="dropdown-item" href="/migrate/dynamodb/mongodb">NCP MongoDB</a></li>
-                                            </ul>
-                                        </li>
-                                        <li><hr class="dropdown-divider" /></li>
-                                        <li class="dropdown-submenu">
-                                            <a class="dropdown-item dropdown-toggle" href="#">GCP Firestore to</a>
-                                            <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" href="/migrate/firestore/dynamodb">AWS DynamoDB</a></li>
-                                                <li><hr class="dropdown-divider" /></li>
-                                                <li><a class="dropdown-item" href="/migrate/firestore/mongodb">NCP MongoDB</a></li>
-                                            </ul>
-                                        </li>
-                                        <li><hr class="dropdown-divider" /></li>
-                                        <li class="dropdown-submenu">
-                                            <a class="dropdown-item dropdown-toggle" href="#">NCP MongoDB to</a>
-                                            <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" href="/migrate/mongodb/dynamodb">AWS DynamoDB</a></li>
-                                                <li><hr class="dropdown-divider" /></li>
-                                                <li><a class="dropdown-item" href="/migrate/mongodb/firestore">GCP Firestore</a></li>
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
+                            <a class="nav-link" href="/migrate/objectstorage">Migration</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/backup/register">Back up</a>
@@ -167,21 +60,23 @@
                 </div>
             </nav>
             <div></div>
-            <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+            <ul class="navbar-nav ms-auto me-2">
+            <!-- <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4"> -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                    <a class="nav-link" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-bars"></i></a>
+                    <!-- <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a> -->
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <!-- <li><a class="dropdown-item" href="#!">Settings</a></li>
                         <li><a class="dropdown-item" href="#!">Activity Log</a></li> -->
                         <!-- <li><hr class="dropdown-divider" /></li> -->
                         <li><a class="dropdown-item" href="#!" id="genServiceLink">Gen Service</a></li>
                         <li><a class="dropdown-item" href="#!" id="delServiceLink">Del Service</a></li>
-                        <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" href="#!" id="clearServiceLink">Clear Task</a></li>
+                        <!-- <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item" href="#!" id="clearServiceLink">Clear Task</a></li> -->
                         <li><hr class="dropdown-divider" /></li>
                         <li><a class="dropdown-item" href="/generate/credential">Create Credential</a></li>
-                        <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" href="#!">Logout</a></li>
+                        <!-- <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item" href="#!">Logout</a></li> -->
                     </ul>
                 </li>
             </ul>

@@ -22,7 +22,6 @@ import (
 	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/service/task"
 	"github.com/labstack/echo/v4"
-	"github.com/rs/zerolog/log"
 )
 
 // TaskController is a struct that holds a reference to the TaskService
@@ -52,7 +51,7 @@ func (tc *TaskController) GetAllTasksHandler(ctx echo.Context) error {
 			Error:  &errStr,
 		})
 	}
-	log.Info().Msgf("%v", tasks)
+	// log.Info().Msgf("%v", tasks)
 	jobEnd(logger, "Successfully Get Task List", start)
 	return ctx.JSON(http.StatusOK, tasks)
 }

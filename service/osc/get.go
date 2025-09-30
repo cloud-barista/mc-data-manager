@@ -32,11 +32,11 @@ import (
 
 func (osc *OSController) MGet(dirPath string, flt *filtering.ObjectFilter) error {
 	if !utils.FileExists(dirPath) {
-        if err := os.MkdirAll(dirPath, 0755); err != nil {
-            osc.logWrite("Error", "MkdirAll error", err)
-            return err
-        }
-    }
+		if err := os.MkdirAll(dirPath, 0755); err != nil {
+			osc.logWrite("Error", "MkdirAll error", err)
+			return err
+		}
+	}
 
 	srcObjList, err := osc.ObjectListWithFilter(flt)
 	if err != nil {
@@ -125,7 +125,7 @@ func getDownloadList(fileList, objList []*models.Object, dirPath string) ([]*mod
 			downloadList = append(downloadList, obj)
 			continue
 		}
-		
+
 		chk := false
 		for _, file := range fileList {
 			fileName, _ := filepath.Rel(dirPath, file.Key)
@@ -163,67 +163,67 @@ func mGetWorker(osc *OSController, dirPath string, jobs chan models.Object, resu
 		ret := Result{name: obj.Key}
 
 		if strings.HasSuffix(obj.Key, "/") {
-            dstDir, err := combinePaths(dirPath, obj.Key)
-            if err != nil {
-                ret.err = err
-                resultChan <- ret
-                continue
-            }
-            if err := os.MkdirAll(dstDir, 0o755); err != nil {
-                ret.err = err
-                resultChan <- ret
-                continue
-            }
-            osc.logWrite("Info", fmt.Sprintf("Make dir: %s", dstDir), nil)
-            resultChan <- ret
-            continue
-        }
+			dstDir, err := combinePaths(dirPath, obj.Key)
+			if err != nil {
+				ret.err = err
+				resultChan <- ret
+				continue
+			}
+			if err := os.MkdirAll(dstDir, 0o755); err != nil {
+				ret.err = err
+				resultChan <- ret
+				continue
+			}
+			osc.logWrite("Info", fmt.Sprintf("Make dir: %s", dstDir), nil)
+			resultChan <- ret
+			continue
+		}
 
-        // 파일 처리: 부모 디렉터리 생성 → 원격에서 읽어와 로컬로 저장
-        fileName, err := combinePaths(dirPath, obj.Key)
-        if err != nil {
-            ret.err = err
-            resultChan <- ret
-            continue
-        }
-        if err := os.MkdirAll(filepath.Dir(fileName), 0o755); err != nil {
-            ret.err = err
-            resultChan <- ret
-            continue
-        }
+		// 파일 처리: 부모 디렉터리 생성 → 원격에서 읽어와 로컬로 저장
+		fileName, err := combinePaths(dirPath, obj.Key)
+		if err != nil {
+			ret.err = err
+			resultChan <- ret
+			continue
+		}
+		if err := os.MkdirAll(filepath.Dir(fileName), 0o755); err != nil {
+			ret.err = err
+			resultChan <- ret
+			continue
+		}
 
-        src, err := osc.osfs.Open(obj.Key)
-        if err != nil {
-            ret.err = err
-            resultChan <- ret
-            continue
-        }
-        dst, err := os.Create(fileName)
-        if err != nil {
-            _ = src.Close()
-            ret.err = err
-            resultChan <- ret
-            continue
-        }
+		src, err := osc.osfs.Open(obj.Key)
+		if err != nil {
+			ret.err = err
+			resultChan <- ret
+			continue
+		}
+		dst, err := os.Create(fileName)
+		if err != nil {
+			_ = src.Close()
+			ret.err = err
+			resultChan <- ret
+			continue
+		}
 
-        n, copyErr := io.Copy(dst, src)
-        _ = dst.Close()
-        _ = src.Close()
+		n, copyErr := io.Copy(dst, src)
+		_ = dst.Close()
+		_ = src.Close()
 
-        if copyErr != nil {
-            ret.err = copyErr
-            resultChan <- ret
-            continue
-        }
-        if obj.Size > 0 && n != obj.Size { // 사이즈가 0인 마커 등은 비교 제외
-            ret.err = errors.New("get failed: size mismatch")
-            resultChan <- ret
-            continue
-        }
+		if copyErr != nil {
+			ret.err = copyErr
+			resultChan <- ret
+			continue
+		}
+		if obj.Size > 0 && n != obj.Size { // 사이즈가 0인 마커 등은 비교 제외
+			ret.err = errors.New("get failed: size mismatch")
+			resultChan <- ret
+			continue
+		}
 
-        osc.logWrite("Info", fmt.Sprintf("Export success: %s -> %s", obj.Key, fileName), nil)
-        resultChan <- ret
-    }
+		osc.logWrite("Info", fmt.Sprintf("Export success: %s -> %s", obj.Key, fileName), nil)
+		resultChan <- ret
+	}
 }
 
 // func GetDatabaseList(provider, databaseType, region, endpoint, creds){

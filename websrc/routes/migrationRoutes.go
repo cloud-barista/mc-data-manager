@@ -31,9 +31,9 @@ func MigrationRoutes(g *echo.Group) {
 	MigrationMySQL(g)
 
 	// Migration From Object Storage to Other Object Storage
-	MigrationFromS3Routes(g)
-	MigrationFromGCPRoutes(g)
-	MigrationFromNCPRoutes(g)
+	// MigrationFromS3Routes(g)
+	// MigrationFromGCPRoutes(g)
+	// MigrationFromNCPRoutes(g)
 
 	// Migration No-SQL to the other No-SQL
 	MigrationNoSQLRoutes(g)
@@ -50,23 +50,25 @@ func MigrationRoot(g *echo.Group) {
 }
 
 func MigrationFromOnpremiseToObjectStorage(g *echo.Group) {
-	g.GET("/linux/aws", controllers.MigrationLinuxToS3GetHandler)
-	// g.POST("/linux/aws", controllers.MigrationLinuxToS3PostHandler)
+	g.GET("/objectstorage", controllers.MigrationObjectStorageHandler)
 
-	g.GET("/linux/gcp", controllers.MigrationLinuxToGCPGetHandler)
-	// g.POST("/linux/gcp", controllers.MigrationLinuxToGCPPostHandler)
+	// g.GET("/linux/aws", controllers.MigrationLinuxToS3GetHandler)
+	// // g.POST("/linux/aws", controllers.MigrationLinuxToS3PostHandler)
 
-	g.GET("/linux/ncp", controllers.MigrationLinuxToNCPGetHandler)
-	// g.POST("/linux/ncp", controllers.MigrationLinuxToNCPPostHandler)
+	// g.GET("/linux/gcp", controllers.MigrationLinuxToGCPGetHandler)
+	// // g.POST("/linux/gcp", controllers.MigrationLinuxToGCPPostHandler)
 
-	g.GET("/windows/aws", controllers.MigrationWindowsToS3GetHandler)
-	// g.POST("/windows/aws", controllers.MigrationWindowsToS3PostHandler)
+	// g.GET("/linux/ncp", controllers.MigrationLinuxToNCPGetHandler)
+	// // g.POST("/linux/ncp", controllers.MigrationLinuxToNCPPostHandler)
 
-	g.GET("/windows/gcp", controllers.MigrationWindowsToGCPGetHandler)
-	// g.POST("/windows/gcp", controllers.MigrationWindowsToGCPPostHandler)
+	// g.GET("/windows/aws", controllers.MigrationWindowsToS3GetHandler)
+	// // g.POST("/windows/aws", controllers.MigrationWindowsToS3PostHandler)
 
-	g.GET("/windows/ncp", controllers.MigrationWindowsToNCPGetHandler)
-	// g.POST("/windows/ncp", controllers.MigrationWindowsToNCPPostHandler)
+	// g.GET("/windows/gcp", controllers.MigrationWindowsToGCPGetHandler)
+	// // g.POST("/windows/gcp", controllers.MigrationWindowsToGCPPostHandler)
+
+	// g.GET("/windows/ncp", controllers.MigrationWindowsToNCPGetHandler)
+	// // g.POST("/windows/ncp", controllers.MigrationWindowsToNCPPostHandler)
 }
 
 func MigrationMySQL(g *echo.Group) {
@@ -74,49 +76,50 @@ func MigrationMySQL(g *echo.Group) {
 	// g.POST("/mysql", controllers.MigrationMySQLPostHandler)
 }
 
-func MigrationFromS3Routes(g *echo.Group) {
-	g.GET("/aws/linux", controllers.MigrationS3ToLinuxGetHandler)
-	// g.POST("/aws/linux", controllers.MigrationS3ToLinuxPostHandler)
+// func MigrationFromS3Routes(g *echo.Group) {
+// 	g.GET("/aws/linux", controllers.MigrationS3ToLinuxGetHandler)
+// 	// g.POST("/aws/linux", controllers.MigrationS3ToLinuxPostHandler)
 
-	g.GET("/aws/windows", controllers.MigrationS3ToWindowsGetHandler)
-	// g.POST("/aws/windows", controllers.MigrationS3ToWindowsPostHandler)
+// 	g.GET("/aws/windows", controllers.MigrationS3ToWindowsGetHandler)
+// 	// g.POST("/aws/windows", controllers.MigrationS3ToWindowsPostHandler)
 
-	g.GET("/aws/gcp", controllers.MigrationS3ToGCPGetHandler)
-	// g.POST("/aws/gcp", controllers.MigrationS3ToGCPPostHandler)
+// 	g.GET("/aws/gcp", controllers.MigrationS3ToGCPGetHandler)
+// 	// g.POST("/aws/gcp", controllers.MigrationS3ToGCPPostHandler)
 
-	g.GET("/aws/ncp", controllers.MigrationS3ToNCPGetHandler)
-	// g.POST("/aws/ncp", controllers.MigrationS3ToNCPPostHandler)
-}
+// 	g.GET("/aws/ncp", controllers.MigrationS3ToNCPGetHandler)
+// 	// g.POST("/aws/ncp", controllers.MigrationS3ToNCPPostHandler)
+// }
 
-func MigrationFromGCPRoutes(g *echo.Group) {
-	g.GET("/gcp/linux", controllers.MigrationGCPToLinuxGetHandler)
-	// g.POST("/gcp/linux", controllers.MigrationGCPToLinuxPostHandler)
+// func MigrationFromGCPRoutes(g *echo.Group) {
+// 	g.GET("/gcp/linux", controllers.MigrationGCPToLinuxGetHandler)
+// 	// g.POST("/gcp/linux", controllers.MigrationGCPToLinuxPostHandler)
 
-	g.GET("/gcp/windows", controllers.MigrationGCPToWindowsGetHandler)
-	// g.POST("/gcp/windows", controllers.MigrationGCPToWindowsPostHandler)
+// 	g.GET("/gcp/windows", controllers.MigrationGCPToWindowsGetHandler)
+// 	// g.POST("/gcp/windows", controllers.MigrationGCPToWindowsPostHandler)
 
-	g.GET("/gcp/aws", controllers.MigrationGCPToS3GetHandler)
-	// g.POST("/gcp/aws", controllers.MigrationGCPToS3PostHandler)
+// 	g.GET("/gcp/aws", controllers.MigrationGCPToS3GetHandler)
+// 	// g.POST("/gcp/aws", controllers.MigrationGCPToS3PostHandler)
 
-	g.GET("/gcp/ncp", controllers.MigrationGCPToNCPGetHandler)
-	// g.POST("/gcp/ncp", controllers.MigrationGCPToNCPPostHandler)
-}
+// 	g.GET("/gcp/ncp", controllers.MigrationGCPToNCPGetHandler)
+// 	// g.POST("/gcp/ncp", controllers.MigrationGCPToNCPPostHandler)
+// }
 
-func MigrationFromNCPRoutes(g *echo.Group) {
-	g.GET("/ncp/linux", controllers.MigrationNCPToLinuxGetHandler)
-	// g.POST("/ncp/linux", controllers.MigrationNCPToLinuxPostHandler)
+// func MigrationFromNCPRoutes(g *echo.Group) {
+// 	g.GET("/ncp/linux", controllers.MigrationNCPToLinuxGetHandler)
+// 	// g.POST("/ncp/linux", controllers.MigrationNCPToLinuxPostHandler)
 
-	g.GET("/ncp/windows", controllers.MigrationNCPToWindowsGetHandler)
-	// g.POST("/ncp/windows", controllers.MigrationNCPToWindowsPostHandler)
+// 	g.GET("/ncp/windows", controllers.MigrationNCPToWindowsGetHandler)
+// 	// g.POST("/ncp/windows", controllers.MigrationNCPToWindowsPostHandler)
 
-	g.GET("/ncp/aws", controllers.MigrationNCPToS3GetHandler)
-	// g.POST("/ncp/aws", controllers.MigrationNCPToS3PostHandler)
+// 	g.GET("/ncp/aws", controllers.MigrationNCPToS3GetHandler)
+// 	// g.POST("/ncp/aws", controllers.MigrationNCPToS3PostHandler)
 
-	g.GET("/ncp/gcp", controllers.MigrationNCPToGCPGetHandler)
-	// g.POST("/ncp/gcp", controllers.MigrationNCPToGCPPostHandler)
-}
+// 	g.GET("/ncp/gcp", controllers.MigrationNCPToGCPGetHandler)
+// 	// g.POST("/ncp/gcp", controllers.MigrationNCPToGCPPostHandler)
+// }
 
 func MigrationNoSQLRoutes(g *echo.Group) {
+	g.GET("/no-sql", controllers.MigrationNoSQLHandler)
 	g.GET("/dynamodb/firestore", controllers.MigrationDynamoDBToFirestoreGetHandler)
 	// g.POST("/dynamodb/firestore", controllers.MigrationDynamoDBToFirestorePostHandler)
 

@@ -94,6 +94,20 @@ func GenerateWindowsGetHandler(ctx echo.Context) error {
 	})
 }
 
+func GenerateObjectStorageGetHandler(ctx echo.Context) error {
+
+	logger := getLoggerFromContext(ctx)
+	logger.Info().Msg("gen object storage get page accessed")
+	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
+		Content:    "Generate-Object-Storage",
+		AWSRegions: GetAWSRegions(),
+		GCPRegions: GetGCPRegions(),
+		NCPRegions: GetNCPRegions(),
+		OS:         runtime.GOOS,
+		Error:      nil,
+	})
+}
+
 func GenerateS3GetHandler(ctx echo.Context) error {
 
 	logger := getLoggerFromContext(ctx)
@@ -137,6 +151,20 @@ func GenerateMySQLGetHandler(ctx echo.Context) error {
 		Content: "Generate-MySQL",
 		OS:      runtime.GOOS,
 		Error:   nil,
+	})
+}
+
+func GenerateNoSQLGetHandler(ctx echo.Context) error {
+
+	logger := getLoggerFromContext(ctx)
+	logger.Info().Msg("gen nrdbms get page accessed")
+	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
+		Content:    "Generate-No-SQL",
+		AWSRegions: GetAWSRegions(),
+		GCPRegions: GetGCPRegions(),
+		NCPRegions: GetNCPRegions(),
+		OS:         runtime.GOOS,
+		Error:      nil,
 	})
 }
 
@@ -215,8 +243,21 @@ func RestoreHandler(ctx echo.Context) error {
 	})
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////////////////
 // Page handlers related to migration data
+
+func MigrationObjectStorageHandler(ctx echo.Context) error {
+	logger := getLoggerFromContext(ctx)
+	logger.Info().Msg("migration object storage get page accessed")
+	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
+		Content:    "Migration-Object-Storage",
+		GCPRegions: GetGCPRegions(),
+		AWSRegions: GetAWSRegions(),
+		NCPRegions: GetNCPRegions(),
+		OS:         runtime.GOOS,
+		Error:      nil,
+	})
+}
 
 // linux to object storage
 
@@ -314,7 +355,6 @@ func MigrationMySQLGetHandler(ctx echo.Context) error {
 // AWS to others
 
 func MigrationS3ToLinuxGetHandler(ctx echo.Context) error {
-
 	logger := getLoggerFromContext(ctx)
 	logger.Info().Msg("migs3lin get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
@@ -475,6 +515,18 @@ func MigrationNCPToGCPGetHandler(ctx echo.Context) error {
 
 // No-SQL
 // AWS DynamoDB to others
+func MigrationNoSQLHandler(ctx echo.Context) error {
+	logger := getLoggerFromContext(ctx)
+	logger.Info().Msg("migration no-sql get page accessed")
+	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
+		Content:    "Migration-No-SQL",
+		GCPRegions: GetGCPRegions(),
+		AWSRegions: GetAWSRegions(),
+		NCPRegions: GetNCPRegions(),
+		OS:         runtime.GOOS,
+		Error:      nil,
+	})
+}
 
 func MigrationDynamoDBToFirestoreGetHandler(ctx echo.Context) error {
 

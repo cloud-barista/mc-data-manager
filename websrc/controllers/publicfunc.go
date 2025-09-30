@@ -654,6 +654,7 @@ func getDataWithReBind(logger *zerolog.Logger, startTime time.Time, ctx echo.Con
 
 	if err := ctx.Bind(params); err != nil {
 		end := time.Now()
+		// fmt.Println("error: ", err.Error())
 		logger.Error().Err(err)
 		logger.Error().Msg("Failed to bind form data")
 		logger.Error().Interface("Params", string(bodyBytes))

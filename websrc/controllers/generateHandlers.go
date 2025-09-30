@@ -45,7 +45,7 @@ type GenerateS3PostHandlerResponseBody struct {
 func GenerateObjectStoragePostHandler(ctx echo.Context) error {
 	start := time.Now()
 
-	logger, logstrings := pageLogInit(ctx, "genS3", "Create dummy data and import to s3", start)
+	logger, logstrings := pageLogInit(ctx, "generate object storage", "Create dummy data and import to object storage", start)
 
 	params := models.DataTask{}
 	if !getDataWithReBind(logger, start, ctx, &params) {

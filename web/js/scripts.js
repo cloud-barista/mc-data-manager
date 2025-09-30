@@ -30,6 +30,7 @@ window.addEventListener('DOMContentLoaded', event => {
 
     if (document.getElementById('genForm')) {
         generateFormSubmit();
+        loadProfileList();
     }
     if (document.getElementById('migForm')) {
         migrationFormSubmit();
@@ -39,9 +40,11 @@ window.addEventListener('DOMContentLoaded', event => {
     }
     if (document.getElementById('backForm')) {
         backUpFormSubmit();
+        loadProfileList();
     }
     if (document.getElementById('restoreForm')) {
         RestoreFormSubmit();
+        loadProfileList();
     }
 
     if (document.getElementById('credentialForm')) {
@@ -52,6 +55,9 @@ window.addEventListener('DOMContentLoaded', event => {
 });
 
 function loadingButtonOn() {
+    const resultText = document.getElementById('resultText');
+    resultText.value = ""
+
     let btn = document.getElementById('submitBtn');
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;In progress..';
@@ -60,7 +66,7 @@ function loadingButtonOn() {
 function loadingButtonOff() {
     let btn = document.getElementById('submitBtn');
     btn.disabled = false;
-    btn.innerHTML = 'generate';
+    btn.innerHTML = 'Submit';
 }
 
 function resultCollpase() {
@@ -127,15 +133,29 @@ function generateFormSubmit() {
         const payload = new FormData(form);
         let jsonData = Object.fromEntries(payload);
         jsonData = convertCheckboxParams(jsonData)
-        jsonData.targetPoint = {
+
+        const requestBody = new Object();
+        requestBody.targetPoint = {
             ...jsonData
         };
-        console.log(jsonData)
-        jsonData.targetPoint.provider = document.getElementById('provider').value;
+        console.log(JSON.stringify(jsonData))
+
+        requestBody.targetPoint.provider = document.getElementById('targetPoint[provider]')?.value;
         const target = document.getElementById('genTarget').value;
-        jsonData.dummy = jsonData.targetPoint
-        if ((jsonData.targetPoint.provider == "ncp") && (jsonData.targetPoint.endpoint == "")) {
-            jsonData.targetPoint.endpoint = "https://kr.object.ncloudstorage.com"
+        
+        // 객체 형태 맞춤
+        const raw = jsonData?.["targetPoint[credentialId]"]?? null
+        requestBody.targetPoint.credentialId = raw != null ? parseInt(raw):raw;
+        delete requestBody.targetPoint["targetPoint[credentialId]"]
+        delete requestBody["targetPoint[credentialId]"]
+
+        requestBody.targetPoint.region = jsonData?.["targetPoint[region]"]?? null
+        delete requestBody.targetPoint["targetPoint[region]"]
+        delete requestBody["targetPoint[region]"]
+        
+        requestBody.dummy = requestBody.targetPoint
+        if ((requestBody.targetPoint.provider == "ncp") && (requestBody.targetPoint.endpoint == "")) {
+            requestBody.targetPoint.endpoint = "https://kr.object.ncloudstorage.com"
         }
         const url = "/generate/" + target;
 
@@ -146,7 +166,7 @@ function generateFormSubmit() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(jsonData)
+            body: JSON.stringify(requestBody)
         };
 
         fetch(url, req)
@@ -182,17 +202,17 @@ function setSelectBox() {
         if (selected === "aws" || selected === "ncp") {
           formHtml = `
             <div class="input-group mb-3">
-                <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+                <span class="input-group-text rounded-start"><i class="fa-solid fa-key"></i></span>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="mig-aws-accessKey" name="accessKey" placeholder="Access Key" required>
+                    <input type="text" class="form-control rounded-end" id="mig-aws-accessKey" name="accessKey" placeholder="Access Key" required>
                     <label for="mig-aws-accessKey">Access Key</label>
                 </div>
             </div>
 
             <div class="input-group mb-3">
-                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
                 <div class="form-floating">
-                    <input type="password" class="form-control" id="mig-aws-secretKey" name="secretKey" placeholder="Secret Key" required>
+                    <input type="password" class="form-control rounded-end" id="mig-aws-secretKey" name="secretKey" placeholder="Secret Key" required>
                     <label for="mig-aws-secretKey">Secret Key</label>
                 </div>
             </div>
@@ -200,9 +220,10 @@ function setSelectBox() {
         } else if (selected === "gcp") {
           formHtml = `
             <div class="input-group mb-3">
-                <span class="input-group-text">Credential Json</span>
+                <span class="input-group-text rounded-start">Credential Json</span>
                 <div class="form-floating">                    
-                    <textarea rows="10" class="form-control" id="mig-gcp-json" name="gcpJson" placeholder="Input Credential Json" style="min-height: 300px; height: 300px" required></textarea>                   
+                    <textarea rows="10" class="form-control rounded-end" id="mig-gcp-json" name="gcpJson" placeholder="Input Credential Json" style="min-height: 300px; height: 300px" required></textarea>
+                    <label for="mig-gcp-json">Input Credential Json</label>
                 </div>
             </div>
           `;
@@ -333,20 +354,20 @@ function loadProfileList() {
             .then(json => {
                 // const resultText = document.getElementById('resultText');
                 // resultText.value = json.Result;
-                console.log(json);
+                // console.log(json);
 
-                const awsOptions = json
-                .filter((item) => item.cspType === 'aws' )
+                const options = json
                 .map((item) => {
                     return {
-                        label: item.name,
-                        value: item.credentialId
+                        label: `${item.cspType.toUpperCase()} - ${item.name}`,
+                        value: item.credentialId,
+                        provider: item.cspType
                     }
                 });
 
-                const awsSelect = document.getElementById("awsProfileSelect");
+                const sourceSelectElement = document.getElementById("sourceCredentialSelect");
 
-                if (awsSelect) {
+                if (sourceSelectElement) {
                     // placeholder 역할 옵션 추가
                     // const placeholder = document.createElement("option");
                     // placeholder.textContent = "Select Credential";
@@ -354,43 +375,35 @@ function loadProfileList() {
                     // placeholder.selected = true;
                     // awsSelect.appendChild(placeholder);
 
-                    awsOptions.forEach(optionData => {
+                    options.forEach(optionData => {
                         const option = document.createElement("option");
                         option.value = optionData.value;
                         option.textContent = optionData.label;
-                        awsSelect.appendChild(option);
+                        option.setAttribute("data-provider", optionData.provider);
+                        sourceSelectElement.appendChild(option);
                     });
                 }
 
-                const gcpOptions = json
-                .filter((item) => item.cspType === 'gcp' )
-                .map((item) => {
-                    return {
-                        label: item.name,
-                        value: item.credentialId
-                    }
-                });
+                const targetSelectElement = document.getElementById("targetCredentialSelect");
 
-                const gcpSelect = document.getElementById("gcpProfileSelect");
-
-                if (gcpSelect) {
+                if (targetSelectElement) {
                     // placeholder 역할 옵션 추가
                     // const placeholder = document.createElement("option");
                     // placeholder.textContent = "Select Credential";
                     // placeholder.disabled = true;
                     // placeholder.selected = true;
-                    // gcpSelect.appendChild(placeholder);
+                    // awsSelect.appendChild(placeholder);
 
-                    gcpOptions.forEach(optionData => {
+                    options.forEach(optionData => {
                         const option = document.createElement("option");
                         option.value = optionData.value;
                         option.textContent = optionData.label;
-                        gcpSelect.appendChild(option);
+                        option.setAttribute("data-provider", optionData.provider);
+                        targetSelectElement.appendChild(option);
                     });
                 }
 
-                console.log('awsOptions: ', awsOptions);
-                console.log('gcpOptions: ', gcpOptions);
+                // console.log('options: ', options);
 
                 const capSelect = document.getElementById("mig-filter-sizeFilteringUnit");
 
@@ -446,76 +459,30 @@ function migrationFormSubmit() {
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        loadingButtonOn();
-        resultCollpase();
 
         const payload = new FormData(form);
         let jsonData = formDataToObject(payload)
+        if(jsonData.sourcePoint.credentialId == "none") {
+            alert("source credential not selected");
+            return
+        }
+        if(jsonData.targetPoint.credentialId == "none") {
+            alert("target credential not selected");
+            return
+        }
+
+        loadingButtonOn();
+        resultCollpase();
         console.log(jsonData)
-        const dest = document.getElementById('migDest').value;
-        const source = document.getElementById('migSource').value;
         const service = document.getElementById('migService').value;
         jsonData.targetPoint.provider = getInputValue('targetPoint[provider]');
         jsonData.sourcePoint.provider = getInputValue('sourcePoint[provider]');
-
         jsonData.targetPoint.credentialId = parseInt(jsonData.targetPoint.credentialId);
         jsonData.sourcePoint.credentialId = parseInt(jsonData.sourcePoint.credentialId);
 
-        if (jsonData.sourceFilter.path === "" || jsonData.sourceFilter.path === null) {
-            jsonData.sourceFilter.path = null;
-        } 
-
-        if (jsonData.sourceFilter.minSize === "" || jsonData.sourceFilter.minSize === null) {
-            jsonData.sourceFilter.minSize = null;
-        } else {
-            jsonData.sourceFilter.minSize = parseFloat(jsonData.sourceFilter.minSize);
+        if(service == "objectstorage") {
+            applyFilter(jsonData)
         }
-
-        if (jsonData.sourceFilter.maxSize === "" || jsonData.sourceFilter.maxSize === null) {
-            jsonData.sourceFilter.maxSize = null;
-        } else {
-            jsonData.sourceFilter.maxSize = parseFloat(jsonData.sourceFilter.maxSize);
-        }
-        
-        if (jsonData.sourceFilter.modifiedAfter && jsonData.sourceFilter.modifiedAfter.trim() !== "") {
-            jsonData.sourceFilter.modifiedAfter = jsonData.sourceFilter.modifiedAfter.replace(" ", "T") + "+09:00";
-        } else {
-            jsonData.sourceFilter.modifiedAfter = null;
-        }
-        
-        if (jsonData.sourceFilter.modifiedBefore && jsonData.sourceFilter.modifiedBefore.trim() !== "") {
-            jsonData.sourceFilter.modifiedBefore = jsonData.sourceFilter.modifiedBefore.replace(" ", "T") + "+09:00";
-        } else {
-            jsonData.sourceFilter.modifiedBefore = null;
-        }
-
-        if (jsonData.sourceFilter.contains === "") {
-            jsonData.sourceFilter.contains = null;
-        } else {
-            jsonData.sourceFilter.contains = jsonData.sourceFilter.contains.replace(/ /g,"").split(',');
-        }
-
-        if (jsonData.sourceFilter.suffixes === "") {
-            jsonData.sourceFilter.suffixes = null;
-        }
-        if (jsonData.sourceFilter.exact === "") {
-            jsonData.sourceFilter.exact = null;
-        }
-
-        console.log(
-            "minSize type:", typeof jsonData.sourceFilter.minSize, 
-            "value:", jsonData.sourceFilter.minSize
-        );
-        console.log(
-            "maxSize type:", typeof jsonData.sourceFilter.maxSize, 
-            "value:", jsonData.sourceFilter.maxSize
-        );
-
-        console.log(
-            "contains type:", typeof jsonData.sourceFilter.contains, 
-            "value:", jsonData.sourceFilter.contains
-        );
-
 
         let url = "/migrate/" + service;
 
@@ -562,24 +529,89 @@ function migrationFormSubmit() {
     });
 }
 
+function applyFilter(jsonData) {
+    if (jsonData.sourceFilter.path === "" || jsonData.sourceFilter.path === null) {
+        jsonData.sourceFilter.path = null;
+    } 
+
+    if (jsonData.sourceFilter.minSize === "" || jsonData.sourceFilter.minSize === null) {
+        jsonData.sourceFilter.minSize = null;
+    } else {
+        jsonData.sourceFilter.minSize = parseFloat(jsonData.sourceFilter.minSize);
+    }
+
+    if (jsonData.sourceFilter.maxSize === "" || jsonData.sourceFilter.maxSize === null) {
+        jsonData.sourceFilter.maxSize = null;
+    } else {
+        jsonData.sourceFilter.maxSize = parseFloat(jsonData.sourceFilter.maxSize);
+    }
+    
+    if (jsonData.sourceFilter.modifiedAfter && jsonData.sourceFilter.modifiedAfter.trim() !== "") {
+        jsonData.sourceFilter.modifiedAfter = jsonData.sourceFilter.modifiedAfter.replace(" ", "T") + "+09:00";
+    } else {
+        jsonData.sourceFilter.modifiedAfter = null;
+    }
+    
+    if (jsonData.sourceFilter.modifiedBefore && jsonData.sourceFilter.modifiedBefore.trim() !== "") {
+        jsonData.sourceFilter.modifiedBefore = jsonData.sourceFilter.modifiedBefore.replace(" ", "T") + "+09:00";
+    } else {
+        jsonData.sourceFilter.modifiedBefore = null;
+    }
+
+    if (jsonData.sourceFilter.contains === "") {
+        jsonData.sourceFilter.contains = null;
+    } else {
+        jsonData.sourceFilter.contains = jsonData.sourceFilter.contains.replace(/ /g,"").split(',');
+    }
+
+    if (jsonData.sourceFilter.suffixes === "") {
+        jsonData.sourceFilter.suffixes = null;
+    }
+    if (jsonData.sourceFilter.exact === "") {
+        jsonData.sourceFilter.exact = null;
+    }
+
+    console.log(
+        "minSize type:", typeof jsonData.sourceFilter.minSize, 
+        "value:", jsonData.sourceFilter.minSize
+    );
+    console.log(
+        "maxSize type:", typeof jsonData.sourceFilter.maxSize, 
+        "value:", jsonData.sourceFilter.maxSize
+    );
+
+    console.log(
+        "contains type:", typeof jsonData.sourceFilter.contains, 
+        "value:", jsonData.sourceFilter.contains
+    );
+}
+
 function backUpFormSubmit() {
     const form = document.getElementById('backForm');
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
+
+        const payload = new FormData(form);
+        let jsonData = formDataToObject(payload)
+
+        const provider = document.getElementById('sourcePoint[provider]').value;
+        const service = document.getElementById('srcService').value;
+        if(service != "rdbms" && jsonData.sourcePoint.credentialId == "none") {
+            alert("credential not selected");
+            return
+        }
+        // console.log(provider)
+
         loadingButtonOn();
         resultCollpase();
 
-        const payload = new FormData(form);
-
-        var service = document.getElementById('srcService').value;
         let url = "/backup/" + service;
         console.log(url);
 
-
-        let jsonData = formDataToObject(payload)
-        console.log(jsonData)
-
+        jsonData.sourcePoint.credentialId = parseInt(jsonData.sourcePoint.credentialId);
+        jsonData.sourcePoint.provider = provider
+        // console.log(jsonData)
 
         if ((jsonData.targetPoint.provider == "ncp") && (jsonData.targetPoint.endpoint == "")) {
             jsonData.targetPoint.endpoint = "https://kr.object.ncloudstorage.com"
@@ -623,19 +655,26 @@ function RestoreFormSubmit() {
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
+
+        const payload = new FormData(form);
+        let jsonData = formDataToObject(payload)
+
+        const provider = document.getElementById('targetPoint[provider]').value;
+        const service = document.getElementById('srcService').value;
+        if(service != "rdbms" && jsonData.targetPoint.credentialId == "none") {
+            alert("credential not selected");
+            return
+        }
+
         loadingButtonOn();
         resultCollpase();
 
-        const payload = new FormData(form);
-
-        var service = document.getElementById('srcService').value;
         let url = "/restore/" + service;
         console.log(url);
-
-
-        let jsonData = formDataToObject(payload)
         console.log(jsonData)
 
+        jsonData.targetPoint.credentialId = parseInt(jsonData.targetPoint.credentialId);
+        jsonData.targetPoint.provider = provider
 
         if ((jsonData.targetPoint.provider == "ncp") && (jsonData.targetPoint.endpoint == "")) {
             jsonData.targetPoint.endpoint = "https://kr.object.ncloudstorage.com"
@@ -706,9 +745,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     alert(`Error: ${error.message}`);
                 });
         });
-    } else {
-        console.error('Clear Service link not found.');
-    }
+    } 
 });
 
 
@@ -824,3 +861,128 @@ window.addEventListener("message", async function (event) {
         console.error("Error in processing message:", error);
     }
 });
+
+
+
+// @@  
+function updateRegionsByProvider(prefix, provider) {
+    const select = document.getElementById(prefix + "RegionSelect");
+    if (!select) return;
+  
+    // 모든 optgroup 숨기기
+    select.querySelectorAll("optgroup").forEach(group => {
+      group.style.display = "none";
+    });
+
+    if(provider == "none") {
+      select.value = "none"
+      return
+    }
+  
+    // 해당 provider optgroup만 보이기
+    const target = select.querySelector(`optgroup[data-provider="${provider}"]`);
+    if (target) {
+      target.style.display = "";
+      // 첫 option 선택
+      select.value = target.querySelector("option")?.value || "";
+    }
+}
+
+
+function updateLabelByProvider(prefix, provider) {
+    const service = document.getElementById("migService");
+    const select = document.getElementById(prefix + "PointLabel");
+    if (!service || !select) return;
+  
+    // 모든 optgroup 숨기기
+    if(provider == "none") {
+        select.value = "-"
+        return
+    }
+    
+    // label 갱신
+    select.value = getServiceName(service.value, provider);
+    
+    // region/mongo 영역 토글
+    toggleDivs(prefix, provider, service.value);
+}
+
+function toggleDivs(prefix, provider, service) {
+    const regionDiv = document.getElementById(prefix + "RegionDiv");
+    const mongoDiv = document.getElementById(prefix + "MongoDiv");
+    if (!regionDiv || !mongoDiv) return;
+
+    const showMongo = service === "nrdbms" && provider === "ncp";
+
+    regionDiv.style.display = showMongo ? "none" : "";
+    mongoDiv.style.display = showMongo ? "" : "none";
+
+    const regionSelect = regionDiv.querySelector("select");
+    if (regionSelect) {
+        regionSelect.disabled = showMongo; // mongoDiv 보이면 regionSelect 비활성화
+    }
+      // mongoDiv 하위 모든 input 제어
+    const mongoInputs = mongoDiv.querySelectorAll("input");
+    mongoInputs.forEach(input => {
+        input.disabled = !showMongo; // mongoDiv 보일 때만 활성화
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const initProviderHandlers = (prefix) => {
+        const credSelect = document.getElementById(prefix + "CredentialSelect");
+        const providerInput = document.getElementById(prefix + "Point[provider]");
+        if (!credSelect || !providerInput) return;
+
+        // 초기 렌더링 시 region 갱신
+        const initialProvider = credSelect.selectedOptions[0]?.dataset?.provider || "none";
+        providerInput.value = initialProvider;
+        updateRegionsByProvider(prefix, initialProvider);
+        updateLabelByProvider(prefix, initialProvider);
+
+        // 이벤트 핸들러 등록
+        credSelect.addEventListener("change", (e) => {
+            const provider = e.target.selectedOptions[0]?.dataset?.provider || "none";
+            providerInput.value = provider;
+            providerInput.dispatchEvent(new Event('change'));
+            updateRegionsByProvider(prefix, provider);
+            updateLabelByProvider(prefix, provider);
+        });
+    };
+
+    // source/target 공통 처리
+    ["source", "target"].forEach(initProviderHandlers);
+});
+
+function ucFirst(str) {
+    if (!str) {
+      return "";
+    }
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function getServiceName(service, provider) {
+    if (provider === "none") return "-";
+  
+    const serviceMap = {
+      nrdbms: {
+        aws: "AWS DynamoDB",
+        ncp: "Naver MongoDB",
+        gcp: "Google Firestore",
+      },
+      objectstorage: {
+        aws: "AWS S3",
+        ncp: "Naver Object Storage",
+        gcp: "Google Cloud Storage",
+      },
+      rdbms: {
+        default: "MySQL",
+      },
+    };
+  
+    const providers = serviceMap[service];
+    if (!providers) return "-";
+  
+    // 우선순위: provider별 매핑 → 없으면 default → 없으면 "-"
+    return providers[provider] || providers.default || "-";
+}

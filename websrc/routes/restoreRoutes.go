@@ -53,5 +53,5 @@ func RestoreRDB(g *echo.Group) {
 
 func RestoreNRDB(g *echo.Group) {
 	// g.GET("/nrdb", controllers.RestoreNRDBGetHandler)
-	g.POST("/nrdb", controllers.RestoreNRDBPostHandler)
+	g.POST("/nrdbms", controllers.RestoreNRDBPostHandler)
 }
