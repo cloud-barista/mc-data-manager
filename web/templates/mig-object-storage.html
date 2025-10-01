@@ -22,7 +22,7 @@
             <input type="hidden" id="migService" value="objectstorage">
             <input type="hidden" id="sourcePoint[provider]" value="none">
             <input type="hidden" id="targetPoint[provider]" value="none">
-                <div class="card rounded-3 mb-4 p-3">
+                <div class="card rounded-3 mb-3 p-3">
     
                     <!-- <div class="mt-2">
                         <label for="mig-aws-region" class="form-label" id="sourcePointLabel">Source -</label>
@@ -33,52 +33,50 @@
                             <label for="sourcePointLabel">Source</label>
                         </div>
                     </div>
-        
-                    <div>
-                        <div class="input-group mb-3 me-1">
-                            <span class="input-group-text rounded-start"><i class="fa-solid fa-user-secret"></i></span>
-                            <div class="form-floating">
-                                <select class="form-select form-select-sm rounded-end" id="sourceCredentialSelect" name="sourcePoint[credentialId]">
-                                    <option value="none" data-provider="none"> - </option>
-                                </select>
-                                <label for="sourceCredentialSelect">provider - credential name</label>
-                            </div>
+    
+                    <div class="input-group mb-3 me-1">
+                        <span class="input-group-text rounded-start"><i class="fa-solid fa-user-secret"></i></span>
+                        <div class="form-floating">
+                            <select class="form-select form-select-sm rounded-end" id="sourceCredentialSelect" name="sourcePoint[credentialId]">
+                                <option value="none" data-provider="none"> - </option>
+                            </select>
+                            <label for="sourceCredentialSelect">provider - credential name</label>
                         </div>
-                        <div class="input-group mb-3 me-1">
-                            <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span>
-                            <div class="form-floating">
-                                <select class="form-select form-select-sm rounded-end" id="sourceRegionSelect" name="sourcePoint[region]">
-                                    <option value="none" selected> - </option>
-                                    <optgroup label="AWS regions" data-provider="aws" style="display: none;">
-                                        {{ range $index, $value := .AWSRegions }}
-                                            <option value="{{ $value }}">{{ $value }}</option>
-                                        {{ end }}
-                                    </optgroup>
-                                    <optgroup label="GCP regions" data-provider="gcp" style="display: none;">
-                                        {{ range $index, $value := .GCPRegions }}
-                                            <option value="{{ $value }}">{{ $value }}</option>
-                                        {{ end }}
-                                    </optgroup>
-                                    <optgroup label="NCP regions" data-provider="ncp" style="display: none;">
-                                        {{ range $index, $value := .NCPRegions }}
-                                            <option value="{{ $value }}">{{ $value }}</option>
-                                        {{ end }}
-                                    </optgroup>                            
-                                </select>
-                                <!-- <select class="form-select form-select-sm" id="regionSelect" name="sourcePoint[region]"> -->
-                                <!-- {{ range $index, $value := .AWSRegions }}
-                                <option value="{{ $value }}">{{ $value }}</option>
-                                {{ end }} -->
-                                <!-- </select> -->
-                                <label for="mig-aws-region">Select Region</label>
-                            </div>
+                    </div>
+                    <div class="input-group mb-3 me-1">
+                        <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span>
+                        <div class="form-floating">
+                            <select class="form-select form-select-sm rounded-end" id="sourceRegionSelect" name="sourcePoint[region]">
+                                <option value="none" selected> - </option>
+                                <optgroup label="AWS regions" data-provider="aws" style="display: none;">
+                                    {{ range $index, $value := .AWSRegions }}
+                                        <option value="{{ $value }}">{{ $value }}</option>
+                                    {{ end }}
+                                </optgroup>
+                                <optgroup label="GCP regions" data-provider="gcp" style="display: none;">
+                                    {{ range $index, $value := .GCPRegions }}
+                                        <option value="{{ $value }}">{{ $value }}</option>
+                                    {{ end }}
+                                </optgroup>
+                                <optgroup label="NCP regions" data-provider="ncp" style="display: none;">
+                                    {{ range $index, $value := .NCPRegions }}
+                                        <option value="{{ $value }}">{{ $value }}</option>
+                                    {{ end }}
+                                </optgroup>                            
+                            </select>
+                            <!-- <select class="form-select form-select-sm" id="regionSelect" name="sourcePoint[region]"> -->
+                            <!-- {{ range $index, $value := .AWSRegions }}
+                            <option value="{{ $value }}">{{ $value }}</option>
+                            {{ end }} -->
+                            <!-- </select> -->
+                            <label for="mig-aws-region">Select Region</label>
                         </div>
-                        <div class="input-group mb-3">
-                            <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
-                            <div class="form-floating">
-                                <input type="text" class="form-control rounded-end" id="mig-aws-bucket" name="sourcePoint[bucket]" placeholder="Bucket" required>
-                                <label for="mig-aws-bucket">Bucket</label>
-                            </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
+                        <div class="form-floating">
+                            <input type="text" class="form-control rounded-end" id="mig-aws-bucket" name="sourcePoint[bucket]" placeholder="Bucket" required>
+                            <label for="mig-aws-bucket">Bucket</label>
                         </div>
                     </div>
         
@@ -173,7 +171,7 @@
                 </div> -->
                 <!-- <hr /> -->
     
-                <div class="card rounded-3 mb-4 p-3">
+                <div class="card rounded-3 mb-3 p-3">
                     <!-- <div style="margin-top: 30px">
                         <label for="mig-gcp-region" class="form-label" id="targetPointLabel">Target -</label>
                     </div> -->
