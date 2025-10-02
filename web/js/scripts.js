@@ -218,15 +218,29 @@ function setSelectBox() {
             </div>
           `;
         } else if (selected === "gcp") {
-          formHtml = `
-            <div class="input-group mb-3">
-                <span class="input-group-text rounded-start">Credential Json</span>
-                <div class="form-floating">                    
-                    <textarea rows="10" class="form-control rounded-end" id="mig-gcp-json" name="gcpJson" placeholder="Input Credential Json" style="min-height: 300px; height: 300px" required></textarea>
-                    <label for="mig-gcp-json">Input Credential Json</label>
+            formHtml = `
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-key"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control rounded-end" id="gcp-s3-accessKey" name="s3accessKey" placeholder="S3 Access Key" required>
+                        <label for="gcp-s3-accessKey">S3 Access Key</label>
+                    </div>
                 </div>
-            </div>
-          `;
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
+                    <div class="form-floating">
+                        <input type="password" class="form-control rounded-end" id="gcp-s3-secretKey" name="s3secretKey" placeholder="S3 Secret Key" required>
+                        <label for="gcp-s3-secretKey">S3 Secret Key</label>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start">Credential Json</span>
+                    <div class="form-floating">                    
+                        <textarea rows="10" class="form-control rounded-end" id="mig-gcp-json" name="gcpJson" placeholder="Input Credential Json" style="min-height: 300px; height: 300px" required></textarea>
+                        <label for="mig-gcp-json">Input Credential Json</label>
+                    </div>
+                </div>
+            `;
         }
 
         $("#credential-dynamicForm").html(formHtml);
