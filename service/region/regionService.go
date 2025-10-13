@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"sort"
 	"sync"
 	"time"
 
@@ -74,6 +75,7 @@ func GetRegions(cspType string) []string {
 	for _, region := range regions.Regions {
 		result = append(result, region.RegionName)
 	}
+	sort.Strings(result)
 
 	// 캐시 갱신
 	cache[cspType] = &RegionCache{

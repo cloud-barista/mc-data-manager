@@ -153,10 +153,12 @@ function generateFormSubmit() {
         delete requestBody.targetPoint["targetPoint[region]"]
         delete requestBody["targetPoint[region]"]
         
-        requestBody.dummy = requestBody.targetPoint
-        if ((requestBody.targetPoint.provider == "ncp") && (requestBody.targetPoint.endpoint == "")) {
-            requestBody.targetPoint.endpoint = "https://kr.object.ncloudstorage.com"
+        if (requestBody.targetPoint.provider != "ncp") {
+            delete requestBody.targetPoint.endpoint
         }
+        
+        requestBody.dummy = requestBody.targetPoint
+
         const url = "/generate/" + target;
 
         let req;
