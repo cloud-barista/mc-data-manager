@@ -15,6 +15,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"slices"
 	"strings"
 
 	// "fmt"
@@ -52,8 +53,14 @@ func (c *CredentialService) CreateCredential(req models.CredentialCreateRequest)
 	// 	return nil, err
 	// }
 
-	if existing, err := c.credentialRepository.CheckNameDuplicate(req.Name, req.CspType); err == nil && existing != nil {
-		return nil, fmt.Errorf("credential with name '%s' already exists", req.Name)
+	// if existing, err := c.credentialRepository.CheckNameDuplicate(req.Name, req.CspType); err == nil && existing != nil {
+	// 	return nil, fmt.Errorf("credential with name '%s' already exists", req.Name)
+	// } else if !errors.Is(err, gorm.ErrRecordNotFound) {
+	// 	return nil, err
+	// }
+
+	if existing, err := c.credentialRepository.CheckProviderDuplicate(req.CspType); err == nil && existing != nil {
+		return nil, fmt.Errorf("credential of '%s' already exists", req.CspType)
 	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
@@ -63,9 +70,11 @@ func (c *CredentialService) CreateCredential(req models.CredentialCreateRequest)
 		return nil, err
 	}
 
-	terr := requestTumblebug(req)
-	if terr != nil {
-		return nil, terr
+	if slices.Contains([]string{"aws", "ncp", "gcp"}, req.CspType) {
+		terr := requestTumblebug(req)
+		if terr != nil {
+			return nil, terr
+		}
 	}
 
 	encoded, err := c.AesConverter.EncryptAESGCM(credStr)
@@ -139,19 +148,16 @@ func requestTumblebug(req models.CredentialCreateRequest) error {
 	if err != nil {
 		return fmt.Errorf("failed to get public key: %w", err)
 	}
-	fmt.Println("#################### 1")
 
 	keyValues, err := getCredentialKeyValues(req)
 	if err != nil {
 		return fmt.Errorf("invalid credential json: %w", err)
 	}
-	fmt.Println("#################### 2")
 
 	encryptedCredentials, encryptedAesKey, err := encryptCredentialsWithPublicKey(publicKey, keyValues)
 	if err != nil {
 		return fmt.Errorf("invalid credential json: %w", err)
 	}
-	fmt.Println("#################### 3")
 
 	payload := map[string]interface{}{
 		"credentialHolder":                 "admin",
@@ -212,6 +218,7 @@ func getCredentialKeyValues(req models.CredentialCreateRequest) (map[string]stri
 
 func getPublicKey() (string, string, error) {
 	req, err := http.NewRequest("GET", "http://localhost:1323/tumblebug/credential/publicKey", nil)
+	// req, err := http.NewRequest("GET", "http://mc-infra-manager:1323/tumblebug/credential/publicKey", nil)
 	if err != nil {
 		return "", "", fmt.Errorf("failed to create request: %w", err)
 	}
@@ -245,52 +252,70 @@ func getPublicKey() (string, string, error) {
 	return res.PublicKey, res.PublicKeyTokenId, nil
 }
 
-func encryptCredentialsWithPublicKey(publicKeyPem string, credentials map[string]string) (map[string]string, string, error) {
+func encryptCredentialsWithPublicKey(publicKeyPem string, credentials map[string]string) ([]map[string]string, string, error) {
 	// PEM → rsa.PublicKey 변환
 	block, _ := pem.Decode([]byte(strings.ReplaceAll(publicKeyPem, `\n`, "\n")))
 	fmt.Println("block: ", block)
 	if block == nil {
 		return nil, "", fmt.Errorf("invalid public key PEM")
 	}
-	fmt.Println("@@@@@@@@@@@@@@@@@@@@@@@@ 1")
 
 	rsaPublicKey, err := x509.ParsePKCS1PublicKey(block.Bytes)
 	if err != nil {
-		fmt.Println("@@@@@@@@@@@@@@@@@@@@@@@@ 2", err)
 		return nil, "", fmt.Errorf("failed to parse public key: %w", err)
 	}
-	fmt.Println("@@@@@@@@@@@@@@@@@@@@@@@@ 2")
 
 	aesKey := make([]byte, 32)
 	if _, err := io.ReadFull(rand.Reader, aesKey); err != nil {
 		return nil, "", fmt.Errorf("encryptCredentialsWithPublicKey failed: %w", err)
 	}
 
-	encryptedCredentials := make(map[string]string)
+	encryptedList := []map[string]string{}
 
 	// 각 credential 값 암호화
 	for k, v := range credentials {
+		encryptedCredentials := make(map[string]string)
 		aesCipher, err := aes.NewCipher(aesKey)
 		if err != nil {
 			return nil, "", fmt.Errorf("encryptCredentialsWithPublicKey failed: %w", err)
 		}
-		gcm, err := cipher.NewGCM(aesCipher)
-		if err != nil {
-			return nil, "", fmt.Errorf("encryptCredentialsWithPublicKey failed: %w", err)
+
+		// IV (CBC에서는 반드시 16바이트)
+		iv := make([]byte, aes.BlockSize)
+		if _, err := io.ReadFull(rand.Reader, iv); err != nil {
+			return nil, "", fmt.Errorf("failed to generate IV: %w", err)
 		}
-		nonce := make([]byte, gcm.NonceSize())
-		if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
-			return nil, "", fmt.Errorf("encryptCredentialsWithPublicKey failed: %w", err)
-		}
-		ciphertext := gcm.Seal(nonce, nonce, []byte(v), nil)
-		encryptedCredentials[k] = base64.StdEncoding.EncodeToString(ciphertext)
+
+		// CBC 모드 암호화기 생성
+		mode := cipher.NewCBCEncrypter(aesCipher, iv)
+
+		// PKCS7 padding 적용
+		padded := pkcs7Pad([]byte(v), aes.BlockSize)
+		ciphertext := make([]byte, len(padded))
+
+		mode.CryptBlocks(ciphertext, padded)
+
+		// IV + Ciphertext 결합 후 Base64 인코딩
+		finalCipher := append(iv, ciphertext...)
+
+		encryptedCredentials["key"] = k
+		encryptedCredentials["value"] = base64.StdEncoding.EncodeToString(finalCipher)
+
+		encryptedList = append(encryptedList, encryptedCredentials)
 	}
 
 	encryptedAesKey, err := rsa.EncryptOAEP(sha256.New(), rand.Reader, rsaPublicKey, aesKey, nil)
 	if err != nil {
 		return nil, "", fmt.Errorf("encryptCredentialsWithPublicKey failed: %w", err)
 	}
-	return encryptedCredentials, base64.StdEncoding.EncodeToString(encryptedAesKey), nil
+	return encryptedList, base64.StdEncoding.EncodeToString(encryptedAesKey), nil
+}
+
+// PKCS7 패딩 추가
+func pkcs7Pad(data []byte, blockSize int) []byte {
+	padding := blockSize - len(data)%blockSize
+	padText := bytes.Repeat([]byte{byte(padding)}, padding)
+	return append(data, padText...)
 }
 
 func sendCredentials(payload map[string]interface{}) error {
@@ -298,6 +323,7 @@ func sendCredentials(payload map[string]interface{}) error {
 	reqBody, _ := json.Marshal(payload)
 	fmt.Println(string(reqBody))
 	req, err := http.NewRequest("POST", "http://localhost:1323/tumblebug/credential", bytes.NewBuffer(reqBody))
+	// req, err := http.NewRequest("POST", "http:/mc-infra-manager:1323/tumblebug/credential", bytes.NewBuffer(reqBody))
 	if err != nil {
 		return fmt.Errorf("create credential failed: %w", err)
 	}
@@ -315,6 +341,12 @@ func sendCredentials(payload map[string]interface{}) error {
 
 	body, _ := io.ReadAll(resp.Body)
 	fmt.Println(string(body))
+
+	// HTTP 코드 확인
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("create credential failed: unexpected status %d, response: %s",
+			resp.StatusCode, string(body))
+	}
 
 	return nil
 }
