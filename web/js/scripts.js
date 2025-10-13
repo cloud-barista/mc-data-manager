@@ -156,7 +156,7 @@ function generateFormSubmit() {
         if (requestBody.targetPoint.provider != "ncp") {
             delete requestBody.targetPoint.endpoint
         }
-        
+
         requestBody.dummy = requestBody.targetPoint
 
         const url = "/generate/" + target;
@@ -502,10 +502,10 @@ function migrationFormSubmit() {
 
         let url = "/migrate/" + service;
 
-        if ((jsonData.targetPoint.provider == "ncp") && (jsonData.targetPoint.endpoint == "")) {
+        if ((jsonData.targetPoint.provider == "ncp") || (jsonData.targetPoint.endpoint == "")) {
             jsonData.targetPoint.endpoint = "https://kr.object.ncloudstorage.com"
         }
-        if ((jsonData.sourcePoint.provider == "ncp") && (jsonData.sourcePoint.endpoint == "")) {
+        if ((jsonData.sourcePoint.provider == "ncp") || (jsonData.sourcePoint.endpoint == "")) {
             jsonData.sourcePoint.endpoint = "https://kr.object.ncloudstorage.com"
         }
 
@@ -629,13 +629,9 @@ function backUpFormSubmit() {
         jsonData.sourcePoint.provider = provider
         // console.log(jsonData)
 
-        if ((jsonData.targetPoint.provider == "ncp") && (jsonData.targetPoint.endpoint == "")) {
-            jsonData.targetPoint.endpoint = "https://kr.object.ncloudstorage.com"
+        if (jsonData.sourcePoint.provider != "ncp") {
+            delete jsonData.sourcePoint.endpoint
         }
-        if ((jsonData.sourcePoint.provider == "ncp") && (jsonData.sourcePoint.endpoint == "")) {
-            jsonData.sourcePoint.endpoint = "https://kr.object.ncloudstorage.com"
-        }
-
         let req = {
             method: 'POST',
             headers: {
@@ -692,11 +688,8 @@ function RestoreFormSubmit() {
         jsonData.targetPoint.credentialId = parseInt(jsonData.targetPoint.credentialId);
         jsonData.targetPoint.provider = provider
 
-        if ((jsonData.targetPoint.provider == "ncp") && (jsonData.targetPoint.endpoint == "")) {
-            jsonData.targetPoint.endpoint = "https://kr.object.ncloudstorage.com"
-        }
-        if ((jsonData.sourcePoint.provider == "ncp") && (jsonData.sourcePoint.endpoint == "")) {
-            jsonData.sourcePoint.endpoint = "https://kr.object.ncloudstorage.com"
+        if (jsonData.targetPoint.provider != "ncp") {
+            delete jsonData.targetPoint.endpoint
         }
 
         let req = {
