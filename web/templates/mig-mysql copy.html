@@ -34,12 +34,12 @@
                     <div class="accordion flex-grow-1 ms-4 mb-4" id="accordionExample">
                         <div class="accordion-item rounded-3">
                             <div class="accordion-header rounded-3" id="headingOne">
-                                <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
                                 <!-- <button class="accordion-button collapsed rounded-top" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"> -->
                                     Enter Source MySQL for Migration
                                 </button> 
                             </div>
-                            <div id="collapseOne" class="accordion-collapse rounded-bottom collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                            <div id="collapseOne" class="accordion-collapse rounded-bottom collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                 <div class="accordion-body border-1 rounded-3 pt-0">
                                     <div class="input-group">
                                         <div class="form-floating">
@@ -254,27 +254,37 @@
         // Next 버튼
         document.querySelectorAll(".next-btn").forEach(btn => {
             btn.addEventListener("click", e => {
-            const current = document.querySelector(btn.dataset.current);
-            const next = document.querySelector(btn.dataset.next);
-        
-            if (current && next) {
-                bootstrap.Collapse.getOrCreateInstance(current).hide();
-                bootstrap.Collapse.getOrCreateInstance(next).show();
-            }
+                const current = document.querySelector(btn.dataset.current);
+                const next = document.querySelector(btn.dataset.next);
+            
+                if (current && next) {
+                    bootstrap.Collapse.getOrCreateInstance(current).hide();
+                    bootstrap.Collapse.getOrCreateInstance(next).show();
+                }
             });
         });
 
         document.getElementById("sourceDiagnoseBtn").addEventListener("click", (e) => {
-            
             const url = "/diagnose/status"
+
+            host = document.getElementById("mig-mysql-srcHost").value
+            port = document.getElementById("mig-mysql-srcPort").value
+            username = document.getElementById("mig-mysql-srcUsername").value
+            password = document.getElementById("mig-mysql-srcPassword").value
+            databaseName = document.getElementById("mig-mysql-srcDatabase").value
+
+            if (!host || !port || !username || !password || !databaseName) {
+                alert("Please make sure all required fields for Source MySQL are filled in.");
+                return;
+            }
 
             jsonData = {
                 targetPoint: {
-                    host: document.getElementById("mig-mysql-srcHost").value,
-                    port: document.getElementById("mig-mysql-srcPort").value,
-                    username: document.getElementById("mig-mysql-srcUsername").value,
-                    password: document.getElementById("mig-mysql-srcPassword").value,
-                    databaseName: document.getElementById("mig-mysql-srcDatabase").value,
+                    host: host,
+                    port: port,
+                    username: username,
+                    password: password,
+                    databaseName: databaseName,
                 },
                 time: 5
             }
