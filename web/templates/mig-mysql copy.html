@@ -2,7 +2,6 @@
     <li class="breadcrumb-item">Migration</li>
 </ol>
 <h2 class="page-title">SQL Database</h2>
-
 <div class="card rounded-3 mb-4 col-auto">
     <ul class="nav nav-tabs pt-2 ps-2">
         <li class="nav-item">
@@ -28,14 +27,12 @@
                         <button class="rounded-circle py-2 px-3 bg-secondary text-white mb-1 next-btn border-0 step-btn" type="button" data-target="#collapseOne">
                             1
                         </button>
-                        <!-- <div class="rounded-circle py-2 px-3 bg-secondary text-white mb-1">1</div> -->
                         <div class="line h-100"></div>
                     </div>
                     <div class="accordion flex-grow-1 ms-4 mb-4" id="accordionExample">
                         <div class="accordion-item rounded-3">
                             <div class="accordion-header rounded-3" id="headingOne">
                                 <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                <!-- <button class="accordion-button collapsed rounded-top" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"> -->
                                     Enter Source MySQL for Migration
                                 </button> 
                             </div>
@@ -43,8 +40,8 @@
                                 <div class="accordion-body border-1 rounded-3 pt-0">
                                     <div class="input-group">
                                         <div class="form-floating">
-                                            <input type="text" class="form-control border-0 bg-white" id="mig-mysql-srcLabel" value="MySQL" value="-" required disabled>
-                                            <label for="mig-mysql-srcLabel">Source</label>
+                                            <input type="text" class="form-control border-0 bg-white" id="mysql-srcLabel" value="MySQL" value="-" required disabled>
+                                            <label for="mysql-srcLabel">Source</label>
                                         </div>
                                     </div>   
                                     <div class="input-group mb-3">
@@ -60,36 +57,36 @@
                                     <div class="input-group mb-3">
                                         <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
                                         <div class="form-floating">
-                                            <input type="text" class="form-control rounded-end" id="mig-mysql-srcHost" name="sourcePoint[host]" placeholder="Host / IP" required>
-                                            <label for="mig-mysql-srcHost">Host / IP</label>
+                                            <input type="text" class="form-control rounded-end" id="mysql-srcHost" name="sourcePoint[host]" placeholder="Host / IP" required>
+                                            <label for="mysql-srcHost">Host / IP</label>
                                         </div>
                                     </div>
                                     <div class="input-group mb-3">
                                         <span class="input-group-text rounded-start"><i class="fa-solid fa-flag"></i></span>
                                         <div class="form-floating">
-                                            <input type="text" class="form-control rounded-end" id="mig-mysql-srcPort" name="sourcePoint[port]" placeholder="Port" required>
-                                            <label for="mig-mysql-srcPort">Port</label>
+                                            <input type="text" class="form-control rounded-end" id="mysql-srcPort" name="sourcePoint[port]" placeholder="Port" required>
+                                            <label for="mysql-srcPort">Port</label>
                                         </div>
                                     </div>
                                     <div class="input-group mb-3">
                                         <span class="input-group-text rounded-start"><i class="fa-solid fa-user"></i></span>
                                         <div class="form-floating">
-                                            <input type="text" class="form-control rounded-end" id="mig-mysql-srcUsername" name="sourcePoint[username]" placeholder="Username" required>
-                                            <label for="mig-mysql-srcUsername">Username</label>
+                                            <input type="text" class="form-control rounded-end" id="mysql-srcUsername" name="sourcePoint[username]" placeholder="Username" required>
+                                            <label for="mysql-srcUsername">Username</label>
                                         </div>
                                     </div>
                                     <div class="input-group mb-3">
                                         <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
                                         <div class="form-floating">
-                                            <input type="password" class="form-control rounded-end" id="mig-mysql-srcPassword" name="sourcePoint[password]" placeholder="Password" required>
-                                            <label for="mig-mysql-srcPassword">Password</label>
+                                            <input type="password" class="form-control rounded-end" id="mysql-srcPassword" name="sourcePoint[password]" placeholder="Password" required>
+                                            <label for="mysql-srcPassword">Password</label>
                                         </div>
                                     </div>
                                     <div class="input-group mb-3">
                                         <span class="input-group-text rounded-start"><i class="fa-solid fa-database"></i></span>
                                         <div class="form-floating">
-                                            <input type="text" class="form-control rounded-end" id="mig-mysql-srcDatabase" name="sourcePoint[database]" placeholder="Database" required>
-                                            <label for="mig-mysql-srcDatabase">Database</label>
+                                            <input type="text" class="form-control rounded-end" id="mysql-srcDatabase" name="sourcePoint[database]" placeholder="Database" required>
+                                            <label for="mysql-srcDatabase">Database</label>
                                         </div>
                                     </div>
                                     
@@ -108,14 +105,12 @@
                         <button class="rounded-circle py-2 px-3 bg-secondary text-white mb-1 next-btn border-0 step-btn" type="button" data-target="#collapseTwo">
                             2
                         </button>
-                        <!-- <div class="rounded-circle py-2 px-3 bg-secondary text-white mb-1">2</div> -->
                         <div class="line h-100"></div>
                     </div>
                     <div class="accordion flex-grow-1 ms-4 mb-4">
                         <div class="accordion-item rounded-3">
-                            <div class="accordion-header"  id="headingTwo">
+                            <div class="accordion-header" id="headingTwo">
                                 <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                <!-- <button class="accordion-button collapsed rounded-top" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo"> -->
                                     Diagnose Source MySQL
                                 </button> 
                             </div>                            
@@ -140,14 +135,12 @@
                         <button class="rounded-circle py-2 px-3 bg-secondary text-white mb-1 next-btn border-0 step-btn" type="button" data-target="#collapseThree">
                             3
                         </button>
-                        <!-- <div class="rounded-circle py-2 px-3 bg-secondary text-white mb-1">3</div> -->
                         <div class="line h-100"></div>
                     </div>
                     <div class="accordion flex-grow-1 ms-4 mb-4">
                         <div class="accordion-item rounded-3">
                             <div class="accordion-header rounded-3"  id="headingThree">
                                 <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                <!-- <button class="accordion-button collapsed rounded-top" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseTwo"> -->
                                     Enter Target MySQL for Migration
                                 </button> 
                             </div>                            
@@ -155,8 +148,8 @@
                                 <div class="accordion-body rounded-3 pt-0">
                                     <div class="input-group mb-3">
                                         <div class="form-floating">
-                                            <input type="text" class="form-control border-0 bg-white" id="mig-mysql-targetHost" value="MySQL" value="-" required disabled>
-                                            <label for="mig-mysql-targetHost">Target</label>
+                                            <input type="text" class="form-control border-0 bg-white" id="mysql-destHost" value="MySQL" value="-" required disabled>
+                                            <label for="mysql-destHost">Target</label>
                                         </div>
                                     </div>  
                                     <div class="input-group mb-3">
@@ -171,36 +164,36 @@
                                     <div class="input-group mb-3">
                                         <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
                                         <div class="form-floating">
-                                            <input type="text" class="form-control rounded-end" id="mig-mysql-destHost" name="targetPoint[host]" placeholder="Host / IP" required>
-                                            <label for="mig-mysql-destHost">Host / IP</label>
+                                            <input type="text" class="form-control rounded-end" id="mysql-destHost" name="targetPoint[host]" placeholder="Host / IP" required>
+                                            <label for="mysql-destHost">Host / IP</label>
                                         </div>
                                     </div>
                                     <div class="input-group mb-3">
                                         <span class="input-group-text rounded-start"><i class="fa-solid fa-flag"></i></span>
                                         <div class="form-floating">
-                                            <input type="text" class="form-control rounded-end" id="mig-mysql-destPort" name="targetPoint[port]" placeholder="Port" required>
-                                            <label for="mig-mysql-destPort">Port</label>
+                                            <input type="text" class="form-control rounded-end" id="mysql-destPort" name="targetPoint[port]" placeholder="Port" required>
+                                            <label for="mysql-destPort">Port</label>
                                         </div>
                                     </div>
                                     <div class="input-group mb-3">
                                         <span class="input-group-text rounded-start"><i class="fa-solid fa-user"></i></span>
                                         <div class="form-floating">
-                                            <input type="text" class="form-control rounded-end" id="mig-mysql-destUsername" name="targetPoint[username]" placeholder="Username" required>
-                                            <label for="mig-mysql-destUsername">Username</label>
+                                            <input type="text" class="form-control rounded-end" id="mysql-destUsername" name="targetPoint[username]" placeholder="Username" required>
+                                            <label for="mysql-destUsername">Username</label>
                                         </div>
                                     </div>
                                     <div class="input-group mb-3">
                                         <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
                                         <div class="form-floating">
-                                            <input type="password" class="form-control rounded-end" id="mig-mysql-destPassword" name="targetPoint[password]" placeholder="Password" required>
-                                            <label for="mig-mysql-destPassword">Password</label>
+                                            <input type="password" class="form-control rounded-end" id="mysql-destPassword" name="targetPoint[password]" placeholder="Password" required>
+                                            <label for="mysql-destPassword">Password</label>
                                         </div>
                                     </div>
                                     <div class="input-group mb-3">
                                         <span class="input-group-text rounded-start"><i class="fa-solid fa-database"></i></span>
                                         <div class="form-floating">
-                                            <input type="text" class="form-control rounded-end" id="mig-mysql-destDatabase" name="targetPoint[database]" placeholder="Database" required>
-                                            <label for="mig-mysql-destDatabase">Database</label>
+                                            <input type="text" class="form-control rounded-end" id="mysql-destDatabase" name="targetPoint[database]" placeholder="Database" required>
+                                            <label for="mysql-destDatabase">Database</label>
                                         </div>
                                     </div>
                                     <div class="input-group">
@@ -216,14 +209,11 @@
                         <button class="rounded-circle py-2 px-3 bg-secondary text-white mb-1 next-btn border-0 step-btn" type="button" data-target="#collapseFour">
                             4
                         </button>
-                        <!-- <div class="rounded-circle py-2 px-3 bg-secondary text-white mb-1">2</div> -->
-                        <!-- <div class="line h-100"></div> -->
                     </div>
                     <div class="accordion flex-grow-1 ms-4 mb-4" id="accordionExample">
                         <div class="accordion-item rounded-3">
                             <div class="accordion-header rounded-3"  id="headingFour">
                                 <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                                <!-- <button class="accordion-button collapsed rounded-top" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseFour"> -->
                                     Diagnose Target MySQL
                                 </button> 
                             </div>                            
@@ -267,11 +257,11 @@
         document.getElementById("sourceDiagnoseBtn").addEventListener("click", (e) => {
             const url = "/diagnose/status"
 
-            host = document.getElementById("mig-mysql-srcHost").value
-            port = document.getElementById("mig-mysql-srcPort").value
-            username = document.getElementById("mig-mysql-srcUsername").value
-            password = document.getElementById("mig-mysql-srcPassword").value
-            databaseName = document.getElementById("mig-mysql-srcDatabase").value
+            host = document.getElementById("mysql-srcHost").value
+            port = document.getElementById("mysql-srcPort").value
+            username = document.getElementById("mysql-srcUsername").value
+            password = document.getElementById("mysql-srcPassword").value
+            databaseName = document.getElementById("mysql-srcDatabase").value
 
             if (!host || !port || !username || !password || !databaseName) {
                 alert("Please make sure all required fields for Source MySQL are filled in.");
