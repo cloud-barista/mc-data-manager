@@ -191,52 +191,55 @@
         </form>
     </div>
 </div>
-<!-- <script>
-    const regionSelect = document.getElementById("targetRegionSelect");
-    const resultBox = document.getElementById("targetBucket");
+<script>
+    // const regionSelect = document.getElementById("targetRegionSelect");
+    // const resultBox = document.getElementById("targetBucket");
 
-    regionSelect.addEventListener("change", async () => {
-        const region = regionSelect.value;
-        resultBox.value = "-"; 
+    // regionSelect.addEventListener("change", async () => {
+    //     const region = regionSelect.value;
+    //     resultBox.value = "-"; 
 
-        if (region == "-" || !region) {
-            return;
-        }
+    //     if (region == "-" || !region) {
+    //         return;
+    //     }
 
-        jsonData = {
-            "targetPoint": {
-                "credentialId": parseInt(document.getElementById("targetCredentialSelect").value),
-                "region": region,
-                "provider": document.getElementById("targetPoint[provider]").value
-            }
-        }
+    //     jsonData = {
+    //         "targetPoint": {
+    //             "credentialId": parseInt(document.getElementById("targetCredentialSelect").value),
+    //             "region": region,
+    //             "provider": document.getElementById("targetPoint[provider]").value
+    //         }
+    //     }
 
-        req = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(jsonData)
-        };
-        console.log("@@@@@@@@@@@@ changed")
+    //     req = {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify(jsonData)
+    //     };
+    //     console.log("@@@@@@@@@@@@ changed")
 
-        let url = "/objectstorage/buckets";
-        fetch(url, req)
-            .then(response => {
-                return response.json();
-            })
-            .then(json => {
-                console.log(json);
-                json.buckets.forEach(optionData => {
-                    const option = document.createElement("option");
-                    option.value = optionData.name;
-                    option.textContent = optionData.name;
-                    resultBox.appendChild(option);
-                });
-            })
-            .catch(reason => {
-                console.log(reason);
-                alert(reason);
-            })
-    });
-</script> -->
+    //     let url = "/objectstorage/buckets";
+    //     fetch(url, req)
+    //         .then(response => {
+    //             return response.json();
+    //         })
+    //         .then(json => {
+    //             console.log(json);
+    //             const first = resultBox.firstElementChild;
+    //             if (first) resultBox.replaceChildren(first);
+
+    //             json.buckets.forEach(optionData => {
+    //                 const option = document.createElement("option");
+    //                 option.value = optionData.name;
+    //                 option.textContent = optionData.name;
+    //                 resultBox.appendChild(option);
+    //             });
+    //         })
+    //         .catch(reason => {
+    //             console.log(reason);
+    //             alert(reason);
+    //         })
+    // });
+</script>

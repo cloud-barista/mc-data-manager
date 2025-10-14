@@ -110,13 +110,37 @@ func (f *S3FS) CreateBucket() error {
 		var nf *types.NotFound
 		var nsb *types.NoSuchBucket
 		if errors.As(err, &nsb) || errors.As(err, &nf) {
-			input := &s3.CreateBucketInput{Bucket: aws.String(f.bucketName)}
-			if f.provider == "aws" {
-				input.CreateBucketConfiguration = &types.CreateBucketConfiguration{
-					LocationConstraint: types.BucketLocationConstraint(f.region),
-				}
+			req, err := http.NewRequest("PUT", "http://localhost:1323/tumblebug/resources/objectstorage/"+f.bucketName, nil)
+			// req, err := http.NewRequest("GET", "http://mc-infra-manager:1323/tumblebug/resources/objectstorage/"+f.bucketName", nil)
+			if err != nil {
+				return fmt.Errorf("failed to create buckets: %w", err)
 			}
-			_, err := f.client.CreateBucket(f.ctx, input)
+
+			// Basic Auth 헤더 추가
+			username := "default"
+			password := "default"
+			req.SetBasicAuth(username, password)
+			req.Header.Set("credential", fmt.Sprintf("%s-%s", f.provider, f.region))
+
+			// 클라이언트로 요청 보내기
+			client := &http.Client{}
+			resp, err := client.Do(req)
+			if err != nil {
+				return fmt.Errorf("failed to create buckets: %w", err)
+			}
+			defer resp.Body.Close()
+
+			if resp.StatusCode == 200 {
+				return nil
+			}
+
+			// input := &s3.CreateBucketInput{Bucket: aws.String(f.bucketName)}
+			// if f.provider == "aws" {
+			// 	input.CreateBucketConfiguration = &types.CreateBucketConfiguration{
+			// 		LocationConstraint: types.BucketLocationConstraint(f.region),
+			// 	}
+			// }
+			// _, err := f.client.CreateBucket(f.ctx, input)
 			return err
 		}
 		return err
