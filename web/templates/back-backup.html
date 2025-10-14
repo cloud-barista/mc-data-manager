@@ -2,7 +2,6 @@
     <li class="breadcrumb-item">Back Up</li>
 </ol>
 <h2 class="page-title" id="title">Object Storage</h2>
-
 <div class="card rounded-3 mb-4 col-auto">
     <ul class="nav nav-tabs pt-2 ps-2" id="serviceTabs">
         <li class="nav-item">
@@ -21,7 +20,6 @@
             <input type="hidden" id="backDest" value="backup">
             <input type="hidden" id="sourcePoint[provider]" value="none">
             <input type="hidden" id="srcService" value="objectstorage">
-            <!-- <label for="sourceCredentialSelect" class="form-label">Back Up</label> -->
             <div class="input-group mb-3">
                 <div class="form-floating">
                     <input type="text" class="form-control" id="sourcePointLabel" placeholder="Source" style="border: 0; background-color: white;" value="-" required disabled>
@@ -37,24 +35,6 @@
                     <label for="sourceCredentialSelect">provider - credential name</label>
                 </div>
             </div>
-            <!-- <label for="mig-linux-path" class="form-label">Backup Service</label> -->
-            <!-- <div class="input-group mb-3"> -->
-                <!-- <span class="input-group-text"><i class="fa-solid fa-cloud"></i></span> -->
-                <!-- <select class="form-select" id="srcProvider" name="sourcePoint[provider]"> -->
-                    <!-- <option value="aws">AWS</option> -->
-                    <!-- <option value="gcp">GCP</option> -->
-                    <!-- <option value="ncp">NCP</option> -->
-                    <!-- <option value="on-premise">On-premise</option> -->
-                <!-- </select> -->
-                <!-- <span class="input-group-text"><i class="fa-solid fa-cloud"></i></span> -->
-                <!-- <select class="form-select" id="srcService" name="srcService"> -->
-                    <!-- <option value="objectstorage">ObjectStorage</option> -->
-                    <!-- <option value="rdbms">RDB</option> -->
-                    <!-- <option value="nrdbms">NRDB</option> -->
-                    <!-- <option value="on-premise">On-premise</option> -->
-                <!-- </select> -->
-            <!-- </div> -->
-
             <div class="mb-3">
                 <label for="mig-linux-path" class="form-label">Backup Path</label>
                 <div class="input-group">
@@ -64,8 +44,7 @@
                       <label for="mig-linux-path">Path</label>
                     </div>
                 </div>
-            </div>
-            
+            </div>            
             <div class="form-section" id="aws-objectstorage" style="display:none;">
                 <div class="mb-3">    
                     <div class="form-floating">
@@ -85,9 +64,7 @@
                     </div>
                 </div>
             </div>
-
             <div class="form-section" id="gcp-objectstorage" style="display:none;">
-                <!-- <label class="form-label">GCP ObjectStorage Settings</label> -->
                 <div class="mb-3">    
                     <div class="form-floating">
                         <select class="form-select form-select-sm rounded-3" id="mig-gcp-region" name="sourcePoint[region]">
@@ -97,8 +74,7 @@
                         </select>
                         <label for="mig-gcp-region">Region</label>
                     </div>
-                </div>
-                
+                </div>                
                 <div class="input-group mb-3">
                     <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
                     <div class="form-floating">
@@ -107,9 +83,7 @@
                     </div>
                 </div>
             </div>
-
             <div class="form-section" id="ncp-objectstorage" style="display:none;">
-                <!-- <label class="form-label">NCP ObjectStorage Settings</label> -->
                 <div class="mb-3">    
                     <div class="form-floating">
                         <select class="form-select form-select-sm rounded-3" id="mig-ncp-region" name="sourcePoint[region]">
@@ -135,7 +109,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="form-section" id="rdbms" style="display:none;">
                 <label for="mysql-srcHost" class="form-label">RDB Settings</label>
                 <div class="input-group mb-3" id="rdbmsProvider">
@@ -153,7 +126,6 @@
                         <label for="mysql-srcHost">Host / IP</label>
                     </div>
                 </div>
-
                 <div class="input-group mb-3">
                     <span class="input-group-text rounded-start"><i class="fa-solid fa-flag"></i></span>
                     <div class="form-floating">
@@ -161,7 +133,6 @@
                         <label for="mysql-srcPort">Port</label>
                     </div>
                 </div>
-
                 <div class="input-group mb-3">
                     <span class="input-group-text rounded-start"><i class="fa-solid fa-user"></i></span>
                     <div class="form-floating">
@@ -169,7 +140,6 @@
                         <label for="mysql-srcUsername">Username</label>
                     </div>
                 </div>
-
                 <div class="input-group mb-3">
                     <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
                     <div class="form-floating">
@@ -178,10 +148,7 @@
                     </div>
                 </div>
             </div>
-
-
             <div class="form-section" id="aws-nrdbms" style="display:none;">
-                <!-- <label class="form-label">AWS NRDB Settings</label> -->
                 <div class="mb-3">    
                     <div class="form-floating">
                         <select class="form-select form-select-sm rounded-3" id="nrdbms-aws-region" name="sourcePoint[region]">
@@ -193,9 +160,7 @@
                     </div>
                 </div>
             </div>
-
             <div class="form-section" id="gcp-nrdbms" style="display:none;">
-                <!-- <label class="form-label">GCP NRDB Settings</label> -->
                 <div class="mb-3">    
                     <div class="form-floating">
                         <select class="form-select form-select-sm rounded-3" id="nrdbms-gcp-region" name="sourcePoint[region]">
@@ -207,9 +172,7 @@
                     </div>
                 </div>
             </div>
-
             <div class="form-section" id="ncp-nrdbms" style="display:none;">
-                <!-- <label class="form-label">NCP NRDB Settings</label> -->
                 <div class="mb-3">    
                     <div class="form-floating">
                         <select class="form-select form-select-sm rounded-3" id="nrdbms-ncp-region" name="sourcePoint[region]">
@@ -228,7 +191,6 @@
                         <label for="nosql-srcHost">Host / IP</label>
                     </div>
                 </div>
-
                 <div class="input-group mb-3">
                     <span class="input-group-text rounded-start"><i class="fa-solid fa-flag"></i></span>
                     <div class="form-floating">
@@ -236,7 +198,6 @@
                         <label for="nosql-srcPort">Port</label>
                     </div>
                 </div>
-
                 <div class="input-group mb-3">
                     <span class="input-group-text rounded-start"><i class="fa-solid fa-user"></i></span>
                     <div class="form-floating">
@@ -244,7 +205,6 @@
                         <label for="nosql-srcUsername">Username</label>
                     </div>
                 </div>
-
                 <div class="input-group mb-3">
                     <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
                     <div class="form-floating">
@@ -260,17 +220,14 @@
                     </div>
                 </div>
             </div>
-
             <button type="submit" class="btn btn-primary rounded-1" id="submitBtn">Submit</button>
         </form>
     </div>
 </div>
-
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const tabs = document.querySelectorAll("#serviceTabs .nav-link");
         const hiddenInput = document.getElementById("srcService");
-        // 텍스트 → 코드값 매핑
         const serviceMap = {
             "Object Storage": "objectstorage",
             "SQL Database": "rdbms",

@@ -17,8 +17,11 @@ package s3fs
 
 import (
 	"context"
+	"encoding/xml"
 	"errors"
+	"fmt"
 	"io"
+	"net/http"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -331,4 +334,47 @@ func (f *S3FS) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*models.Obje
 
 func (f *S3FS) ObjectList() ([]*models.Object, error) {
 	return f.ObjectListWithFilter(nil)
+}
+
+func (f *S3FS) BucketList() ([]models.Bucket, error) {
+	req, err := http.NewRequest("GET", "http://localhost:1323/tumblebug/resources/objectStorage", nil)
+	// req, err := http.NewRequest("GET", "http://mc-infra-manager:1323/tumblebug/credential/publicKey", nil)
+	if err != nil {
+		return []models.Bucket{}, fmt.Errorf("failed to get buckets: %w", err)
+	}
+
+	// Basic Auth 헤더 추가
+	username := "default"
+	password := "default"
+	req.SetBasicAuth(username, password)
+	req.Header.Set("credential", fmt.Sprintf("%s-%s", f.provider, f.region))
+
+	// 클라이언트로 요청 보내기
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return []models.Bucket{}, fmt.Errorf("failed to get buckets: %w", err)
+	}
+	defer resp.Body.Close()
+
+	// 응답 바디 읽기
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return []models.Bucket{}, fmt.Errorf("failed to get buckets: %w", err)
+	}
+	fmt.Println("Raw body:", string(body))
+
+	// Parse the response to extract public key and token ID
+	var res models.ListAllMyBucketsResult
+	if err := xml.Unmarshal(body, &res); err != nil {
+		fmt.Println("error: ", err.Error())
+		return []models.Bucket{}, fmt.Errorf("failed to get buckets: %w", err)
+	}
+
+	// 버킷이 비어 있으면 빈 리스트 반환
+	if res.Buckets.Bucket == nil {
+		return []models.Bucket{}, nil
+	}
+
+	return res.Buckets.Bucket, nil
 }

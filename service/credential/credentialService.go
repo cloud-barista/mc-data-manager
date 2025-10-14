@@ -203,13 +203,13 @@ func getCredentialKeyValues(req models.CredentialCreateRequest) (map[string]stri
 		}
 
 		return map[string]string{
-			"client_id":      gcp.ClientID,
-			"ClientEmail":    gcp.ClientEmail,
-			"private_key_id": gcp.PrivateKeyID,
-			"PrivateKey":     gcp.PrivateKey,
-			"ProjectID":      gcp.ProjectID,
-			"S3AccessKey":    req.S3AccessKey,
-			"S3SecretKey":    req.S3SecretKey,
+			// "client_id":      gcp.ClientID,
+			"ClientEmail": gcp.ClientEmail,
+			// "private_key_id": gcp.PrivateKeyID,
+			"PrivateKey":  gcp.PrivateKey,
+			"ProjectID":   gcp.ProjectID,
+			"S3AccessKey": req.S3AccessKey,
+			"S3SecretKey": req.S3SecretKey,
 		}, nil
 	default:
 		return nil, fmt.Errorf("unsupported cspType: %q", req.CspType)

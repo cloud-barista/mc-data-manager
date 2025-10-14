@@ -154,7 +154,6 @@
                         <div class="input-group mb-3 me-1">
                             <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span>
                             <div class="form-floating">
-                                
                                 <select class="form-select form-select-sm rounded-end" id="targetRegionSelect" name="targetPoint[region]">
                                     <option value="none" selected> - </option>
                                     <optgroup label="AWS regions" data-provider="aws" style="display: none;">
@@ -180,6 +179,9 @@
                             <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
                             <div class="form-floating">
                                 <input type="text" class="form-control rounded-end" id="mig-gcp-bucket" name="targetPoint[bucket]" placeholder="Bucket" required>
+                                <!-- <select class="form-select form-select-sm rounded-end" id="targetBucket" name="targetPoint[bucket]">
+                                    <option value="-" selected>-</option>
+                                </select> -->
                                 <label for="mig-gcp-bucket">Bucket</label>
                             </div>
                         </div>
@@ -189,3 +191,52 @@
         </form>
     </div>
 </div>
+<!-- <script>
+    const regionSelect = document.getElementById("targetRegionSelect");
+    const resultBox = document.getElementById("targetBucket");
+
+    regionSelect.addEventListener("change", async () => {
+        const region = regionSelect.value;
+        resultBox.value = "-"; 
+
+        if (region == "-" || !region) {
+            return;
+        }
+
+        jsonData = {
+            "targetPoint": {
+                "credentialId": parseInt(document.getElementById("targetCredentialSelect").value),
+                "region": region,
+                "provider": document.getElementById("targetPoint[provider]").value
+            }
+        }
+
+        req = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        };
+        console.log("@@@@@@@@@@@@ changed")
+
+        let url = "/objectstorage/buckets";
+        fetch(url, req)
+            .then(response => {
+                return response.json();
+            })
+            .then(json => {
+                console.log(json);
+                json.buckets.forEach(optionData => {
+                    const option = document.createElement("option");
+                    option.value = optionData.name;
+                    option.textContent = optionData.name;
+                    resultBox.appendChild(option);
+                });
+            })
+            .catch(reason => {
+                console.log(reason);
+                alert(reason);
+            })
+    });
+</script> -->
