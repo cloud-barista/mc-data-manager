@@ -14,7 +14,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"net/http"
 	"slices"
 	"strings"
 
@@ -71,7 +70,7 @@ func (c *CredentialService) CreateCredential(req models.CredentialCreateRequest)
 	}
 
 	if slices.Contains([]string{"aws", "ncp", "gcp"}, req.CspType) {
-		terr := requestTumblebug(req)
+		terr := createTumblebugCredential(req)
 		if terr != nil {
 			return nil, terr
 		}
@@ -143,7 +142,7 @@ func (c *CredentialService) DeleteCredential(id uint64) error {
 	return c.credentialRepository.DeleteCredential(id)
 }
 
-func requestTumblebug(req models.CredentialCreateRequest) error {
+func createTumblebugCredential(req models.CredentialCreateRequest) error {
 	publicKey, publicKeyTokenId, err := getPublicKey()
 	if err != nil {
 		return fmt.Errorf("failed to get public key: %w", err)
@@ -217,31 +216,14 @@ func getCredentialKeyValues(req models.CredentialCreateRequest) (map[string]stri
 }
 
 func getPublicKey() (string, string, error) {
-	req, err := http.NewRequest("GET", "http://localhost:1323/tumblebug/credential/publicKey", nil)
-	// req, err := http.NewRequest("GET", "http://mc-infra-manager:1323/tumblebug/credential/publicKey", nil)
+	url := "http://localhost:1323/tumblebug/credential/publicKey"
+	// url := "http://mc-infra-manager:1323/tumblebug/credential/publicKey"
+	method := "GET"
+
+	body, err := utils.RequestTumblebug(url, method, "", nil)
 	if err != nil {
 		return "", "", fmt.Errorf("failed to create request: %w", err)
 	}
-
-	// Basic Auth 헤더 추가
-	username := "default"
-	password := "default"
-	req.SetBasicAuth(username, password)
-
-	// 클라이언트로 요청 보내기
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return "", "", fmt.Errorf("get public key failed: %w", err)
-	}
-	defer resp.Body.Close()
-
-	// 응답 바디 읽기
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", "", fmt.Errorf("get public key failed: %w", err)
-	}
-	fmt.Println("Raw body:", string(body))
 
 	// Parse the response to extract public key and token ID
 	var res models.PublicKeyResponse
@@ -319,33 +301,14 @@ func pkcs7Pad(data []byte, blockSize int) []byte {
 }
 
 func sendCredentials(payload map[string]interface{}) error {
-	client := &http.Client{}
+	url := "http://localhost:1323/tumblebug/credential"
+	// url := "http://mc-infra-manager:1323/tumblebug/credential"
+	method := "POST"
 	reqBody, _ := json.Marshal(payload)
-	fmt.Println(string(reqBody))
-	req, err := http.NewRequest("POST", "http://localhost:1323/tumblebug/credential", bytes.NewBuffer(reqBody))
-	// req, err := http.NewRequest("POST", "http:/mc-infra-manager:1323/tumblebug/credential", bytes.NewBuffer(reqBody))
+
+	_, err := utils.RequestTumblebug(url, method, "", reqBody)
 	if err != nil {
 		return fmt.Errorf("create credential failed: %w", err)
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	username := "default"
-	password := "default"
-	req.SetBasicAuth(username, password)
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return fmt.Errorf("create credential failed: %w", err)
-	}
-	defer resp.Body.Close()
-
-	body, _ := io.ReadAll(resp.Body)
-	fmt.Println(string(body))
-
-	// HTTP 코드 확인
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("create credential failed: unexpected status %d, response: %s",
-			resp.StatusCode, string(body))
 	}
 
 	return nil

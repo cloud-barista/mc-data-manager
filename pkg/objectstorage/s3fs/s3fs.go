@@ -21,7 +21,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"net/http"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -30,6 +29,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/filtering"
+	"github.com/cloud-barista/mc-data-manager/pkg/utils"
 	"github.com/rs/zerolog/log"
 )
 
@@ -110,27 +110,13 @@ func (f *S3FS) CreateBucket() error {
 		var nf *types.NotFound
 		var nsb *types.NoSuchBucket
 		if errors.As(err, &nsb) || errors.As(err, &nf) {
-			req, err := http.NewRequest("PUT", "http://localhost:1323/tumblebug/resources/objectstorage/"+f.bucketName, nil)
-			// req, err := http.NewRequest("GET", "http://mc-infra-manager:1323/tumblebug/resources/objectstorage/"+f.bucketName", nil)
+			url := "http://localhost:1323/tumblebug/resources/objectstorage/" + f.bucketName
+			// url := "http://mc-infra-manager:1323/tumblebug/resources/objectstorage/" + f.bucketName
+			method := "PUT"
+			connName := fmt.Sprintf("%s-%s", f.provider, f.region)
+
+			_, err := utils.RequestTumblebug(url, method, connName, nil)
 			if err != nil {
-				return fmt.Errorf("failed to create buckets: %w", err)
-			}
-
-			// Basic Auth 헤더 추가
-			username := "default"
-			password := "default"
-			req.SetBasicAuth(username, password)
-			req.Header.Set("credential", fmt.Sprintf("%s-%s", f.provider, f.region))
-
-			// 클라이언트로 요청 보내기
-			client := &http.Client{}
-			resp, err := client.Do(req)
-			if err != nil {
-				return fmt.Errorf("failed to create buckets: %w", err)
-			}
-			defer resp.Body.Close()
-
-			if resp.StatusCode == 200 {
 				return nil
 			}
 
@@ -361,32 +347,15 @@ func (f *S3FS) ObjectList() ([]*models.Object, error) {
 }
 
 func (f *S3FS) BucketList() ([]models.Bucket, error) {
-	req, err := http.NewRequest("GET", "http://localhost:1323/tumblebug/resources/objectStorage", nil)
-	// req, err := http.NewRequest("GET", "http://mc-infra-manager:1323/tumblebug/credential/publicKey", nil)
+	url := "http://localhost:1323/tumblebug/resources/objectStorage"
+	// url := "http://mc-infra-manager:1323/tumblebug/resources/objectStorage"
+	method := "GET"
+	connName := fmt.Sprintf("%s-%s", f.provider, f.region)
+
+	body, err := utils.RequestTumblebug(url, method, connName, nil)
 	if err != nil {
 		return []models.Bucket{}, fmt.Errorf("failed to get buckets: %w", err)
 	}
-
-	// Basic Auth 헤더 추가
-	username := "default"
-	password := "default"
-	req.SetBasicAuth(username, password)
-	req.Header.Set("credential", fmt.Sprintf("%s-%s", f.provider, f.region))
-
-	// 클라이언트로 요청 보내기
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return []models.Bucket{}, fmt.Errorf("failed to get buckets: %w", err)
-	}
-	defer resp.Body.Close()
-
-	// 응답 바디 읽기
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return []models.Bucket{}, fmt.Errorf("failed to get buckets: %w", err)
-	}
-	fmt.Println("Raw body:", string(body))
 
 	// Parse the response to extract public key and token ID
 	var res models.ListAllMyBucketsResult
