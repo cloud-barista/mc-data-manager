@@ -17,16 +17,16 @@ package s3fs
 
 import (
 	"context"
+	"encoding/json"
 	"encoding/xml"
-	"errors"
 	"fmt"
 	"io"
+	"net/http"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/filtering"
 	"github.com/cloud-barista/mc-data-manager/pkg/utils"
@@ -95,43 +95,27 @@ type S3FS struct {
 //
 // Aws imposes location constraints when creating buckets
 func (f *S3FS) CreateBucket() error {
-	_, err := f.client.HeadBucket(f.ctx, &s3.HeadBucketInput{
-		Bucket: aws.String(f.bucketName),
-	})
+	url := "http://localhost:1323/tumblebug/resources/objectStorage/" + f.bucketName
+	// url := "http://mc-infra-manager:1323/tumblebug/resources/objectStorage/" + f.bucketName
+	method := http.MethodHead
+	connName := fmt.Sprintf("%s-%s", f.provider, f.region)
+
+	_, err := utils.RequestTumblebug(url, method, connName, nil)
 	if err != nil {
-		var bae *types.BucketAlreadyExists
-		if errors.As(err, &bae) {
-			return nil
-		}
-		var baoby *types.BucketAlreadyOwnedByYou
-		if errors.As(err, &baoby) {
-			return nil
-		}
-		var nf *types.NotFound
-		var nsb *types.NoSuchBucket
-		if errors.As(err, &nsb) || errors.As(err, &nf) {
-			url := "http://localhost:1323/tumblebug/resources/objectstorage/" + f.bucketName
-			// url := "http://mc-infra-manager:1323/tumblebug/resources/objectstorage/" + f.bucketName
-			method := "PUT"
-			connName := fmt.Sprintf("%s-%s", f.provider, f.region)
+		url = "http://localhost:1323/tumblebug/resources/objectStorage/" + f.bucketName
+		// url := "http://mc-infra-manager:1323/tumblebug/resources/objectStorage/" + f.bucketName
+		method = http.MethodPut
 
-			_, err := utils.RequestTumblebug(url, method, connName, nil)
-			if err != nil {
-				return nil
-			}
-
-			// input := &s3.CreateBucketInput{Bucket: aws.String(f.bucketName)}
-			// if f.provider == "aws" {
-			// 	input.CreateBucketConfiguration = &types.CreateBucketConfiguration{
-			// 		LocationConstraint: types.BucketLocationConstraint(f.region),
-			// 	}
-			// }
-			// _, err := f.client.CreateBucket(f.ctx, input)
+		_, err := utils.RequestTumblebug(url, method, connName, nil)
+		if err != nil {
+			fmt.Println("create error: ", err.Error())
 			return err
 		}
-		return err
+
+		return nil
 	}
-	return err
+	return nil
+	// return err
 }
 
 // Delete Bucket
@@ -145,10 +129,10 @@ func (f *S3FS) DeleteBucket() error {
 	if len(objList) != 0 {
 		// Divide objectIds into batches of 1000
 		const batchSize = 1000
-		var objectIds []types.ObjectIdentifier
+		var objectIds []string
 
 		for _, object := range objList {
-			objectIds = append(objectIds, types.ObjectIdentifier{Key: aws.String(object.Key)})
+			objectIds = append(objectIds, object.Key)
 
 			// When we reach batch size, delete objects
 			if len(objectIds) == batchSize {
@@ -156,7 +140,7 @@ func (f *S3FS) DeleteBucket() error {
 					return err
 				}
 				// Reset objectIds for the next batch
-				objectIds = []types.ObjectIdentifier{}
+				objectIds = []string{}
 			}
 		}
 
@@ -169,7 +153,12 @@ func (f *S3FS) DeleteBucket() error {
 	}
 
 	// Delete the bucket
-	_, err = f.client.DeleteBucket(f.ctx, &s3.DeleteBucketInput{Bucket: &f.bucketName})
+	url := "http://localhost:1323/tumblebug/resources/objectStorage/" + f.bucketName
+	// url := "http://mc-infra-manager:1323/tumblebug/resources/objectStorage/" + f.bucketName
+	method := http.MethodDelete
+	connName := fmt.Sprintf("%s-%s", f.provider, f.region)
+
+	_, err = utils.RequestTumblebug(url, method, connName, nil)
 	if err != nil {
 		return err
 	}
@@ -178,12 +167,31 @@ func (f *S3FS) DeleteBucket() error {
 }
 
 // deleteObjectBatch deletes a batch of objects
-func (f *S3FS) deleteObjectBatch(objectIds []types.ObjectIdentifier) error {
-	_, err := f.client.DeleteObjects(f.ctx, &s3.DeleteObjectsInput{
-		Bucket: aws.String(f.bucketName),
-		Delete: &types.Delete{Objects: objectIds},
-	})
-	return err
+func (f *S3FS) deleteObjectBatch(keys []string) error {
+	url := "http://localhost:1323/tumblebug/resources/objectStorage/" + f.bucketName + "?delete=true"
+	// url := "http://mc-infra-manager:1323/tumblebug/resources/objectStorage/" + f.bucketName
+	method := http.MethodPost
+	connName := fmt.Sprintf("%s-%s", f.provider, f.region)
+
+	deleteReq := models.DeleteRequest{
+		XMLNS: "http://s3.amazonaws.com/doc/2006-03-01/",
+	}
+	for _, key := range keys {
+		deleteReq.Objects = append(deleteReq.Objects, models.S3Object{Key: key})
+	}
+	// 보기 좋게 들여쓰기된 XML 생성
+	output, err := xml.MarshalIndent(deleteReq, "", "    ")
+	if err != nil {
+		return err
+	}
+
+	// XML 헤더 추가
+	_, rerr := utils.RequestTumblebug(url, method, connName, []byte(xml.Header+string(output)))
+	if rerr != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Open function using pipeline
@@ -283,7 +291,7 @@ func New(provider models.Provider, client *s3.Client, bucketName, region string)
 func (f *S3FS) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*models.Object, error) {
 	log.Debug().Msg("[S3FS] filtering")
 	var out []*models.Object
-	var token *string
+	// var token *string
 
 	var prefix *string
 	if flt != nil && flt.Path != "" {
@@ -292,20 +300,26 @@ func (f *S3FS) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*models.Obje
 	}
 
 	for {
-		resp, err := f.client.ListObjectsV2(f.ctx, &s3.ListObjectsV2Input{
-			Bucket:            aws.String(f.bucketName),
-			ContinuationToken: token,
-			Prefix:            prefix,
-		})
+		url := fmt.Sprintf("%s%s", "http://localhost:1323/tumblebug/resources/objectStorage/", f.bucketName)
+		method := http.MethodGet
+		connName := fmt.Sprintf("%s-%s", f.provider, f.region)
+
+		result, err := utils.RequestTumblebug(url, method, connName, nil)
 		if err != nil {
 			return nil, err
 		}
 
+		var resp models.ListBucketResult
+		if err := json.Unmarshal(result, &resp); err != nil {
+			fmt.Println("error: ", err.Error())
+			return []*models.Object{}, fmt.Errorf("failed to get objects: %w", err)
+		}
+
 		for _, o := range resp.Contents {
 			c := filtering.Candidate{
-				Key:          aws.ToString(o.Key),
-				Size:         aws.ToInt64(o.Size),
-				LastModified: aws.ToTime(o.LastModified),
+				Key:          o.Key,
+				Size:         o.Size,
+				LastModified: o.LastModified,
 			}
 
 			log.Debug().Str("key", c.Key).Int64("size", c.Size).
@@ -325,19 +339,17 @@ func (f *S3FS) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*models.Obje
 			}
 
 			out = append(out, &models.Object{
-				ETag:         aws.ToString(o.ETag),
+				ETag: o.ETag,
+				// ETag:         aws.ToString(o.ETag),
 				Key:          c.Key,
 				LastModified: c.LastModified,
 				Size:         c.Size,
-				StorageClass: string(o.StorageClass),
+				StorageClass: o.StorageClass,
 				Provider:     f.provider,
 			})
 		}
 
-		if resp.NextContinuationToken == nil {
-			break
-		}
-		token = resp.NextContinuationToken
+		break
 	}
 	return out, nil
 }
@@ -349,7 +361,7 @@ func (f *S3FS) ObjectList() ([]*models.Object, error) {
 func (f *S3FS) BucketList() ([]models.Bucket, error) {
 	url := "http://localhost:1323/tumblebug/resources/objectStorage"
 	// url := "http://mc-infra-manager:1323/tumblebug/resources/objectStorage"
-	method := "GET"
+	method := http.MethodGet
 	connName := fmt.Sprintf("%s-%s", f.provider, f.region)
 
 	body, err := utils.RequestTumblebug(url, method, connName, nil)
@@ -359,7 +371,7 @@ func (f *S3FS) BucketList() ([]models.Bucket, error) {
 
 	// Parse the response to extract public key and token ID
 	var res models.ListAllMyBucketsResult
-	if err := xml.Unmarshal(body, &res); err != nil {
+	if err := json.Unmarshal(body, &res); err != nil {
 		fmt.Println("error: ", err.Error())
 		return []models.Bucket{}, fmt.Errorf("failed to get buckets: %w", err)
 	}

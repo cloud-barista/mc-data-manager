@@ -3,6 +3,7 @@ package service
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"sort"
 	"sync"
 	"time"
@@ -38,7 +39,7 @@ func GetRegions(cspType string) []string {
 	// CSP별 endpoint 확인
 	url := fmt.Sprintf("http://localhost:1323/tumblebug/provider/%s/region", cspType)
 	// url := fmt.Sprintf("http://mc-infra-manager:1323/tumblebug/provider/%s/region", cspType)
-	method := "GET"
+	method := http.MethodGet
 
 	// API 호출
 	body, err := utils.RequestTumblebug(url, method, "", nil)

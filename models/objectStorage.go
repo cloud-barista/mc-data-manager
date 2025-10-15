@@ -1,6 +1,9 @@
 package models
 
-import "encoding/xml"
+import (
+	"encoding/xml"
+	"time"
+)
 
 type ObjectFilterParams struct {
 	Path              string   `json:"path"`
@@ -19,12 +22,10 @@ type BucketListResponse struct {
 }
 
 type ListAllMyBucketsResult struct {
-	XMLName xml.Name `xml:"ListAllMyBucketsResult"`
-	XMLNS   string   `xml:"xmlns,attr"`
-	Owner   Owner    `xml:"Owner"`
+	Owner   Owner `json:"Owner"`
 	Buckets struct {
-		Bucket []Bucket `xml:"Bucket"`
-	} `xml:"Buckets"`
+		Bucket []Bucket `json:"Bucket"`
+	} `json:"Buckets"`
 }
 
 // 변환 후 구조
@@ -33,11 +34,38 @@ type SimpleBuckets struct {
 }
 
 type Owner struct {
-	ID          string `xml:"ID"`
-	DisplayName string `xml:"DisplayName"`
+	ID          string `json:"ID"`
+	DisplayName string `json:"DisplayName"`
 }
 
 type Bucket struct {
-	Name         string `xml:"Name" json:"name"`
-	CreationDate string `xml:"CreationDate" json:"creationDate"`
+	Name         string `json:"Name"`
+	CreationDate string `json:"CreationDate"`
+}
+
+type ListBucketResult struct {
+	Name        string     `json:"Name"`
+	Prefix      string     `json:"Prefix"`
+	Marker      string     `json:"Marker"`
+	MaxKeys     int        `json:"MaxKeys"`
+	IsTruncated bool       `json:"IsTruncated"`
+	Contents    []Contents `json:"Contents"`
+}
+
+type Contents struct {
+	Key          string    `json:"Key"`
+	LastModified time.Time `json:"LastModified"`
+	ETag         string    `json:"ETag"`
+	Size         int64     `json:"Size"`
+	StorageClass string    `json:"StorageClass"`
+}
+
+type DeleteRequest struct {
+	XMLName xml.Name   `xml:"Delete"`
+	XMLNS   string     `xml:"xmlns,attr"`
+	Objects []S3Object `xml:"Object"`
+}
+
+type S3Object struct {
+	Key string `xml:"Key"`
 }

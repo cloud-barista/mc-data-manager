@@ -17,6 +17,7 @@ func RequestTumblebug(url string, method string, connName string, jsonBody []byt
 	username := "default"
 	password := "default"
 	req.SetBasicAuth(username, password)
+	req.Header.Add("Accept", "application/json")
 	if connName != "" {
 		req.Header.Set("credential", connName)
 	}
