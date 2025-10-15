@@ -71,7 +71,7 @@
                             </select>
                             <label for="sourceBucket">Bucket</label>
                         </div>
-                        <button type="button" class="btn btn-primary rounded-1 ms-3" id="getBtn">Search</button>
+                        <button type="button" class="btn btn-primary rounded-1 ms-3" id="sourceBtn">Search</button>
                     </div>
         
                     <div class="mt-2 ms-3" style="display: flex; align-items: center;">
@@ -178,17 +178,25 @@
                                 </select>
                                 <label for="mig-gcp-region">Select Region</label>
                             </div>
-                        </div>        
-                        <div class="input-group">
+                        </div>
+                        <div class="input-group mb-3 me-1">
                             <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
                             <div class="form-floating">
                                 <!-- <input type="text" class="form-control rounded-end" id="mig-gcp-bucket" name="targetPoint[bucket]" placeholder="Bucket" required> -->
-                                <select class="form-select form-select-sm rounded-end" id="targetBucket" name="targetPoint[bucket]">
+                                <select class="form-select form-select-sm rounded-end" id="targetBucket">
+                                <!-- <select class="form-select form-select-sm rounded-end" id="targetBucket" name="targetPoint[bucket]"> -->
                                     <option value="-" selected>-</option>
                                 </select>
-                                <label for="mig-gcp-bucket">Bucket</label>
+                                <label for="targetBucket">Bucket</label>
                             </div>
-                            <button type="button" class="btn btn-primary rounded-1 ms-3" id="getBtn">Search</button>
+                            <button type="button" class="btn btn-primary rounded-1 ms-3" id="targetBtn">Search</button>
+                        </div>
+                        <div class="input-group" id="targetNewBucket" style="display: none;">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
+                            <div class="form-floating">
+                                <input type="text" class="form-control rounded-end" id="newBucket" name="targetPoint[bucket]" placeholder="Bucket" required>
+                                <label for="newBucket">New Bucket</label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -197,86 +205,185 @@
     </div>
 </div>
 <script>
-    const getBtn = document.getElementById("getBtn");
-    const credSelect = document.getElementById("sourceCredentialSelect")
-    const regionSelect = document.getElementById("sourceRegionSelect")
-    const bucketSelect = document.getElementById("sourceBucket");
-    const provider = document.getElementById("sourcePoint[provider]")
-    // const credSelect = document.getElementById("targetCredentialSelect")
-    // const regionSelect = document.getElementById("targetRegionSelect")
-    // const bucketSelect = document.getElementById("targetBucket");
-    // const provider = document.getElementById("targetPoint[provider]")
+    const sourceBtn = document.getElementById("sourceBtn");
+    const sourceCred = document.getElementById("sourceCredentialSelect")
+    const sourceRegion = document.getElementById("sourceRegionSelect")
+    const sourceBucket = document.getElementById("sourceBucket");
+    const sourceProvider = document.getElementById("sourcePoint[provider]")
+    const targetBtn = document.getElementById("targetBtn");
+    const targetCred = document.getElementById("targetCredentialSelect")
+    const targetRegion = document.getElementById("targetRegionSelect")
+    const targetBucket = document.getElementById("targetBucket");
+    const targetProvider = document.getElementById("targetPoint[provider]")
+    const bucketInput = document.getElementById("newBucket");
 
-    credSelect.addEventListener("change", () => {
+    targetBucket.addEventListener("change", () => {
+        toggleNewBucket()
+    })
+
+    sourceCred.addEventListener("change", () => {
         console.log("credential changed")
-        resetBuckets(false)
+        const cred = sourceCred.value;
+        if (cred == "none" || !cred) {
+            resetBuckets("source", false);
+        }
     })
 
-    regionSelect.addEventListener("change", () => {
+    targetCred.addEventListener("change", () => {
+        console.log("credential changed")
+        const cred = targetCred.value;
+        if (cred == "none" || !cred) {
+            resetBuckets("target", false);
+            toggleNewBucket()
+
+            return
+        }
+        resetBuckets("target", true)
+
+        const option = document.createElement("option");
+        option.value = "new";
+        option.textContent = "create new bucket";
+        targetBucket.appendChild(option);
+        toggleNewBucket()
+    })
+
+    sourceRegion.addEventListener("change", () => {
         console.log("region changed")
-        resetBuckets(false)
+        const region = sourceRegion.value;
+        if (region == "none" || !region) {
+            resetBuckets("source", false);
+        }
     })
 
-    getBtn.addEventListener("click", () => {
-        const region = regionSelect.value;
+    targetRegion.addEventListener("change", () => {
+        console.log("region changed")
+        const region = targetRegion.value;
         if (region == "none" || !region) {
+            resetBuckets("target", false);
+            toggleNewBucket()
+
+            return
+        }
+        resetBuckets("target", true)
+        toggleNewBucket()
+    })
+
+    sourceBtn.addEventListener("click", () => {
+        if (sourceRegion.value == "none" || !sourceRegion.value) {
             return;
         }
+        sourceBtn.disabled = true;
+        sourceBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;';
 
-        jsonData = {
-            "targetPoint": {
-                "credentialId": parseInt(credSelect.value),
-                "region": region,
-                "provider": provider.value
-            }
-        }
-
-        req = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(jsonData)
-        };
-
-        let url = "/objectstorage/buckets";
-        fetch(url, req)
-            .then(response => {
-                return response.json();
-            })
+        fetchRegionList(sourceCred.value, sourceRegion.value, sourceProvider.value)
             .then(json => {
-                console.log(json);
-                resetBuckets(true)
-
-                if(json.buckets.length === 0) {                    
-                    const option = document.createElement("option");
-                    option.value = "none";
-                    option.textContent = "no buckets found";
-                    bucketSelect.appendChild(option);
-                } else {
+                sourceBucket.replaceChildren();
+                
+                if(json.buckets.length > 0) {
                     json.buckets.forEach(optionData => {
                         const option = document.createElement("option");
                         option.value = optionData.Name;
                         option.textContent = optionData.Name;
-                        bucketSelect.appendChild(option);
+                        sourceBucket.appendChild(option);
                     });
+                } else {
+                    const option = document.createElement("option");
+                    option.value = "none";
+                    option.textContent = "no buckets found";
+                    sourceBucket.appendChild(option);
                 }
-
             })
             .catch(reason => {
                 console.log(reason);
                 alert(reason);
             })
+            .finally(() => {
+                sourceBtn.disabled = false;
+                sourceBtn.innerHTML = 'Search';
+            })
     });
 
-    function resetBuckets(hardReset) {
-        let option
+    targetBtn.addEventListener("click", () => {
+        if (targetRegion.value == "none" || !targetRegion.value) {
+            return;
+        }
+        targetBtn.disabled = true;
+        targetBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;';
+
+        fetchRegionList(targetCred.value, targetRegion.value, targetProvider.value)
+            .then(json => {
+                resetBuckets("target", true)
+
+                json.buckets.forEach(optionData => {
+                    const option = document.createElement("option");
+                    option.value = optionData.Name;
+                    option.textContent = optionData.Name;
+                    targetBucket.appendChild(option);
+                });
+            })
+            .catch(reason => {
+                console.log(reason);
+                alert(reason);
+            })
+            .finally(() => {
+                targetBtn.disabled = false;
+                targetBtn.innerHTML = 'Search';
+                toggleNewBucket()
+            })
+    });
+
+    function resetBuckets(targetSelect, hardReset) {
+        let option = document.createElement("option");
         if(!hardReset) {
-            option = document.createElement("option");
             option.value = "none";
             option.textContent = "-";
+        } else {
+            option.value = "new";
+            option.textContent = "create new bucket";
         }
         
-        bucketSelect.replaceChildren(option);
+        if(targetSelect == "source") {
+            sourceBucket.replaceChildren(option)
+        } else {
+            targetBucket.replaceChildren(option);
+        }
+    }
+
+    function toggleNewBucket() {
+        const newBucket = document.getElementById("targetNewBucket")
+        if (targetBucket.value == "new") {
+            newBucket.style.display = ""
+            bucketInput.value = ""
+        } else {
+            newBucket.style.display = "none"
+            bucketInput.value = targetBucket.value
+        }
+    }
+
+    function fetchRegionList(credentialId, region, provider) {
+        const url = "/objectstorage/buckets";
+        const jsonData = {
+            "targetPoint": {
+                "credentialId": parseInt(credentialId),
+                "region": region,
+                "provider": provider
+            }
+        }
+        const req = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        }
+
+        return fetch(url, req)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        
+                        return response.json();
+                    });
     }
 </script>
