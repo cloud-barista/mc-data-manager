@@ -209,30 +209,34 @@
     </div>
 </div>
 <script>
-    const sourceBtn = document.getElementById("sourceBtn");
-    const sourceCred = document.getElementById("sourceCredentialSelect")
-    const sourceRegion = document.getElementById("sourceRegionSelect")
-    const sourceBucket = document.getElementById("sourceBucket");
-    const sourceProvider = document.getElementById("sourcePoint[provider]")
-    const targetBtn = document.getElementById("targetBtn");
-    const targetCred = document.getElementById("targetCredentialSelect")
-    const targetRegion = document.getElementById("targetRegionSelect")
-    const targetBucket = document.getElementById("targetBucket");
-    const targetProvider = document.getElementById("targetPoint[provider]")
+    const source = {
+        btn: document.getElementById("sourceBtn"),
+        cred: document.getElementById("sourceCredentialSelect"),
+        region: document.getElementById("sourceRegionSelect"),
+        bucket: document.getElementById("sourceBucket"),
+        provider: document.getElementById("sourcePoint[provider]")
+    };
+    const target = {
+        btn: document.getElementById("targetBtn"),
+        cred: document.getElementById("targetCredentialSelect"),
+        region: document.getElementById("targetRegionSelect"),
+        bucket: document.getElementById("targetBucket"),
+        provider: document.getElementById("targetPoint[provider]")
+    };
     const bucketInput = document.getElementById("newBucket");
 
-    targetBucket.addEventListener("change", () => {
+    target.bucket.addEventListener("change", () => {
         toggleNewBucket()
     })
 
-    sourceCred.addEventListener("change", () => {
+    source.cred.addEventListener("change", () => {
         console.log("credential changed")
         resetBuckets("source", false);
     })
 
-    targetCred.addEventListener("change", () => {
+    target.cred.addEventListener("change", () => {
         console.log("credential changed")
-        const cred = targetCred.value;
+        const cred = target.cred.value;
         if (cred == "none" || !cred) {
             resetBuckets("target", false);
             toggleNewBucket()
@@ -240,22 +244,17 @@
             return
         }
         resetBuckets("target", true)
-
-        const option = document.createElement("option");
-        option.value = "new";
-        option.textContent = "create new bucket";
-        targetBucket.appendChild(option);
         toggleNewBucket()
     })
 
-    sourceRegion.addEventListener("change", () => {
+    source.region.addEventListener("change", () => {
         console.log("region changed")
         resetBuckets("source", false);
     })
 
-    targetRegion.addEventListener("change", () => {
+    target.region.addEventListener("change", () => {
         console.log("region changed")
-        const region = targetRegion.value;
+        const region = target.region.value;
         if (region == "none" || !region) {
             resetBuckets("target", false);
             toggleNewBucket()
@@ -266,29 +265,29 @@
         toggleNewBucket()
     })
 
-    sourceBtn.addEventListener("click", () => {
-        if (sourceRegion.value == "none" || !sourceRegion.value) {
+    source.btn.addEventListener("click", () => {
+        if (source.region.value == "none" || !source.region.value) {
             return;
         }
-        sourceBtn.disabled = true;
-        sourceBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;';
+        source.btn.disabled = true;
+        source.btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;';
 
-        fetchRegionList(sourceCred.value, sourceRegion.value, sourceProvider.value)
+        fetchRegionList(source.cred.value, source.region.value, source.provider.value)
             .then(json => {
-                sourceBucket.replaceChildren();
+                source.bucket.replaceChildren();
                 
                 if(json.buckets.length > 0) {
                     json.buckets.forEach(optionData => {
                         const option = document.createElement("option");
                         option.value = optionData.Name;
                         option.textContent = optionData.Name;
-                        sourceBucket.appendChild(option);
+                        source.bucket.appendChild(option);
                     });
                 } else {
                     const option = document.createElement("option");
                     option.value = "none";
                     option.textContent = "no buckets found";
-                    sourceBucket.appendChild(option);
+                    source.bucket.appendChild(option);
                 }
             })
             .catch(reason => {
@@ -296,19 +295,19 @@
                 alert(reason);
             })
             .finally(() => {
-                sourceBtn.disabled = false;
-                sourceBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i>';
+                source.btn.disabled = false;
+                source.btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i>';
             })
     });
 
-    targetBtn.addEventListener("click", () => {
-        if (targetRegion.value == "none" || !targetRegion.value) {
+    target.btn.addEventListener("click", () => {
+        if (target.region.value == "none" || !target.region.value) {
             return;
         }
-        targetBtn.disabled = true;
-        targetBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;';
+        target.btn.disabled = true;
+        target.btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;';
 
-        fetchRegionList(targetCred.value, targetRegion.value, targetProvider.value)
+        fetchRegionList(target.cred.value, target.region.value, target.provider.value)
             .then(json => {
                 resetBuckets("target", true)
 
@@ -316,7 +315,7 @@
                     const option = document.createElement("option");
                     option.value = optionData.Name;
                     option.textContent = optionData.Name;
-                    targetBucket.appendChild(option);
+                    target.bucket.appendChild(option);
                 });
             })
             .catch(reason => {
@@ -324,8 +323,8 @@
                 alert(reason);
             })
             .finally(() => {
-                targetBtn.disabled = false;
-                targetBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i>';
+                target.btn.disabled = false;
+                target.btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i>';
                 toggleNewBucket()
             })
     });
@@ -341,20 +340,20 @@
         }
         
         if(targetSelect == "source") {
-            sourceBucket.replaceChildren(option)
+            source.bucket.replaceChildren(option)
         } else {
-            targetBucket.replaceChildren(option);
+            target.bucket.replaceChildren(option);
         }
     }
 
     function toggleNewBucket() {
-        const newBucket = document.getElementById("targetNewBucket")
-        if (targetBucket.value == "new") {
-            newBucket.style.display = ""
+        const newBucketDiv = document.getElementById("targetNewBucket")
+        if (target.bucket.value == "new") {
+            newBucketDiv.style.display = ""
             bucketInput.value = ""
         } else {
-            newBucket.style.display = "none"
-            bucketInput.value = targetBucket.value
+            newBucketDiv.style.display = "none"
+            bucketInput.value = target.bucket.value
         }
     }
 
