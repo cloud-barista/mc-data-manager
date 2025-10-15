@@ -493,7 +493,7 @@ function migrationFormSubmit() {
             jsonData.sourcePoint.endpoint = "https://kr.object.ncloudstorage.com"
         }
 
-        console.log('jsonData: ', jsonData);        
+        console.log('jsonData: ', jsonData);
 
         console.log(url);
 
