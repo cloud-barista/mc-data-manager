@@ -71,7 +71,9 @@
                             </select>
                             <label for="sourceBucket">Bucket</label>
                         </div>
-                        <button type="button" class="btn btn-primary rounded-1 ms-3" id="sourceBtn">Search</button>
+                        <button type="button" class="btn btn-primary rounded-1 ms-2" id="sourceBtn">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
                     </div>
         
                     <div class="mt-2 ms-3" style="display: flex; align-items: center;">
@@ -189,7 +191,9 @@
                                 </select>
                                 <label for="targetBucket">Bucket</label>
                             </div>
-                            <button type="button" class="btn btn-primary rounded-1 ms-3" id="targetBtn">Search</button>
+                            <button type="button" class="btn btn-primary rounded-1 ms-2" id="targetBtn">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </button>
                         </div>
                         <div class="input-group" id="targetNewBucket" style="display: none;">
                             <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
@@ -299,7 +303,7 @@
             })
             .finally(() => {
                 sourceBtn.disabled = false;
-                sourceBtn.innerHTML = 'Search';
+                sourceBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i>';
             })
     });
 
@@ -327,7 +331,7 @@
             })
             .finally(() => {
                 targetBtn.disabled = false;
-                targetBtn.innerHTML = 'Search';
+                targetBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i>';
                 toggleNewBucket()
             })
     });
