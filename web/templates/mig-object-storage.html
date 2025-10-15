@@ -227,10 +227,7 @@
 
     sourceCred.addEventListener("change", () => {
         console.log("credential changed")
-        const cred = sourceCred.value;
-        if (cred == "none" || !cred) {
-            resetBuckets("source", false);
-        }
+        resetBuckets("source", false);
     })
 
     targetCred.addEventListener("change", () => {
@@ -253,10 +250,7 @@
 
     sourceRegion.addEventListener("change", () => {
         console.log("region changed")
-        const region = sourceRegion.value;
-        if (region == "none" || !region) {
-            resetBuckets("source", false);
-        }
+        resetBuckets("source", false);
     })
 
     targetRegion.addEventListener("change", () => {
