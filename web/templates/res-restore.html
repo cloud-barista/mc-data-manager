@@ -51,9 +51,10 @@
                 </div>
             </div>
             <div class="form-section" id="aws-objectstorage" style="display:none;">
-                <div class="mb-3">    
+                <div class="input-group mb-3 me-1">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span>  
                     <div class="form-floating">
-                        <select class="form-select form-select-sm rounded-3" id="mig-aws-region" name="targetPoint[region]">
+                        <select class="form-select form-select-sm rounded-end" id="mig-aws-region" name="targetPoint[region]">
                         {{ range $index, $value := .AWSRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}
@@ -72,9 +73,10 @@
 
             <div class="form-section" id="gcp-objectstorage" style="display:none;">
                 <!-- <label class="form-label">GCP ObjectStorage Settings</label> -->
-                <div class="mb-3">    
+                <div class="input-group mb-3 me-1">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span> 
                     <div class="form-floating">
-                        <select class="form-select form-select-sm rounded-3" id="mig-gcp-region" name="targetPoint[region]">
+                        <select class="form-select form-select-sm rounded-end" id="mig-gcp-region" name="targetPoint[region]">
                         {{ range $index, $value := .GCPRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}
@@ -94,9 +96,10 @@
 
             <div class="form-section" id="ncp-objectstorage" style="display:none;">
                 <!-- <label class="form-label">NCP ObjectStorage Settings</label> -->
-                <div class="mb-3">    
+                <div class="input-group mb-3 me-1">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span> 
                     <div class="form-floating">
-                        <select class="form-select form-select-sm rounded-3" id="mig-ncp-region" name="targetPoint[region]">
+                        <select class="form-select form-select-sm rounded-end" id="mig-ncp-region" name="targetPoint[region]">
                         {{ range $index, $value := .NCPRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}
@@ -164,11 +167,12 @@
             </div>
 
 
-            <div class="form-section" id="aws-nrdb" style="display:none;">
+            <div class="form-section" id="aws-nrdbms" style="display:none;">
                 <!-- <label class="form-label">AWS NRDB Settings</label> -->
-                <div class="mb-3">    
+                <div class="input-group mb-3 me-1">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span> 
                     <div class="form-floating">
-                        <select class="form-select form-select-sm rounded-3" id="nrdb-aws-region" name="targetPoint[region]">
+                        <select class="form-select form-select-sm rounded-end" id="nrdb-aws-region" name="targetPoint[region]">
                         {{ range $index, $value := .AWSRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}
@@ -178,11 +182,12 @@
                 </div>
             </div>
 
-            <div class="form-section" id="gcp-nrdb" style="display:none;">
+            <div class="form-section" id="gcp-nrdbms" style="display:none;">
                 <!-- <label class="form-label">GCP NRDB Settings</label> -->
-                <div class="mb-3">    
+                <div class="input-group mb-3 me-1">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span> 
                     <div class="form-floating">
-                        <select class="form-select form-select-sm rounded-3" id="nrdb-gcp-region" name="targetPoint[region]">
+                        <select class="form-select form-select-sm rounded-end" id="nrdb-gcp-region" name="targetPoint[region]">
                         {{ range $index, $value := .GCPRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}
@@ -192,11 +197,12 @@
                 </div>
             </div>
 
-            <div class="form-section" id="ncp-nrdb" style="display:none;">
+            <div class="form-section" id="ncp-nrdbms" style="display:none;">
                 <!-- <label class="form-label">NCP NRDB Settings</label> -->
-                <div class="mb-3">    
+                <div class="input-group mb-3 me-1">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span> 
                     <div class="form-floating">
-                        <select class="form-select form-select-sm rounded-3" id="nrdb-ncp-region" name="targetPoint[region]">
+                        <select class="form-select form-select-sm rounded-end" id="nrdb-ncp-region" name="targetPoint[region]">
                         {{ range $index, $value := .NCPRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}

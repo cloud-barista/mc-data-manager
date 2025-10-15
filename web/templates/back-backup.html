@@ -46,9 +46,10 @@
                 </div>
             </div>            
             <div class="form-section" id="aws-objectstorage" style="display:none;">
-                <div class="mb-3">    
+                <div class="input-group mb-3 me-1">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span>   
                     <div class="form-floating">
-                        <select class="form-select form-select-sm rounded-3" id="mig-aws-region" name="sourcePoint[region]">
+                        <select class="form-select form-select-sm rounded-end" id="mig-aws-region" name="sourcePoint[region]">
                         {{ range $index, $value := .AWSRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}
@@ -65,9 +66,10 @@
                 </div>
             </div>
             <div class="form-section" id="gcp-objectstorage" style="display:none;">
-                <div class="mb-3">    
+                <div class="input-group mb-3 me-1">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span> 
                     <div class="form-floating">
-                        <select class="form-select form-select-sm rounded-3" id="mig-gcp-region" name="sourcePoint[region]">
+                        <select class="form-select form-select-sm rounded-end" id="mig-gcp-region" name="sourcePoint[region]">
                         {{ range $index, $value := .GCPRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}
@@ -84,9 +86,10 @@
                 </div>
             </div>
             <div class="form-section" id="ncp-objectstorage" style="display:none;">
-                <div class="mb-3">    
+                <div class="input-group mb-3 me-1">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span>   
                     <div class="form-floating">
-                        <select class="form-select form-select-sm rounded-3" id="mig-ncp-region" name="sourcePoint[region]">
+                        <select class="form-select form-select-sm rounded-end" id="mig-ncp-region" name="sourcePoint[region]">
                         {{ range $index, $value := .NCPRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}
@@ -149,9 +152,10 @@
                 </div>
             </div>
             <div class="form-section" id="aws-nrdbms" style="display:none;">
-                <div class="mb-3">    
+                <div class="input-group mb-3 me-1">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span> 
                     <div class="form-floating">
-                        <select class="form-select form-select-sm rounded-3" id="nrdbms-aws-region" name="sourcePoint[region]">
+                        <select class="form-select form-select-sm rounded-end" id="nrdbms-aws-region" name="sourcePoint[region]">
                         {{ range $index, $value := .AWSRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}
@@ -161,9 +165,10 @@
                 </div>
             </div>
             <div class="form-section" id="gcp-nrdbms" style="display:none;">
-                <div class="mb-3">    
+                <div class="input-group mb-3 me-1">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span>  
                     <div class="form-floating">
-                        <select class="form-select form-select-sm rounded-3" id="nrdbms-gcp-region" name="sourcePoint[region]">
+                        <select class="form-select form-select-sm rounded-end" id="nrdbms-gcp-region" name="sourcePoint[region]">
                         {{ range $index, $value := .GCPRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}
@@ -173,9 +178,10 @@
                 </div>
             </div>
             <div class="form-section" id="ncp-nrdbms" style="display:none;">
-                <div class="mb-3">    
+                <div class="input-group mb-3 me-1">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span> 
                     <div class="form-floating">
-                        <select class="form-select form-select-sm rounded-3" id="nrdbms-ncp-region" name="sourcePoint[region]">
+                        <select class="form-select form-select-sm rounded-end" id="nrdbms-ncp-region" name="sourcePoint[region]">
                         {{ range $index, $value := .NCPRegions }}
                         <option value="{{ $value }}">{{ $value }}</option>
                         {{ end }}
