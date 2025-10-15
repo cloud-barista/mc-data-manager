@@ -2,7 +2,6 @@ package service
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"sort"
 	"sync"
@@ -37,8 +36,8 @@ func GetRegions(cspType string) []string {
 	}
 
 	// CSP별 endpoint 확인
-	url := fmt.Sprintf("http://localhost:1323/tumblebug/provider/%s/region", cspType)
-	// url := fmt.Sprintf("http://mc-infra-manager:1323/tumblebug/provider/%s/region", cspType)
+	url := "http://localhost:1323/tumblebug/connConfig?filterRegionRepresentative=true"
+	// url := "http://mc-infra-manager:1323/connConfig?filterRegionRepresentative=true"
 	method := http.MethodGet
 
 	// API 호출
@@ -47,15 +46,17 @@ func GetRegions(cspType string) []string {
 		return nil
 	}
 
-	var regions models.Regions
-	if err := json.Unmarshal(body, &regions); err != nil {
+	var conns models.ConnectionConfigList
+	if err := json.Unmarshal(body, &conns); err != nil {
 		return nil
 	}
 
-	// regionName-zone 평탄화
 	var result []string
-	for _, region := range regions.Regions {
-		result = append(result, region.RegionName)
+	for _, connConfig := range conns.ConnectionConfig {
+		if connConfig.ProviderName != cspType {
+			continue
+		}
+		result = append(result, connConfig.RegionDetail.RegionName)
 	}
 	sort.Strings(result)
 

@@ -486,6 +486,12 @@ function migrationFormSubmit() {
             alert("target credential not selected");
             return
         }
+        if(jsonData.targetPoint.bucket == "none" || jsonData.targetPoint.bucket == "-"
+            || jsonData.sourcePoint.bucket == "none" || jsonData.sourcePoint.bucket == "-"
+        ) {
+            alert("please select or create bucket");
+            return
+        }
 
         loadingButtonOn();
         resultCollpase();
