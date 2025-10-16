@@ -17,7 +17,6 @@ package models
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"time"
 )
@@ -26,6 +25,8 @@ type CredentialCreateRequest struct {
 	CspType        string          `json:"cspType"`
 	Name           string          `json:"name,omitempty"`
 	CredentialJson json.RawMessage `json:"credentialJson,omitempty"`
+	S3AccessKey    string          `json:"s3AccessKey"`
+	S3SecretKey    string          `json:"s3SecretKey"`
 }
 
 type CredentialListResponse struct {
@@ -38,7 +39,7 @@ type Credential struct {
 	CredentialId   uint64    `gorm:"column:credentialId;primaryKey;autoIncrement" json:"credentialId"`
 	CspType        string    `gorm:"column:cspType;size:50;not null" json:"cspType"`
 	Name           string    `gorm:"column:name;size:150" json:"name,omitempty"`
-	CredentialJson string    `gorm:"column:credentialJson;type:longtext"json:"credentialJson,omitempty"`
+	CredentialJson string    `gorm:"column:credentialJson;type:longtext" json:"credentialJson,omitempty"`
 	CreatedAt      time.Time `gorm:"column:createAt;autoCreateTime" json:"createdAt"`
 	UpdatedAt      time.Time `gorm:"column:updateAt;autoUpdateTime" json:"updatedAt,omitempty"`
 }
@@ -50,7 +51,7 @@ func (Credential) TableName() string {
 
 func (cr *CredentialCreateRequest) GetCredential() (string, error) {
 	if len(cr.CredentialJson) == 0 {
-		return "", errors.New("credentialJson is empty")
+		return "", fmt.Errorf("credentialJson is empty")
 	}
 
 	switch cr.CspType {

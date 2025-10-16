@@ -54,7 +54,7 @@ func (c *CredentialHandler) CreateCredentialHandler(ctx echo.Context) error {
 	credential, err := c.credetialService.CreateCredential(params)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{
-			Result: logstrings.String(),
+			Result: err.Error(),
 			Error:  nil,
 		})
 	}

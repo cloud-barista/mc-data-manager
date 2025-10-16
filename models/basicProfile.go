@@ -21,6 +21,19 @@ type BaseProfile struct {
 	ProfileName string `json:"profileName" form:"profileName"`
 }
 
+type PublicKeyResponse struct {
+	PublicKeyTokenId string `json:"publicKeyTokenId"`
+	PublicKey        string `json:"publicKey"`
+}
+
+type TumblebugCredentialCreate struct {
+	CredentialHolder                 string            `json:"credentialHolder"`
+	CredentialKeyValueList           map[string]string `json:"credentialKeyValueList"`
+	EncryptedClientAesKeyByPublicKey string            `json:"encryptedClientAesKeyByPublicKey"`
+	ProviderName                     string            `json:"providerName"`
+	PublicKeyTokenId                 string            `json:"publicKeyTokenId"`
+}
+
 type ProfileCredentials struct {
 	AWS AWSCredentials `json:"aws,omitempty"`
 	NCP NCPCredentials `json:"ncp,omitempty"`
