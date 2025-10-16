@@ -1715,7 +1715,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/task": {
+        "/tasks": {
             "get": {
                 "description": "Retrieve a list of all Tasks in the system.",
                 "produces": [
@@ -1784,7 +1784,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/task/{id}": {
+        "/tasks/{id}": {
             "get": {
                 "description": "Get the details of a Task using its ID.",
                 "consumes": [
@@ -1911,17 +1911,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.AWSCredentials": {
-            "type": "object",
-            "properties": {
-                "accessKey": {
-                    "type": "string"
-                },
-                "secretKey": {
-                    "type": "string"
-                }
-            }
-        },
         "models.BackupTask": {
             "type": "object",
             "properties": {
@@ -1930,6 +1919,9 @@ const docTemplate = `{
                 },
                 "operationId": {
                     "type": "string"
+                },
+                "sourceFilter": {
+                    "$ref": "#/definitions/models.ObjectFilterParams"
                 },
                 "sourcePoint": {
                     "$ref": "#/definitions/models.ProviderConfig"
@@ -1944,6 +1936,9 @@ const docTemplate = `{
             "properties": {
                 "dummy": {
                     "$ref": "#/definitions/models.GenFileParams"
+                },
+                "sourceFilter": {
+                    "$ref": "#/definitions/models.ObjectFilterParams"
                 },
                 "sourcePoint": {
                     "$ref": "#/definitions/models.ProviderConfig"
@@ -1965,24 +1960,7 @@ const docTemplate = `{
             }
         },
         "models.CredentialCreateRequest": {
-            "type": "object",
-            "properties": {
-                "aws": {
-                    "$ref": "#/definitions/models.AWSCredentials"
-                },
-                "cspType": {
-                    "type": "string"
-                },
-                "gcp": {
-                    "$ref": "#/definitions/models.GCPCredentials"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "ncp": {
-                    "$ref": "#/definitions/models.NCPCredentials"
-                }
-            }
+            "type": "object"
         },
         "models.DataTask": {
             "type": "object",
@@ -1993,49 +1971,14 @@ const docTemplate = `{
                 "operationId": {
                     "type": "string"
                 },
+                "sourceFilter": {
+                    "$ref": "#/definitions/models.ObjectFilterParams"
+                },
                 "sourcePoint": {
                     "$ref": "#/definitions/models.ProviderConfig"
                 },
                 "targetPoint": {
                     "$ref": "#/definitions/models.ProviderConfig"
-                }
-            }
-        },
-        "models.GCPCredentials": {
-            "type": "object",
-            "properties": {
-                "auth_provider_x509_cert_url": {
-                    "type": "string"
-                },
-                "auth_uri": {
-                    "type": "string"
-                },
-                "client_email": {
-                    "type": "string"
-                },
-                "client_id": {
-                    "type": "string"
-                },
-                "client_x509_cert_url": {
-                    "type": "string"
-                },
-                "private_key": {
-                    "type": "string"
-                },
-                "private_key_id": {
-                    "type": "string"
-                },
-                "project_id": {
-                    "type": "string"
-                },
-                "token_uri": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                },
-                "universe_domain": {
-                    "type": "string"
                 }
             }
         },
@@ -2133,6 +2076,9 @@ const docTemplate = `{
                 "operationId": {
                     "type": "string"
                 },
+                "sourceFilter": {
+                    "$ref": "#/definitions/models.ObjectFilterParams"
+                },
                 "sourcePoint": {
                     "$ref": "#/definitions/models.ProviderConfig"
                 },
@@ -2141,14 +2087,44 @@ const docTemplate = `{
                 }
             }
         },
-        "models.NCPCredentials": {
+        "models.ObjectFilterParams": {
             "type": "object",
             "properties": {
-                "accessKey": {
+                "contains": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "exact": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "maxSize": {
+                    "type": "number"
+                },
+                "minSize": {
+                    "type": "number"
+                },
+                "modifiedAfter": {
                     "type": "string"
                 },
-                "secretKey": {
+                "modifiedBefore": {
                     "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "sizeFilteringUnit": {
+                    "type": "string"
+                },
+                "suffixes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -2157,6 +2133,9 @@ const docTemplate = `{
             "properties": {
                 "bucket": {
                     "type": "string"
+                },
+                "credentialId": {
+                    "type": "integer"
                 },
                 "databaseId": {
                     "type": "string"
@@ -2178,9 +2157,6 @@ const docTemplate = `{
                 },
                 "port": {
                     "type": "string"
-                },
-                "credentialId": {
-                    "type": "integer"
                 },
                 "projectId": {
                     "type": "string"
@@ -2204,6 +2180,9 @@ const docTemplate = `{
                 },
                 "operationId": {
                     "type": "string"
+                },
+                "sourceFilter": {
+                    "$ref": "#/definitions/models.ObjectFilterParams"
                 },
                 "sourcePoint": {
                     "$ref": "#/definitions/models.ProviderConfig"
