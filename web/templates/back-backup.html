@@ -76,13 +76,6 @@
                         </button>
                     </div>
                 </div>
-                <div class="input-group d-none">
-                    <span class="input-group-text rounded-start"><i class="fa-solid fa-location-dot"></i></span>
-                    <div class="form-floating">
-                        <input type="text" class="form-control rounded-end" id="back-ncp-endpoint" name="sourcePoint[endpoint]" value="https://kr.object.ncloudstorage.com" placeholder="Endpoint">
-                        <label for="back-ncp-endpoint">Endpoint</label>
-                    </div>
-                </div>
                 <div class="form-section" id="rdbms" style="display:none;">
                     <div class="input-group mb-3" id="rdbmsProvider">
                         <span class="input-group-text rounded-start"><i class="fa-solid fa-cloud"></i></span>
@@ -216,7 +209,7 @@
             });
         });
         
-        document.getElementById('sourcePoint[provider]').addEventListener('change', e => {
+        source.provider.addEventListener('change', e => {
             updateFormVisibility()
         });
     });

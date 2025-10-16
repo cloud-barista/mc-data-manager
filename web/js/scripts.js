@@ -508,10 +508,10 @@ function migrationFormSubmit() {
 
         let url = "/migrate/" + service;
 
-        if ((jsonData.targetPoint.provider == "ncp") || (jsonData.targetPoint.endpoint == "")) {
+        if (jsonData.targetPoint.provider == "ncp" || jsonData.targetPoint.endpoint == "") {
             jsonData.targetPoint.endpoint = "https://kr.object.ncloudstorage.com"
         }
-        if ((jsonData.sourcePoint.provider == "ncp") || (jsonData.sourcePoint.endpoint == "")) {
+        if (jsonData.sourcePoint.provider == "ncp" || jsonData.sourcePoint.endpoint == "") {
             jsonData.sourcePoint.endpoint = "https://kr.object.ncloudstorage.com"
         }
 
@@ -623,8 +623,7 @@ function backUpFormSubmit() {
             alert("credential not selected");
             return
         }
-        if(jsonData.sourcePoint.bucket == "none" || jsonData.sourcePoint.bucket == "-" || jsonData.sourcePoint.bucket == ""
-        ) {
+        if(jsonData.sourcePoint.bucket == "none" || jsonData.sourcePoint.bucket == "-" || jsonData.sourcePoint.bucket == "") {
             alert("please select bucket");
             return
         }
@@ -640,9 +639,10 @@ function backUpFormSubmit() {
         jsonData.sourcePoint.provider = provider
         // console.log(jsonData)
 
-        if (jsonData.sourcePoint.provider != "ncp") {
-            delete jsonData.sourcePoint.endpoint
+        if (service == "objectstorage" && provider == "ncp") {
+            jsonData.sourcePoint.endpoint = "https://kr.object.ncloudstorage.com"
         }
+
         let req = {
             method: 'POST',
             headers: {
@@ -683,9 +683,13 @@ function RestoreFormSubmit() {
         let jsonData = formDataToObject(payload)
 
         const provider = document.getElementById('targetPoint[provider]').value;
-        const service = document.getElementById('srcService').value;
+        const service = document.getElementById('targetService').value;
         if(service != "rdbms" && jsonData.targetPoint.credentialId == "none") {
             alert("credential not selected");
+            return
+        }
+        if(jsonData.targetPoint.bucket == "none" || jsonData.targetPoint.bucket == "-" || jsonData.targetPoint.bucket == "") {
+            alert("please select or create bucket");
             return
         }
 
@@ -697,10 +701,10 @@ function RestoreFormSubmit() {
         console.log(jsonData)
 
         jsonData.targetPoint.credentialId = parseInt(jsonData.targetPoint.credentialId);
-        jsonData.targetPoint.provider = provider
+        jsonData.targetPoint.provider = provider       
 
-        if (jsonData.targetPoint.provider != "ncp") {
-            delete jsonData.targetPoint.endpoint
+        if(service == "objectstorage" && provider == "ncp") {
+            jsonData.targetPoint.endpoint = "https://kr.object.ncloudstorage.com"
         }
 
         let req = {
@@ -767,10 +771,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     } 
 });
-
-
-
-
 
 document.addEventListener('DOMContentLoaded', function () {
     const genServiceLink = document.getElementById('genServiceLink');
