@@ -162,6 +162,10 @@ function generateFormSubmit() {
         requestBody.targetPoint.region = jsonData?.["targetPoint[region]"]?? null
         delete requestBody.targetPoint["targetPoint[region]"]
         delete requestBody["targetPoint[region]"]
+
+        requestBody.targetPoint.bucket = jsonData?.["targetPoint[bucket]"]?? null
+        delete requestBody.targetPoint["targetPoint[bucket]"]
+        delete requestBody["targetPoint[bucket]"]
         
         if (requestBody.targetPoint.provider != "ncp") {
             delete requestBody.targetPoint.endpoint

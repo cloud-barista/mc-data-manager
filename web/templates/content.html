@@ -58,7 +58,7 @@
 
             <!-- SQL Database 마이그레이션 템플릿 -->
             {{ if eq .Content "Migration-MySQL" }}
-                {{ template "mig-mysql copy.html" . }}
+                {{ template "mig-mysql.html" . }}
             {{ end }}
 
             <!-- No-SQL 마이그레이션 템플릿 -->
