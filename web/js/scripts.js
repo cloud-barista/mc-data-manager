@@ -127,12 +127,23 @@ function generateFormSubmit() {
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        loadingButtonOn();
-        resultCollpase();
 
+        const target = document.getElementById('genTarget').value;
         const payload = new FormData(form);
         let jsonData = Object.fromEntries(payload);
         jsonData = convertCheckboxParams(jsonData)
+
+        const bucket = document.getElementById('newBucket')?.value;
+        if (
+            target === "objectstorage" &&
+            (!bucket || ["none", "-", ""].includes(bucket.trim()))
+        ) {
+            alert("please select or create bucket");
+            return
+        }
+
+        loadingButtonOn();
+        resultCollpase();
 
         const requestBody = new Object();
         requestBody.targetPoint = {
@@ -141,7 +152,6 @@ function generateFormSubmit() {
         console.log(JSON.stringify(jsonData))
 
         requestBody.targetPoint.provider = document.getElementById('targetPoint[provider]')?.value;
-        const target = document.getElementById('genTarget').value;
         
         // 객체 형태 맞춤
         const raw = jsonData?.["targetPoint[credentialId]"]?? null
