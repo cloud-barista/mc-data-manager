@@ -7,11 +7,7 @@
 // Scripts
 // 
 
-
-
-
 // for mc-data-manger
-
 window.addEventListener('DOMContentLoaded', event => {
 
     // Toggle the side navigation
@@ -76,7 +72,6 @@ function resultCollpase() {
     colp.show();
 }
 
-
 function convertCheckboxParams(obj) {
     for (const key in obj) {
         if (obj.hasOwnProperty(key)) {
@@ -120,7 +115,6 @@ function getInputValue(id) {
     const value = element.value.trim();
     return value !== "" ? value : null;
 }
-
 
 function generateFormSubmit() {
     const form = document.getElementById('genForm');
@@ -366,7 +360,6 @@ function setPicker() {
 
 function loadProfileList() {
     let url = "/credentials";
-
     let req;
 
         req = {
@@ -896,8 +889,6 @@ window.addEventListener("message", async function (event) {
     }
 });
 
-
-
 // @@  
 function updateRegionsByProvider(prefix, provider) {
     const select = document.getElementById(prefix + "RegionSelect");
@@ -921,7 +912,6 @@ function updateRegionsByProvider(prefix, provider) {
       select.value = target.querySelector("option")?.value || "";
     }
 }
-
 
 function updateLabelByProvider(prefix, provider) {
     const service = document.getElementById("migService");

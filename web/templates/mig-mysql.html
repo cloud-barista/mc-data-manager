@@ -43,7 +43,7 @@
                                             <input type="text" class="form-control border-0 bg-white" id="mysql-srcLabel" value="MySQL" value="-" required disabled>
                                             <label for="mysql-srcLabel">Source</label>
                                         </div>
-                                    </div>   
+                                    </div>
                                     <div class="input-group mb-3">
                                         <span class="input-group-text rounded-start"><i class="fa-solid fa-cloud"></i></span>
                                         <select class="form-select rounded-end" id="sourcePoint[provider]" name="sourcePoint[provider]">
@@ -53,7 +53,6 @@
                                             <option value="on-premise">On-premise</option>
                                         </select>
                                     </div>
-                                    
                                     <div class="input-group mb-3">
                                         <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
                                         <div class="form-floating">
@@ -89,7 +88,6 @@
                                             <label for="mysql-srcDatabase">Database</label>
                                         </div>
                                     </div>
-                                    
                                     <div class="input-group">
                                         <button class="btn btn-dark btn-block rounded-3 float-end next-btn ms-auto" type="button" data-current="#collapseOne" data-next="#collapseTwo">
                                             Next
@@ -116,11 +114,76 @@
                             </div>                            
                             <div id="collapseTwo" class="accordion-collapse rounded-bottom collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
-                                    <div>
-                                        <button class="btn btn-primary mb-3 rounded-3 float-end" id="sourceDiagnoseBtn" type="button">diagnose</button>
+                                    <div class="input-group">
+                                        <div class="form-floating mb-3">
+                                            <input type="text" class="form-control rounded-3" id="mysql-sourceTime" name="sourceTime" placeholder="time" required>
+                                            <label for="mysql-sourceTime">time</label>
+                                        </div>
+                                        <button class="btn btn-primary ms-3 mb-3 rounded-3 float-end" id="sourceDiagnoseBtn" type="button">diagnose</button>
                                     </div>
-                                    <div class="input-group mb-3">
-                                        <textarea class="form-control rounded-1" id="sourceResult" name="resultText" rows="10" disabled></textarea>
+                                    <div class="mb-3">
+                                    <!-- <div class="input-group mb-3"> -->
+                                        <!-- <textarea class="form-control rounded-1" id="sourceResult" name="resultText" rows="10" disabled></textarea> -->
+                                            <!-- SQL Statistics -->
+                                            <div class="card rounded-3">
+                                                <div class="card-header">SQL Statistics (digest Δ-based)</div>
+                                                <div class="card-body p-0">
+                                                    <table class="table table-sm mb-0">
+                                                        <thead class="table-light">
+                                                            <tr><th class="ps-4 fw-normal" style="width: 70%;">Queries performed</th><th class="fw-normal">Value</th></tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr><td class="ps-5">Read</td><td class="value" id="readCount">-</td></tr>
+                                                            <tr><td class="ps-5">Write</td><td class="value" id="writeCount">-</td></tr>
+                                                            <tr><td class="ps-5">Other</td><td class="value" id="otherCount">-</td></tr>
+                                                            <tr><td class="ps-5">Total</td><td class="value" id="totalCount">-</td></tr>
+                                                            <tr>
+                                                            <td class="ps-4">Queries</td>
+                                                            <td class="value">
+                                                                <span id="queriesTotal">-</span>
+                                                                (<span id="queriesPerSec">-</span> per sec.)
+                                                            </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>                                        
+                                            <!-- General Statistics -->
+                                            <div class="card mt-2 rounded-3">
+                                              <div class="card-header">General Statistics</div>
+                                              <div class="card-body p-0">
+                                                <table class="table table-sm mb-0">
+                                                  <tbody>
+                                                    <tr><td class="ps-5" style="width: 70%;">Total Tables</td><td class="value" id="totalTable">-</td></tr>
+                                                    <tr><td class="ps-5" style="width: 70%;">Total Time</td><td class="value" id="totalTime">-</td></tr>
+                                                  </tbody>
+                                                </table>
+                                              </div>
+                                            </div>                                        
+                                            <!-- Latency -->
+                                            <div class="card mt-2 rounded-3">
+                                                <div class="card-header">Latency (avg only, ms)</div>
+                                                <div class="card-body p-0">
+                                                    <table class="table table-sm mb-0">
+                                                        <tbody>
+                                                            <tr><td class="ps-5" style="width: 70%;">Avg</td><td class="value" id="avgLatency">-</td></tr>
+                                                            <tr><td class="ps-5" style="width: 70%;">Sum</td><td class="value" id="sumLatency">-</td></tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>                                            
+                                            <!-- Thread -->
+                                            <div class="card mt-2 rounded-3">
+                                                <div class="card-header">Thread</div>
+                                                <div class="card-body p-0">
+                                                    <table class="table table-sm mb-0">
+                                                        <tbody>
+                                                            <tr><td class="ps-5" style="width: 70%;">Connected</td><td class="value" id="connectedThread">-</td></tr>
+                                                            <tr><td class="ps-5" style="width: 70%;">Running</td><td class="value" id="runningThread">-</td></tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                     </div>
                                     <div class="input-group">
                                         <button class="btn btn-dark btn-block rounded-3 next-btn ms-auto" type="button" data-current="#collapseTwo" data-next="#collapseThree">Next</button>                            
@@ -233,8 +296,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            
+            </div>            
             <button type="submit" class="btn btn-primary rounded-1" id="submitBtn">Submit</button>
         </form>
     </div>
@@ -287,19 +349,19 @@
                 body: JSON.stringify(jsonData)
             };
 
-            const sourceResult = document.getElementById('sourceResult');
-            sourceResult.value = ""
+            // const sourceResult = document.getElementById('sourceResult');
+            // sourceResult.value = ""
 
             const btn = e.currentTarget
             btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;In progress..';
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
 
             fetch(url, req)
                 .then(response => {
                     return response.json();
                 })
                 .then(json => {
-                    sourceResult.value = json.Result;
+                    updateStats(json)
                 })
                 .catch(reason => {
                     console.log(reason);
@@ -313,4 +375,25 @@
             console.log("diagnose progressing...");
         });
     });
+
+    function updateStats(data) {
+        // 안전한 소수점 변환
+        const formatFixed = (num, digits = 2) => (typeof num === "number" && !isNaN(num)) ? num.toFixed(digits) : "0.00";
+
+        // ✅ totalTime: 나노초 → 초 단위 변환
+        const seconds = (data.Diagnostics.Elapsed / 1e9).toFixed(2) + "s";
+
+        document.getElementById("readCount").textContent = data.Diagnostics.Report.Read;
+        document.getElementById("writeCount").textContent = data.Diagnostics.Report.Write;
+        document.getElementById("otherCount").textContent = data.Diagnostics.Report.Other;
+        document.getElementById("totalCount").textContent = data.Diagnostics.Report.Total;
+        document.getElementById("queriesTotal").textContent = data.Diagnostics.Report.Total;
+        document.getElementById("queriesPerSec").textContent = formatFixed(data.Diagnostics.QPS);
+        document.getElementById("totalTime").textContent = seconds;
+        document.getElementById("avgLatency").textContent = formatFixed(data.Diagnostics.AvgMs);
+        document.getElementById("sumLatency").textContent = formatFixed(data.Diagnostics.SumMs);
+        document.getElementById("totalTable").textContent = data.Diagnostics.Lock.length;
+        document.getElementById("connectedThread").textContent = data.Diagnostics.Thread.ThreadConnected;
+        document.getElementById("runningThread").textContent = data.Diagnostics.Thread.ThreadRunning;
+    }
 </script>
