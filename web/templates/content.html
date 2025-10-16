@@ -35,31 +35,7 @@
             
             {{ if eq .Content "Generate-No-SQL" }}
                 {{ template "gen-no-sql.html" . }}
-            {{ end }}
-
-            {{ if eq .Content "Generate-S3" }}
-                {{ template "gen-s3.html" . }}
-            {{ end }}
-
-            {{ if eq .Content "Generate-GCP" }}
-                {{ template "gen-gcp.html" . }}
-            {{ end }}
-        
-            {{ if eq .Content "Generate-NCP" }}
-                {{ template "gen-ncp.html" . }}
-            {{ end }}
-            
-            {{ if eq .Content "Generate-DynamoDB" }}
-                {{ template "gen-dynamodb.html" . }}
-            {{ end }}
-            
-            {{ if eq .Content "Generate-Firestore" }}
-                {{ template "gen-firestore.html" . }}
-            {{ end }}
-        
-            {{ if eq .Content "Generate-MongoDB" }}
-                {{ template "gen-mongodb.html" . }}
-            {{ end }}
+            {{ end }}       
 
             {{ if eq .Content "Generate-Credential" }}
                 {{ template "gen-credential.html" . }}

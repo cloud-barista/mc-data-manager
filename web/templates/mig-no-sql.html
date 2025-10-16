@@ -44,26 +44,29 @@
                         <label for="sourceCredentialSelect">provider - credential name</label>
                     </div>
                 </div>
-                <div class="form-floating" id="sourceRegionDiv">
-                    <select class="form-select form-select-sm rounded-3" id="sourceRegionSelect" name="sourcePoint[region]">
-                        <option value="none" selected> - </option>
-                        <optgroup label="AWS regions" data-provider="aws" style="display: none;">
-                            {{ range $index, $value := .AWSRegions }}
-                            <option value="{{ $value }}">{{ $value }}</option>
-                            {{ end }}
-                        </optgroup>
-                        <optgroup label="GCP regions" data-provider="gcp" style="display: none;">
-                            {{ range $index, $value := .GCPRegions }}
+                <div class="input-group" id="sourceRegionDiv">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span>
+                    <div class="form-floating">
+                        <select class="form-select form-select-sm rounded-end" id="sourceRegionSelect" name="sourcePoint[region]">
+                            <option value="none" selected> - </option>
+                            <optgroup label="AWS regions" data-provider="aws" style="display: none;">
+                                {{ range $index, $value := .AWSRegions }}
                                 <option value="{{ $value }}">{{ $value }}</option>
-                            {{ end }}
-                        </optgroup>
-                        <optgroup label="NCP regions" data-provider="ncp" style="display: none;">
-                            {{ range $index, $value := .NCPRegions }}
-                                <option value="{{ $value }}">{{ $value }}</option>
-                            {{ end }}
-                        </optgroup>                            
-                    </select>
-                    <label for="mig-source-region">Select Region</label>
+                                {{ end }}
+                            </optgroup>
+                            <optgroup label="GCP regions" data-provider="gcp" style="display: none;">
+                                {{ range $index, $value := .GCPRegions }}
+                                    <option value="{{ $value }}">{{ $value }}</option>
+                                {{ end }}
+                            </optgroup>
+                            <optgroup label="NCP regions" data-provider="ncp" style="display: none;">
+                                {{ range $index, $value := .NCPRegions }}
+                                    <option value="{{ $value }}">{{ $value }}</option>
+                                {{ end }}
+                            </optgroup>                            
+                        </select>
+                        <label for="mig-source-region">Select Region</label>
+                    </div>
                 </div>
                 <div id="sourceMongoDiv" style="display: none;">                        
                     <div class="input-group mb-3">
@@ -98,7 +101,7 @@
                         </div>
                     </div>
             
-                    <div class="input-group mb-3">
+                    <div class="input-group">
                         <span class="input-group-text rounded-start"><i class="fa-solid fa-database"></i></span>
                         <div class="form-floating">
                             <input type="text" class="form-control rounded-end" id="mig-mongodb-databaseName" name="sourcePoint[databaseName]" placeholder="DB Name" required disabled>
@@ -127,26 +130,29 @@
                         <label for="mig-target-credential">provider - credential name</label>
                     </div>
                 </div>
-                <div class="form-floating" id="targetRegionDiv">
-                    <select class="form-select form-select-sm rounded-3" id="targetRegionSelect" name="targetPoint[region]">
-                        <option value="none" selected> - </option>
-                        <optgroup label="AWS regions" data-provider="aws" style="display: none;">
-                            {{ range $index, $value := .AWSRegions }}
-                                <option value="{{ $value }}">{{ $value }}</option>
-                            {{ end }}
-                        </optgroup>
-                        <optgroup label="GCP regions" data-provider="gcp" style="display: none;">
-                            {{ range $index, $value := .GCPRegions }}
-                                <option value="{{ $value }}">{{ $value }}</option>
-                            {{ end }}
-                        </optgroup>
-                        <optgroup label="NCP regions" data-provider="ncp" style="display: none;">
-                            {{ range $index, $value := .NCPRegions }}
-                                <option value="{{ $value }}">{{ $value }}</option>
-                            {{ end }}
-                        </optgroup>                            
-                    </select>
-                    <label for="mig-target-region">Select Region</label>
+                <div class="input-group" id="targetRegionDiv">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span>
+                    <div class="form-floating">
+                        <select class="form-select form-select-sm rounded-end" id="targetRegionSelect" name="targetPoint[region]">
+                            <option value="none" selected> - </option>
+                            <optgroup label="AWS regions" data-provider="aws" style="display: none;">
+                                {{ range $index, $value := .AWSRegions }}
+                                    <option value="{{ $value }}">{{ $value }}</option>
+                                {{ end }}
+                            </optgroup>
+                            <optgroup label="GCP regions" data-provider="gcp" style="display: none;">
+                                {{ range $index, $value := .GCPRegions }}
+                                    <option value="{{ $value }}">{{ $value }}</option>
+                                {{ end }}
+                            </optgroup>
+                            <optgroup label="NCP regions" data-provider="ncp" style="display: none;">
+                                {{ range $index, $value := .NCPRegions }}
+                                    <option value="{{ $value }}">{{ $value }}</option>
+                                {{ end }}
+                            </optgroup>                            
+                        </select>
+                        <label for="mig-target-region">Select Region</label>
+                    </div>
                 </div>
                 <div id="targetMongoDiv" style="display: none;">    
                     <div class="input-group mb-3">
@@ -181,7 +187,7 @@
                         </div>
                     </div>
         
-                    <div class="input-group mb-3">
+                    <div class="input-group">
                         <span class="input-group-text rounded-start"><i class="fa-solid fa-database"></i></span>
                         <div class="form-floating">
                             <input type="text" class="form-control rounded-end" id="mig-target-mongodb-databaseName" name="targetPoint[databaseName]" placeholder="DB Name" required disabled>

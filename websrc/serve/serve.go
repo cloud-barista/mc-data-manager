@@ -208,6 +208,9 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 	diagnoseGroup := e.Group("/diagnose")
 	routes.DiagnoseRoutes(diagnoseGroup)
 
+	objectStorageGroup := e.Group("/objectstorage")
+	routes.ObjectStorageRoutes(objectStorageGroup)
+
 	selfEndpoint := "localhost" + ":" + port
 	website := " http://" + selfEndpoint
 	apidashboard := " http://" + selfEndpoint + "/swagger/index.html"

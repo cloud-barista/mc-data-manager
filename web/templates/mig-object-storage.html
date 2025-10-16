@@ -23,17 +23,12 @@
             <input type="hidden" id="sourcePoint[provider]" value="none">
             <input type="hidden" id="targetPoint[provider]" value="none">
                 <div class="card rounded-3 mb-3 p-3">
-    
-                    <!-- <div class="mt-2">
-                        <label for="mig-aws-region" class="form-label" id="sourcePointLabel">Source -</label>
-                    </div> -->
                     <div class="input-group mb-3">
                         <div class="form-floating">
                             <input type="text" class="form-control" id="sourcePointLabel" placeholder="Source" style="border: 0; background-color: white;" value="-" required disabled>
                             <label for="sourcePointLabel">Source</label>
                         </div>
-                    </div>
-    
+                    </div>    
                     <div class="input-group mb-3 me-1">
                         <span class="input-group-text rounded-start"><i class="fa-solid fa-user-secret"></i></span>
                         <div class="form-floating">
@@ -64,20 +59,21 @@
                                     {{ end }}
                                 </optgroup>                            
                             </select>
-                            <!-- <select class="form-select form-select-sm" id="regionSelect" name="sourcePoint[region]"> -->
-                            <!-- {{ range $index, $value := .AWSRegions }}
-                            <option value="{{ $value }}">{{ $value }}</option>
-                            {{ end }} -->
-                            <!-- </select> -->
                             <label for="mig-aws-region">Select Region</label>
                         </div>
                     </div>
                     <div class="input-group mb-3">
                         <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
                         <div class="form-floating">
-                            <input type="text" class="form-control rounded-end" id="mig-aws-bucket" name="sourcePoint[bucket]" placeholder="Bucket" required>
-                            <label for="mig-aws-bucket">Bucket</label>
+                            <!-- <input type="text" class="form-control rounded-end" id="mig-aws-bucket" name="sourcePoint[bucket]" placeholder="Bucket" required> -->
+                            <select class="form-select form-select-sm rounded-end" id="sourceBucket" name="sourcePoint[bucket]">
+                                <option value="-" selected>-</option>
+                            </select>
+                            <label for="sourceBucket">Bucket</label>
                         </div>
+                        <button type="button" class="btn btn-primary rounded-1 ms-2" id="sourceBtn">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
                     </div>
         
                     <div class="d-flex align-items-center ms-2">
@@ -87,9 +83,7 @@
         
                     <div class="card rounded-3 p-3" id="filterContent" style="display:none;">
                         <div class="d-flex flex-wrap gap-2">
-                        <!-- <div style="display: flex; flex-wrap: wrap; gap: 10px;"> -->
                             <div class="input-group mb-3" style="max-width: 300px;">
-                            <!-- <div class="mb-4" style="display: flex"> -->
                                 <span class="input-group-text rounded-start text-center text-wrap" style="width: 80px; font-size: 0.9rem;">Path</span>
                                 <div class="form-floating">
                                     <input type="text" class="form-control rounded-end" id="mig-filter-path" name="sourceFilter[path]" placeholder="Path">
@@ -98,22 +92,16 @@
                             </div>
                         </div>
                         <div class="d-flex flex-wrap gap-2">
-                        <!-- <div style="display: flex; flex-wrap: wrap; gap: 10px;"> -->
                             <div class="input-group mb-3" style="max-width: 300px;">
-                            <!-- <div class="mb-4" style="display: flex"> -->
                                 <span class="input-group-text rounded-start text-wrap" style="width: 80px; font-size: 0.9rem;">File Size</span>
                                 <div class="form-floating">
                                     <input type="number" class="form-control rounded-end" id="mig-filter-minSize" name="sourceFilter[minSize]" placeholder="0" min="0">
                                     <label for="mig-filter-minSize">Min</label>
                                 </div>
                             </div>
-                            <div class="mb-3" style="padding-top: 15px"><div class="form-floating">~</div></div>
-                            <!-- <div class="mb-4" style="display: flex">                        
-                                <div class="form-floating">
-                                    <input type="number" class="form-control" id="mig-filter-maxSize" name="sourceFilter[maxSize]" placeholder="MaxSize">
-                                    <label for="mig-filter-maxSize">Input Max File Size</label>
-                                </div>
-                            </div> -->
+                            <div class="mb-3 d-flex align-items-center">
+                                ~
+                            </div>
                             <div class="input-group mb-3" style="max-width: 300px;">
                                 <div class="form-floating">
                                     <input type="number" class="form-control rounded-start" id="mig-filter-maxSize" name="sourceFilter[maxSize]" placeholder="0" min="0">
@@ -122,39 +110,27 @@
                                 <select class="form-select rounded-end bg-light" id="mig-filter-sizeFilteringUnit" name="sourceFilter[sizeFilteringUnit]" style="max-width: 80px;">
                                 </select>
                             </div>
-                            <!-- <div class="mb-4">
-                                <div class="form-floating">
-                                    <select class="form-select form-select-sm" id="mig-filter-sizeFilteringUnit" name="sourceFilter[sizeFilteringUnit]">
-                                    </select>
-                                    <label for="mig-filter-sizeFilteringUnit">Select Unit</label>
-                                </div>
-                            </div>                     -->
                         </div>
                         <div class="d-flex flex-wrap gap-2">
-                        <!-- <div style="display: flex; flex-wrap: wrap; gap: 10px;"> -->
                             <div class="input-group mb-3" style="max-width: 300px;">
-                            <!-- <div class="mb-4" style="display: flex"> -->
-                                <!-- <span class="input-group-text text-center text-wrap" style="width: 120px; font-size: 0.9rem;"> -->
                                 <span class="input-group-text rounded-start text-wrap" style="width: 80px; font-size: 0.9rem;">Date Range</span>
                                 <div class="form-floating">
                                     <input type="text" id="datepicker1" class="form-control rounded-end" id="mig-filter-stdate" name="sourceFilter[modifiedAfter]" placeholder="Start Date">
-                                    <!-- <input type="text" class="form-control w-50" id="mig-filter-contains" name="sourceFilter[contains]" placeholder="Contains" required> -->
                                     <label for="mig-filter-stdate">Start Date</label>
                                 </div>
                             </div>
-                            <div class="mb-3" style="padding-top: 15px"><div class="form-floating">~</div></div>
+                            <div class="mb-3 d-flex align-items-center">
+                                ~
+                            </div>
                             <div class="input-group mb-3" style="max-width: 300px;">
                                 <div class="form-floating">
                                     <input type="text" id="datepicker2" class="form-control rounded-3" id="mig-filter-eddate" name="sourceFilter[modifiedBefore]" placeholder="End Date">
-                                    <!-- <input type="text" class="form-control w-50" id="mig-filter-contains" name="sourceFilter[contains]" placeholder="Contains" required> -->
                                     <label for="mig-filter-eddate">End Date</label>
                                 </div>
                             </div>                    
                         </div>
                         <div class="d-flex flex-wrap gap-2">
-                        <!-- <div style="display: flex; flex-wrap: wrap; gap: 10px;"> -->
                             <div class="input-group" style="max-width: 300px;">
-                            <!-- <div class="mb-4" style="display: flex"> -->
                                 <span class="input-group-text rounded-start text-wrap" style="width: 80px; font-size: 0.9rem;">Contains</span>
                                 <div class="form-floating flex-grow-1">
                                     <input type="text" class="form-control rounded-end" id="mig-filter-contains" name="sourceFilter[contains]" placeholder="Contains">
@@ -162,19 +138,9 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-    
+                    </div>    
                 </div>
-    
-                <!-- <div class="text-center" style="font-size: 50px; margin-top: 10px">
-                    <i class="fa-solid fa-angles-down"></i>
-                </div> -->
-                <!-- <hr /> -->
-    
                 <div class="card rounded-3 mb-3 p-3">
-                    <!-- <div style="margin-top: 30px">
-                        <label for="mig-gcp-region" class="form-label" id="targetPointLabel">Target -</label>
-                    </div> -->
                     <div class="input-group mb-3">
                         <div class="form-floating">
                             <input type="text" class="form-control" id="targetPointLabel" placeholder="Target" style="border: 0; background-color: white;" value="-" required disabled>
@@ -185,8 +151,6 @@
                         <div class="input-group mb-3 me-1">
                             <span class="input-group-text rounded-start"><i class="fa-solid fa-user-secret"></i></span>
                             <div class="form-floating">
-                                <!-- <input type="text" class="form-control" id="gen-s3-profile" name="targetPoint[profileName]" placeholder="profile name" required>
-                                <label for="gen-s3-profile">Profile</label> -->
                                 <select class="form-select form-select-sm rounded-end" id="targetCredentialSelect" name="targetPoint[credentialId]">
                                     <option value="none" data-provider="none"> - </option>
                                 </select>
@@ -196,7 +160,6 @@
                         <div class="input-group mb-3 me-1">
                             <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span>
                             <div class="form-floating">
-                                
                                 <select class="form-select form-select-sm rounded-end" id="targetRegionSelect" name="targetPoint[region]">
                                     <option value="none" selected> - </option>
                                     <optgroup label="AWS regions" data-provider="aws" style="display: none;">
@@ -215,29 +178,26 @@
                                         {{ end }}
                                     </optgroup>                            
                                 </select>
-                                <label for="mig-gcp-region">Select Region</label>
+                                <label for="targetRegionSelect">Select Region</label>
                             </div>
                         </div>
-        
-                    
-                        <!-- <div class="mb-3">
-                            <label for="mig-gcp-credential" class="form-label">Credentials 파일</label>
-                            <input class="form-control" type="file" id="mig-gcp-credential" name="gcpCredential" required>
-                        </div>
-        
-                        <div class="input-group mb-3">
-                            <span class="input-group-text"><i class="fa-solid fa-id-card"></i></span>
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="gen-gcp-projectid" name="projectid" placeholder="ProjectID" required>
-                                <label for="gen-gcp-projectid">ProjectID</label>
-                            </div>
-                        </div> -->
-        
                         <div class="input-group">
                             <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
                             <div class="form-floating">
-                                <input type="text" class="form-control rounded-end" id="mig-gcp-bucket" name="targetPoint[bucket]" placeholder="Bucket" required>
-                                <label for="mig-gcp-bucket">Bucket</label>
+                                <select class="form-select form-select-sm rounded-end" id="targetBucket" name="targetPoint[bucket]">
+                                    <option value="-" selected>-</option>
+                                </select>
+                                <label for="targetBucket">Bucket</label>
+                            </div>
+                            <button type="button" class="btn btn-primary rounded-1 ms-2" id="targetBtn">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </button>
+                        </div>
+                        <div class="input-group mt-3" id="targetNewBucket" style="display: none;">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
+                            <div class="form-floating">
+                                <input type="text" class="form-control rounded-end" id="newBucket" name="targetPoint[bucket]" placeholder="Bucket">
+                                <label for="newBucket">New Bucket</label>
                             </div>
                         </div>
                     </div>
@@ -246,3 +206,179 @@
         </form>
     </div>
 </div>
+<script>
+    const source = {
+        btn: document.getElementById("sourceBtn"),
+        cred: document.getElementById("sourceCredentialSelect"),
+        region: document.getElementById("sourceRegionSelect"),
+        bucket: document.getElementById("sourceBucket"),
+        provider: document.getElementById("sourcePoint[provider]")
+    };
+    const target = {
+        btn: document.getElementById("targetBtn"),
+        cred: document.getElementById("targetCredentialSelect"),
+        region: document.getElementById("targetRegionSelect"),
+        bucket: document.getElementById("targetBucket"),
+        provider: document.getElementById("targetPoint[provider]")
+    };
+    const bucketInput = document.getElementById("newBucket");
+
+    target.bucket.addEventListener("change", () => {
+        toggleNewBucket()
+    })
+
+    source.cred.addEventListener("change", () => {
+        console.log("credential changed")
+        resetBuckets("source", false);
+    })
+
+    target.cred.addEventListener("change", () => {
+        console.log("credential changed")
+        const cred = target.cred.value;
+        if (cred == "none" || !cred) {
+            resetBuckets("target", false);
+            toggleNewBucket()
+
+            return
+        }
+        resetBuckets("target", true)
+        toggleNewBucket()
+    })
+
+    source.region.addEventListener("change", () => {
+        console.log("region changed")
+        resetBuckets("source", false);
+    })
+
+    target.region.addEventListener("change", () => {
+        console.log("region changed")
+        const region = target.region.value;
+        if (region == "none" || !region) {
+            resetBuckets("target", false);
+            toggleNewBucket()
+
+            return
+        }
+        resetBuckets("target", true)
+        toggleNewBucket()
+    })
+
+    source.btn.addEventListener("click", () => {
+        if (source.region.value == "none" || !source.region.value) {
+            return;
+        }
+        source.btn.disabled = true;
+        source.btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;';
+
+        fetchBucketList(source.cred.value, source.region.value, source.provider.value)
+            .then(json => {
+                source.bucket.replaceChildren();
+                
+                if(json.buckets.length > 0) {
+                    json.buckets.forEach(optionData => {
+                        const option = document.createElement("option");
+                        option.value = optionData.Name;
+                        option.textContent = optionData.Name;
+                        source.bucket.appendChild(option);
+                    });
+                } else {
+                    const option = document.createElement("option");
+                    option.value = "none";
+                    option.textContent = "no buckets found";
+                    source.bucket.appendChild(option);
+                }
+            })
+            .catch(reason => {
+                console.log(reason);
+                alert(reason);
+            })
+            .finally(() => {
+                source.btn.disabled = false;
+                source.btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i>';
+            })
+    });
+
+    target.btn.addEventListener("click", () => {
+        if (target.region.value == "none" || !target.region.value) {
+            return;
+        }
+        target.btn.disabled = true;
+        target.btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;';
+
+        fetchBucketList(target.cred.value, target.region.value, target.provider.value)
+            .then(json => {
+                resetBuckets("target", true)
+
+                json.buckets.forEach(optionData => {
+                    const option = document.createElement("option");
+                    option.value = optionData.Name;
+                    option.textContent = optionData.Name;
+                    target.bucket.appendChild(option);
+                });
+            })
+            .catch(reason => {
+                console.log(reason);
+                alert(reason);
+            })
+            .finally(() => {
+                target.btn.disabled = false;
+                target.btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i>';
+                toggleNewBucket()
+            })
+    });
+
+    function resetBuckets(targetSelect, hardReset) {
+        let option = document.createElement("option");
+        if(!hardReset) {
+            option.value = "none";
+            option.textContent = "-";
+        } else {
+            option.value = "new";
+            option.textContent = "create new bucket";
+        }
+        
+        if(targetSelect == "source") {
+            source.bucket.replaceChildren(option)
+        } else {
+            target.bucket.replaceChildren(option);
+        }
+    }
+
+    function toggleNewBucket() {
+        const newBucketDiv = document.getElementById("targetNewBucket")
+        if (target.bucket.value == "new") {
+            newBucketDiv.style.display = ""
+            bucketInput.value = ""
+        } else {
+            newBucketDiv.style.display = "none"
+            bucketInput.value = target.bucket.value
+        }
+    }
+
+    function fetchBucketList(credentialId, region, provider) {
+        const url = "/objectstorage/buckets";
+        const jsonData = {
+            "targetPoint": {
+                "credentialId": parseInt(credentialId),
+                "region": region,
+                "provider": provider
+            }
+        }
+        const req = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        }
+
+        return fetch(url, req)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        
+                        return response.json();
+                    });
+    }
+</script>

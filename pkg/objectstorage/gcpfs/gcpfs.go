@@ -153,3 +153,23 @@ func New(client *storage.Client, projectID, bucketName string, region string) *G
 
 	return gfs
 }
+
+func (f *GCPfs) BucketList() ([]models.Bucket, error) {
+	var buckets []models.Bucket
+	it := f.client.Buckets(f.ctx, f.projectID)
+	for {
+		battrs, err := it.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		buckets = append(buckets, models.Bucket{
+			Name:         battrs.Name,
+			CreationDate: battrs.Created.String(),
+		})
+	}
+
+	return buckets, nil
+}
