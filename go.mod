@@ -1,6 +1,6 @@
 module github.com/cloud-barista/mc-data-manager
 
-go 1.23.0
+go 1.25.0
 
 require (
 	cloud.google.com/go/firestore v1.16.0
@@ -32,6 +32,8 @@ require (
 	github.com/go-co-op/gocron v1.37.0
 	github.com/rs/zerolog v1.33.0
 	github.com/swaggo/swag v1.16.3
+	gorm.io/driver/mysql v1.6.0
+	gorm.io/gorm v1.30.1
 )
 
 require (
@@ -79,8 +81,6 @@ require (
 	golang.org/x/tools v0.24.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gorm.io/driver/mysql v1.6.0 // indirect
-	gorm.io/gorm v1.30.1 // indirect
 )
 
 require (

@@ -1,18 +1,13 @@
 basePath: /
 definitions:
-  models.AWSCredentials:
-    properties:
-      accessKey:
-        type: string
-      secretKey:
-        type: string
-    type: object
   models.BackupTask:
     properties:
       dummy:
         $ref: '#/definitions/models.GenFileParams'
       operationId:
         type: string
+      sourceFilter:
+        $ref: '#/definitions/models.ObjectFilterParams'
       sourcePoint:
         $ref: '#/definitions/models.ProviderConfig'
       targetPoint:
@@ -22,6 +17,8 @@ definitions:
     properties:
       dummy:
         $ref: '#/definitions/models.GenFileParams'
+      sourceFilter:
+        $ref: '#/definitions/models.ObjectFilterParams'
       sourcePoint:
         $ref: '#/definitions/models.ProviderConfig'
       targetPoint:
@@ -35,17 +32,6 @@ definitions:
         type: string
     type: object
   models.CredentialCreateRequest:
-    properties:
-      aws:
-        $ref: '#/definitions/models.AWSCredentials'
-      cspType:
-        type: string
-      gcp:
-        $ref: '#/definitions/models.GCPCredentials'
-      name:
-        type: string
-      ncp:
-        $ref: '#/definitions/models.NCPCredentials'
     type: object
   models.DataTask:
     properties:
@@ -53,35 +39,12 @@ definitions:
         $ref: '#/definitions/models.GenFileParams'
       operationId:
         type: string
+      sourceFilter:
+        $ref: '#/definitions/models.ObjectFilterParams'
       sourcePoint:
         $ref: '#/definitions/models.ProviderConfig'
       targetPoint:
         $ref: '#/definitions/models.ProviderConfig'
-    type: object
-  models.GCPCredentials:
-    properties:
-      auth_provider_x509_cert_url:
-        type: string
-      auth_uri:
-        type: string
-      client_email:
-        type: string
-      client_id:
-        type: string
-      client_x509_cert_url:
-        type: string
-      private_key:
-        type: string
-      private_key_id:
-        type: string
-      project_id:
-        type: string
-      token_uri:
-        type: string
-      type:
-        type: string
-      universe_domain:
-        type: string
     type: object
   models.GenFileParams:
     properties:
@@ -145,22 +108,46 @@ definitions:
         $ref: '#/definitions/models.GenFileParams'
       operationId:
         type: string
+      sourceFilter:
+        $ref: '#/definitions/models.ObjectFilterParams'
       sourcePoint:
         $ref: '#/definitions/models.ProviderConfig'
       targetPoint:
         $ref: '#/definitions/models.ProviderConfig'
     type: object
-  models.NCPCredentials:
+  models.ObjectFilterParams:
     properties:
-      accessKey:
+      contains:
+        items:
+          type: string
+        type: array
+      exact:
+        items:
+          type: string
+        type: array
+      maxSize:
+        type: number
+      minSize:
+        type: number
+      modifiedAfter:
         type: string
-      secretKey:
+      modifiedBefore:
         type: string
+      path:
+        type: string
+      sizeFilteringUnit:
+        type: string
+      suffixes:
+        items:
+          type: string
+        type: array
     type: object
   models.ProviderConfig:
     properties:
       bucket:
         type: string
+      credentialId:
+        type: integer
       databaseId:
         type: string
       databaseName:
@@ -175,8 +162,6 @@ definitions:
         type: string
       port:
         type: string
-      credentialId:
-        type: integer
       projectId:
         type: string
       provider:
@@ -192,6 +177,8 @@ definitions:
         $ref: '#/definitions/models.GenFileParams'
       operationId:
         type: string
+      sourceFilter:
+        $ref: '#/definitions/models.ObjectFilterParams'
       sourcePoint:
         $ref: '#/definitions/models.ProviderConfig'
       targetPoint:
@@ -1384,7 +1371,7 @@ paths:
       summary: Destroy Resources
       tags:
       - '[Service]'
-  /task:
+  /tasks:
     get:
       description: Retrieve a list of all Tasks in the system.
       operationId: GetAllTasksHandler
@@ -1430,7 +1417,7 @@ paths:
       summary: Create a new Task
       tags:
       - '[Task]'
-  /task/{id}:
+  /tasks/{id}:
     delete:
       description: Delete an existing Task using its ID.
       operationId: DeleteTaskHandler

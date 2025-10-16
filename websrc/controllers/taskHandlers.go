@@ -38,7 +38,7 @@ type TaskController struct {
 //	@Produce		json
 //	@Success		200		{array}		models.Task	"Successfully retrieved all Tasks"
 //	@Failure		500		{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/task [get]
+//	@Router			/tasks [get]
 func (tc *TaskController) GetAllTasksHandler(ctx echo.Context) error {
 	start := time.Now()
 	logger, logstrings := pageLogInit(ctx, "Get-task-list", "Get an existing task", start)
@@ -67,7 +67,7 @@ func (tc *TaskController) GetAllTasksHandler(ctx echo.Context) error {
 //	@Param			RequestBody		body	models.Schedule	true	"Parameters required for creating a Task"
 //	@Success		200			{object}	models.BasicResponse	"Successfully created a Task"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/task [post]
+//	@Router			/tasks [post]
 func (tc *TaskController) CreateTaskHandler(ctx echo.Context) error {
 	start := time.Now()
 	logger, logstrings := pageLogInit(ctx, "Create-task", "Creating a new task", start)
@@ -107,7 +107,7 @@ func (tc *TaskController) CreateTaskHandler(ctx echo.Context) error {
 //	@Param			id		path	string	true	"Task ID"
 //	@Success		200		{object}	models.Task	"Successfully retrieved a Task"
 //	@Failure		404		{object}	models.BasicResponse	"Task not found"
-//	@Router			/task/{id} [get]
+//	@Router			/tasks/{id} [get]
 func (tc *TaskController) GetTaskHandler(ctx echo.Context) error {
 	start := time.Now()
 	logger, logstrings := pageLogInit(ctx, "Get-task", "Get an existing task", start)
@@ -138,7 +138,7 @@ func (tc *TaskController) GetTaskHandler(ctx echo.Context) error {
 //	@Success		200			{object}	models.BasicResponse	"Successfully updated the Task"
 //	@Failure		404			{object}	models.BasicResponse	"Task not found"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/task/{id} [put]
+//	@Router			/tasks/{id} [put]
 func (tc *TaskController) UpdateTaskHandler(ctx echo.Context) error {
 	start := time.Now()
 	logger, logstrings := pageLogInit(ctx, "Update-task", "Updating an existing task", start)
@@ -177,7 +177,7 @@ func (tc *TaskController) UpdateTaskHandler(ctx echo.Context) error {
 //	@Param			id		path	string	true	"Task ID"
 //	@Success		200		{object}	models.BasicResponse	"Successfully deleted the Task"
 //	@Failure		404		{object}	models.BasicResponse	"Task not found"
-//	@Router			/task/{id} [delete]
+//	@Router			/tasks/{id} [delete]
 func (tc *TaskController) DeleteTaskHandler(ctx echo.Context) error {
 	start := time.Now()
 	logger, logstrings := pageLogInit(ctx, "Delete-task", "Delete an existing task", start)

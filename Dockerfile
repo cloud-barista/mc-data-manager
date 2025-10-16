@@ -1,8 +1,9 @@
 ##############################################################
 ## Stage 1 - Go Build As builder
 ##############################################################
-FROM golang:1.23 AS builder
+FROM golang:1.25.0 AS builder
 WORKDIR /opt
+RUN go version
 COPY . .
 RUN go build -o app .
 
@@ -17,8 +18,8 @@ ARG GID=0
 ARG USER=root
 ARG GROUP=root
 
-RUN apt-get update -y && apt-get upgrade -y  
-RUN apt-get install -y  curl
+RUN apt-get update -y && apt-get upgrade -y
+RUN apt-get install curl -y
 
 RUN if [ "${USER}" != "root" ]; then \
         groupadd -g ${GID} ${GROUP} && \
