@@ -623,6 +623,11 @@ function backUpFormSubmit() {
             alert("credential not selected");
             return
         }
+        if(jsonData.sourcePoint.bucket == "none" || jsonData.sourcePoint.bucket == "-" || jsonData.sourcePoint.bucket == ""
+        ) {
+            alert("please select bucket");
+            return
+        }
         // console.log(provider)
 
         loadingButtonOn();

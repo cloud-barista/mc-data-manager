@@ -139,7 +139,7 @@
                             </div>
                         </div>
                     </div>    
-                </div>    
+                </div>
                 <div class="card rounded-3 mb-3 p-3">
                     <div class="input-group mb-3">
                         <div class="form-floating">
@@ -272,7 +272,7 @@
         source.btn.disabled = true;
         source.btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;';
 
-        fetchRegionList(source.cred.value, source.region.value, source.provider.value)
+        fetchBucketList(source.cred.value, source.region.value, source.provider.value)
             .then(json => {
                 source.bucket.replaceChildren();
                 
@@ -307,7 +307,7 @@
         target.btn.disabled = true;
         target.btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;';
 
-        fetchRegionList(target.cred.value, target.region.value, target.provider.value)
+        fetchBucketList(target.cred.value, target.region.value, target.provider.value)
             .then(json => {
                 resetBuckets("target", true)
 
@@ -357,7 +357,7 @@
         }
     }
 
-    function fetchRegionList(credentialId, region, provider) {
+    function fetchBucketList(credentialId, region, provider) {
         const url = "/objectstorage/buckets";
         const jsonData = {
             "targetPoint": {
