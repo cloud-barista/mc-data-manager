@@ -116,74 +116,71 @@
                                 <div class="accordion-body">
                                     <div class="input-group">
                                         <div class="form-floating mb-3">
-                                            <input type="text" class="form-control rounded-3" id="mysql-sourceTime" name="sourceTime" placeholder="time" required>
-                                            <label for="mysql-sourceTime">time</label>
+                                            <input type="text" class="form-control rounded-3 w-25" id="sourceTime" name="sourceTime" placeholder="time" value="5" required>
+                                            <label for="sourceTime">Duration</label>
                                         </div>
-                                        <button class="btn btn-primary ms-3 mb-3 rounded-3 float-end" id="sourceDiagnoseBtn" type="button">diagnose</button>
+                                        <button class="btn btn-primary ms-3 mb-3 rounded-3 float-end" id="sourceDiagnoseBtn" type="button">Diagnose</button>
                                     </div>
                                     <div class="mb-3">
-                                    <!-- <div class="input-group mb-3"> -->
-                                        <!-- <textarea class="form-control rounded-1" id="sourceResult" name="resultText" rows="10" disabled></textarea> -->
-                                            <!-- SQL Statistics -->
-                                            <div class="card rounded-3">
-                                                <div class="card-header">SQL Statistics (digest Δ-based)</div>
-                                                <div class="card-body p-0">
-                                                    <table class="table table-sm mb-0">
-                                                        <thead class="table-light">
-                                                            <tr><th class="ps-4 fw-normal" style="width: 70%;">Queries performed</th><th class="fw-normal">Value</th></tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr><td class="ps-5">Read</td><td class="value" id="readCount">-</td></tr>
-                                                            <tr><td class="ps-5">Write</td><td class="value" id="writeCount">-</td></tr>
-                                                            <tr><td class="ps-5">Other</td><td class="value" id="otherCount">-</td></tr>
-                                                            <tr><td class="ps-5">Total</td><td class="value" id="totalCount">-</td></tr>
-                                                            <tr>
-                                                            <td class="ps-4">Queries</td>
-                                                            <td class="value">
-                                                                <span id="queriesTotal">-</span>
-                                                                (<span id="queriesPerSec">-</span> per sec.)
-                                                            </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>                                        
-                                            <!-- General Statistics -->
-                                            <div class="card mt-2 rounded-3">
-                                              <div class="card-header">General Statistics</div>
-                                              <div class="card-body p-0">
+                                        <div class="card rounded-3">
+                                            <div class="card-header">SQL Statistics (digest Δ-based)</div>
+                                            <div class="card-body p-0">
                                                 <table class="table table-sm mb-0">
-                                                  <tbody>
-                                                    <tr><td class="ps-5" style="width: 70%;">Total Tables</td><td class="value" id="totalTable">-</td></tr>
-                                                    <tr><td class="ps-5" style="width: 70%;">Total Time</td><td class="value" id="totalTime">-</td></tr>
-                                                  </tbody>
+                                                    <thead class="table-light">
+                                                        <tr><th class="ps-4 fw-normal" style="width: 70%;">Queries performed</th><th class="fw-normal">Value</th></tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr><td class="ps-5">Read</td><td class="value" id="readCount">-</td></tr>
+                                                        <tr><td class="ps-5">Write</td><td class="value" id="writeCount">-</td></tr>
+                                                        <tr><td class="ps-5">Other</td><td class="value" id="otherCount">-</td></tr>
+                                                        <tr><td class="ps-5">Total</td><td class="value" id="totalCount">-</td></tr>
+                                                        <tr>
+                                                        <td class="ps-4">Queries</td>
+                                                        <td class="value">
+                                                            <span id="queriesTotal">-</span>
+                                                            (<span id="queriesPerSec">-</span> per sec.)
+                                                        </td>
+                                                        </tr>
+                                                    </tbody>
                                                 </table>
-                                              </div>
-                                            </div>                                        
-                                            <!-- Latency -->
-                                            <div class="card mt-2 rounded-3">
-                                                <div class="card-header">Latency (avg only, ms)</div>
-                                                <div class="card-body p-0">
-                                                    <table class="table table-sm mb-0">
-                                                        <tbody>
-                                                            <tr><td class="ps-5" style="width: 70%;">Avg</td><td class="value" id="avgLatency">-</td></tr>
-                                                            <tr><td class="ps-5" style="width: 70%;">Sum</td><td class="value" id="sumLatency">-</td></tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>                                            
-                                            <!-- Thread -->
-                                            <div class="card mt-2 rounded-3">
-                                                <div class="card-header">Thread</div>
-                                                <div class="card-body p-0">
-                                                    <table class="table table-sm mb-0">
-                                                        <tbody>
-                                                            <tr><td class="ps-5" style="width: 70%;">Connected</td><td class="value" id="connectedThread">-</td></tr>
-                                                            <tr><td class="ps-5" style="width: 70%;">Running</td><td class="value" id="runningThread">-</td></tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
                                             </div>
+                                        </div>                                        
+                                        <!-- General Statistics -->
+                                        <div class="card mt-2 rounded-3">
+                                            <div class="card-header">General Statistics</div>
+                                            <div class="card-body p-0">
+                                            <table class="table table-sm mb-0">
+                                                <tbody>
+                                                <tr><td class="ps-5" style="width: 70%;">Total Tables</td><td class="value" id="totalTable">-</td></tr>
+                                                <tr><td class="ps-5" style="width: 70%;">Total Time</td><td class="value" id="totalTime">-</td></tr>
+                                                </tbody>
+                                            </table>
+                                            </div>
+                                        </div>                                        
+                                        <!-- Latency -->
+                                        <div class="card mt-2 rounded-3">
+                                            <div class="card-header">Latency (avg only, ms)</div>
+                                            <div class="card-body p-0">
+                                                <table class="table table-sm mb-0">
+                                                    <tbody>
+                                                        <tr><td class="ps-5" style="width: 70%;">Avg</td><td class="value" id="avgLatency">-</td></tr>
+                                                        <tr><td class="ps-5" style="width: 70%;">Sum</td><td class="value" id="sumLatency">-</td></tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>                                            
+                                        <!-- Thread -->
+                                        <div class="card mt-2 rounded-3">
+                                            <div class="card-header">Thread</div>
+                                            <div class="card-body p-0">
+                                                <table class="table table-sm mb-0">
+                                                    <tbody>
+                                                        <tr><td class="ps-5" style="width: 70%;">Connected</td><td class="value" id="connectedThread">-</td></tr>
+                                                        <tr><td class="ps-5" style="width: 70%;">Running</td><td class="value" id="runningThread">-</td></tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="input-group">
                                         <button class="btn btn-dark btn-block rounded-3 next-btn ms-auto" type="button" data-current="#collapseTwo" data-next="#collapseThree">Next</button>                            
@@ -267,13 +264,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="d-flex mb-1">
+                <div class="d-flex mb-3">
                     <div class="d-flex flex-column pr-4 align-items-center mt-2">
                         <button class="rounded-circle py-2 px-3 bg-secondary text-white mb-1 next-btn border-0 step-btn" type="button" data-target="#collapseFour">
                             4
                         </button>
                     </div>
-                    <div class="accordion flex-grow-1 ms-4 mb-4" id="accordionExample">
+                    <div class="accordion flex-grow-1 ms-4" id="accordionExample">
                         <div class="accordion-item rounded-3">
                             <div class="accordion-header rounded-3"  id="headingFour">
                                 <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
@@ -282,26 +279,132 @@
                             </div>                            
                             <div id="collapseFour" class="accordion-collapse rounded-bottom collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
-                                    <div>
-                                        <button class="btn btn-primary mb-3 rounded-3 float-end" id="targetDiagnoseBtn" type="button">diagnose</button>
-                                    </div>
-                                    <div class="input-group mb-3">
-                                        <textarea class="form-control rounded-1" id="targetResult" name="resultText" rows="10" disabled></textarea>
-                                    </div>
                                     <div class="input-group">
-                                        <button class="btn btn-dark btn-block rounded-3 ms-auto next-btn" type="button" data-current="#collapseFour" data-next="#collapseFive">Next</button>                            
+                                        <div class="form-floating mb-3">
+                                            <input type="text" class="form-control rounded-3" id="targetTime" name="targetTime" placeholder="time" value="5" required>
+                                            <label for="targetTime">Duration</label>
+                                        </div>
+                                        <div class="form-floating mb-3 ms-3">
+                                            <input type="text" class="form-control rounded-3" id="targetTableCount" name="targetTableCount" placeholder="Table Count" value="10" required>
+                                            <label for="targetTableCount">Table Count</label>
+                                        </div>
+                                        <div class="form-floating mb-3 ms-3">
+                                            <input type="text" class="form-control rounded-3" id="targetTableSize" name="targetTableSize" placeholder="Table Size" value="10" required>
+                                            <label for="targetTableSize">Table Size</label>
+                                        </div>
+                                        <div class="form-floating mb-3 ms-3">
+                                            <input type="text" class="form-control rounded-3" id="targetThread" name="targetThread" placeholder="Thread" value="10" required>
+                                            <label for="targetThread">Thread</label>
+                                        </div>
+                                        <button class="btn btn-primary rounded-3 ms-3 mb-3 float-end" id="targetDiagnoseBtn" type="button">
+                                            Diagnose
+                                        </button>                                 
+                                    </div>
+                                    <div class="card rounded-3">
+                                        <div class="card-header">SQL Statistics</div>
+                                        <div class="card-body p-0">
+                                            <table class="table table-sm mb-0">
+                                                <thead class="table-light">
+                                                    <tr><th class="ps-4 fw-normal" style="width: 70%;">Queries performed</th><th class="fw-normal">Value</th></tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr><td class="ps-5">Read</td><td class="value" id="readTargetCount">-</td></tr>
+                                                    <tr><td class="ps-5">Write</td><td class="value" id="writeTargetCount">-</td></tr>
+                                                    <tr><td class="ps-5">Other</td><td class="value" id="otherTargetCount">-</td></tr>
+                                                    <tr><td class="ps-5">Total</td><td class="value" id="totalTargetCount">-</td></tr>
+                                                    <tr>
+                                                        <td class="ps-4">Transactions</td>
+                                                        <td class="value">
+                                                            <span id="transactionsTotal">-</span>
+                                                            (<span id="transactionsPerSec">-</span> per sec.)
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ps-4">Queries</td>
+                                                        <td class="value">
+                                                            <span id="queriesTargetTotal">-</span>
+                                                            (<span id="queriesTargetPerSec">-</span> per sec.)
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ps-4">Ignored errors</td>
+                                                        <td class="value">
+                                                            <span id="errorsTotal">-</span>
+                                                            (<span id="errorsPerSec">-</span> per sec.)
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ps-4">Reconnects</td>
+                                                        <td class="value">
+                                                            <span id="reconnectsTotal">-</span>
+                                                            (<span id="reconnectsPerSec">-</span> per sec.)
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>                                        
+                                    <!-- General Statistics -->
+                                    <div class="card mt-2 rounded-3">
+                                        <div class="card-header">General Statistics</div>
+                                        <div class="card-body p-0">
+                                        <table class="table table-sm mb-0">
+                                            <tbody>
+                                                <tr><td class="ps-5" style="width: 70%;">Total Time</td><td class="value" id="totalTargetTime">-</td></tr>
+                                                <tr><td class="ps-5" style="width: 70%;">Total Number Of Events</td><td class="value" id="totalEvents">-</td></tr>
+                                            </tbody>
+                                        </table>
+                                        </div>
+                                    </div>                                        
+                                    <!-- Latency -->
+                                    <div class="card mt-2 rounded-3">
+                                        <div class="card-header">Latency (avg only, ms)</div>
+                                        <div class="card-body p-0">
+                                            <table class="table table-sm mb-0">
+                                                <tbody>
+                                                    <tr><td class="ps-5" style="width: 70%;">Min</td><td class="value" id="minTargetLatency">-</td></tr>
+                                                    <tr><td class="ps-5" style="width: 70%;">Avg</td><td class="value" id="avgTargetLatency">-</td></tr>
+                                                    <tr><td class="ps-5" style="width: 70%;">Max</td><td class="value" id="maxTargetLatency">-</td></tr>
+                                                    <tr><td class="ps-5" style="width: 70%;">95th Percentile</td><td class="value" id="95TargetLatency">-</td></tr>
+                                                    <tr><td class="ps-5" style="width: 70%;">Sum</td><td class="value" id="sumTargetLatency">-</td></tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>                                            
+                                    <!-- Thread -->
+                                    <div class="card mt-2 rounded-3">
+                                        <div class="card-header">Threads fairness</div>
+                                        <div class="card-body p-0">
+                                            <table class="table table-sm mb-0">
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="ps-5" style="width: 70%;">Events (avg/stddev)</td>
+                                                        <td class="value">
+                                                            <span id="avgTargetEvents">-</span> / <span id="stddevTargetEvents">-</span>                                                                    
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ps-5" style="width: 70%;">Execution Time (avg/stddev)</td>
+                                                        <td class="value">
+                                                            <span id="avgTagetExecTime">-</span> / <span id="stddevTargetExecTime">-</span> 
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>            
+            </div>
             <button type="submit" class="btn btn-primary rounded-1" id="submitBtn">Submit</button>
         </form>
     </div>
-</div>
+</div>  
 <script>
+
     document.addEventListener("DOMContentLoaded", () => {
         // Next 버튼
         document.querySelectorAll(".next-btn").forEach(btn => {
@@ -338,7 +441,7 @@
                     password: password,
                     databaseName: databaseName,
                 },
-                time: 5
+                time: parseInt(document.getElementById("sourceTime").value)
             }
 
             let req = {
@@ -348,9 +451,6 @@
                 },
                 body: JSON.stringify(jsonData)
             };
-
-            // const sourceResult = document.getElementById('sourceResult');
-            // sourceResult.value = ""
 
             const btn = e.currentTarget
             btn.disabled = true;
@@ -374,12 +474,70 @@
 
             console.log("diagnose progressing...");
         });
+
+        document.getElementById("targetDiagnoseBtn").addEventListener("click", (e) => {
+            const url = "/diagnose/sysbench"
+
+            host = document.getElementById("mysql-destHost").value
+            port = document.getElementById("mysql-destPort").value
+            username = document.getElementById("mysql-destUsername").value
+            password = document.getElementById("mysql-destPassword").value
+            databaseName = document.getElementById("mysql-destDatabase").value
+
+            if (!host || !port || !username || !password || !databaseName) {
+                alert("Please make sure all required fields for Source MySQL are filled in.");
+                return;
+            }
+
+            jsonData = {
+                host: host,
+                port: port,
+                username: username,
+                password: password,
+                databaseName: databaseName,
+                targetType: "mysql",
+                tableCount: parseInt(document.getElementById("targetTableCount").value),
+                tableSize: parseInt(document.getElementById("targetTableSize").value),
+                threadsCount: parseInt(document.getElementById("targetThread").value),
+                time: parseInt(document.getElementById("targetTime").value)
+            }
+
+            let req = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(jsonData)
+            };
+
+            const btn = e.currentTarget
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+
+            fetch(url, req)
+                .then(response => {
+                    return response.json();
+                })
+                .then(json => {
+                    updateSysbenchResult(json)
+                })
+                .catch(reason => {
+                    console.log(reason);
+                    alert(reason);
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = 'Diagnose';
+                });
+
+            console.log("diagnose progressing...");
+        });
     });
 
-    function updateStats(data) {
-        // 안전한 소수점 변환
-        const formatFixed = (num, digits = 2) => (typeof num === "number" && !isNaN(num)) ? num.toFixed(digits) : "0.00";
+    // 안전한 소수점 변환
+    const formatFixed = (num, digits = 2) => (typeof num === "number" && !isNaN(num)) ? num.toFixed(digits) : "0.00";
 
+    function updateStats(data) {
         // ✅ totalTime: 나노초 → 초 단위 변환
         const seconds = (data.Diagnostics.Elapsed / 1e9).toFixed(2) + "s";
 
@@ -395,5 +553,36 @@
         document.getElementById("totalTable").textContent = data.Diagnostics.Lock.length;
         document.getElementById("connectedThread").textContent = data.Diagnostics.Thread.ThreadConnected;
         document.getElementById("runningThread").textContent = data.Diagnostics.Thread.ThreadRunning;
+    }
+
+    function updateSysbenchResult(data) {
+        // ✅ totalTime: 나노초 → 초 단위 변환
+        const seconds = (data.SysbenchResult.rdbmsResult.totalTime / 1e9).toFixed(2) + "s";
+
+        document.getElementById("readTargetCount").textContent = data.SysbenchResult.rdbmsResult.read;
+        document.getElementById("writeTargetCount").textContent = data.SysbenchResult.rdbmsResult.write;
+        document.getElementById("otherTargetCount").textContent = data.SysbenchResult.rdbmsResult.other;
+        document.getElementById("totalTargetCount").textContent = data.SysbenchResult.rdbmsResult.total;
+        document.getElementById("transactionsTotal").textContent = data.SysbenchResult.rdbmsResult.transactions;
+        document.getElementById("transactionsPerSec").textContent = formatFixed(data.SysbenchResult.rdbmsResult.tps);
+        document.getElementById("queriesTargetTotal").textContent = data.SysbenchResult.rdbmsResult.queries;
+        document.getElementById("queriesTargetPerSec").textContent = formatFixed(data.SysbenchResult.rdbmsResult.qps);
+        document.getElementById("errorsTotal").textContent = data.SysbenchResult.rdbmsResult.ignoredErrors;
+        document.getElementById("errorsPerSec").textContent = formatFixed(data.SysbenchResult.rdbmsResult.ignoredErrorsPerSec);
+        document.getElementById("reconnectsTotal").textContent = data.SysbenchResult.rdbmsResult.reconnects;
+        document.getElementById("reconnectsPerSec").textContent = formatFixed(data.SysbenchResult.rdbmsResult.reconnectsPerSec);
+        document.getElementById("totalTargetTime").textContent = seconds;
+        document.getElementById("totalEvents").textContent = data.SysbenchResult.rdbmsResult.totalEvents;
+
+        document.getElementById("minTargetLatency").textContent = formatFixed(data.SysbenchResult.rdbmsResult.latencyMinMs);
+        document.getElementById("avgTargetLatency").textContent = formatFixed(data.SysbenchResult.rdbmsResult.latencyAvgMs);
+        document.getElementById("maxTargetLatency").textContent = formatFixed(data.SysbenchResult.rdbmsResult.latencyMaxMs);
+        document.getElementById("95TargetLatency").textContent = formatFixed(data.SysbenchResult.rdbmsResult.latencyP95Ms);
+        document.getElementById("sumTargetLatency").textContent = formatFixed(data.SysbenchResult.rdbmsResult.latencySumMs);
+
+        document.getElementById("avgTargetEvents").textContent = data.SysbenchResult.rdbmsResult.eventsAvg;
+        document.getElementById("stddevTargetEvents").textContent = data.SysbenchResult.rdbmsResult.eventsStddev;
+        document.getElementById("avgTagetExecTime").textContent = data.SysbenchResult.rdbmsResult.execTimeAvgSec;
+        document.getElementById("stddevTargetExecTime").textContent = data.SysbenchResult.rdbmsResult.execTimeStddevSec;
     }
 </script>
