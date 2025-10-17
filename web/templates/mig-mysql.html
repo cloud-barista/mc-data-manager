@@ -127,7 +127,7 @@
                                             <div class="card-body p-0">
                                                 <table class="table table-sm mb-0">
                                                     <thead class="table-light">
-                                                        <tr><th class="ps-4 fw-normal" style="width: 70%;">Queries performed</th><th class="fw-normal">Value</th></tr>
+                                                        <tr><th class="ps-4 fw-normal" style="width: 50%;">Queries performed</th><th class="fw-normal">Value</th></tr>
                                                     </thead>
                                                     <tbody>
                                                         <tr><td class="ps-5">Read</td><td class="value" id="readCount">-</td></tr>
@@ -151,8 +151,8 @@
                                             <div class="card-body p-0">
                                             <table class="table table-sm mb-0">
                                                 <tbody>
-                                                <tr><td class="ps-5" style="width: 70%;">Total Tables</td><td class="value" id="totalTable">-</td></tr>
-                                                <tr><td class="ps-5" style="width: 70%;">Total Time</td><td class="value" id="totalTime">-</td></tr>
+                                                <tr><td class="ps-5" style="width: 50%;">Total Tables</td><td class="value" id="totalTable">-</td></tr>
+                                                <tr><td class="ps-5" style="width: 50%;">Total Time</td><td class="value" id="totalTime">-</td></tr>
                                                 </tbody>
                                             </table>
                                             </div>
@@ -163,8 +163,8 @@
                                             <div class="card-body p-0">
                                                 <table class="table table-sm mb-0">
                                                     <tbody>
-                                                        <tr><td class="ps-5" style="width: 70%;">Avg</td><td class="value" id="avgLatency">-</td></tr>
-                                                        <tr><td class="ps-5" style="width: 70%;">Sum</td><td class="value" id="sumLatency">-</td></tr>
+                                                        <tr><td class="ps-5" style="width: 50%;">Avg</td><td class="value" id="avgLatency">-</td></tr>
+                                                        <tr><td class="ps-5" style="width: 50%;">Sum</td><td class="value" id="sumLatency">-</td></tr>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -175,8 +175,8 @@
                                             <div class="card-body p-0">
                                                 <table class="table table-sm mb-0">
                                                     <tbody>
-                                                        <tr><td class="ps-5" style="width: 70%;">Connected</td><td class="value" id="connectedThread">-</td></tr>
-                                                        <tr><td class="ps-5" style="width: 70%;">Running</td><td class="value" id="runningThread">-</td></tr>
+                                                        <tr><td class="ps-5" style="width: 50%;">Connected</td><td class="value" id="connectedThread">-</td></tr>
+                                                        <tr><td class="ps-5" style="width: 50%;">Running</td><td class="value" id="runningThread">-</td></tr>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -305,15 +305,22 @@
                                         <div class="card-body p-0">
                                             <table class="table table-sm mb-0">
                                                 <thead class="table-light">
-                                                    <tr><th class="ps-4 fw-normal" style="width: 70%;">Queries performed</th><th class="fw-normal">Value</th></tr>
+                                                    <tr>
+                                                        <th class="ps-4 fw-normal" style="width: 50%;">Queries performed</th>
+                                                        <th class="fw-normal" style="width: 25%;">Source</th>
+                                                        <th class="fw-normal">Target</th>
+                                                    </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr><td class="ps-5">Read</td><td class="value" id="readTargetCount">-</td></tr>
-                                                    <tr><td class="ps-5">Write</td><td class="value" id="writeTargetCount">-</td></tr>
-                                                    <tr><td class="ps-5">Other</td><td class="value" id="otherTargetCount">-</td></tr>
-                                                    <tr><td class="ps-5">Total</td><td class="value" id="totalTargetCount">-</td></tr>
+                                                    <tr><td class="ps-5">Read</td><td class="value" id="readSourceCount">-</td><td class="value" id="readTargetCount">-</td></tr>
+                                                    <tr><td class="ps-5">Write</td><td class="value" id="writeSourceCount">-</td><td class="value" id="writeTargetCount">-</td></tr>
+                                                    <tr><td class="ps-5">Other</td><td class="value" id="otherSourceCount">-</td><td class="value" id="otherTargetCount">-</td></tr>
+                                                    <tr><td class="ps-5">Total</td><td class="value" id="totalSourceCount">-</td><td class="value" id="totalTargetCount">-</td></tr>
                                                     <tr>
                                                         <td class="ps-4">Transactions</td>
+                                                        <td class="value">
+                                                            <span>-</span>
+                                                        </td>
                                                         <td class="value">
                                                             <span id="transactionsTotal">-</span>
                                                             (<span id="transactionsPerSec">-</span> per sec.)
@@ -322,6 +329,10 @@
                                                     <tr>
                                                         <td class="ps-4">Queries</td>
                                                         <td class="value">
+                                                            <span id="queriesSourceTotal">-</span>
+                                                            (<span id="queriesSourcePerSec">-</span> per sec.)
+                                                        </td>
+                                                        <td class="value">
                                                             <span id="queriesTargetTotal">-</span>
                                                             (<span id="queriesTargetPerSec">-</span> per sec.)
                                                         </td>
@@ -329,12 +340,18 @@
                                                     <tr>
                                                         <td class="ps-4">Ignored errors</td>
                                                         <td class="value">
+                                                            <span>-</span>
+                                                        </td>
+                                                        <td class="value">
                                                             <span id="errorsTotal">-</span>
                                                             (<span id="errorsPerSec">-</span> per sec.)
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td class="ps-4">Reconnects</td>
+                                                        <td class="value">
+                                                            <span>-</span>
+                                                        </td>
                                                         <td class="value">
                                                             <span id="reconnectsTotal">-</span>
                                                             (<span id="reconnectsPerSec">-</span> per sec.)
@@ -350,8 +367,8 @@
                                         <div class="card-body p-0">
                                         <table class="table table-sm mb-0">
                                             <tbody>
-                                                <tr><td class="ps-5" style="width: 70%;">Total Time</td><td class="value" id="totalTargetTime">-</td></tr>
-                                                <tr><td class="ps-5" style="width: 70%;">Total Number Of Events</td><td class="value" id="totalEvents">-</td></tr>
+                                                <tr><td class="ps-5" style="width: 50%;">Total Time</td><td class="value" id="totalSourceTime" style="width: 25%;">-</td><td class="value" id="totalTargetTime">-</td></tr>
+                                                <tr><td class="ps-5" style="width: 50%;">Total Number Of Events</td><td class="value">-</td><td class="value" id="totalEvents">-</td></tr>
                                             </tbody>
                                         </table>
                                         </div>
@@ -362,11 +379,11 @@
                                         <div class="card-body p-0">
                                             <table class="table table-sm mb-0">
                                                 <tbody>
-                                                    <tr><td class="ps-5" style="width: 70%;">Min</td><td class="value" id="minTargetLatency">-</td></tr>
-                                                    <tr><td class="ps-5" style="width: 70%;">Avg</td><td class="value" id="avgTargetLatency">-</td></tr>
-                                                    <tr><td class="ps-5" style="width: 70%;">Max</td><td class="value" id="maxTargetLatency">-</td></tr>
-                                                    <tr><td class="ps-5" style="width: 70%;">95th Percentile</td><td class="value" id="95TargetLatency">-</td></tr>
-                                                    <tr><td class="ps-5" style="width: 70%;">Sum</td><td class="value" id="sumTargetLatency">-</td></tr>
+                                                    <tr><td class="ps-5" style="width: 50%;">Min</td><td class="value" style="width: 25%;">-</td><td class="value" id="minTargetLatency">-</td></tr>
+                                                    <tr><td class="ps-5" style="width: 50%;">Avg</td><td class="value" id="avgSourceLatency">-</td><td class="value" id="avgTargetLatency">-</td></tr>
+                                                    <tr><td class="ps-5" style="width: 50%;">Max</td><td class="value">-</td><td class="value" id="maxTargetLatency">-</td></tr>
+                                                    <tr><td class="ps-5" style="width: 50%;">95th Percentile</td><td class="value">-</td><td class="value" id="95TargetLatency">-</td></tr>
+                                                    <tr><td class="ps-5" style="width: 50%;">Sum</td><td class="value" id="sumSourceLatency">-</td><td class="value" id="sumTargetLatency">-</td></tr>
                                                 </tbody>
                                             </table>
                                         </div>
@@ -378,13 +395,19 @@
                                             <table class="table table-sm mb-0">
                                                 <tbody>
                                                     <tr>
-                                                        <td class="ps-5" style="width: 70%;">Events (avg/stddev)</td>
+                                                        <td class="ps-5" style="width: 50%;">Events (avg/stddev)</td>
+                                                        <td class="value" style="width: 25%;">
+                                                            <span>-</span>                                                               
+                                                        </td>
                                                         <td class="value">
                                                             <span id="avgTargetEvents">-</span> / <span id="stddevTargetEvents">-</span>                                                                    
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="ps-5" style="width: 70%;">Execution Time (avg/stddev)</td>
+                                                        <td class="ps-5" style="width: 50%;">Execution Time (avg/stddev)</td>
+                                                        <td class="value">
+                                                            <span>-</span>
+                                                        </td>
                                                         <td class="value">
                                                             <span id="avgTagetExecTime">-</span> / <span id="stddevTargetExecTime">-</span> 
                                                         </td>
@@ -547,14 +570,23 @@
         const seconds = (data.Diagnostics.Elapsed / 1e9).toFixed(2) + "s";
 
         document.getElementById("readCount").textContent = data.Diagnostics.Report.Read;
+        document.getElementById("readSourceCount").textContent = data.Diagnostics.Report.Read;
         document.getElementById("writeCount").textContent = data.Diagnostics.Report.Write;
+        document.getElementById("writeSourceCount").textContent = data.Diagnostics.Report.Write;
         document.getElementById("otherCount").textContent = data.Diagnostics.Report.Other;
+        document.getElementById("otherSourceCount").textContent = data.Diagnostics.Report.Other;
         document.getElementById("totalCount").textContent = data.Diagnostics.Report.Total;
+        document.getElementById("totalSourceCount").textContent = data.Diagnostics.Report.Total;
         document.getElementById("queriesTotal").textContent = data.Diagnostics.Report.Total;
+        document.getElementById("queriesSourceTotal").textContent = data.Diagnostics.Report.Total;
         document.getElementById("queriesPerSec").textContent = formatFixed(data.Diagnostics.QPS);
+        document.getElementById("queriesSourcePerSec").textContent = formatFixed(data.Diagnostics.QPS);
         document.getElementById("totalTime").textContent = seconds;
+        document.getElementById("totalSourceTime").textContent = seconds;
         document.getElementById("avgLatency").textContent = formatFixed(data.Diagnostics.AvgMs);
+        document.getElementById("avgSourceLatency").textContent = formatFixed(data.Diagnostics.AvgMs);
         document.getElementById("sumLatency").textContent = formatFixed(data.Diagnostics.SumMs);
+        document.getElementById("sumSourceLatency").textContent = formatFixed(data.Diagnostics.SumMs);
         document.getElementById("totalTable").textContent = data.Diagnostics.Lock.length;
         document.getElementById("connectedThread").textContent = data.Diagnostics.Thread.ThreadConnected;
         document.getElementById("runningThread").textContent = data.Diagnostics.Thread.ThreadRunning;
