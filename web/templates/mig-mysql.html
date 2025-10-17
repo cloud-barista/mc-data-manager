@@ -117,7 +117,7 @@
                                     <div class="input-group">
                                         <div class="form-floating mb-3">
                                             <input type="text" class="form-control rounded-3 w-25" id="sourceTime" name="sourceTime" placeholder="time" value="5" required>
-                                            <label for="sourceTime">Duration</label>
+                                            <label for="sourceTime">Duration ( sec )</label>
                                         </div>
                                         <button class="btn btn-primary ms-3 mb-3 rounded-3 float-end" id="sourceDiagnoseBtn" type="button">Diagnose</button>
                                     </div>
@@ -282,7 +282,7 @@
                                     <div class="input-group">
                                         <div class="form-floating mb-3">
                                             <input type="text" class="form-control rounded-3" id="targetTime" name="targetTime" placeholder="time" value="5" required>
-                                            <label for="targetTime">Duration</label>
+                                            <label for="targetTime">Duration ( sec )</label>
                                         </div>
                                         <div class="form-floating mb-3 ms-3">
                                             <input type="text" class="form-control rounded-3" id="targetTableCount" name="targetTableCount" placeholder="Table Count" value="10" required>
@@ -399,12 +399,11 @@
                     </div>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary rounded-1" id="submitBtn">Submit</button>
+            <button type="submit" class="btn btn-primary rounded-1 float-end" id="submitBtn">Submit</button>
         </form>
     </div>
 </div>  
 <script>
-
     document.addEventListener("DOMContentLoaded", () => {
         // Next 버튼
         document.querySelectorAll(".next-btn").forEach(btn => {
@@ -579,13 +578,11 @@
         document.getElementById("reconnectsPerSec").textContent = formatFixed(data.SysbenchResult.rdbmsResult.reconnectsPerSec);
         document.getElementById("totalTargetTime").textContent = seconds;
         document.getElementById("totalEvents").textContent = data.SysbenchResult.rdbmsResult.totalEvents;
-
         document.getElementById("minTargetLatency").textContent = formatFixed(data.SysbenchResult.rdbmsResult.latencyMinMs);
         document.getElementById("avgTargetLatency").textContent = formatFixed(data.SysbenchResult.rdbmsResult.latencyAvgMs);
         document.getElementById("maxTargetLatency").textContent = formatFixed(data.SysbenchResult.rdbmsResult.latencyMaxMs);
         document.getElementById("95TargetLatency").textContent = formatFixed(data.SysbenchResult.rdbmsResult.latencyP95Ms);
         document.getElementById("sumTargetLatency").textContent = formatFixed(data.SysbenchResult.rdbmsResult.latencySumMs);
-
         document.getElementById("avgTargetEvents").textContent = data.SysbenchResult.rdbmsResult.eventsAvg;
         document.getElementById("stddevTargetEvents").textContent = data.SysbenchResult.rdbmsResult.eventsStddev;
         document.getElementById("avgTagetExecTime").textContent = data.SysbenchResult.rdbmsResult.execTimeAvgSec;
