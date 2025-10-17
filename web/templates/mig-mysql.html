@@ -564,11 +564,10 @@
 
     // 안전한 소수점 변환
     const formatFixed = (num, digits = 2) => (typeof num === "number" && !isNaN(num)) ? num.toFixed(digits) : "0.00";
+    // ✅ totalTime: 나노초 → 초 단위 변환
+    const formatSeconds = (num) => (typeof num === "number" && !isNaN(num)) ? (num / 1e9).toFixed(2) + "s" : num;
 
     function updateStats(data) {
-        // ✅ totalTime: 나노초 → 초 단위 변환
-        const seconds = (data.Diagnostics.Elapsed / 1e9).toFixed(2) + "s";
-
         document.getElementById("readCount").textContent = data.Diagnostics.Report.Read;
         document.getElementById("readSourceCount").textContent = data.Diagnostics.Report.Read;
         document.getElementById("writeCount").textContent = data.Diagnostics.Report.Write;
@@ -581,8 +580,8 @@
         document.getElementById("queriesSourceTotal").textContent = data.Diagnostics.Report.Total;
         document.getElementById("queriesPerSec").textContent = formatFixed(data.Diagnostics.QPS);
         document.getElementById("queriesSourcePerSec").textContent = formatFixed(data.Diagnostics.QPS);
-        document.getElementById("totalTime").textContent = seconds;
-        document.getElementById("totalSourceTime").textContent = seconds;
+        document.getElementById("totalTime").textContent = formatSeconds(data.Diagnostics.Elapsed);
+        document.getElementById("totalSourceTime").textContent = formatSeconds(data.Diagnostics.Elapsed);
         document.getElementById("avgLatency").textContent = formatFixed(data.Diagnostics.AvgMs);
         document.getElementById("avgSourceLatency").textContent = formatFixed(data.Diagnostics.AvgMs);
         document.getElementById("sumLatency").textContent = formatFixed(data.Diagnostics.SumMs);
@@ -593,9 +592,6 @@
     }
 
     function updateSysbenchResult(data) {
-        // ✅ totalTime: 나노초 → 초 단위 변환
-        const seconds = (data.SysbenchResult.rdbmsResult.totalTime / 1e9).toFixed(2) + "s";
-
         document.getElementById("readTargetCount").textContent = data.SysbenchResult.rdbmsResult.read;
         document.getElementById("writeTargetCount").textContent = data.SysbenchResult.rdbmsResult.write;
         document.getElementById("otherTargetCount").textContent = data.SysbenchResult.rdbmsResult.other;
@@ -608,7 +604,7 @@
         document.getElementById("errorsPerSec").textContent = formatFixed(data.SysbenchResult.rdbmsResult.ignoredErrorsPerSec);
         document.getElementById("reconnectsTotal").textContent = data.SysbenchResult.rdbmsResult.reconnects;
         document.getElementById("reconnectsPerSec").textContent = formatFixed(data.SysbenchResult.rdbmsResult.reconnectsPerSec);
-        document.getElementById("totalTargetTime").textContent = seconds;
+        document.getElementById("totalTargetTime").textContent = formatSeconds(data.SysbenchResult.rdbmsResult.totalTime);
         document.getElementById("totalEvents").textContent = data.SysbenchResult.rdbmsResult.totalEvents;
         document.getElementById("minTargetLatency").textContent = formatFixed(data.SysbenchResult.rdbmsResult.latencyMinMs);
         document.getElementById("avgTargetLatency").textContent = formatFixed(data.SysbenchResult.rdbmsResult.latencyAvgMs);

@@ -25,78 +25,80 @@
     <div class="card-body">
         <!-- <form action="/generate/aws" method="POST"> -->
         <form id="genForm">
-            <div class="input-group mb-3">
-                <div class="form-floating">
-                    <input type="text" class="form-control" id="targetPointLabel" value="-" style="border: 0; background-color: white;" value="-" required disabled>
-                    <label for="targetPointLabel">Target</label>
+            <div class="card rounded-3 p-3 mb-3">
+                <div class="input-group mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="targetPointLabel" value="-" style="border: 0; background-color: white;" value="-" required disabled>
+                        <label for="targetPointLabel">Target</label>
+                    </div>
                 </div>
-            </div>
-            <div class="input-group mb-3 me-1">
-                <span class="input-group-text rounded-start"><i class="fa-solid fa-user-secret"></i></span>
-                <div class="form-floating">
-                    <select class="form-select form-select-sm rounded-end" id="targetCredentialSelect" name="targetPoint[credentialId]">
-                        <option value="none" data-provider="none"> - </option>
-                    </select>
-                    <label for="targetCredentialSelect">provider - credential name</label>
+                <div class="input-group mb-3 me-1">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-user-secret"></i></span>
+                    <div class="form-floating">
+                        <select class="form-select form-select-sm rounded-end" id="targetCredentialSelect" name="targetPoint[credentialId]">
+                            <option value="none" data-provider="none"> - </option>
+                        </select>
+                        <label for="targetCredentialSelect">provider - credential name</label>
+                    </div>
                 </div>
-            </div>
-            <div class="input-group mb-3 me-1">
-                <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span>
-                <div class="form-floating">
-                    <select class="form-select form-select-sm rounded-end" id="targetRegionSelect" name="targetPoint[region]">
-                        <option value="none" selected> - </option>
-                        <optgroup label="AWS regions" data-provider="aws" style="display: none;">
-                            {{ range $index, $value := .AWSRegions }}
-                            <option value="{{ $value }}">{{ $value }}</option>
-                            {{ end }}
-                        </optgroup>
-                        <optgroup label="GCP regions" data-provider="gcp" style="display: none;">
-                            {{ range $index, $value := .GCPRegions }}
-                            <option value="{{ $value }}">{{ $value }}</option>
-                            {{ end }}
-                        </optgroup>
-                        <optgroup label="NCP regions" data-provider="ncp" style="display: none;">
-                            {{ range $index, $value := .NCPRegions }}
-                            <option value="{{ $value }}">{{ $value }}</option>
-                            {{ end }}
-                        </optgroup>                            
-                    </select>
-                    <label for="targetRegionSelect">Select Region</label>
+                <div class="input-group mb-3 me-1">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span>
+                    <div class="form-floating">
+                        <select class="form-select form-select-sm rounded-end" id="targetRegionSelect" name="targetPoint[region]">
+                            <option value="none" selected> - </option>
+                            <optgroup label="AWS regions" data-provider="aws" style="display: none;">
+                                {{ range $index, $value := .AWSRegions }}
+                                <option value="{{ $value }}">{{ $value }}</option>
+                                {{ end }}
+                            </optgroup>
+                            <optgroup label="GCP regions" data-provider="gcp" style="display: none;">
+                                {{ range $index, $value := .GCPRegions }}
+                                <option value="{{ $value }}">{{ $value }}</option>
+                                {{ end }}
+                            </optgroup>
+                            <optgroup label="NCP regions" data-provider="ncp" style="display: none;">
+                                {{ range $index, $value := .NCPRegions }}
+                                <option value="{{ $value }}">{{ $value }}</option>
+                                {{ end }}
+                            </optgroup>                            
+                        </select>
+                        <label for="targetRegionSelect">Select Region</label>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="input-group mb-3 d-none" id="ncp-endpoint-div">
-                <span class="input-group-text rounded-start"><i class="fa-solid fa-location-dot"></i></span>
-                <div class="form-floating">
-                    <input type="text" class="form-control rounded-end" id="gen-ncp-endpoint" name="endpoint" value="https://kr.object.ncloudstorage.com" placeholder="Endpoint">
-                    <label for="gen-ncp-endpoint">Endpoint</label>
+                
+                <div class="input-group mb-3 d-none" id="ncp-endpoint-div">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-location-dot"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control rounded-end" id="gen-ncp-endpoint" name="endpoint" value="https://kr.object.ncloudstorage.com" placeholder="Endpoint">
+                        <label for="gen-ncp-endpoint">Endpoint</label>
+                    </div>
                 </div>
-            </div>
-
-            <div class="input-group mb-3">
-                <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
-                <div class="form-floating">
-                    <!-- <input type="text" class="form-control rounded-end" id="gen-s3-bucket" name="bucket" placeholder="Bucket" required> -->
-                    <select class="form-select form-select-sm rounded-end" id="targetBucket" name="targetPoint[bucket]">
-                        <option value="-" selected>-</option>
-                    </select>
-                    <label for="targetBucket">Bucket</label>
+    
+                <div class="input-group">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
+                    <div class="form-floating">
+                        <!-- <input type="text" class="form-control rounded-end" id="gen-s3-bucket" name="bucket" placeholder="Bucket" required> -->
+                        <select class="form-select form-select-sm rounded-end" id="targetBucket" name="targetPoint[bucket]">
+                            <option value="-" selected>-</option>
+                        </select>
+                        <label for="targetBucket">Bucket</label>
+                    </div>
+                    <button type="button" class="btn btn-primary rounded-1 ms-2" id="targetBtn">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
                 </div>
-                <button type="button" class="btn btn-primary rounded-1 ms-2" id="targetBtn">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </button>
-            </div>
-            <div class="input-group mb-3" id="targetNewBucket" style="display: none;">
-                <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
-                <div class="form-floating">
-                    <input type="text" class="form-control rounded-end" id="newBucket" name="targetPoint[bucket]" placeholder="Bucket">
-                    <label for="newBucket">New Bucket</label>
+                <div class="input-group mt-3" id="targetNewBucket" style="display: none;">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control rounded-end" id="newBucket" name="targetPoint[bucket]" placeholder="Bucket">
+                        <label for="newBucket">New Bucket</label>
+                    </div>
                 </div>
             </div>
 
             {{ template "gen-data.html" . }}
 
-            <button type="submit" class="btn btn-primary rounded-1" id="submitBtn">Submit</button>
+            <button type="submit" class="btn btn-primary rounded-1 float-end" id="submitBtn">Submit</button>
             <input type="hidden" id="genTarget" value="objectstorage">
             <input type="hidden" id="targetPoint[provider]" value="none">
         </form>
