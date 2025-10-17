@@ -485,6 +485,12 @@ function migrationFormSubmit() {
 
         const payload = new FormData(form);
         let jsonData = formDataToObject(payload)
+        delete jsonData.sourceTime
+        delete jsonData.targetTime
+        delete jsonData.targetThread
+        delete jsonData.targetTableCount
+        delete jsonData.targetTableSize
+
         if(jsonData.sourcePoint.credentialId == "none") {
             alert("source credential not selected");
             return

@@ -519,6 +519,12 @@
                     return response.json();
                 })
                 .then(json => {
+                    if(json.Error) {
+                        console.log(json.Error);
+                        alert("failed to diagnose");
+
+                        return
+                    }
                     updateSysbenchResult(json)
                 })
                 .catch(reason => {
