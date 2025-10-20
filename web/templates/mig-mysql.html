@@ -383,7 +383,7 @@
                                     </div>                                        
                                     <!-- Latency -->
                                     <div class="card mt-2 rounded-3">
-                                        <div class="card-header">Latency (avg only, ms)</div>
+                                        <div class="card-header">Latency (ms)</div>
                                         <div class="card-body p-0">
                                             <table class="table table-sm mb-0">
                                                 <tbody>
@@ -417,11 +417,42 @@
                                                             <span>-</span>
                                                         </td>
                                                         <td class="value">
-                                                            <span id="avgTagetExecTime">-</span> / <span id="stddevTargetExecTime">-</span> 
+                                                            <span id="avgTargetExecTime">-</span> / <span id="stddevTargetExecTime">-</span> 
                                                         </td>
                                                     </tr>
                                                 </tbody>
                                             </table>
+                                        </div>
+                                    </div>
+                                    <div class="card mt-2 rounded-3">
+                                        <div class="card-header">
+                                            Target Database Performance Diagnosis
+                                        </div>
+                                        <div class="card-body ps-4">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <div class="fw-bold">
+                                                        Overall Score: 
+                                                    </div>
+                                                    <div class="d-flex justify-content-center align-items-center">
+                                                        <span id="score">- </span>
+                                                        <span class="ms-1 text-muted">/ 12</span>
+                                                    </div>
+                                                </div>
+                                                <div class="rounded-3 d-flex justify-content-center align-items-center me-3">
+                                                    <span class="rounded-3" id="gradeBadge">-</span>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="fw-bold">
+                                                Summary
+                                            </div>
+                                            <span class="ps-4" id="summary">-</span>
+                                            <hr>
+                                            <div class="fw-bold">
+                                                Detailed Analysis
+                                            </div>
+                                            <div class="detail-list ps-4" id="details"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -654,7 +685,130 @@
         document.getElementById("sumTargetLatency").textContent = formatFixed(data.SysbenchResult.rdbmsResult.latencySumMs);
         document.getElementById("avgTargetEvents").textContent = data.SysbenchResult.rdbmsResult.eventsAvg;
         document.getElementById("stddevTargetEvents").textContent = data.SysbenchResult.rdbmsResult.eventsStddev;
-        document.getElementById("avgTagetExecTime").textContent = data.SysbenchResult.rdbmsResult.execTimeAvgSec;
+        document.getElementById("avgTargetExecTime").textContent = data.SysbenchResult.rdbmsResult.execTimeAvgSec;
         document.getElementById("stddevTargetExecTime").textContent = data.SysbenchResult.rdbmsResult.execTimeStddevSec;
+
+        diagnoseSysbench(data)
+    }
+
+    function diagnoseSysbench(data) {
+       // ⚙️ 계산 가능한 파생 값들
+        const qps = formatFixed(data.SysbenchResult.rdbmsResult.qps);
+        const tps = formatFixed(data.SysbenchResult.rdbmsResult.tps);
+        const avgLatency = formatFixed(data.SysbenchResult.rdbmsResult.latencyAvgMs);
+        const p95Latency = formatFixed(data.SysbenchResult.rdbmsResult.latencyP95Ms);
+        const fairnessDev = data.SysbenchResult.rdbmsResult.eventsStddev;
+        const totalOps = data.SysbenchResult.rdbmsResult.transactions || 1;
+        const errorRate = ((data.SysbenchResult.rdbmsResult.ignoredErrors + data.SysbenchResult.rdbmsResult.reconnects) / totalOps) * 100;
+
+        let score = 0;
+        let details = []; // 세부 진단 코멘트 누적용
+
+        // ✅ Throughput 평가
+        if (qps >= 3000) {
+            score += 2;
+            details.push(`🟢 QPS (${qps}) — Excellent throughput.`);
+        } else if (qps >= 1000) {
+            score += 1;
+            details.push(`🟡 QPS (${qps}) — Moderate performance, could improve with indexing or caching.`);
+        } else {
+            details.push(`🔴 QPS (${qps}) — Low query throughput, possible CPU or I/O bottleneck.`);
+        }
+
+        if (tps >= 200) {
+            score += 2;
+            details.push(`🟢 TPS (${tps}) — Transaction rate is very high.`);
+        } else if (tps >= 50) {
+            score += 1;
+            details.push(`🟡 TPS (${tps}) — Acceptable, but consider tuning commit frequency or buffer settings.`);
+        } else {
+            details.push(`🔴 TPS (${tps}) — Low transaction throughput, possible contention or slow disk writes.`);
+        }
+
+        // ✅ Latency 평가
+        if (avgLatency < 1) {
+            score += 2;
+            details.push(`🟢 Avg Latency (${avgLatency} ms) — Excellent response time.`);
+        } else if (avgLatency < 5) {
+            score += 1;
+            details.push(`🟡 Avg Latency (${avgLatency} ms) — Slight delay, may benefit from connection pooling.`);
+        } else {
+            details.push(`🔴 Avg Latency (${avgLatency} ms) — High latency, investigate slow queries or locking.`);
+        }
+
+        if (p95Latency < 2) {
+            score += 2;
+            details.push(`🟢 P95 Latency (${p95Latency} ms) — Stable latency distribution.`);
+        } else if (p95Latency < 10) {
+            score += 1;
+            details.push(`🟡 P95 Latency (${p95Latency} ms) — Minor spikes detected.`);
+        } else {
+            details.push(`🔴 P95 Latency (${p95Latency} ms) — Significant latency spikes, review workload balance.`);
+        }
+
+        // ✅ 안정성 평가
+        if (errorRate === 0) {
+            score += 2;
+            details.push(`🟢 Error Rate (${errorRate.toFixed(3)}%) — No connection or query errors.`);
+        } else if (errorRate < 0.1) {
+            score += 1;
+            details.push(`🟡 Error Rate (${errorRate.toFixed(3)}%) — Low error rate, but monitor for anomalies.`);
+        } else {
+            details.push(`🔴 Error Rate (${errorRate.toFixed(3)}%) — Frequent errors detected, check connections or queries.`);
+        }
+
+        // ✅ 스레드 부하 균형 평가
+        if (fairnessDev < 10) {
+            score += 2;
+            details.push(`🟢 Thread Fairness Stddev (${fairnessDev}) — Excellent load distribution.`);
+        } else if (fairnessDev < 30) {
+            score += 1;
+            details.push(`🟡 Thread Fairness Stddev (${fairnessDev}) — Moderate imbalance between threads.`);
+        } else {
+            details.push(`🔴 Thread Fairness Stddev (${fairnessDev}) — Severe imbalance, check concurrency configuration.`);
+        }
+
+        // ✅ 최종 평가
+        let grade, summary;
+        if (score >= 10) {
+            grade = "Excellent";
+            summary = "🏆 Database performance is optimal and highly efficient.";
+        } else if (score >= 7) {
+            grade = "Good";
+            summary = "✅ Database performs well, slight optimizations may help.";
+        } else if (score >= 4) {
+            grade = "Fair";
+            summary = "⚠️ Some bottlenecks detected — consider tuning queries or I/O.";
+        } else {
+            grade = "Poor";
+            summary = "❌ Database underperforming, investigate configuration and load.";
+        }
+
+        // ✅ 최종 comment 조합
+        const comment = `${summary}\n\n📊 Detailed analysis:\n ${details.join("\n ")}`;
+        
+        // ✅ HTML 렌더링
+        const gradeBadge = document.getElementById("gradeBadge");
+        const scoreEl = document.getElementById("score");
+        const summaryEl = document.getElementById("summary");
+        const detailsEl = document.getElementById("details");
+
+        gradeBadge.textContent = grade;
+        gradeBadge.classList.add(`grade-${grade}`);
+        scoreEl.textContent = score;
+
+        // ✅ comment 내용 분리 (상단 요약 + 상세 항목)
+        const parts = comment.split("\n\n📊 Detailed analysis:\n");
+        const summaryText = parts[0];
+        const detailsText = parts[1]?.split("\n ") || [];
+
+        summaryEl.textContent = summaryText;
+
+        detailsText.forEach((line) => {
+            if (!line.trim()) return;
+            const div = document.createElement("div");
+            div.textContent = line.trim();
+            detailsEl.appendChild(div);
+        });
     }
 </script>
