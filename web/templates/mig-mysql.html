@@ -788,13 +788,11 @@
         const comment = `${summary}\n\n📊 Detailed analysis:\n ${details.join("\n ")}`;
         
         // ✅ HTML 렌더링
-        const gradeBadge = document.getElementById("gradeBadge");
         const scoreEl = document.getElementById("score");
         const summaryEl = document.getElementById("summary");
         const detailsEl = document.getElementById("details");
 
-        gradeBadge.textContent = grade;
-        gradeBadge.classList.add(`grade-${grade}`);
+        setGrade(grade)
         scoreEl.textContent = score;
 
         // ✅ comment 내용 분리 (상단 요약 + 상세 항목)
@@ -810,5 +808,25 @@
             div.textContent = line.trim();
             detailsEl.appendChild(div);
         });
+    }
+
+    function setGrade(grade) {
+        const badge = document.getElementById("gradeBadge");
+        badge.textContent = grade;
+        badge.classList.remove("bg-success", "bg-info", "bg-warning", "bg-danger");
+
+        switch (grade.toLowerCase()) {
+            case "excellent":
+                badge.classList.add("bg-success");
+                break;
+            case "good":
+                badge.classList.add("bg-info");
+                break;
+            case "fair":
+                badge.classList.add("bg-warning");
+                break;
+            default:
+                badge.classList.add("bg-danger");
+        }
     }
 </script>
