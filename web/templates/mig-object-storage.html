@@ -59,7 +59,7 @@
                                     {{ end }}
                                 </optgroup>                            
                             </select>
-                            <label for="mig-aws-region">Select Region</label>
+                            <label for="sourceRegionSelect">Select Region</label>
                         </div>
                     </div>
                     <div class="input-group mb-3">
@@ -113,8 +113,8 @@
                             <div class="input-group mb-3" style="max-width: 300px;">
                                 <span class="input-group-text rounded-start text-wrap" style="width: 80px; font-size: 0.9rem;">Date Range</span>
                                 <div class="form-floating">
-                                    <input type="text" id="datepicker1" class="form-control rounded-end" id="mig-filter-stdate" name="sourceFilter[modifiedAfter]" placeholder="Start Date">
-                                    <label for="mig-filter-stdate">Start Date</label>
+                                    <input type="text" id="datepicker1" class="form-control rounded-end" name="sourceFilter[modifiedAfter]" placeholder="Start Date">
+                                    <label for="datepicker1">Start Date</label>
                                 </div>
                             </div>
                             <div class="mb-3 d-flex align-items-center">
@@ -122,8 +122,8 @@
                             </div>
                             <div class="input-group mb-3" style="max-width: 300px;">
                                 <div class="form-floating">
-                                    <input type="text" id="datepicker2" class="form-control rounded-3" id="mig-filter-eddate" name="sourceFilter[modifiedBefore]" placeholder="End Date">
-                                    <label for="mig-filter-eddate">End Date</label>
+                                    <input type="text" id="datepicker2" class="form-control rounded-3" name="sourceFilter[modifiedBefore]" placeholder="End Date">
+                                    <label for="datepicker1">End Date</label>
                                 </div>
                             </div>                    
                         </div>
@@ -152,7 +152,7 @@
                                 <select class="form-select form-select-sm rounded-end" id="targetCredentialSelect" name="targetPoint[credentialId]">
                                     <option value="none" data-provider="none"> - </option>
                                 </select>
-                                <label for="mig-gcp-region">provider - credential name</label>
+                                <label for="targetCredentialSelect">provider - credential name</label>
                             </div>
                         </div>
                         <div class="input-group mb-3 me-1">
