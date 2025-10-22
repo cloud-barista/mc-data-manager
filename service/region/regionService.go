@@ -36,12 +36,11 @@ func GetRegions(cspType string) []string {
 	}
 
 	// CSP별 endpoint 확인
-	url := "http://localhost:1323/tumblebug/connConfig?filterRegionRepresentative=true"
-	// url := "http://mc-infra-manager:1323/connConfig?filterRegionRepresentative=true"
+	path := "/tumblebug/connConfig?filterRegionRepresentative=true"
 	method := http.MethodGet
 
 	// API 호출
-	body, err := utils.RequestTumblebug(url, method, "", nil)
+	body, err := utils.RequestTumblebug(path, method, "", nil)
 	if err != nil {
 		return nil
 	}

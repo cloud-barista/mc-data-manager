@@ -43,18 +43,16 @@ type GCPfs struct {
 
 // Creating a Bucket
 func (f *GCPfs) CreateBucket() error {
-	url := "http://localhost:1323/tumblebug/resources/objectStorage/" + f.bucketName
-	// url := "http://mc-infra-manager:1323/tumblebug/resources/objectStorage/" + f.bucketName
+	path := "/tumblebug/resources/objectStorage/" + f.bucketName
 	method := http.MethodHead
 	connName := fmt.Sprintf("%s-%s", f.provider, f.region)
 
-	_, err := utils.RequestTumblebug(url, method, connName, nil)
+	_, err := utils.RequestTumblebug(path, method, connName, nil)
 	if err != nil {
-		url = "http://localhost:1323/tumblebug/resources/objectStorage/" + f.bucketName
-		// url := "http://mc-infra-manager:1323/tumblebug/resources/objectStorage/" + f.bucketName
+		path = "/tumblebug/resources/objectStorage/" + f.bucketName
 		method = http.MethodPut
 
-		_, err := utils.RequestTumblebug(url, method, connName, nil)
+		_, err := utils.RequestTumblebug(path, method, connName, nil)
 		if err != nil {
 			fmt.Println("create error: ", err.Error())
 			return err
@@ -101,12 +99,11 @@ func (f *GCPfs) DeleteBucket() error {
 	}
 
 	// Delete the bucket
-	url := "http://localhost:1323/tumblebug/resources/objectStorage/" + f.bucketName
-	// url := "http://mc-infra-manager:1323/tumblebug/resources/objectStorage/" + f.bucketName
+	path := "/tumblebug/resources/objectStorage/" + f.bucketName
 	method := http.MethodDelete
 	connName := fmt.Sprintf("%s-%s", f.provider, f.region)
 
-	_, err = utils.RequestTumblebug(url, method, connName, nil)
+	_, err = utils.RequestTumblebug(path, method, connName, nil)
 	if err != nil {
 		return err
 	}
@@ -116,8 +113,7 @@ func (f *GCPfs) DeleteBucket() error {
 
 // deleteObjectBatch deletes a batch of objects
 func (f *GCPfs) deleteObjectBatch(keys []string) error {
-	url := "http://localhost:1323/tumblebug/resources/objectStorage/" + f.bucketName + "?delete=true"
-	// url := "http://mc-infra-manager:1323/tumblebug/resources/objectStorage/" + f.bucketName
+	path := "/tumblebug/resources/objectStorage/" + f.bucketName + "?delete=true"
 	method := http.MethodPost
 	connName := fmt.Sprintf("%s-%s", f.provider, f.region)
 
@@ -134,7 +130,7 @@ func (f *GCPfs) deleteObjectBatch(keys []string) error {
 	}
 
 	// XML 헤더 추가
-	_, rerr := utils.RequestTumblebug(url, method, connName, []byte(xml.Header+string(output)))
+	_, rerr := utils.RequestTumblebug(path, method, connName, []byte(xml.Header+string(output)))
 	if rerr != nil {
 		return err
 	}
@@ -171,11 +167,11 @@ func (f *GCPfs) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*models.Obj
 	// 	query = &storage.Query{Prefix: pre}
 	// }
 
-	url := fmt.Sprintf("%s%s", "http://localhost:1323/tumblebug/resources/objectStorage/", f.bucketName)
+	path := "/tumblebug/resources/objectStorage/" + f.bucketName
 	method := http.MethodGet
 	connName := fmt.Sprintf("%s-%s", f.provider, f.region)
 
-	result, err := utils.RequestTumblebug(url, method, connName, nil)
+	result, err := utils.RequestTumblebug(path, method, connName, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -230,12 +226,11 @@ func New(client *storage.Client, projectID, bucketName string, region string) *G
 }
 
 func (f *GCPfs) BucketList() ([]models.Bucket, error) {
-	url := "http://localhost:1323/tumblebug/resources/objectStorage"
-	// url := "http://mc-infra-manager:1323/tumblebug/resources/objectStorage"
+	path := "/tumblebug/resources/objectStorage"
 	method := http.MethodGet
 	connName := fmt.Sprintf("%s-%s", f.provider, f.region)
 
-	body, err := utils.RequestTumblebug(url, method, connName, nil)
+	body, err := utils.RequestTumblebug(path, method, connName, nil)
 	if err != nil {
 		return []models.Bucket{}, fmt.Errorf("failed to get buckets: %w", err)
 	}

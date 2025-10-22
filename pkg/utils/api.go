@@ -5,9 +5,13 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 )
 
-func RequestTumblebug(url string, method string, connName string, jsonBody []byte) ([]byte, error) {
+func RequestTumblebug(path string, method string, connName string, jsonBody []byte) ([]byte, error) {
+	baseUrl := os.Getenv("TUMBLEBUG_URL")
+	url := fmt.Sprintf("%s%s", baseUrl, path)
+
 	req, err := http.NewRequest(method, url, bytes.NewBuffer(jsonBody))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)

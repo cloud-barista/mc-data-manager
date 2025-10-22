@@ -217,11 +217,10 @@ func getCredentialKeyValues(req models.CredentialCreateRequest) (map[string]stri
 }
 
 func getPublicKey() (string, string, error) {
-	url := "http://localhost:1323/tumblebug/credential/publicKey"
-	// url := "http://mc-infra-manager:1323/tumblebug/credential/publicKey"
+	path := "/tumblebug/credential/publicKey"
 	method := http.MethodGet
 
-	body, err := utils.RequestTumblebug(url, method, "", nil)
+	body, err := utils.RequestTumblebug(path, method, "", nil)
 	if err != nil {
 		return "", "", fmt.Errorf("failed to create request: %w", err)
 	}
@@ -302,12 +301,11 @@ func pkcs7Pad(data []byte, blockSize int) []byte {
 }
 
 func sendCredentials(payload map[string]interface{}) error {
-	url := "http://localhost:1323/tumblebug/credential"
-	// url := "http://mc-infra-manager:1323/tumblebug/credential"
+	path := "/tumblebug/credential"
 	method := http.MethodPost
 	reqBody, _ := json.Marshal(payload)
 
-	_, err := utils.RequestTumblebug(url, method, "", reqBody)
+	_, err := utils.RequestTumblebug(path, method, "", reqBody)
 	if err != nil {
 		return fmt.Errorf("create credential failed: %w", err)
 	}
