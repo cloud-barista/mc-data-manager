@@ -50,7 +50,6 @@ type MySQLSysbenchParsed struct {
 func ParseMySQLSysbenchOutput(out []byte) (MySQLSysbenchParsed, error) {
 	sp := MySQLSysbenchParsed{Raw: string(out)}
 	sc := bufio.NewScanner(bytes.NewReader(out))
-	fmt.Println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ result : ", sp)
 
 	// 자주 쓰는 정규식
 	reUint := regexp.MustCompile(`([0-9]+)`)
