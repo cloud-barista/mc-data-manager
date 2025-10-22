@@ -50,7 +50,7 @@
                                             <option value="aws">AWS</option>
                                             <option value="gcp">GCP</option>
                                             <option value="ncp">NCP</option>
-                                            <option value="on-premise">On-premise</option>
+                                            <!-- <option value="on-premise">On-premise</option> -->
                                         </select>
                                     </div>
                                     <div class="input-group mb-3">
@@ -118,11 +118,13 @@
                             <div id="collapseTwo" class="accordion-collapse rounded-bottom collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
                                     <div class="input-group">
-                                        <div class="form-floating mb-3">
-                                            <input type="text" class="form-control rounded-3 w-25" id="sourceTime" name="sourceTime" placeholder="time" value="5" required>
+                                        <div class="form-floating mb-3 col-3">
+                                            <input type="text" class="form-control rounded-3" id="sourceTime" name="sourceTime" placeholder="time" value="5">
                                             <label for="sourceTime">Duration ( sec )</label>
+                                        </div>                                        
+                                        <div class="form-floating mb-3 ms-3 col-9">
+                                            <button class="btn btn-primary rounded-3 h-100 float-end" id="sourceDiagnoseBtn" type="button">Diagnose</button>
                                         </div>
-                                        <button class="btn btn-primary ms-3 mb-3 rounded-3 float-end" id="sourceDiagnoseBtn" type="button">Diagnose</button>
                                     </div>
                                     <div class="mb-3">
                                         <div class="card rounded-3">
@@ -207,7 +209,7 @@
                                     Enter Target MySQL for Migration
                                 </button> 
                             </div>                            
-                            <div id="collapseThree" class="accordion-collapse rounded-bottom collapse show" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                            <div id="collapseThree" class="accordion-collapse rounded-bottom collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
                                 <div class="accordion-body rounded-3 pt-0">
                                     <div class="input-group mb-3">
                                         <div class="form-floating">
@@ -221,7 +223,7 @@
                                             <option value="aws">AWS</option>
                                             <option value="gcp">GCP</option>
                                             <option value="ncp">NCP</option>
-                                            <option value="onpremise">On-premise</option>
+                                            <!-- <option value="onpremise">On-premise</option> -->
                                         </select>
                                     </div>
                                     <div class="input-group mb-3">
@@ -285,37 +287,37 @@
                                     Diagnose Target MySQL
                                 </button> 
                             </div>                            
-                            <div id="collapseFour" class="accordion-collapse rounded-bottom collapse show" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+                            <div id="collapseFour" class="accordion-collapse rounded-bottom collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
                                     <div class="input-group">
                                         <div class="form-floating mb-3 col-3">
-                                            <input type="text" class="form-control rounded-3" id="targetTime" name="targetTime" placeholder="time" value="5" required>
+                                            <input type="text" class="form-control rounded-3" id="targetTime" name="targetTime" placeholder="time" value="5">
                                             <label for="targetTime">Duration ( sec )</label>
                                         </div>
                                         <div class="form-floating mb-3 ms-3 col-3">
-                                            <input type="text" class="form-control rounded-3" id="targetTableCount" name="targetTableCount" placeholder="Table Count" value="10" required>
+                                            <input type="text" class="form-control rounded-3" id="targetTableCount" name="targetTableCount" placeholder="Table Count" value="10">
                                             <label for="targetTableCount">Table Count</label>
                                         </div>
                                         <div class="form-floating mb-3 ms-3 col-3">
-                                            <input type="text" class="form-control rounded-3" id="targetTableSize" name="targetTableSize" placeholder="Table Size" value="10" required>
+                                            <input type="text" class="form-control rounded-3" id="targetTableSize" name="targetTableSize" placeholder="Table Size" value="10">
                                             <label for="targetTableSize">Table Size</label>
                                         </div>
                                         <div class="form-floating mb-3 ms-3 col-3">
-                                            <input type="text" class="form-control rounded-3" id="targetThread" name="targetThread" placeholder="Thread" value="10" required>
+                                            <input type="text" class="form-control rounded-3" id="targetThread" name="targetThread" placeholder="Thread" value="10">
                                             <label for="targetThread">Thread</label>
                                         </div>                             
                                     </div>
                                     <div class="input-group">
                                         <div class="form-floating mb-3 col-3">
-                                            <input type="number" class="form-control rounded-3" id="cpuCores" name="cpuCores" placeholder="cpuCores" value="0" min="0" required>
+                                            <input type="number" class="form-control rounded-3" id="cpuCores" name="cpuCores" placeholder="cpuCores" value="0" min="0">
                                             <label for="cpuCores">Cpu</label>
                                         </div>
                                         <div class="form-floating mb-3 ms-3 col-3">
-                                            <input type="number" class="form-control rounded-3" id="memoryGB" name="memoryGB" placeholder="memoryGB" value="0" min="0" required>
+                                            <input type="number" class="form-control rounded-3" id="memoryGB" name="memoryGB" placeholder="memoryGB" value="0" min="0">
                                             <label for="memoryGB">Memory ( GB )</label>
                                         </div>
                                         <div class="form-floating mb-3 ms-3 col-3">                                            
-                                            <select class="form-select rounded-3" id="storageType" name="storageType" required>
+                                            <select class="form-select rounded-3" id="storageType" name="storageType">
                                                 <option value="" selected disabled>Choose Storage Type</option>
                                                 <option value="HDD">HDD</option>
                                                 <option value="SSD">SSD</option>
@@ -323,8 +325,8 @@
                                             </select>
                                             <label for="storageType">Storage Type</label>
                                         </div>
-                                        <div class="form-floating mb-3 ms-3 col-3 ">
-                                            <button class="btn btn-primary rounded-3 h-100 float-end w-50" id="targetDiagnoseBtn" type="button">
+                                        <div class="form-floating mb-3 ms-3 col-3">
+                                            <button class="btn btn-primary rounded-3 h-100 float-end" id="targetDiagnoseBtn" type="button">
                                                 Diagnose
                                             </button>
                                         </div> 
@@ -445,7 +447,7 @@
                                             </table>
                                         </div>
                                     </div>
-                                    <div class="card mt-2 rounded-3">
+                                    <div class="card mt-2 rounded-3" id="targetDiagnosis" style="display: none;">
                                         <div class="card-header">
                                             Target Database Performance Diagnosis
                                         </div>
@@ -476,7 +478,7 @@
                                                     <i class="fa-solid fa-circle-question"></i>
                                                 </button>
                                                 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable  modal-lg">
+                                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
                                                                 <h5 class="modal-title" id="staticBackdropLabel">Notes</h5>
@@ -500,7 +502,7 @@
                     </div>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary rounded-1 float-end" id="submitBtn">Submit</button>
+            <button type="submit" class="btn btn-primary rounded-3 float-end" id="submitBtn" disabled>Submit</button>
         </form>
     </div>
 </div>  
@@ -529,7 +531,7 @@
                     if (headerBtn) {
                         headerBtn.disabled = false; 
                     }
-                }
+                }                 
             });
         });
         
@@ -570,6 +572,9 @@
                         if (otherBtn) {
                             otherBtn.disabled = false; 
                         }
+                        if (!isSource) {
+                            document.getElementById("submitBtn").disabled = false
+                        }
 
                         btn.disabled = false;
                         btn.innerHTML = 'Verified';
@@ -579,6 +584,9 @@
                         alert(reason);
                         if (otherBtn) {
                             otherBtn.disabled = true; 
+                        }
+                        if (!isSource) {
+                            document.getElementById("submitBtn").disabled = true
                         }
                         
                         btn.disabled = false;
@@ -649,6 +657,10 @@
                     .finally(() => {
                         btn.disabled = false;
                         btn.innerHTML = 'Diagnose';
+
+                        if(!isSource) {
+                            document.getElementById("targetDiagnosis").style.display = ""
+                        }
                     });
             })
         })
@@ -852,14 +864,15 @@
             `<span class="d-inline-block" style="width: 7rem;">Threads</span><span> : ${threads}</span>`,
             `<span class="d-inline-block" style="width: 7rem;">Time</span><span> : ${timeSec}s</span>`,
             `<span class="d-inline-block" style="width: 7rem;">Storage weight</span><span> : ${storageType} ( x ${storageWeight})</span>`,
-            `<span class="d-inline-block" style="width: 7rem;">Memory fit</span><span> : ${memoryFits ? 'likely fit' : 'likely not fit'} (dataset≈${formatFixed(datasetGBest, 2)}GB vs bufferPool≈${formatFixed(bufferPoolGBest, 2)}GB)</span>`,
+            // `<span class="d-inline-block" style="width: 7rem;">Memory fit</span><span> : ${memoryFits ? 'likely fit' : 'likely not fit'} (dataset≈${formatFixed(datasetGBest, 2)}GB vs bufferPool≈${formatFixed(bufferPoolGBest, 2)}GB)</span>`,
             ``,
             `📊 QPS/core (Throughput per CPU core)`,
             `<span class="d-inline-block ps-3" style="width: 7rem;">• Excellent</span><span> ≥ ${formatFixed(QPS_EX, 0)} per core</span>`,
             `<span class="d-inline-block ps-3" style="width: 7rem;">• Good</span><span> ≥ ${formatFixed(QPS_GO, 0)} per core</span>`,
             `<span class="d-inline-block ps-3" style="width: 7rem;">• Low</span><span> < ${formatFixed(QPS_GO, 0)} per core</span>`,
             ``,
-            `⚙️ TPS/core (Transactions per CPU core, important in write-OLTP mode)`,
+            `⚙️ TPS/core (Transactions per CPU core)`,
+            // `⚙️ TPS/core (Transactions per CPU core, important in write-OLTP mode)`,
             `<span class="d-inline-block ps-3" style="width: 7rem;">• Excellent</span><span> ≥ ${formatFixed(TPS_EX, 0)} per core</span>`,
             `<span class="d-inline-block ps-3" style="width: 7rem;">• Good</span><span> ≥ ${formatFixed(TPS_GO, 0)} per core</span>`,
             `<span class="d-inline-block ps-3" style="width: 7rem;">• Low</span><span> < ${formatFixed(TPS_GO, 0)} per core</span>`,
@@ -903,7 +916,6 @@
         const pre = document.createElement("pre");
         notes.forEach((line) => {
             pre.innerHTML += line + "\n";
-            // pre.textContent += line + "\n";
         });
         modalBody.appendChild(pre);
 
