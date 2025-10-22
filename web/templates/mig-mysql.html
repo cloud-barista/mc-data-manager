@@ -468,11 +468,6 @@
                                             </div>
                                             <hr>
                                             <div class="fw-bold">
-                                                Summary
-                                            </div>
-                                            <span class="ps-4" id="summary">-</span>
-                                            <hr>
-                                            <div class="fw-bold">
                                                 Detailed Analysis
                                                 <button type="button" class="btn border-0" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                                                     <i class="fa-solid fa-circle-question"></i>
@@ -481,10 +476,13 @@
                                                     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title" id="staticBackdropLabel">Notes</h5>
+                                                                <div>
+                                                                    <h5 class="modal-title" id="staticBackdropLabel">Notes</h5>
+                                                                    <span class="fst-italic text-muted ps-2 fw-normal">The scores are based on the stated criteria below and are for reference only.</span> 
+                                                                </div>
                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
-                                                            <div class="modal-body fw-normal" id="modalBody">
+                                                            <div class="modal-body fw-normal ps-4" id="modalBody">
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button class="btn btn-secondary rounded-3" type="button" data-bs-dismiss="modal">Close</button>
@@ -493,7 +491,12 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="detail-list ps-4" id="details"></div>
+                                            <div class="detail-list ps-4" id="details">-</div>
+                                            <hr>
+                                            <div class="fw-bold">
+                                                Summary
+                                            </div>
+                                            <span class="ps-4" id="summary">-</span>
                                         </div>
                                     </div>
                                 </div>
