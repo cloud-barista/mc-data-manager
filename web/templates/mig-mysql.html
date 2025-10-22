@@ -207,7 +207,7 @@
                                     Enter Target MySQL for Migration
                                 </button> 
                             </div>                            
-                            <div id="collapseThree" class="accordion-collapse rounded-bottom collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                            <div id="collapseThree" class="accordion-collapse rounded-bottom collapse show" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
                                 <div class="accordion-body rounded-3 pt-0">
                                     <div class="input-group mb-3">
                                         <div class="form-floating">
@@ -472,17 +472,17 @@
                                             <hr>
                                             <div class="fw-bold">
                                                 Detailed Analysis
-                                                <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                                <button type="button" class="btn border-0" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                                                     <i class="fa-solid fa-circle-question"></i>
                                                 </button>
                                                 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable  modal-lg">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
                                                                 <h5 class="modal-title" id="staticBackdropLabel">Notes</h5>
                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
-                                                            <div class="modal-body" id="modalBody">
+                                                            <div class="modal-body fw-normal" id="modalBody">
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button class="btn btn-secondary rounded-3" type="button" data-bs-dismiss="modal">Close</button>
@@ -491,14 +491,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-
-
-
-
-
-
-
-
                                             <div class="detail-list ps-4" id="details"></div>
                                         </div>
                                     </div>
@@ -785,10 +777,16 @@
 
         // 레이턴시 문턱 (메모리/스토리지 영향)
         const isHDD = storageType === 'HDD';
-        const LAT_AVG_EX = isHDD ? 3.0 : 1.0;      // ms
-        const LAT_AVG_GO = isHDD ? 10.0 : 5.0;      // ms
-        const LAT_P95_EX = isHDD ? 10.0 : 5.0;
-        const LAT_P95_GO = isHDD ? 40.0 : 20.0;
+        // gemini
+        const LAT_AVG_EX = isHDD ? 10.0 : 2.0;      // ms
+        const LAT_AVG_GO = isHDD ? 50.0 : 10.0;      // ms
+        const LAT_P95_EX = isHDD ? 50.0 : 10.0;
+        const LAT_P95_GO = isHDD ? 150.0 : 50.0;
+        // gpt
+        // const LAT_AVG_EX = isHDD ? 3.0 : 1.0;      // ms
+        // const LAT_AVG_GO = isHDD ? 10.0 : 5.0;      // ms
+        // const LAT_P95_EX = isHDD ? 10.0 : 5.0;
+        // const LAT_P95_GO = isHDD ? 40.0 : 20.0;
 
         // --- 점수화 (Throughput: QPS/TPS, Latency avg/p95, Errors) ---
         // 최대 10점 (QPS2 + TPS2 + avg2 + p95 2 + errors2)
@@ -848,35 +846,38 @@
 
         // --- 참고/가정 메모 ---
         const notes = [
-            `NOTES`,
-            `  • Mode: oltp_read_write (threads=${threads}, time=${timeSec}s, tables=${tables}, tableRows=${tableRows})`,
-            `  • Storage weight: ${storageType} (* ${storageWeight})`,
-            `  • Memory fit: ${memoryFits ? 'likely fit' : 'likely not fit'} (dataset≈${formatFixed(datasetGBest, 2)}GB vs bufferPool≈${formatFixed(bufferPoolGBest, 2)}GB)`,
+            `<span class="d-inline-block" style="width: 7rem;">Mode</span><span> : oltp_read_write</span>`,
+            `<span class="d-inline-block" style="width: 7rem;">Tables</span><span> : ${tables}</span>`,
+            `<span class="d-inline-block" style="width: 7rem;">Table Size</span><span> : ${tableRows}</span>`,
+            `<span class="d-inline-block" style="width: 7rem;">Threads</span><span> : ${threads}</span>`,
+            `<span class="d-inline-block" style="width: 7rem;">Time</span><span> : ${timeSec}s</span>`,
+            `<span class="d-inline-block" style="width: 7rem;">Storage weight</span><span> : ${storageType} ( x ${storageWeight})</span>`,
+            `<span class="d-inline-block" style="width: 7rem;">Memory fit</span><span> : ${memoryFits ? 'likely fit' : 'likely not fit'} (dataset≈${formatFixed(datasetGBest, 2)}GB vs bufferPool≈${formatFixed(bufferPoolGBest, 2)}GB)</span>`,
             ``,
             `📊 QPS/core (Throughput per CPU core)`,
-            `  • Excellent: ≥ QPS_EX ${formatFixed(QPS_EX, 0)} per core)`,
-            `  • Good:      ≥ QPS_GO ${formatFixed(QPS_GO, 0)} per core)`,
-            `  • Low:       <  QPS_GO ${formatFixed(QPS_GO, 0)} per core)`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Excellent</span><span> ≥ ${formatFixed(QPS_EX, 0)} per core</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Good</span><span> ≥ ${formatFixed(QPS_GO, 0)} per core</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Low</span><span> < ${formatFixed(QPS_GO, 0)} per core</span>`,
             ``,
             `⚙️ TPS/core (Transactions per CPU core, important in write-OLTP mode)`,
-            `  • Excellent: ≥ TPS_EX ${formatFixed(TPS_EX, 0)} per core)`,
-            `  • Good:      ≥ TPS_GO ${formatFixed(TPS_GO, 0)} per core)`,
-            `  • Low:       <  TPS_GO ${formatFixed(TPS_GO, 0)} per core)`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Excellent</span><span> ≥ ${formatFixed(TPS_EX, 0)} per core</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Good</span><span> ≥ ${formatFixed(TPS_GO, 0)} per core</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Low</span><span> < ${formatFixed(TPS_GO, 0)} per core</span>`,
             ``,
             `⏱️ Avg Latency (ms)`,
-            `  • Excellent: <  LAT_AVG_EX ${LAT_AVG_EX} ms)`,
-            `  • Good:      <  LAT_AVG_GO ${LAT_AVG_GO} ms)`,
-            `  • High:      ≥  LAT_AVG_GO ${LAT_AVG_GO} ms)`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Excellent</span><span> < ${LAT_AVG_EX} ms</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Good</span><span> < ${LAT_AVG_GO} ms</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• High</span><span> ≥ ${LAT_AVG_GO} ms</span>`,
             ``,
             `📉 P95 Latency (ms)`,
-            `  • Excellent: <  LAT_P95_EX ${LAT_P95_EX} ms)`,
-            `  • Good:      <  LAT_P95_GO ${LAT_P95_GO} ms)`,
-            `  • Spiky:     ≥  LAT_P95_GO ${LAT_P95_GO} ms)`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Excellent</span><span> < ${LAT_P95_EX} ms</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Good</span><span> < ${LAT_P95_GO} ms</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Spiky</span><span> ≥ ${LAT_P95_GO} ms</span>`,
             ``,
-            `❗ Error Rate (%)`,
-            `  • Excellent: 0%`,
-            `  • Good:      < 0.1%`,
-            `  • Frequent:  ≥ 0.1%`,
+            `🚫 Error Rate (%)`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Excellent</span><span> 0%</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Good</span><span> < 0.1%</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Frequent</span><span> ≥ 0.1%</span>`,
         ];
 
         // ✅ 최종 comment 조합
@@ -901,7 +902,8 @@
         modalBody.replaceChildren();
         const pre = document.createElement("pre");
         notes.forEach((line) => {
-            pre.textContent += line + "\n";
+            pre.innerHTML += line + "\n";
+            // pre.textContent += line + "\n";
         });
         modalBody.appendChild(pre);
 
