@@ -20,6 +20,29 @@ func MatchCandidate(flt *ObjectFilter, c Candidate) bool {
 		return true
 	}
 
+	// prefix
+	if flt.Path != "" {
+		ok := false
+		keyLower := strings.ToLower(c.Key)
+
+		if strings.HasPrefix(keyLower, flt.Path) ||
+			strings.Contains(keyLower, strings.ToLower(flt.Path)) {
+			ok = true
+		}
+
+		switch strings.ToLower(strings.TrimSpace(flt.PathExcludeYn)) {
+		case "y":
+			if ok {
+				return false
+			}
+		case "n":
+			if !ok {
+				return false
+			}
+		default:
+		}
+	}
+
 	// Exact
 	if len(flt.Exact) > 0 {
 		ok := false
@@ -52,14 +75,30 @@ func MatchCandidate(flt *ObjectFilter, c Candidate) bool {
 	// Contains
 	if len(flt.Contains) > 0 {
 		ok := false
+		keyLower := strings.ToLower(c.Key)
+
 		for _, v := range flt.Contains {
-			if strings.Contains(strings.ToLower(c.Key), strings.ToLower(v)) {
+			v = strings.TrimSpace(v)
+			if v == "" {
+				continue
+			}
+
+			if strings.Contains(keyLower, strings.ToLower(v)) {
 				ok = true
 				break
 			}
 		}
-		if !ok {
-			return false
+
+		switch strings.ToLower(strings.TrimSpace(flt.ContainExcludeYn)) {
+		case "y":
+			if ok {
+				return false
+			}
+		case "n":
+			if !ok {
+				return false
+			}
+		default:
 		}
 	}
 
@@ -78,7 +117,7 @@ func MatchCandidate(flt *ObjectFilter, c Candidate) bool {
 			return false
 		}
 	}
-	
+
 	if flt.ModifiedBefore != nil {
 		before := flt.ModifiedBefore.UTC()
 		if c.LastModified.UTC().After(before) {

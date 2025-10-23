@@ -29,7 +29,9 @@ func FromParams(p *models.ObjectFilterParams) (*ObjectFilter, error) {
 
 	return &ObjectFilter{
 		Path:              p.Path,
+		PathExcludeYn:     p.PathExcludeYn,
 		Contains:          p.Contains,
+		ContainExcludeYn:  p.ContainExcludeYn,
 		Suffixes:          p.Suffixes,
 		Exact:             p.Exact,
 		MinSize:           p.MinSize,

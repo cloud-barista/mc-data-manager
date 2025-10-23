@@ -7,7 +7,9 @@ import (
 
 type ObjectFilterParams struct {
 	Path              string   `json:"path"`
+	PathExcludeYn     string   `json:"pathExcludeYn"`
 	Contains          []string `json:"contains"`
+	ContainExcludeYn  string   `json:"containExcludeYn"`
 	Suffixes          []string `json:"suffixes"`
 	Exact             []string `json:"exact"`
 	MinSize           *float64 `json:"minSize"`

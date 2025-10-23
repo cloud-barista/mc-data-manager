@@ -49,12 +49,12 @@ func (src *OSController) Copy(dst *OSController, flt *filtering.ObjectFilter) er
 		return err
 	}
 
-	prefix := ""
+	path := ""
 	if flt != nil && flt.Path != "" {
-		prefix = strings.TrimPrefix(flt.Path, "/")
+		path = strings.TrimPrefix(flt.Path, "/")
 	}
 
-	copyList, skipList := getDownloadList(dstObjList, srcObjList, prefix)
+	copyList, skipList := getDownloadList(dstObjList, srcObjList, path, flt.PathExcludeYn)
 
 	for _, skip := range skipList {
 		src.logWrite("Info", fmt.Sprintf("skip file : %s", skip.Key), nil)
