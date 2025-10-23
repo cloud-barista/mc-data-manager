@@ -459,7 +459,7 @@
                                                     </div>
                                                     <div class="d-flex justify-content-center align-items-center">
                                                         <span id="score">- </span>
-                                                        <span class="ms-1 text-muted">/ 12</span>
+                                                        <span class="ms-1 text-muted">/ 10</span>
                                                     </div>
                                                 </div>
                                                 <div class="me-3">
@@ -492,11 +492,6 @@
                                                 </div>
                                             </div>
                                             <div class="detail-list ps-4" id="details">-</div>
-                                            <hr>
-                                            <div class="fw-bold">
-                                                Summary
-                                            </div>
-                                            <span class="ps-4" id="summary">-</span>
                                         </div>
                                     </div>
                                 </div>
@@ -839,24 +834,20 @@
         }
 
         // Errors
-        if (errorRate === 0) { score += 2; details.push(`🟢 Errors ${formatFixed(errorRate, 3)}% — none`); }
-        else if (errorRate < 0.1) { score += 1; details.push(`🟡 Errors ${formatFixed(errorRate, 3)}% — low`); }
+        if (errorRate === 0) { score += 2; details.push(`🟢 Errors ${formatFixed(errorRate, 3)}% — Excellent`); }
+        else if (errorRate < 0.1) { score += 1; details.push(`🟡 Errors ${formatFixed(errorRate, 3)}% — Good`); }
         else { details.push(`🔴 Errors ${formatFixed(errorRate, 3)}% — frequent`); }
 
         // ✅ 최종 평가
-        let grade, summary;
+        let grade;
         if (score >= 10) {
             grade = "Excellent";
-            summary = "🏆 Database performance is optimal and highly efficient.";
         } else if (score >= 7) {
             grade = "Good";
-            summary = "✅ Database performs well, slight optimizations may help.";
         } else if (score >= 4) {
             grade = "Fair";
-            summary = "⚠️ Some bottlenecks detected — consider tuning queries or I/O.";
         } else {
             grade = "Poor";
-            summary = "❌ Database underperforming, investigate configuration and load.";
         }
 
         // --- 참고/가정 메모 ---
@@ -866,46 +857,52 @@
             `<span class="d-inline-block" style="width: 7rem;">Table Size</span><span> : ${tableRows}</span>`,
             `<span class="d-inline-block" style="width: 7rem;">Threads</span><span> : ${threads}</span>`,
             `<span class="d-inline-block" style="width: 7rem;">Time</span><span> : ${timeSec}s</span>`,
+            `<span class="d-inline-block" style="width: 7rem;">Cpu</span><span> : ${cpuCores} cores</span>`,
+            `<span class="d-inline-block" style="width: 7rem;">Memory</span><span> : ${ramGB} GB</span>`,
             `<span class="d-inline-block" style="width: 7rem;">Storage weight</span><span> : ${storageType} ( x ${storageWeight})</span>`,
             // `<span class="d-inline-block" style="width: 7rem;">Memory fit</span><span> : ${memoryFits ? 'likely fit' : 'likely not fit'} (dataset≈${formatFixed(datasetGBest, 2)}GB vs bufferPool≈${formatFixed(bufferPoolGBest, 2)}GB)</span>`,
             ``,
-            `📊 QPS/core (Throughput per CPU core)`,
-            `<span class="d-inline-block ps-3" style="width: 7rem;">• Excellent(3)</span><span> ≥ ${formatFixed(QPS_EX, 0)} per core</span>`,
-            `<span class="d-inline-block ps-3" style="width: 7rem;">• Good(2)</span><span> ≥ ${formatFixed(QPS_GO, 0)} per core</span>`,
-            `<span class="d-inline-block ps-3" style="width: 7rem;">• Low(1)</span><span> < ${formatFixed(QPS_GO, 0)} per core</span>`,
+            `Score`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Excellent</span><span> > 9 - Database performance is optimal and highly efficient.</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Good</span><span> > 6 - Database performs well, slight optimizations may help.</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Fair</span><span> > 3 - Some bottlenecks detected — consider tuning queries or I/O.</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Low</span><span> < 3 - Database underperforming, investigate configuration and load.</span>`,
             ``,
-            `⚙️ TPS/core (Transactions per CPU core)`,
-            // `⚙️ TPS/core (Transactions per CPU core, important in write-OLTP mode)`,
-            `<span class="d-inline-block ps-3" style="width: 7rem;">• Excellent(3)</span><span> ≥ ${formatFixed(TPS_EX, 0)} per core</span>`,
-            `<span class="d-inline-block ps-3" style="width: 7rem;">• Good(2)</span><span> ≥ ${formatFixed(TPS_GO, 0)} per core</span>`,
-            `<span class="d-inline-block ps-3" style="width: 7rem;">• Low(1)</span><span> < ${formatFixed(TPS_GO, 0)} per core</span>`,
+            `QPS/core (Throughput per CPU core)`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Excellent(2)</span><span> ≥ ${formatFixed(QPS_EX, 0)} per core</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Good(1)</span><span> ≥ ${formatFixed(QPS_GO, 0)} per core</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Low(0)</span><span> < ${formatFixed(QPS_GO, 0)} per core</span>`,
             ``,
-            `⏱️ Avg Latency (ms)`,
-            `<span class="d-inline-block ps-3" style="width: 7rem;">• Excellent(3)</span><span> < ${LAT_AVG_EX} ms</span>`,
-            `<span class="d-inline-block ps-3" style="width: 7rem;">• Good(2)</span><span> < ${LAT_AVG_GO} ms</span>`,
-            `<span class="d-inline-block ps-3" style="width: 7rem;">• High(1)</span><span> ≥ ${LAT_AVG_GO} ms</span>`,
+            `TPS/core (Transactions per CPU core)`,
+            //  TPS/core (Transactions per CPU core, important in write-OLTP mode)`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Excellent(2)</span><span> ≥ ${formatFixed(TPS_EX, 0)} per core</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Good(1)</span><span> ≥ ${formatFixed(TPS_GO, 0)} per core</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Low(0)</span><span> < ${formatFixed(TPS_GO, 0)} per core</span>`,
             ``,
-            `📉 P95 Latency (ms)`,
-            `<span class="d-inline-block ps-3" style="width: 7rem;">• Excellent(3)</span><span> < ${LAT_P95_EX} ms</span>`,
-            `<span class="d-inline-block ps-3" style="width: 7rem;">• Good(2)</span><span> < ${LAT_P95_GO} ms</span>`,
-            `<span class="d-inline-block ps-3" style="width: 7rem;">• Spiky(1)</span><span> ≥ ${LAT_P95_GO} ms</span>`,
+            `Avg Latency (ms)`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Excellent(2)</span><span> < ${LAT_AVG_EX} ms</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Good(1)</span><span> < ${LAT_AVG_GO} ms</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• High(0)</span><span> ≥ ${LAT_AVG_GO} ms</span>`,
             ``,
-            `🚫 Error Rate (%)`,
-            `<span class="d-inline-block ps-3" style="width: 7rem;">• Excellent(3)</span><span> 0%</span>`,
-            `<span class="d-inline-block ps-3" style="width: 7rem;">• Good(2)</span><span> < 0.1%</span>`,
-            `<span class="d-inline-block ps-3" style="width: 7rem;">• Frequent(1)</span><span> ≥ 0.1%</span>`,
+            `P95 Latency (ms)`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Excellent(2)</span><span> < ${LAT_P95_EX} ms</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Good(1)</span><span> < ${LAT_P95_GO} ms</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Spiky(0)</span><span> ≥ ${LAT_P95_GO} ms</span>`,
+            ``,
+            `Error Rate (%)`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Excellent(2)</span><span> 0%</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Good(1)</span><span> < 0.1%</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Frequent(0)</span><span> ≥ 0.1%</span>`,
         ];
 
         
         // ✅ HTML 렌더링
         const scoreEl = document.getElementById("score");
-        const summaryEl = document.getElementById("summary");
         const detailsEl = document.getElementById("details");
         const modalBody = document.getElementById("modalBody")
 
         setGrade(grade)
         scoreEl.textContent = score;
-        summaryEl.textContent = summary;
 
         modalBody.replaceChildren();
         const pre = document.createElement("pre");
