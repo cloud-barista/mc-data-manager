@@ -76,18 +76,28 @@
                         </button>
                     </div>        
                     <div class="d-flex align-items-center ms-2">
-                        <label for="mig-filter-path" class="form-label">Filter</label>
+                        <label for="btnFilterExpand" class="form-label">Filter</label>
                         <button class="btn" id="btnFilterExpand" type="button"><i class="fa-solid fa-square-caret-down" style="font-size: 22px"></i></button>
                     </div>        
                     <div class="card rounded-3 p-3" id="filterContent" style="display:none;">
                         <div class="d-flex flex-wrap gap-2">
-                            <div class="input-group mb-3" style="max-width: 300px;">
+                            <div class="input-group mb-3" style="max-width: 405px;">
                                 <span class="input-group-text rounded-start text-center text-wrap" style="width: 80px; font-size: 0.9rem;">Path</span>
-                                <div class="form-floating">
-                                    <input type="text" class="form-control rounded-end" id="mig-filter-path" name="sourceFilter[path]" placeholder="Path">
-                                    <label for="mig-filter-path">Path</label>
+                                <div class="form-floating" style="max-width: 220px;">
+                                    <input type="text" class="form-control" id="mig-filter-path" name="sourceFilter[path]" placeholder="Path">
+                                    <label for="mig-filter-path" id="pathLabel">Path</label>
                                 </div>
-                            </div>
+                                <div class="rounded-end border bg-light d-flex flex-column justify-content-center ps-3 pe-3" style="max-width: 105px; font-size: 0.9rem;">
+                                    <div class="d-flex align-items-center">
+                                        <input class="form-radio-input me-2" type="radio" id="mig-filter-path-include" name="sourceFilter[pathExcludeYn]" value="n" checked>
+                                        <label class="form-check-label" for="mig-filter-path-include">include</label>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <input class="form-radio-input me-2" type="radio" id="mig-filter-path-exclude" name="sourceFilter[pathExcludeYn]" value="y">
+                                        <label class="form-check-label" for="mig-filter-path-exclude">exclude</label>
+                                    </div>
+                                </div>
+                            </div>                            
                         </div>
                         <div class="d-flex flex-wrap gap-2">
                             <div class="input-group mb-3" style="max-width: 300px;">
@@ -127,12 +137,22 @@
                                 </div>
                             </div>                    
                         </div>
-                        <div class="d-flex flex-wrap gap-2">
-                            <div class="input-group" style="max-width: 300px;">
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <div class="input-group" style="max-width: 405px;">
                                 <span class="input-group-text rounded-start text-wrap" style="width: 80px; font-size: 0.9rem;">Contains</span>
-                                <div class="form-floating flex-grow-1">
-                                    <input type="text" class="form-control rounded-end" id="mig-filter-contains" name="sourceFilter[contains]" placeholder="Contains">
-                                    <label for="mig-filter-contains">Text to include</label>
+                                <div class="form-floating flex-grow-1" style="max-width: 220px;">
+                                    <input type="text" class="form-control" id="mig-filter-texts" name="sourceFilter[contains]" placeholder="Texts">
+                                    <label for="mig-filter-texts" id="textsLabel">Texts</label>
+                                </div>
+                                <div class="rounded-end border bg-light d-flex flex-column justify-content-center ps-3 pe-3" style="max-width: 105px; font-size: 0.9rem;">
+                                    <div class="d-flex align-items-center">
+                                        <input class="form-radio-input me-2" type="radio" id="mig-filter-texts-include" name="sourceFilter[containsExcludeYn]" value="n" checked>
+                                        <label class="form-check-label" for="mig-filter-texts-include">include</label>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <input class="form-radio-input me-2" type="radio" id="mig-filter-texts-exclude" name="sourceFilter[containsExcludeYn]" value="y">
+                                        <label class="form-check-label" for="mig-filter-texts-exclude">exclude</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -379,4 +399,17 @@
                         return response.json();
                     });
     }
+
+    // ["Path", "Texts"].forEach(a => {
+    //     document.getElementById("mig-filter-" + a.toLowerCase() + "-exclude").addEventListener("change", (e) => {
+    //         const pathLabel = document.getElementById(a.toLowerCase() + "Label");
+
+    //         if(e.target.checked) {
+    //             pathLabel.innerHTML = a + " To Exclude"
+    //         } else {            
+    //             pathLabel.innerHTML = a + " To Include"
+    //         }
+    //     })
+    // })
+
 </script>
