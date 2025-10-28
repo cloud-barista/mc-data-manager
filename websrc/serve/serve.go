@@ -176,7 +176,8 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 
 	// Route for system management
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
-	e.GET("/", controllers.MainGetHandler)
+	e.GET("/", controllers.GenerateObjectStorageGetHandler)
+	// e.GET("/", controllers.MainGetHandler)
 
 	HealthHandler := controllers.NewHealthHandler(config.DB)
 	e.GET("/readyZ", HealthHandler.GetSystemReadyHandler)
@@ -207,6 +208,9 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 
 	diagnoseGroup := e.Group("/diagnose")
 	routes.DiagnoseRoutes(diagnoseGroup)
+
+	objectStorageGroup := e.Group("/objectstorage")
+	routes.ObjectStorageRoutes(objectStorageGroup)
 
 	selfEndpoint := "localhost" + ":" + port
 	website := " http://" + selfEndpoint

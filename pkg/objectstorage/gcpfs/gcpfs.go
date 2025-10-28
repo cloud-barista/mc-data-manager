@@ -17,14 +17,17 @@ package gcpfs
 
 import (
 	"context"
+	"encoding/json"
+	"encoding/xml"
+	"fmt"
 	"io"
-	"strings"
+	"net/http"
 
 	"cloud.google.com/go/storage"
 	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/filtering"
+	"github.com/cloud-barista/mc-data-manager/pkg/utils"
 	"github.com/rs/zerolog/log"
-	"google.golang.org/api/iterator"
 )
 
 type GCPfs struct {
@@ -40,15 +43,22 @@ type GCPfs struct {
 
 // Creating a Bucket
 func (f *GCPfs) CreateBucket() error {
-	_, err := f.bktclient.Attrs(f.ctx)
+	path := "/tumblebug/resources/objectStorage/" + f.bucketName
+	method := http.MethodHead
+	connName := fmt.Sprintf("%s-%s", f.provider, f.region)
+
+	_, err := utils.RequestTumblebug(path, method, connName, nil)
 	if err != nil {
-		if err == storage.ErrBucketNotExist {
-			return f.bktclient.Create(f.ctx, f.projectID, &storage.BucketAttrs{
-				Name:     f.bucketName,
-				Location: f.region,
-			})
+		path = "/tumblebug/resources/objectStorage/" + f.bucketName
+		method = http.MethodPut
+
+		_, err := utils.RequestTumblebug(path, method, connName, nil)
+		if err != nil {
+			fmt.Println("create error: ", err.Error())
+			return err
 		}
-		return err
+
+		return nil
 	}
 	return nil
 }
@@ -57,21 +67,75 @@ func (f *GCPfs) CreateBucket() error {
 //
 // Check and delete all objects in the bucket and delete the bucket
 func (f *GCPfs) DeleteBucket() error {
-	iter := f.bktclient.Objects(f.ctx, &storage.Query{})
-	for {
-		attr, err := iter.Next()
-		if err == iterator.Done {
-			break
+	objList, err := f.ObjectList()
+	if err != nil {
+		return err
+	}
+
+	if len(objList) != 0 {
+		// Divide objectIds into batches of 1000
+		const batchSize = 1000
+		var objectIds []string
+
+		for _, object := range objList {
+			objectIds = append(objectIds, object.Key)
+
+			// When we reach batch size, delete objects
+			if len(objectIds) == batchSize {
+				if err := f.deleteObjectBatch(objectIds); err != nil {
+					return err
+				}
+				// Reset objectIds for the next batch
+				objectIds = []string{}
+			}
 		}
 
-		if err != nil {
-			return err
-		}
-		if err := f.bktclient.Object(attr.Name).Delete(f.ctx); err != nil {
-			return err
+		// Delete any remaining objects
+		if len(objectIds) > 0 {
+			if err := f.deleteObjectBatch(objectIds); err != nil {
+				return err
+			}
 		}
 	}
-	return f.bktclient.Delete(f.ctx)
+
+	// Delete the bucket
+	path := "/tumblebug/resources/objectStorage/" + f.bucketName
+	method := http.MethodDelete
+	connName := fmt.Sprintf("%s-%s", f.provider, f.region)
+
+	_, err = utils.RequestTumblebug(path, method, connName, nil)
+	if err != nil {
+		return err
+	}
+	log.Info().Msg("DeleteDone")
+	return nil
+}
+
+// deleteObjectBatch deletes a batch of objects
+func (f *GCPfs) deleteObjectBatch(keys []string) error {
+	path := "/tumblebug/resources/objectStorage/" + f.bucketName + "?delete=true"
+	method := http.MethodPost
+	connName := fmt.Sprintf("%s-%s", f.provider, f.region)
+
+	deleteReq := models.DeleteRequest{
+		XMLNS: "http://s3.amazonaws.com/doc/2006-03-01/",
+	}
+	for _, key := range keys {
+		deleteReq.Objects = append(deleteReq.Objects, models.S3Object{Key: key})
+	}
+	// 보기 좋게 들여쓰기된 XML 생성
+	output, err := xml.MarshalIndent(deleteReq, "", "    ")
+	if err != nil {
+		return err
+	}
+
+	// XML 헤더 추가
+	_, rerr := utils.RequestTumblebug(path, method, connName, []byte(xml.Header+string(output)))
+	if rerr != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Open function
@@ -97,26 +161,33 @@ func (f *GCPfs) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*models.Obj
 	log.Debug().Msg("[GCP] filtering")
 	var objList []*models.Object
 
-	var query *storage.Query
-	if flt != nil && flt.Path != "" {
-		pre := strings.TrimPrefix(flt.Path, "/")
-		query = &storage.Query{Prefix: pre}
+	// var query *storage.Query
+	// if flt != nil && flt.Path != "" {
+	// 	pre := strings.TrimPrefix(flt.Path, "/")
+	// 	query = &storage.Query{Prefix: pre}
+	// }
+
+	path := "/tumblebug/resources/objectStorage/" + f.bucketName
+	method := http.MethodGet
+	connName := fmt.Sprintf("%s-%s", f.provider, f.region)
+
+	result, err := utils.RequestTumblebug(path, method, connName, nil)
+	if err != nil {
+		return nil, err
 	}
 
-	it := f.bktclient.Objects(f.ctx, query)
-	for {
-		objAttrs, err := it.Next()
-		if err == iterator.Done {
-			break
-		}
-		if err != nil {
-			return nil, err
-		}
+	var resp models.ListBucketResult
+	if err := json.Unmarshal(result, &resp); err != nil {
+		fmt.Println("error: ", err.Error())
+		return []*models.Object{}, fmt.Errorf("failed to get objects: %w", err)
+	}
+
+	for _, o := range resp.Contents {
 
 		candidate := filtering.Candidate{
-			Key:          objAttrs.Name,
-			Size:         objAttrs.Size,
-			LastModified: objAttrs.Created,
+			Key:          o.Key,
+			Size:         o.Size,
+			LastModified: o.LastModified,
 		}
 
 		log.Debug().
@@ -128,11 +199,11 @@ func (f *GCPfs) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*models.Obj
 		// filtering.MatchCandidate() 호출
 		if filtering.MatchCandidate(flt, candidate) {
 			objList = append(objList, &models.Object{
-				ETag:         objAttrs.Etag,
-				Key:          objAttrs.Name,
-				LastModified: objAttrs.Created,
-				Size:         objAttrs.Size,
-				StorageClass: objAttrs.StorageClass,
+				// ETag:         o.Etag,
+				Key:          o.Key,
+				LastModified: o.LastModified,
+				Size:         o.Size,
+				StorageClass: o.StorageClass,
 				Provider:     f.provider,
 			})
 		}
@@ -152,4 +223,29 @@ func New(client *storage.Client, projectID, bucketName string, region string) *G
 	}
 
 	return gfs
+}
+
+func (f *GCPfs) BucketList() ([]models.Bucket, error) {
+	path := "/tumblebug/resources/objectStorage"
+	method := http.MethodGet
+	connName := fmt.Sprintf("%s-%s", f.provider, f.region)
+
+	body, err := utils.RequestTumblebug(path, method, connName, nil)
+	if err != nil {
+		return []models.Bucket{}, fmt.Errorf("failed to get buckets: %w", err)
+	}
+
+	// Parse the response to extract public key and token ID
+	var res models.ListAllMyBucketsResult
+	if err := json.Unmarshal(body, &res); err != nil {
+		fmt.Println("error: ", err.Error())
+		return []models.Bucket{}, fmt.Errorf("failed to get buckets: %w", err)
+	}
+
+	// 버킷이 비어 있으면 빈 리스트 반환
+	if res.Buckets.Bucket == nil {
+		return []models.Bucket{}, nil
+	}
+
+	return res.Buckets.Bucket, nil
 }

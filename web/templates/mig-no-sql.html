@@ -44,7 +44,7 @@
                         <label for="sourceCredentialSelect">provider - credential name</label>
                     </div>
                 </div>
-                <div class="input-group mb-3 me-1" id="sourceRegionDiv">
+                <div class="input-group" id="sourceRegionDiv">
                     <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span>
                     <div class="form-floating">
                         <select class="form-select form-select-sm rounded-end" id="sourceRegionSelect" name="sourcePoint[region]">
@@ -65,7 +65,7 @@
                                 {{ end }}
                             </optgroup>                            
                         </select>
-                        <label for="mig-source-region">Select Region</label>
+                        <label for="sourceRegionSelect">Select Region</label>
                     </div>
                 </div>
                 <div id="sourceMongoDiv" style="display: none;">                        
@@ -101,7 +101,7 @@
                         </div>
                     </div>
             
-                    <div class="input-group mb-3">
+                    <div class="input-group">
                         <span class="input-group-text rounded-start"><i class="fa-solid fa-database"></i></span>
                         <div class="form-floating">
                             <input type="text" class="form-control rounded-end" id="mig-mongodb-databaseName" name="sourcePoint[databaseName]" placeholder="DB Name" required disabled>
@@ -127,10 +127,10 @@
                         <select class="form-select form-select-sm rounded-end" id="targetCredentialSelect" name="targetPoint[credentialId]">
                             <option value="none" data-provider="none"> - </option>
                         </select>
-                        <label for="mig-target-credential">provider - credential name</label>
+                        <label for="targetCredentialSelect">provider - credential name</label>
                     </div>
                 </div>
-                <div class="input-group mb-3 me-1" id="targetRegionDiv">
+                <div class="input-group" id="targetRegionDiv">
                     <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span>
                     <div class="form-floating">
                         <select class="form-select form-select-sm rounded-end" id="targetRegionSelect" name="targetPoint[region]">
@@ -151,7 +151,7 @@
                                 {{ end }}
                             </optgroup>                            
                         </select>
-                        <label for="mig-target-region">Select Region</label>
+                        <label for="targetRegionSelect">Select Region</label>
                     </div>
                 </div>
                 <div id="targetMongoDiv" style="display: none;">    
@@ -187,7 +187,7 @@
                         </div>
                     </div>
         
-                    <div class="input-group mb-3">
+                    <div class="input-group">
                         <span class="input-group-text rounded-start"><i class="fa-solid fa-database"></i></span>
                         <div class="form-floating">
                             <input type="text" class="form-control rounded-end" id="mig-target-mongodb-databaseName" name="targetPoint[databaseName]" placeholder="DB Name" required disabled>
@@ -195,10 +195,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            
-    
-            <button type="submit" class="btn btn-primary rounded-1" id="submitBtn">Submit</button>
+            </div>       
+            <button type="submit" class="btn btn-primary rounded-3 float-end" id="submitBtn">Submit</button>
         </form>
     </div>
 </div>

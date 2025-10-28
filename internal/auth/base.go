@@ -16,12 +16,14 @@ limitations under the License.
 package auth
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/cloud-barista/mc-data-manager/config"
 	"github.com/cloud-barista/mc-data-manager/models"
@@ -199,8 +201,15 @@ func GetRDMS(params *models.ProviderConfig) (*rdbc.RDBController, error) {
 	log.Info().Str("Port", params.Port).Msg("GetRDMS")
 	dst, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", params.User, params.Password, params.Host, params.Port))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to open DB: %w", err)
 	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	if err := dst.PingContext(ctx); err != nil {
+		return nil, fmt.Errorf("failed to connect to DB (%s:%s): %w", params.Host, params.Port, err)
+	}
+
 	return rdbc.New(mysql.New(models.Provider(params.Provider), dst))
 }
 

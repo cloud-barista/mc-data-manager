@@ -2,7 +2,6 @@
     <li class="breadcrumb-item">Migration</li>
 </ol>
 <h2 class="page-title">SQL Database</h2>
-
 <div class="card rounded-3 mb-4 col-auto">
     <ul class="nav nav-tabs pt-2 ps-2">
         <li class="nav-item">
@@ -17,121 +16,927 @@
             <a class="nav-link" href="/migrate/no-sql">No-SQL</a>
         </li>
     </ul>
-    <!-- <div class="card-header">
-        <i class="fa-solid fa-database"></i>
-        MySQL
-    </div> -->
     <div class="card-body">
-        <!-- <form action="/migration/mysql" method="POST"> -->
         <form id="migForm">
             <input type="hidden" id="migService" value="rdbms">
             <input type="hidden" id="migSource" value="mysql">
             <input type="hidden" id="migDest" value="mysql">
-            <div class="card rounded-3 mb-3 p-3">
-                <div class="input-group mb-3">
-                    <div class="form-floating">
-                        <input type="text" class="form-control" id="mig-mysql-srcHost" value="MySQL" style="border: 0; background-color: white;" value="-" required disabled>
-                        <label for="mig-mysql-srcHost">Source</label>
+            <div class="stepper d-flex flex-column mt-2 ml-2" id="accordionExample">
+                <div class="d-flex mb-1">
+                    <div class="d-flex flex-column pr-4 align-items-center mt-2">
+                        <button class="rounded-circle py-2 px-3 bg-secondary text-white mb-1 next-btn border-0 step-btn" type="button" data-target="#collapseOne">
+                            1
+                        </button>
+                        <div class="line h-100"></div>
+                    </div>
+                    <div class="accordion flex-grow-1 ms-4 mb-4">
+                        <div class="accordion-item rounded-3">
+                            <div class="accordion-header" id="headingOne">
+                                <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    Enter Source MySQL for Migration
+                                </button> 
+                            </div>
+                            <div id="collapseOne" class="accordion-collapse rounded-bottom collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                <div class="accordion-body border-1 rounded-3 pt-0">
+                                    <div class="input-group">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control border-0 bg-white" id="mysql-srcLabel" value="MySQL" value="-" required disabled>
+                                            <label for="mysql-srcLabel">Source</label>
+                                        </div>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text rounded-start"><i class="fa-solid fa-cloud"></i></span>
+                                        <select class="form-select rounded-end" id="sourcePoint[provider]" name="sourcePoint[provider]">
+                                            <option value="aws">AWS</option>
+                                            <option value="gcp">GCP</option>
+                                            <option value="ncp">NCP</option>
+                                            <!-- <option value="on-premise">On-premise</option> -->
+                                        </select>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control rounded-end" id="mysql-srcHost" name="sourcePoint[host]" placeholder="Host / IP" required>
+                                            <label for="mysql-srcHost">Host / IP</label>
+                                        </div>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text rounded-start"><i class="fa-solid fa-flag"></i></span>
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control rounded-end" id="mysql-srcPort" name="sourcePoint[port]" placeholder="Port" required>
+                                            <label for="mysql-srcPort">Port</label>
+                                        </div>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text rounded-start"><i class="fa-solid fa-user"></i></span>
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control rounded-end" id="mysql-srcUsername" name="sourcePoint[username]" placeholder="Username" required>
+                                            <label for="mysql-srcUsername">Username</label>
+                                        </div>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
+                                        <div class="form-floating">
+                                            <input type="password" class="form-control rounded-end" id="mysql-srcPassword" name="sourcePoint[password]" placeholder="Password" required>
+                                            <label for="mysql-srcPassword">Password</label>
+                                        </div>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text rounded-start"><i class="fa-solid fa-database"></i></span>
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control rounded-end" id="mysql-srcDatabase" name="sourcePoint[database]" placeholder="Database" required>
+                                            <label for="mysql-srcDatabase">Database</label>
+                                        </div>
+                                    </div>
+                                    <div class="input-group">
+                                        <button class="btn btn-success btn-block rounded-3 ms-auto me-3" type="button" id="sourceVerifyBtn">
+                                            Verify
+                                        </button>
+                                        <button class="btn btn-success btn-block rounded-3 next-btn" type="button" data-current="#collapseOne" data-next="#collapseTwo" disabled>
+                                            Next
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <!-- <label for="mig-mysql-srcHost" class="form-label">Source MySQL</label> -->
-    
-                <div class="input-group mb-3">
-                    <span class="input-group-text rounded-start"><i class="fa-solid fa-cloud"></i></span>
-                    <select class="form-select rounded-end" id="sourcePoint[provider]" name="sourcePoint[provider]">
-                        <option value="aws">AWS</option>
-                        <option value="gcp">GCP</option>
-                        <option value="ncp">NCP</option>
-                        <option value="on-premise">On-premise</option>
-                    </select>
-                </div>
-    
-                <div class="input-group mb-3">
-                    <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
-                    <div class="form-floating">
-                        <input type="text" class="form-control rounded-end" id="mig-mysql-srcHost" name="sourcePoint[host]" placeholder="Host / IP" required>
-                        <label for="mig-mysql-host">Host / IP</label>
+                <div class="d-flex mb-1">
+                    <div class="d-flex flex-column pr-4 align-items-center mt-2">
+                        <button class="rounded-circle py-2 px-3 bg-secondary text-white mb-1 next-btn border-0 step-btn" type="button" data-target="#collapseTwo">
+                            2
+                        </button>
+                        <div class="line h-100"></div>
+                    </div>
+                    <div class="accordion flex-grow-1 ms-4 mb-4">
+                        <div class="accordion-item rounded-3">
+                            <div class="accordion-header" id="headingTwo">
+                                <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" disabled>
+                                    Diagnose Source MySQL
+                                </button> 
+                            </div>                            
+                            <div id="collapseTwo" class="accordion-collapse rounded-bottom collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <div class="input-group">
+                                        <div class="form-floating mb-3 col-3">
+                                            <input type="text" class="form-control rounded-3" id="sourceTime" name="sourceTime" placeholder="time" value="5">
+                                            <label for="sourceTime">Duration ( sec )</label>
+                                        </div>                                        
+                                        <div class="form-floating mb-3 ms-3 col-9">
+                                            <button class="btn btn-primary rounded-3 h-100 float-end" id="sourceDiagnoseBtn" type="button">Diagnose</button>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="card rounded-3">
+                                            <div class="card-header">SQL Statistics (digest Δ-based)</div>
+                                            <div class="card-body p-0">
+                                                <table class="table table-sm mb-0">
+                                                    <thead class="table-light">
+                                                        <tr><th class="ps-4 fw-normal" style="width: 50%;">Queries performed</th><th class="fw-normal">Value</th></tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr><td class="ps-5">Read</td><td class="value" id="readCount">-</td></tr>
+                                                        <tr><td class="ps-5">Write</td><td class="value" id="writeCount">-</td></tr>
+                                                        <tr><td class="ps-5">Other</td><td class="value" id="otherCount">-</td></tr>
+                                                        <tr><td class="ps-5">Total</td><td class="value" id="totalCount">-</td></tr>
+                                                        <tr>
+                                                        <td class="ps-4">Queries</td>
+                                                        <td class="value">
+                                                            <span id="queriesTotal">-</span>
+                                                            (<span id="queriesPerSec">-</span> per sec.)
+                                                        </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>                                        
+                                        <!-- General Statistics -->
+                                        <div class="card mt-2 rounded-3">
+                                            <div class="card-header">General Statistics</div>
+                                            <div class="card-body p-0">
+                                            <table class="table table-sm mb-0">
+                                                <tbody>
+                                                <tr><td class="ps-5" style="width: 50%;">Total Tables</td><td class="value" id="totalTable">-</td></tr>
+                                                <tr><td class="ps-5" style="width: 50%;">Total Time</td><td class="value" id="totalTime">-</td></tr>
+                                                </tbody>
+                                            </table>
+                                            </div>
+                                        </div>                                        
+                                        <!-- Latency -->
+                                        <div class="card mt-2 rounded-3">
+                                            <div class="card-header">Latency (avg only, ms)</div>
+                                            <div class="card-body p-0">
+                                                <table class="table table-sm mb-0">
+                                                    <tbody>
+                                                        <tr><td class="ps-5" style="width: 50%;">Avg</td><td class="value" id="avgLatency">-</td></tr>
+                                                        <tr><td class="ps-5" style="width: 50%;">Sum</td><td class="value" id="sumLatency">-</td></tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>                                            
+                                        <!-- Thread -->
+                                        <div class="card mt-2 rounded-3">
+                                            <div class="card-header">Thread</div>
+                                            <div class="card-body p-0">
+                                                <table class="table table-sm mb-0">
+                                                    <tbody>
+                                                        <tr><td class="ps-5" style="width: 50%;">Connected</td><td class="value" id="connectedThread">-</td></tr>
+                                                        <tr><td class="ps-5" style="width: 50%;">Running</td><td class="value" id="runningThread">-</td></tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="input-group">
+                                        <button class="btn btn-success btn-block rounded-3 next-btn ms-auto" type="button" data-current="#collapseTwo" data-next="#collapseThree">Next</button>                            
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-    
-                <div class="input-group mb-3">
-                    <span class="input-group-text rounded-start"><i class="fa-solid fa-flag"></i></span>
-                    <div class="form-floating">
-                        <input type="text" class="form-control rounded-end" id="mig-mysql-srcPort" name="sourcePoint[port]" placeholder="Port" required>
-                        <label for="mig-mysql-port">Port</label>
+                <div class="d-flex mb-1">
+                    <div class="d-flex flex-column pr-4 align-items-center mt-2">                        
+                        <button class="rounded-circle py-2 px-3 bg-secondary text-white mb-1 next-btn border-0 step-btn" type="button" data-target="#collapseThree">
+                            3
+                        </button>
+                        <div class="line h-100"></div>
+                    </div>
+                    <div class="accordion flex-grow-1 ms-4 mb-4">
+                        <div class="accordion-item rounded-3">
+                            <div class="accordion-header" id="headingThree">
+                                <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree" disabled>
+                                    Enter Target MySQL for Migration
+                                </button> 
+                            </div>                            
+                            <div id="collapseThree" class="accordion-collapse rounded-bottom collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                                <div class="accordion-body rounded-3 pt-0">
+                                    <div class="input-group mb-3">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control border-0 bg-white" id="mysql-destHostLabel" value="MySQL" value="-" required disabled>
+                                            <label for="mysql-destHostLabel">Target</label>
+                                        </div>
+                                    </div>  
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text rounded-start"><i class="fa-solid fa-cloud"></i></span>
+                                        <select class="form-select rounded-end" id="targetPoint[provider]" name="targetPoint[provider]">
+                                            <option value="aws">AWS</option>
+                                            <option value="gcp">GCP</option>
+                                            <option value="ncp">NCP</option>
+                                            <!-- <option value="onpremise">On-premise</option> -->
+                                        </select>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control rounded-end" id="mysql-destHost" name="targetPoint[host]" placeholder="Host / IP" required>
+                                            <label for="mysql-destHost">Host / IP</label>
+                                        </div>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text rounded-start"><i class="fa-solid fa-flag"></i></span>
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control rounded-end" id="mysql-destPort" name="targetPoint[port]" placeholder="Port" required>
+                                            <label for="mysql-destPort">Port</label>
+                                        </div>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text rounded-start"><i class="fa-solid fa-user"></i></span>
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control rounded-end" id="mysql-destUsername" name="targetPoint[username]" placeholder="Username" required>
+                                            <label for="mysql-destUsername">Username</label>
+                                        </div>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
+                                        <div class="form-floating">
+                                            <input type="password" class="form-control rounded-end" id="mysql-destPassword" name="targetPoint[password]" placeholder="Password" required>
+                                            <label for="mysql-destPassword">Password</label>
+                                        </div>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text rounded-start"><i class="fa-solid fa-database"></i></span>
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control rounded-end" id="mysql-destDatabase" name="targetPoint[database]" placeholder="Database" required>
+                                            <label for="mysql-destDatabase">Database</label>
+                                        </div>
+                                    </div>
+                                    <div class="input-group">
+                                        <button class="btn btn-success btn-block rounded-3 me-3 ms-auto" type="button" id="targetVerifyBtn">
+                                            Verify
+                                        </button>
+                                        <button class="btn btn-success btn-block rounded-3 next-btn" type="button" data-current="#collapseThree" data-next="#collapseFour" disabled>
+                                            Next
+                                        </button>  
+                                    </div>                            
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-    
-                <div class="input-group mb-3">
-                    <span class="input-group-text rounded-start"><i class="fa-solid fa-user"></i></span>
-                    <div class="form-floating">
-                        <input type="text" class="form-control rounded-end" id="mig-mysql-srcUsername" name="sourcePoint[username]" placeholder="Username" required>
-                        <label for="mig-mysql-username">Username</label>
+                <div class="d-flex mb-3">
+                    <div class="d-flex flex-column pr-4 align-items-center mt-2">
+                        <button class="rounded-circle py-2 px-3 bg-secondary text-white mb-1 next-btn border-0 step-btn" type="button" data-target="#collapseFour">
+                            4
+                        </button>
                     </div>
-                </div>
-    
-                <div class="input-group">
-                    <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
-                    <div class="form-floating">
-                        <input type="password" class="form-control rounded-end" id="mig-mysql-srcPassword" name="sourcePoint[password]" placeholder="Password" required>
-                        <label for="mig-mysql-password">Password</label>
+                    <div class="accordion flex-grow-1 ms-4" id="accordionExample">
+                        <div class="accordion-item rounded-3">
+                            <div class="accordion-header" id="headingFour">
+                                <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour" disabled>
+                                    Diagnose Target MySQL
+                                </button> 
+                            </div>                            
+                            <div id="collapseFour" class="accordion-collapse rounded-bottom collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <div class="input-group">
+                                        <div class="form-floating mb-3 col-3">
+                                            <input type="text" class="form-control rounded-3" id="targetTime" name="targetTime" placeholder="time" value="5">
+                                            <label for="targetTime">Duration ( sec )</label>
+                                        </div>
+                                        <div class="form-floating mb-3 ms-3 col-3">
+                                            <input type="text" class="form-control rounded-3" id="targetTableCount" name="targetTableCount" placeholder="Table Count" value="10">
+                                            <label for="targetTableCount">Table Count</label>
+                                        </div>
+                                        <div class="form-floating mb-3 ms-3 col-3">
+                                            <input type="text" class="form-control rounded-3" id="targetTableSize" name="targetTableSize" placeholder="Table Size" value="10">
+                                            <label for="targetTableSize">Table Size</label>
+                                        </div>
+                                        <div class="form-floating mb-3 ms-3 col-3">
+                                            <input type="text" class="form-control rounded-3" id="targetThread" name="targetThread" placeholder="Thread" value="10">
+                                            <label for="targetThread">Thread</label>
+                                        </div>                             
+                                    </div>
+                                    <div class="input-group">
+                                        <div class="form-floating mb-3 col-3">
+                                            <input type="number" class="form-control rounded-3" id="cpuCores" name="cpuCores" placeholder="cpuCores" value="0" min="0">
+                                            <label for="cpuCores">Cpu</label>
+                                        </div>
+                                        <div class="form-floating mb-3 ms-3 col-3">
+                                            <input type="number" class="form-control rounded-3" id="memoryGB" name="memoryGB" placeholder="memoryGB" value="0" min="0">
+                                            <label for="memoryGB">Memory ( GB )</label>
+                                        </div>
+                                        <div class="form-floating mb-3 ms-3 col-3">                                            
+                                            <select class="form-select rounded-3" id="storageType" name="storageType">
+                                                <option value="" selected disabled>Choose Storage Type</option>
+                                                <option value="HDD">HDD</option>
+                                                <option value="SSD">SSD</option>
+                                                <option value="NVMe">NVMe</option>
+                                            </select>
+                                            <label for="storageType">Storage Type</label>
+                                        </div>
+                                        <div class="form-floating mb-3 ms-3 col-3">
+                                            <button class="btn btn-primary rounded-3 h-100 float-end" id="targetDiagnoseBtn" type="button">
+                                                Diagnose
+                                            </button>
+                                        </div> 
+                                    </div>
+                                    <div class="card rounded-3">
+                                        <div class="card-header">SQL Statistics</div>
+                                        <div class="card-body p-0">
+                                            <table class="table table-sm mb-0">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th class="ps-4 fw-normal" style="width: 50%;">Queries performed</th>
+                                                        <th class="fw-normal" style="width: 25%;">Source</th>
+                                                        <th class="fw-normal">Target</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr><td class="ps-5">Read</td><td class="value" id="readSourceCount">-</td><td class="value" id="readTargetCount">-</td></tr>
+                                                    <tr><td class="ps-5">Write</td><td class="value" id="writeSourceCount">-</td><td class="value" id="writeTargetCount">-</td></tr>
+                                                    <tr><td class="ps-5">Other</td><td class="value" id="otherSourceCount">-</td><td class="value" id="otherTargetCount">-</td></tr>
+                                                    <tr><td class="ps-5">Total</td><td class="value" id="totalSourceCount">-</td><td class="value" id="totalTargetCount">-</td></tr>
+                                                    <tr>
+                                                        <td class="ps-4">Transactions</td>
+                                                        <td class="value">
+                                                            <span>-</span>
+                                                        </td>
+                                                        <td class="value">
+                                                            <span id="transactionsTotal">-</span>
+                                                            (<span id="transactionsPerSec">-</span> per sec.)
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ps-4">Queries</td>
+                                                        <td class="value">
+                                                            <span id="queriesSourceTotal">-</span>
+                                                            (<span id="queriesSourcePerSec">-</span> per sec.)
+                                                        </td>
+                                                        <td class="value">
+                                                            <span id="queriesTargetTotal">-</span>
+                                                            (<span id="queriesTargetPerSec">-</span> per sec.)
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ps-4">Ignored errors</td>
+                                                        <td class="value">
+                                                            <span>-</span>
+                                                        </td>
+                                                        <td class="value">
+                                                            <span id="errorsTotal">-</span>
+                                                            (<span id="errorsPerSec">-</span> per sec.)
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ps-4">Reconnects</td>
+                                                        <td class="value">
+                                                            <span>-</span>
+                                                        </td>
+                                                        <td class="value">
+                                                            <span id="reconnectsTotal">-</span>
+                                                            (<span id="reconnectsPerSec">-</span> per sec.)
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>                                        
+                                    <!-- General Statistics -->
+                                    <div class="card mt-2 rounded-3">
+                                        <div class="card-header">General Statistics</div>
+                                        <div class="card-body p-0">
+                                        <table class="table table-sm mb-0">
+                                            <tbody>
+                                                <tr><td class="ps-5" style="width: 50%;">Total Time</td><td class="value" id="totalSourceTime" style="width: 25%;">-</td><td class="value" id="totalTargetTime">-</td></tr>
+                                                <tr><td class="ps-5" style="width: 50%;">Total Number Of Events</td><td class="value">-</td><td class="value" id="totalEvents">-</td></tr>
+                                            </tbody>
+                                        </table>
+                                        </div>
+                                    </div>                                        
+                                    <!-- Latency -->
+                                    <div class="card mt-2 rounded-3">
+                                        <div class="card-header">Latency (ms)</div>
+                                        <div class="card-body p-0">
+                                            <table class="table table-sm mb-0">
+                                                <tbody>
+                                                    <tr><td class="ps-5" style="width: 50%;">Min</td><td class="value" style="width: 25%;">-</td><td class="value" id="minTargetLatency">-</td></tr>
+                                                    <tr><td class="ps-5" style="width: 50%;">Avg</td><td class="value" id="avgSourceLatency">-</td><td class="value" id="avgTargetLatency">-</td></tr>
+                                                    <tr><td class="ps-5" style="width: 50%;">Max</td><td class="value">-</td><td class="value" id="maxTargetLatency">-</td></tr>
+                                                    <tr><td class="ps-5" style="width: 50%;">95th Percentile</td><td class="value">-</td><td class="value" id="95TargetLatency">-</td></tr>
+                                                    <tr><td class="ps-5" style="width: 50%;">Sum</td><td class="value" id="sumSourceLatency">-</td><td class="value" id="sumTargetLatency">-</td></tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>                                            
+                                    <!-- Thread -->
+                                    <div class="card mt-2 rounded-3">
+                                        <div class="card-header">Threads fairness</div>
+                                        <div class="card-body p-0">
+                                            <table class="table table-sm mb-0">
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="ps-5" style="width: 50%;">Events (avg/stddev)</td>
+                                                        <td class="value" style="width: 25%;">
+                                                            <span>-</span>                                                               
+                                                        </td>
+                                                        <td class="value">
+                                                            <span id="avgTargetEvents">-</span> / <span id="stddevTargetEvents">-</span>                                                                    
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ps-5" style="width: 50%;">Execution Time (avg/stddev)</td>
+                                                        <td class="value">
+                                                            <span>-</span>
+                                                        </td>
+                                                        <td class="value">
+                                                            <span id="avgTargetExecTime">-</span> / <span id="stddevTargetExecTime">-</span> 
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="card mt-2 rounded-3" id="targetDiagnosis" style="display: none;">
+                                        <div class="card-header">
+                                            Target Database Performance Diagnosis
+                                        </div>
+                                        <div class="card-body ps-4">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <div class="fw-bold">
+                                                        Overall Score: 
+                                                    </div>
+                                                    <div class="d-flex justify-content-center align-items-center">
+                                                        <span id="score">- </span>
+                                                        <span class="ms-1 text-muted">/ 10</span>
+                                                    </div>
+                                                </div>
+                                                <div class="me-3">
+                                                    <span class="rounded-circle d-flex justify-content-center align-items-center" id="gradeBadge" style="width: 3rem; height: 3rem;">-</span>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="fw-bold">
+                                                Detailed Analysis
+                                                <button type="button" class="btn border-0" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                                    <i class="fa-solid fa-circle-question"></i>
+                                                </button>
+                                                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <div>
+                                                                    <h5 class="modal-title" id="staticBackdropLabel">Notes</h5>
+                                                                    <span class="fst-italic text-muted ps-2 fw-normal">The scores are based on the stated criteria below and are for reference only.</span> 
+                                                                </div>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body fw-normal ps-4" id="modalBody">
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button class="btn btn-secondary rounded-3" type="button" data-bs-dismiss="modal">Close</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="detail-list ps-4" id="details">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <div class="card rounded-3 mb-3 p-3">
-                <div class="input-group mb-3">
-                    <div class="form-floating">
-                        <input type="text" class="form-control" id="mig-mysql-targetHost" value="MySQL" style="border: 0; background-color: white;" value="-" required disabled>
-                        <label for="mig-mysql-targetHost">Target</label>
-                    </div>
-                </div>
-                <!-- <label for="mig-mysql-srcHost" class="form-label">Target MySQL</label> -->
-    
-                <div class="input-group mb-3">
-                    <span class="input-group-text rounded-start"><i class="fa-solid fa-cloud"></i></span>
-                    <select class="form-select rounded-end" id="targetPoint[provider]" name="targetPoint[provider]">
-                        <option value="aws">AWS</option>
-                        <option value="gcp">GCP</option>
-                        <option value="ncp">NCP</option>
-                        <option value="onpremise">On-premise</option>
-                    </select>
-                </div>
-    
-                <div class="input-group mb-3">
-                    <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
-                    <div class="form-floating">
-                        <input type="text" class="form-control rounded-end" id="mig-mysql-destHost" name="targetPoint[host]" placeholder="Host / IP" required>
-                        <label for="mig-mysql-host">Host / IP</label>
-                    </div>
-                </div>
-    
-                <div class="input-group mb-3">
-                    <span class="input-group-text rounded-start"><i class="fa-solid fa-flag"></i></span>
-                    <div class="form-floating">
-                        <input type="text" class="form-control rounded-end" id="mig-mysql-destPort" name="targetPoint[port]" placeholder="Port" required>
-                        <label for="mig-mysql-port">Port</label>
-                    </div>
-                </div>
-    
-                <div class="input-group mb-3">
-                    <span class="input-group-text rounded-start"><i class="fa-solid fa-user"></i></span>
-                    <div class="form-floating">
-                        <input type="text" class="form-control rounded-end" id="mig-mysql-destUsername" name="targetPoint[username]" placeholder="Username" required>
-                        <label for="mig-mysql-username">Username</label>
-                    </div>
-                </div>
-    
-                <div class="input-group">
-                    <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
-                    <div class="form-floating">
-                        <input type="password" class="form-control rounded-end" id="mig-mysql-destPassword" name="targetPoint[password]" placeholder="Password" required>
-                        <label for="mig-mysql-password">Password</label>
-                    </div>
-                </div>
-            </div>
-            
-            <button type="submit" class="btn btn-primary rounded-1" id="submitBtn">Submit</button>
+            <button type="submit" class="btn btn-primary rounded-3 float-end" id="submitBtn" disabled>Submit</button>
         </form>
     </div>
-</div>
+</div>  
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll(".next-btn").forEach(btn => {
+            btn.addEventListener("click", e => {
+                // 현재 단계 ID (예: "#collapseOne")
+                const currentId = btn.dataset.current;
+                // 다음 단계 ID (예: "#collapseTwo")
+                const nextId = btn.dataset.next;
+
+                // 현재 단계 버튼 색상 변경
+                const stepBtn = document.querySelector(`button[data-target='${currentId}']`);
+                if (stepBtn) {
+                    stepBtn.classList.remove("bg-secondary");
+                    stepBtn.classList.add("bg-success");
+                }
+
+                // 다음 단계 collapse 열기
+                const next = document.querySelector(nextId);
+                if (next) {
+                    bootstrap.Collapse.getOrCreateInstance(next).show();
+
+                    const headerBtn = document.querySelector(`button[data-bs-target='${nextId}']`);
+                    if (headerBtn) {
+                        headerBtn.disabled = false; 
+                    }
+                }                 
+            });
+        });
+        
+        ["sourceVerifyBtn", "targetVerifyBtn"].forEach(id => {
+            document.getElementById(id).addEventListener("click", (e) => {
+                const btn = e.currentTarget;
+                const isSource = id === "sourceVerifyBtn"; // 클릭한 버튼이 source인지 target인지 구분
+                const prefix = isSource ? "mysql-src" : "mysql-dest"; // 각 input prefix 구분
+
+                const url = "/diagnose/connection";
+
+                // prefix 기반으로 input 값 읽기
+                const host = document.getElementById(`${prefix}Host`).value;
+                const port = document.getElementById(`${prefix}Port`).value;
+                const username = document.getElementById(`${prefix}Username`).value;
+                const password = document.getElementById(`${prefix}Password`).value;
+                const databaseName = document.getElementById(`${prefix}Database`).value;
+
+                if (!host || !port || !username || !password || !databaseName) {
+                    alert(`Please make sure all required fields for ${isSource ? "Source" : "Target"} MySQL are filled in.`);
+                    return;
+                }
+
+                const jsonData = {
+                    targetPoint: { host, port, username, password, databaseName }
+                };
+
+                // 버튼 로딩 상태로 전환
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+
+                const parent = e.target.closest("div");
+                const otherBtn = parent.querySelector(".next-btn");
+
+                // API 요청
+                fetchRequest(url, jsonData)
+                    .then(json => {
+                        if (otherBtn) {
+                            otherBtn.disabled = false; 
+                        }
+                        if (!isSource) {
+                            document.getElementById("submitBtn").disabled = false
+                        }
+
+                        btn.disabled = false;
+                        btn.innerHTML = 'Verified';
+                    })
+                    .catch(reason => {
+                        console.error(reason);
+                        alert(reason);
+                        if (otherBtn) {
+                            otherBtn.disabled = true; 
+                        }
+                        if (!isSource) {
+                            document.getElementById("submitBtn").disabled = true
+                        }
+                        
+                        btn.disabled = false;
+                        btn.innerHTML = 'Verify';
+                    })
+            });
+        });
+        
+        ["sourceDiagnoseBtn", "targetDiagnoseBtn"].forEach(id => {
+            document.getElementById(id).addEventListener("click", (e) => {
+                const btn = e.currentTarget;
+                const isSource = id === "sourceDiagnoseBtn"; // 클릭한 버튼이 source인지 target인지 구분
+                const prefix = isSource ? "mysql-src" : "mysql-dest"; // 각 input prefix 구분
+
+                const url = isSource ? "/diagnose/status" : "/diagnose/sysbench";
+
+                // prefix 기반으로 input 값 읽기
+                const host = document.getElementById(`${prefix}Host`).value;
+                const port = document.getElementById(`${prefix}Port`).value;
+                const username = document.getElementById(`${prefix}Username`).value;
+                const password = document.getElementById(`${prefix}Password`).value;
+                const databaseName = document.getElementById(`${prefix}Database`).value;
+
+                if (!host || !port || !username || !password || !databaseName) {
+                    alert(`Please make sure all required fields for ${isSource ? "Source" : "Target"} MySQL are filled in.`);
+                    return;
+                }
+
+                const jsonData = isSource ? {
+                    targetPoint: {
+                        host: host,
+                        port: port,
+                        username: username,
+                        password: password,
+                        databaseName: databaseName,
+                    },
+                    time: parseInt(document.getElementById("sourceTime").value)
+                } : {
+                    host: host,
+                    port: port,
+                    username: username,
+                    password: password,
+                    databaseName: databaseName,
+                    targetType: "mysql",
+                    tableCount: parseInt(document.getElementById("targetTableCount").value),
+                    tableSize: parseInt(document.getElementById("targetTableSize").value),
+                    threadsCount: parseInt(document.getElementById("targetThread").value),
+                    time: parseInt(document.getElementById("targetTime").value)
+                }
+
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+
+                fetchRequest(url, jsonData)
+                    .then(json => {
+                        if(json.Error) {
+                            console.log(json.Error);
+                            alert("failed to diagnose");
+
+                            return
+                        }
+                        isSource ? updateStats(json) : updateSysbenchResult(json, jsonData)
+                    })
+                    .catch(reason => {
+                        console.log(reason);
+                        alert(reason);
+                    })
+                    .finally(() => {
+                        btn.disabled = false;
+                        btn.innerHTML = 'Diagnose';
+
+                        if(!isSource) {
+                            document.getElementById("targetDiagnosis").style.display = ""
+                        }
+                    });
+            })
+        })
+    })
+
+    function fetchRequest(url, jsonData) {
+        const req = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        }
+
+        return fetch(url, req)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        
+                        return response.json();
+                    });
+    }
+
+    // 안전한 소수점 변환
+    const formatFixed = (num, digits = 2) => (typeof num === "number" && !isNaN(num)) ? num.toFixed(digits) : "0.00";
+    // totalTime: 나노초 → 초 단위 변환
+    const formatSeconds = (num) => (typeof num === "number" && !isNaN(num)) ? (num / 1e9).toFixed(2) + "s" : num;
+
+    function updateStats(data) {
+        document.getElementById("readCount").textContent = data.Diagnostics.Report.Read;
+        document.getElementById("readSourceCount").textContent = data.Diagnostics.Report.Read;
+        document.getElementById("writeCount").textContent = data.Diagnostics.Report.Write;
+        document.getElementById("writeSourceCount").textContent = data.Diagnostics.Report.Write;
+        document.getElementById("otherCount").textContent = data.Diagnostics.Report.Other;
+        document.getElementById("otherSourceCount").textContent = data.Diagnostics.Report.Other;
+        document.getElementById("totalCount").textContent = data.Diagnostics.Report.Total;
+        document.getElementById("totalSourceCount").textContent = data.Diagnostics.Report.Total;
+        document.getElementById("queriesTotal").textContent = data.Diagnostics.Report.Total;
+        document.getElementById("queriesSourceTotal").textContent = data.Diagnostics.Report.Total;
+        document.getElementById("queriesPerSec").textContent = formatFixed(data.Diagnostics.QPS);
+        document.getElementById("queriesSourcePerSec").textContent = formatFixed(data.Diagnostics.QPS);
+        document.getElementById("totalTime").textContent = formatSeconds(data.Diagnostics.Elapsed);
+        document.getElementById("totalSourceTime").textContent = formatSeconds(data.Diagnostics.Elapsed);
+        document.getElementById("avgLatency").textContent = formatFixed(data.Diagnostics.AvgMs);
+        document.getElementById("avgSourceLatency").textContent = formatFixed(data.Diagnostics.AvgMs);
+        document.getElementById("sumLatency").textContent = formatFixed(data.Diagnostics.SumMs);
+        document.getElementById("sumSourceLatency").textContent = formatFixed(data.Diagnostics.SumMs);
+        document.getElementById("totalTable").textContent = data.Diagnostics.Lock.length;
+        document.getElementById("connectedThread").textContent = data.Diagnostics.Thread.ThreadConnected;
+        document.getElementById("runningThread").textContent = data.Diagnostics.Thread.ThreadRunning;
+    }
+
+    function updateSysbenchResult(data, sysbenchParams) {
+        document.getElementById("readTargetCount").textContent = data.SysbenchResult.rdbmsResult.read;
+        document.getElementById("writeTargetCount").textContent = data.SysbenchResult.rdbmsResult.write;
+        document.getElementById("otherTargetCount").textContent = data.SysbenchResult.rdbmsResult.other;
+        document.getElementById("totalTargetCount").textContent = data.SysbenchResult.rdbmsResult.total;
+        document.getElementById("transactionsTotal").textContent = data.SysbenchResult.rdbmsResult.transactions;
+        document.getElementById("transactionsPerSec").textContent = formatFixed(data.SysbenchResult.rdbmsResult.tps);
+        document.getElementById("queriesTargetTotal").textContent = data.SysbenchResult.rdbmsResult.queries;
+        document.getElementById("queriesTargetPerSec").textContent = formatFixed(data.SysbenchResult.rdbmsResult.qps);
+        document.getElementById("errorsTotal").textContent = data.SysbenchResult.rdbmsResult.ignoredErrors;
+        document.getElementById("errorsPerSec").textContent = formatFixed(data.SysbenchResult.rdbmsResult.ignoredErrorsPerSec);
+        document.getElementById("reconnectsTotal").textContent = data.SysbenchResult.rdbmsResult.reconnects;
+        document.getElementById("reconnectsPerSec").textContent = formatFixed(data.SysbenchResult.rdbmsResult.reconnectsPerSec);
+        document.getElementById("totalTargetTime").textContent = formatSeconds(data.SysbenchResult.rdbmsResult.totalTime);
+        document.getElementById("totalEvents").textContent = data.SysbenchResult.rdbmsResult.totalEvents;
+        document.getElementById("minTargetLatency").textContent = formatFixed(data.SysbenchResult.rdbmsResult.latencyMinMs);
+        document.getElementById("avgTargetLatency").textContent = formatFixed(data.SysbenchResult.rdbmsResult.latencyAvgMs);
+        document.getElementById("maxTargetLatency").textContent = formatFixed(data.SysbenchResult.rdbmsResult.latencyMaxMs);
+        document.getElementById("95TargetLatency").textContent = formatFixed(data.SysbenchResult.rdbmsResult.latencyP95Ms);
+        document.getElementById("sumTargetLatency").textContent = formatFixed(data.SysbenchResult.rdbmsResult.latencySumMs);
+        document.getElementById("avgTargetEvents").textContent = data.SysbenchResult.rdbmsResult.eventsAvg;
+        document.getElementById("stddevTargetEvents").textContent = data.SysbenchResult.rdbmsResult.eventsStddev;
+        document.getElementById("avgTargetExecTime").textContent = data.SysbenchResult.rdbmsResult.execTimeAvgSec;
+        document.getElementById("stddevTargetExecTime").textContent = data.SysbenchResult.rdbmsResult.execTimeStddevSec;
+
+        diagnoseSysbench(data, sysbenchParams)
+    }
+
+    function diagnoseSysbench(data, sysbenchParams) {
+        const rowSizeBytes = data.rowSizeBytes ?? 200;
+
+        // 입력 정리/보정
+        const cpuCores = Math.max(Number(document.getElementById("cpuCores").value || 0), 1);
+        const ramGB    = Math.max(Number(document.getElementById("memoryGB").value || 0), 1);
+        const storageType = String(document.getElementById("storageType").value || 'HDD').toUpperCase(); // HDD/SSD/NVME
+
+        const threads  = Math.max(Number(sysbenchParams.threadsCount || 0), 1);
+        const timeSec  = Math.max(Number(sysbenchParams.time || 0), 1);
+        const tables   = Math.max(Number(sysbenchParams.tableCount || 1), 1);
+        const tableRows= Math.max(Number(sysbenchParams.tableSize || 1), 1);
+
+        
+        // ⚙️ 계산 가능한 파생 값들
+        const qps = formatFixed(data.SysbenchResult.rdbmsResult.qps);
+        const tps = formatFixed(data.SysbenchResult.rdbmsResult.tps);
+        const avgLatency = formatFixed(data.SysbenchResult.rdbmsResult.latencyAvgMs);
+        const p95Latency = formatFixed(data.SysbenchResult.rdbmsResult.latencyP95Ms);
+        const fairnessDev = data.SysbenchResult.rdbmsResult.eventsStddev;
+        const totalOps = data.SysbenchResult.rdbmsResult.transactions || 1;
+        const errorRate = ((data.SysbenchResult.rdbmsResult.ignoredErrors + data.SysbenchResult.rdbmsResult.reconnects) / totalOps) * 100;
+        const hasP95 = !Number.isNaN(p95Latency);
+
+        // --- 정규화 지표/가정 ---
+        // 1) 코어당 처리량
+        const qpsPerCore = qps / cpuCores;
+        const tpsPerCore = tps / cpuCores;
+        // 2) 메모리 적합성(추정): buffer pool≈min(RAM*0.6, RAM-2GB)
+        const bufferPoolGBest = Math.max(0, Math.min(ramGB * 0.6, ramGB - 2));
+        const datasetGBest = (tables * tableRows * rowSizeBytes) / (1024 ** 3);
+        const memoryFits = datasetGBest <= bufferPoolGBest;
+        // 3) 스토리지 가중치
+        const storageWeight =
+            storageType === 'NVME' ? 1.2 :
+            storageType === 'HDD'  ? 0.8 : 1.0; // SSD=1.0
+
+        // --- 기준선(휴리스틱) 스케일링: write-OLTP 전제 ---
+        // 처리량 문턱(코어당): NVMe 가산, HDD 감산, 메모리 미적합 시 더 까다롭게(*0.85)
+        const memScale = memoryFits ? 1.0 : 0.85;
+        const QPS_EX = 800 * storageWeight * memScale; // excellent 문턱
+        const QPS_GO = 300 * storageWeight * memScale; // good 문턱
+        const TPS_EX = 70  * storageWeight * memScale;
+        const TPS_GO = 20  * storageWeight * memScale;
+
+        // 레이턴시 문턱 (메모리/스토리지 영향)
+        const isHDD = storageType === 'HDD';
+        // gemini
+        const LAT_AVG_EX = isHDD ? 10.0 : 2.0;      // ms
+        const LAT_AVG_GO = isHDD ? 50.0 : 10.0;      // ms
+        const LAT_P95_EX = isHDD ? 50.0 : 10.0;
+        const LAT_P95_GO = isHDD ? 150.0 : 50.0;
+        // gpt
+        // const LAT_AVG_EX = isHDD ? 3.0 : 1.0;      // ms
+        // const LAT_AVG_GO = isHDD ? 10.0 : 5.0;      // ms
+        // const LAT_P95_EX = isHDD ? 10.0 : 5.0;
+        // const LAT_P95_GO = isHDD ? 40.0 : 20.0;
+
+        // --- 점수화 (Throughput: QPS/TPS, Latency avg/p95, Errors) ---
+        // 최대 10점 (QPS2 + TPS2 + avg2 + p95 2 + errors2)
+        let score = 0;
+        const details = [];
+
+        // QPS/core
+        if (qpsPerCore >= QPS_EX) { score += 2; details.push(`🟢 QPS/core ${formatFixed(qpsPerCore, 1)} — excellent (≥ ${formatFixed(QPS_GO, 0)})`); }
+        else if (qpsPerCore >= QPS_GO) { score += 1; details.push(`🟡 QPS/core ${formatFixed(qpsPerCore, 1)} — good (≥ ${formatFixed(QPS_GO, 0)})`); }
+        else { details.push(`🔴 QPS/core ${formatFixed(qpsPerCore, 1)} — low (< ${formatFixed(QPS_GO, 0)})`); }
+
+        // TPS/core (write-OLTP 모드면 TPS 중요)
+        if (tpsPerCore >= TPS_EX) { score += 2; details.push(`🟢 TPS/core ${formatFixed(tpsPerCore, 1)} — excellent (≥ ${formatFixed(TPS_GO, 0)})`); }
+        else if (tpsPerCore >= TPS_GO) { score += 1; details.push(`🟡 TPS/core ${formatFixed(tpsPerCore, 1)} — good (≥ ${formatFixed(TPS_GO, 0)})`); }
+        else { details.push(`🔴 TPS/core ${formatFixed(tpsPerCore, 1)} — low (< ${formatFixed(TPS_GO, 0)})`); }
+
+        // Avg latency
+        if (avgLatency < LAT_AVG_EX) { score += 2; details.push(`🟢 Avg latency (${avgLatency} ms) — excellent (< ${LAT_AVG_EX} ms)`); }
+        else if (avgLatency < LAT_AVG_GO) { score += 1; details.push(`🟡 Avg latency (${avgLatency} ms) — good (< ${LAT_AVG_GO} ms)`); }
+        else { details.push(`🔴 Avg latency (${avgLatency} ms) — high (≥ ${LAT_AVG_GO} ms)`); }
+
+        // P95 latency (있으면 반영)
+        if (hasP95) {
+            if (p95Latency < LAT_P95_EX) { // 5ms 미만 (극도로 우수한 성능)
+                score += 2;
+                details.push(`🟢 P95 Latency (${p95Latency} ms) — excellent (< ${LAT_P95_EX} ms))`);
+            } else if (p95Latency < LAT_P95_GO) { // 20ms 미만 (운영 환경에서 허용 가능한 수준)
+                score += 1;
+                details.push(`🟡 P95 Latency (${p95Latency} ms) — good (< ${LAT_P95_GO} ms)`);
+            } else {
+                details.push(`🔴 P95 Latency (${p95Latency} ms) — spiky (≥ ${LAT_P95_GO} ms)`);
+            }
+        } else {
+            details.push(`ℹ️ P95 latency not provided — graded by avg only.`);
+        }
+
+        // Errors
+        if (errorRate === 0) { score += 2; details.push(`🟢 Errors ${formatFixed(errorRate, 3)}% — Excellent`); }
+        else if (errorRate < 0.1) { score += 1; details.push(`🟡 Errors ${formatFixed(errorRate, 3)}% — Good`); }
+        else { details.push(`🔴 Errors ${formatFixed(errorRate, 3)}% — frequent`); }
+
+        // ✅ 최종 평가
+        let grade;
+        if (score >= 10) {
+            grade = "Excellent";
+        } else if (score >= 7) {
+            grade = "Good";
+        } else if (score >= 4) {
+            grade = "Fair";
+        } else {
+            grade = "Poor";
+        }
+
+        // --- 참고/가정 메모 ---
+        const notes = [
+            `<span class="d-inline-block" style="width: 7rem;">Mode</span><span> : oltp_read_write</span>`,
+            `<span class="d-inline-block" style="width: 7rem;">Tables</span><span> : ${tables}</span>`,
+            `<span class="d-inline-block" style="width: 7rem;">Table Size</span><span> : ${tableRows}</span>`,
+            `<span class="d-inline-block" style="width: 7rem;">Threads</span><span> : ${threads}</span>`,
+            `<span class="d-inline-block" style="width: 7rem;">Time</span><span> : ${timeSec}s</span>`,
+            `<span class="d-inline-block" style="width: 7rem;">Cpu</span><span> : ${cpuCores} cores</span>`,
+            `<span class="d-inline-block" style="width: 7rem;">Memory</span><span> : ${ramGB} GB</span>`,
+            `<span class="d-inline-block" style="width: 7rem;">Storage weight</span><span> : ${storageType} ( x ${storageWeight})</span>`,
+            // `<span class="d-inline-block" style="width: 7rem;">Memory fit</span><span> : ${memoryFits ? 'likely fit' : 'likely not fit'} (dataset≈${formatFixed(datasetGBest, 2)}GB vs bufferPool≈${formatFixed(bufferPoolGBest, 2)}GB)</span>`,
+            ``,
+            `Score`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Excellent</span><span> > 9 - Database performance is optimal and highly efficient.</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Good</span><span> > 6 - Database performs well, slight optimizations may help.</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Fair</span><span> > 3 - Some bottlenecks detected — consider tuning queries or I/O.</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Low</span><span> < 3 - Database underperforming, investigate configuration and load.</span>`,
+            ``,
+            `QPS/core (Throughput per CPU core)`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Excellent(2)</span><span> ≥ ${formatFixed(QPS_EX, 0)} per core</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Good(1)</span><span> ≥ ${formatFixed(QPS_GO, 0)} per core</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Low(0)</span><span> < ${formatFixed(QPS_GO, 0)} per core</span>`,
+            ``,
+            `TPS/core (Transactions per CPU core)`,
+            //  TPS/core (Transactions per CPU core, important in write-OLTP mode)`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Excellent(2)</span><span> ≥ ${formatFixed(TPS_EX, 0)} per core</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Good(1)</span><span> ≥ ${formatFixed(TPS_GO, 0)} per core</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Low(0)</span><span> < ${formatFixed(TPS_GO, 0)} per core</span>`,
+            ``,
+            `Avg Latency (ms)`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Excellent(2)</span><span> < ${LAT_AVG_EX} ms</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Good(1)</span><span> < ${LAT_AVG_GO} ms</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• High(0)</span><span> ≥ ${LAT_AVG_GO} ms</span>`,
+            ``,
+            `P95 Latency (ms)`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Excellent(2)</span><span> < ${LAT_P95_EX} ms</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Good(1)</span><span> < ${LAT_P95_GO} ms</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Spiky(0)</span><span> ≥ ${LAT_P95_GO} ms</span>`,
+            ``,
+            `Error Rate (%)`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Excellent(2)</span><span> 0%</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Good(1)</span><span> < 0.1%</span>`,
+            `<span class="d-inline-block ps-3" style="width: 7rem;">• Frequent(0)</span><span> ≥ 0.1%</span>`,
+        ];
+
+        
+        // ✅ HTML 렌더링
+        const scoreEl = document.getElementById("score");
+        const detailsEl = document.getElementById("details");
+        const modalBody = document.getElementById("modalBody")
+
+        setGrade(grade)
+        scoreEl.textContent = score;
+
+        modalBody.replaceChildren();
+        const pre = document.createElement("pre");
+        notes.forEach((line) => {
+            pre.innerHTML += line + "\n";
+        });
+        modalBody.appendChild(pre);
+
+        detailsEl.replaceChildren();
+        details.forEach((line) => {
+            if (!line.trim()) return;
+            const div = document.createElement("div");
+            div.textContent = line.trim();
+            detailsEl.appendChild(div);
+        });
+    }
+
+    function setGrade(grade) {
+        const badge = document.getElementById("gradeBadge");
+        badge.textContent = grade;
+        badge.classList.remove("bg-success", "bg-info", "bg-warning", "bg-danger");
+
+        switch (grade.toLowerCase()) {
+            case "excellent":
+                badge.classList.add("bg-success");
+                break;
+            case "good":
+                badge.classList.add("bg-info");
+                break;
+            case "fair":
+                badge.classList.add("bg-warning");
+                break;
+            default:
+                badge.classList.add("bg-danger");
+        }
+    }
+</script>

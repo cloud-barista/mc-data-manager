@@ -61,5 +61,8 @@ func GenerateRoutes(g *echo.Group) {
 	g.GET("/:id", controllers.GetGenerateHandler)        // Retrieve a single task by ID
 	g.PUT("/:id", controllers.UpdateGenerateHandler)     // Update an existing task by ID
 	g.DELETE("/:id", controllers.DeleteGeneratekHandler) // Delete a task by ID
+}
 
+func ObjectStorageRoutes(g *echo.Group) {
+	g.POST("/buckets", controllers.ObjectstorageBucketsHandler)
 }

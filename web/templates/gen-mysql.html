@@ -7,13 +7,13 @@
 
 <div class="card mb-4 rounded-3 col-auto">
     <ul class="nav nav-tabs pt-2 ps-2" id="serviceTabs">
-        <li class="nav-item">
+        <!-- <li class="nav-item">
             {{if eq .OS "linux"}}
             <a class="nav-link" href="/generate/linux">On-Premise</a>
             {{else}}
             <a class="nav-link" href="/generate/windows">On-Premise</a>
             {{end}}
-        </li>
+        </li> -->
         <li class="nav-item">
             <a class="nav-link" href="/generate/objectstorage">Object Storage</a>
         </li>
@@ -27,55 +27,52 @@
     <div class="card-body">
         <!-- <form action="/generate/mysql" method="POST"> -->
         <form id="genForm">
-            <div class="input-group mb-3">
-                <div class="form-floating">
-                    <input type="text" class="form-control" id="gent-targetHost" value="MySQL" style="border: 0; background-color: white;" value="-" required disabled>
-                    <label for="gent-targetHost">Target</label>
+            <div class="card rounded-3 p-3 mb-3">
+                <div class="input-group mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="gent-targetHost" value="MySQL" style="border: 0; background-color: white;" value="-" required disabled>
+                        <label for="gent-targetHost">Target</label>
+                    </div>
                 </div>
-            </div>
-            <div class="input-group mb-3">
-                <span class="input-group-text rounded-start"><i class="fa-solid fa-cloud"></i></span>
-                <select class="form-select" id="provider" name="provider">
-                    <option value="aws">AWS</option>
-                    <option value="gcp">GCP</option>
-                    <option value="ncp">NCP</option>
-                    <option value="on-premise">On-premise</option>
-                </select>
-            </div>
-
-            <div class="input-group mb-3">
-                <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
-                <div class="form-floating">
-                    <input type="text" class="form-control rounded-end" id="gen-mysql-host" name="host" placeholder="Host / IP" required>
-                    <label for="gen-mysql-host">Host / IP</label>
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-cloud"></i></span>
+                    <select class="form-select" id="provider" name="provider">
+                        <option value="aws">AWS</option>
+                        <option value="gcp">GCP</option>
+                        <option value="ncp">NCP</option>
+                        <option value="on-premise">On-premise</option>
+                    </select>
                 </div>
-            </div>
-
-            <div class="input-group mb-3">
-                <span class="input-group-text rounded-start"><i class="fa-solid fa-flag"></i></span>
-                <div class="form-floating">
-                    <input type="text" class="form-control rounded-end" id="gen-mysql-port" name="port" placeholder="Port" required>
-                    <label for="gen-mysql-port">Port</label>
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control rounded-end" id="gen-mysql-host" name="host" placeholder="Host / IP" required>
+                        <label for="gen-mysql-host">Host / IP</label>
+                    </div>
                 </div>
-            </div>
-
-            <div class="input-group mb-3">
-                <span class="input-group-text rounded-start"><i class="fa-solid fa-user"></i></span>
-                <div class="form-floating">
-                    <input type="text" class="form-control rounded-end" id="gen-mysql-username" autocomplete="username" name="username" placeholder="Username" required>
-                    <label for="gen-mysql-username">Username</label>
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-flag"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control rounded-end" id="gen-mysql-port" name="port" placeholder="Port" required>
+                        <label for="gen-mysql-port">Port</label>
+                    </div>
                 </div>
-            </div>
-
-            <div class="input-group mb-3">
-                <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
-                <div class="form-floating">
-                    <input type="password" class="form-control rounded-end" id="gen-mysql-password" name="password" placeholder="Password" required>
-                    <label for="gen-mysql-password">Password</label>
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-user"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control rounded-end" id="gen-mysql-username" autocomplete="username" name="username" placeholder="Username" required>
+                        <label for="gen-mysql-username">Username</label>
+                    </div>
                 </div>
-            </div>
-            
-            <button type="submit" class="btn btn-primary rounded-1" id="submitBtn">Submit</button>
+                <div class="input-group">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
+                    <div class="form-floating">
+                        <input type="password" class="form-control rounded-end" id="gen-mysql-password" name="password" placeholder="Password" required>
+                        <label for="gen-mysql-password">Password</label>
+                    </div>
+                </div>
+            </div>       
+            <button type="submit" class="btn btn-primary rounded-3 float-end" id="submitBtn">Submit</button>
             <input type="hidden" id="genTarget" value="rdbms">
         </form>
     </div>

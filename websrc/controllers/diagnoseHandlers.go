@@ -172,3 +172,32 @@ func logDiagnose(logger *zerolog.Logger, result diagnostics.TimedResult) {
 func logSysbench(logger *zerolog.Logger, result sysbench.SysbenchParsed) {
 	logger.Info().Msg(result.FormatSysbenchLike())
 }
+
+func (d *DiagnoseHandler) PostConnectionHandler(ctx echo.Context) error {
+	start := time.Now()
+	logger, logstrings := pageLogInit(ctx, "Connection-test", "Check MySQL connection", start)
+	params := models.DiagnosticTask{}
+	if !getDataWithReBind(logger, start, ctx, &params) {
+		errStr := "Invalid request data"
+		logger.Error().Msg(errStr)
+		return ctx.JSON(http.StatusBadRequest, models.BasicResponse{
+			Result: logstrings.String(),
+			Error:  &errStr,
+		})
+	}
+
+	_, err := auth.GetRDMS(&params.TargetPoint)
+	if err != nil {
+		errStr := "Invalid request data"
+		logger.Error().Msg(errStr)
+		return ctx.JSON(http.StatusBadRequest, models.BasicResponse{
+			Result: logstrings.String(),
+			Error:  &errStr,
+		})
+	}
+
+	return ctx.JSON(http.StatusOK, models.BasicResponse{
+		Result: logstrings.String(),
+		Error:  nil,
+	})
+}

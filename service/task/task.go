@@ -818,7 +818,9 @@ func handleObjectStorageMigrateTask(params models.BasicDataTask) models.Status {
 	} else {
 		compiled := map[string]any{
 			"path":     flt.Path,
+			"pathExcludeYn" : flt.PathExcludeYn,
 			"contains": flt.Contains,
+			"containExcludeYn" : flt.ContainExcludeYn,
 			"suffixes": flt.Suffixes,
 			"exact":    flt.Exact,
 			"minSize":  flt.MinSize,

@@ -5,13 +5,13 @@
 
 <div class="card mb-4 rounded-3 col-auto">
     <ul class="nav nav-tabs pt-2 ps-2" id="serviceTabs">
-        <li class="nav-item">
+        <!-- <li class="nav-item">
             {{if eq .OS "linux"}}
             <a class="nav-link" href="/generate/linux">On-Premise</a>
             {{else}}
             <a class="nav-link" href="/generate/windows">On-Premise</a>
             {{end}}
-        </li>
+        </li> -->
         <li class="nav-item">
             <a class="nav-link active" href="#">Object Storage</a>
         </li>
@@ -25,75 +25,98 @@
     <div class="card-body">
         <!-- <form action="/generate/aws" method="POST"> -->
         <form id="genForm">
-            <div class="input-group mb-3">
-                <div class="form-floating">
-                    <input type="text" class="form-control" id="targetPointLabel" value="-" style="border: 0; background-color: white;" value="-" required disabled>
-                    <label for="targetPointLabel">Target</label>
+            <div class="card rounded-3 p-3 mb-3">
+                <div class="input-group mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="targetPointLabel" value="-" style="border: 0; background-color: white;" value="-" required disabled>
+                        <label for="targetPointLabel">Target</label>
+                    </div>
                 </div>
-            </div>
-            <div class="input-group mb-3 me-1">
-                <span class="input-group-text rounded-start"><i class="fa-solid fa-user-secret"></i></span>
-                <div class="form-floating">
-                    <select class="form-select form-select-sm rounded-end" id="targetCredentialSelect" name="targetPoint[credentialId]">
-                        <option value="none" data-provider="none"> - </option>
-                    </select>
-                    <label for="targetCredentialSelect">provider - credential name</label>
+                <div class="input-group mb-3 me-1">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-user-secret"></i></span>
+                    <div class="form-floating">
+                        <select class="form-select form-select-sm rounded-end" id="targetCredentialSelect" name="targetPoint[credentialId]">
+                            <option value="none" data-provider="none"> - </option>
+                        </select>
+                        <label for="targetCredentialSelect">provider - credential name</label>
+                    </div>
                 </div>
-            </div>
-            <div class="input-group mb-3 me-1">
-                <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span>
-                <div class="form-floating">
-                    <select class="form-select form-select-sm rounded-end" id="targetRegionSelect" name="targetPoint[region]">
-                        <option value="none" selected> - </option>
-                        <optgroup label="AWS regions" data-provider="aws" style="display: none;">
-                            {{ range $index, $value := .AWSRegions }}
-                            <option value="{{ $value }}">{{ $value }}</option>
-                            {{ end }}
-                        </optgroup>
-                        <optgroup label="GCP regions" data-provider="gcp" style="display: none;">
-                            {{ range $index, $value := .GCPRegions }}
-                            <option value="{{ $value }}">{{ $value }}</option>
-                            {{ end }}
-                        </optgroup>
-                        <optgroup label="NCP regions" data-provider="ncp" style="display: none;">
-                            {{ range $index, $value := .NCPRegions }}
-                            <option value="{{ $value }}">{{ $value }}</option>
-                            {{ end }}
-                        </optgroup>                            
-                    </select>
-                    <label for="targetRegionSelect">Select Region</label>
+                <div class="input-group mb-3 me-1">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span>
+                    <div class="form-floating">
+                        <select class="form-select form-select-sm rounded-end" id="targetRegionSelect" name="targetPoint[region]">
+                            <option value="none" selected> - </option>
+                            <optgroup label="AWS regions" data-provider="aws" style="display: none;">
+                                {{ range $index, $value := .AWSRegions }}
+                                <option value="{{ $value }}">{{ $value }}</option>
+                                {{ end }}
+                            </optgroup>
+                            <optgroup label="GCP regions" data-provider="gcp" style="display: none;">
+                                {{ range $index, $value := .GCPRegions }}
+                                <option value="{{ $value }}">{{ $value }}</option>
+                                {{ end }}
+                            </optgroup>
+                            <optgroup label="NCP regions" data-provider="ncp" style="display: none;">
+                                {{ range $index, $value := .NCPRegions }}
+                                <option value="{{ $value }}">{{ $value }}</option>
+                                {{ end }}
+                            </optgroup>                            
+                        </select>
+                        <label for="targetRegionSelect">Select Region</label>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="input-group mb-3" id="ncp-endpoint-div">
-                <span class="input-group-text rounded-start"><i class="fa-solid fa-location-dot"></i></span>
-                <div class="form-floating">
-                    <input type="text" class="form-control rounded-end" id="gen-ncp-endpoint" name="endpoint" placeholder="Endpoint">
-                    <label for="gen-ncp-endpoint">Endpoint</label>
+                
+                <div class="input-group mb-3 d-none" id="ncp-endpoint-div">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-location-dot"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control rounded-end" id="gen-ncp-endpoint" name="endpoint" value="https://kr.object.ncloudstorage.com" placeholder="Endpoint">
+                        <label for="gen-ncp-endpoint">Endpoint</label>
+                    </div>
                 </div>
-            </div>
-
-            <div class="input-group mb-3">
-                <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
-                <div class="form-floating">
-                    <input type="text" class="form-control rounded-end" id="gen-s3-bucket" name="bucket" placeholder="Bucket" required>
-                    <label for="gen-s3-bucket">Bucket</label>
+    
+                <div class="input-group">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
+                    <div class="form-floating">
+                        <!-- <input type="text" class="form-control rounded-end" id="gen-s3-bucket" name="bucket" placeholder="Bucket" required> -->
+                        <select class="form-select form-select-sm rounded-end" id="targetBucket" name="targetPoint[bucket]">
+                            <option value="-" selected>-</option>
+                        </select>
+                        <label for="targetBucket">Bucket</label>
+                    </div>
+                    <button type="button" class="btn btn-primary rounded-3 ms-2" id="targetBtn">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+                <div class="input-group mt-3" id="targetNewBucket" style="display: none;">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control rounded-end" id="newBucket" name="targetPoint[bucket]" placeholder="Bucket">
+                        <label for="newBucket">New Bucket</label>
+                    </div>
                 </div>
             </div>
 
             {{ template "gen-data.html" . }}
 
-            <button type="submit" class="btn btn-primary rounded-1" id="submitBtn">Submit</button>
+            <button type="submit" class="btn btn-primary rounded-3 float-end" id="submitBtn">Submit</button>
             <input type="hidden" id="genTarget" value="objectstorage">
             <input type="hidden" id="targetPoint[provider]" value="none">
         </form>
     </div>
 </div>
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const hiddenInput = document.getElementById("targetPoint[provider]");
-      
-        document.getElementById('targetPoint[provider]').addEventListener('change', e => {
+    const target = {
+        btn: document.getElementById("targetBtn"),
+        cred: document.getElementById("targetCredentialSelect"),
+        region: document.getElementById("targetRegionSelect"),
+        bucket: document.getElementById("targetBucket"),
+        provider: document.getElementById("targetPoint[provider]"),
+        service: document.getElementById("targetService")
+    };
+    const bucketInput = document.getElementById("newBucket");
+
+    document.addEventListener("DOMContentLoaded", () => {      
+        target.provider.addEventListener('change', e => {
             updateFormVisibility()
         });
     });
@@ -112,7 +135,7 @@
     }
 
     function updateFormVisibility() {
-        const provider = document.getElementById('targetPoint[provider]').value;
+        const provider = target.provider.value;
         const ncpDiv = document.getElementById('ncp-endpoint-div')
         ncpDiv.style.display = 'none';
 
@@ -133,4 +156,113 @@
     }
   
     updateFormVisibility();
+
+    target.bucket.addEventListener("change", () => {
+        toggleNewBucket()
+    })
+
+    target.cred.addEventListener("change", () => {
+        console.log("credential changed")
+        const cred = target.cred.value;
+        if (cred == "none" || !cred) {
+            resetBuckets(false);
+            toggleNewBucket()
+
+            return
+        }
+        resetBuckets(true)
+        toggleNewBucket()
+    })
+
+    target.region.addEventListener("change", () => {
+        console.log("region changed")
+        const region = target.region.value;
+        if (region == "none" || !region) {
+            resetBuckets(false);
+            toggleNewBucket()
+
+            return
+        }
+        resetBuckets(true)
+        toggleNewBucket()
+    })
+
+    target.btn.addEventListener("click", () => {
+        if (target.region.value == "none" || !target.region.value) {
+            return;
+        }
+        target.btn.disabled = true;
+        target.btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;';
+
+        fetchBucketList(target.cred.value, target.region.value, target.provider.value)
+            .then(json => {
+                resetBuckets(true)
+
+                json.buckets.forEach(optionData => {
+                    const option = document.createElement("option");
+                    option.value = optionData.Name;
+                    option.textContent = optionData.Name;
+                    target.bucket.appendChild(option);
+                });
+            })
+            .catch(reason => {
+                console.log(reason);
+                alert(reason);
+            })
+            .finally(() => {
+                target.btn.disabled = false;
+                target.btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i>';
+                toggleNewBucket()
+            })
+    });
+
+    function resetBuckets(hardReset) {
+        let option = document.createElement("option");
+        if(!hardReset) {
+            option.value = "none";
+            option.textContent = "-";
+        } else {
+            option.value = "new";
+            option.textContent = "create new bucket";
+        }
+        target.bucket.replaceChildren(option);        
+    }
+
+    function toggleNewBucket() {
+        const newBucketDiv = document.getElementById("targetNewBucket")
+        if (target.bucket.value == "new") {
+            newBucketDiv.style.display = ""
+            bucketInput.value = ""
+        } else {
+            newBucketDiv.style.display = "none"
+            bucketInput.value = target.bucket.value
+        }
+    }
+
+    function fetchBucketList(credentialId, region, provider) {
+        const url = "/objectstorage/buckets";
+        const jsonData = {
+            "targetPoint": {
+                "credentialId": parseInt(credentialId),
+                "region": region,
+                "provider": provider
+            }
+        }
+        const req = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        }
+
+        return fetch(url, req)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        
+                        return response.json();
+                    });
+    }
   </script>
