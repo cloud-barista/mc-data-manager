@@ -80,7 +80,7 @@ func (osc *OSController) MGet(dirPath string, flt *filtering.ObjectFilter) error
 	// 	return err
 	// }
 
-	downlaodList, skipList := getDownloadList(fileList, srcObjList, dirPath)
+	downlaodList, skipList := getDownloadList(fileList, srcObjList, dirPath, flt.PathExcludeYn)
 
 	for _, skip := range skipList {
 		osc.logWrite("Info", fmt.Sprintf("skip file : %s", skip.Key), nil)
@@ -116,7 +116,7 @@ func (osc *OSController) MGet(dirPath string, flt *filtering.ObjectFilter) error
 	return nil
 }
 
-func getDownloadList(fileList, objList []*models.Object, dirPath string) ([]*models.Object, []*models.Object) {
+func getDownloadList(fileList, objList []*models.Object, path string, pathExcludeYn string) ([]*models.Object, []*models.Object) {
 	downloadList := []*models.Object{}
 	skipList := []*models.Object{}
 
@@ -126,11 +126,27 @@ func getDownloadList(fileList, objList []*models.Object, dirPath string) ([]*mod
 			continue
 		}
 
+		if path != "" {
+			hasPrefix := strings.HasPrefix(obj.Key, path)
+
+			switch strings.ToLower(strings.TrimSpace(pathExcludeYn)) {
+			case "y":
+				if hasPrefix {
+					continue
+				}
+			case "n":
+				if !hasPrefix {
+					continue
+				}
+			}
+		}
+
 		chk := false
 		for _, file := range fileList {
-			fileName, _ := filepath.Rel(dirPath, file.Key)
-			objName, _ := filepath.Rel(filepath.Base(dirPath), obj.Key)
-			if strings.Contains(objName, fileName) {
+			// fileName, _ := filepath.Rel(dirPath, file.Key)
+			// objName, _ := filepath.Rel(filepath.Base(dirPath), obj.Key)
+			// if strings.Contains(objName, fileName) {
+			if strings.EqualFold(obj.Key, file.Key) {
 				chk = true
 				if obj.Size != file.Size {
 					downloadList = append(downloadList, obj)

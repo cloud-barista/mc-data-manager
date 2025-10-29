@@ -19,7 +19,7 @@ ARG USER=root
 ARG GROUP=root
 
 RUN apt-get update -y && apt-get upgrade -y
-RUN apt-get install curl -y
+RUN apt-get install curl sysbench -y
 
 RUN if [ "${USER}" != "root" ]; then \
         groupadd -g ${GID} ${GROUP} && \

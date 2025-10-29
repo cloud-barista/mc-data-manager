@@ -7,7 +7,9 @@ import (
 
 type ObjectFilter struct {
 	Path              string
+	PathExcludeYn     string
 	Contains          []string
+	ContainExcludeYn  string
 	Suffixes          []string
 	Exact             []string
 	Regex             *regexp.Regexp

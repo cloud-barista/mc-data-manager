@@ -22,6 +22,7 @@ import (
 	"runtime"
 
 	"github.com/cloud-barista/mc-data-manager/models"
+	service "github.com/cloud-barista/mc-data-manager/service/region"
 	"github.com/labstack/echo/v4"
 )
 
@@ -42,9 +43,9 @@ func DashBoardHandler(ctx echo.Context) error {
 	logger.Info().Msg("dashboard get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content:    "dashboard",
-		AWSRegions: GetAWSRegions(),
-		GCPRegions: GetGCPRegions(),
-		NCPRegions: GetNCPRegions(),
+		AWSRegions: service.GetRegions("aws"),
+		GCPRegions: service.GetRegions("gcp"),
+		NCPRegions: service.GetRegions("ncp"),
 		OS:         runtime.GOOS,
 		Error:      nil,
 	})
@@ -59,9 +60,9 @@ func TaskRegisterHandler(ctx echo.Context) error {
 	logger.Info().Msg("Task get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content:    "Register-Task",
-		AWSRegions: GetAWSRegions(),
-		GCPRegions: GetGCPRegions(),
-		NCPRegions: GetNCPRegions(),
+		AWSRegions: service.GetRegions("aws"),
+		GCPRegions: service.GetRegions("gcp"),
+		NCPRegions: service.GetRegions("ncp"),
 		OS:         runtime.GOOS,
 		Error:      nil,
 	})
@@ -100,9 +101,9 @@ func GenerateObjectStorageGetHandler(ctx echo.Context) error {
 	logger.Info().Msg("gen object storage get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content:    "Generate-Object-Storage",
-		AWSRegions: GetAWSRegions(),
-		GCPRegions: GetGCPRegions(),
-		NCPRegions: GetNCPRegions(),
+		AWSRegions: service.GetRegions("aws"),
+		GCPRegions: service.GetRegions("gcp"),
+		NCPRegions: service.GetRegions("ncp"),
 		OS:         runtime.GOOS,
 		Error:      nil,
 	})
@@ -116,7 +117,7 @@ func GenerateS3GetHandler(ctx echo.Context) error {
 		Content: "Generate-S3",
 		OS:      runtime.GOOS,
 		Error:   nil,
-		Regions: GetAWSRegions(),
+		Regions: service.GetRegions("aws"),
 	})
 }
 
@@ -127,7 +128,7 @@ func GenerateGCPGetHandler(ctx echo.Context) error {
 		Content: "Generate-GCP",
 		OS:      runtime.GOOS,
 		Error:   nil,
-		Regions: GetGCPRegions(),
+		Regions: service.GetRegions("gcp"),
 	})
 }
 
@@ -139,7 +140,7 @@ func GenerateNCPGetHandler(ctx echo.Context) error {
 		Content: "Generate-NCP",
 		OS:      runtime.GOOS,
 		Error:   nil,
-		Regions: GetNCPRegions(),
+		Regions: service.GetRegions("ncp"),
 	})
 }
 
@@ -160,9 +161,9 @@ func GenerateNoSQLGetHandler(ctx echo.Context) error {
 	logger.Info().Msg("gen nrdbms get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content:    "Generate-No-SQL",
-		AWSRegions: GetAWSRegions(),
-		GCPRegions: GetGCPRegions(),
-		NCPRegions: GetNCPRegions(),
+		AWSRegions: service.GetRegions("aws"),
+		GCPRegions: service.GetRegions("gcp"),
+		NCPRegions: service.GetRegions("ncp"),
 		OS:         runtime.GOOS,
 		Error:      nil,
 	})
@@ -175,7 +176,7 @@ func GenerateDynamoDBGetHandler(ctx echo.Context) error {
 		Content: "Generate-DynamoDB",
 		OS:      runtime.GOOS,
 		Error:   nil,
-		Regions: GetAWSRegions(),
+		Regions: service.GetRegions("aws"),
 	})
 }
 
@@ -186,7 +187,7 @@ func GenerateFirestoreGetHandler(ctx echo.Context) error {
 		Content: "Generate-Firestore",
 		OS:      runtime.GOOS,
 		Error:   nil,
-		Regions: GetGCPRegions(),
+		Regions: service.GetRegions("gcp"),
 	})
 }
 
@@ -197,7 +198,7 @@ func GenerateMongoDBGetHandler(ctx echo.Context) error {
 		Content: "Generate-MongoDB",
 		OS:      runtime.GOOS,
 		Error:   nil,
-		Regions: GetNCPRegions(),
+		Regions: service.GetRegions("ncp"),
 	})
 }
 
@@ -219,9 +220,9 @@ func BackupHandler(ctx echo.Context) error {
 	logger.Info().Msg("backup get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content:    "Backup",
-		AWSRegions: GetAWSRegions(),
-		GCPRegions: GetGCPRegions(),
-		NCPRegions: GetNCPRegions(),
+		AWSRegions: service.GetRegions("aws"),
+		GCPRegions: service.GetRegions("gcp"),
+		NCPRegions: service.GetRegions("ncp"),
 		OS:         runtime.GOOS,
 		Error:      nil,
 	})
@@ -235,9 +236,9 @@ func RestoreHandler(ctx echo.Context) error {
 	logger.Info().Msg("restore get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content:    "Restore",
-		AWSRegions: GetAWSRegions(),
-		GCPRegions: GetGCPRegions(),
-		NCPRegions: GetNCPRegions(),
+		AWSRegions: service.GetRegions("aws"),
+		GCPRegions: service.GetRegions("gcp"),
+		NCPRegions: service.GetRegions("ncp"),
 		OS:         runtime.GOOS,
 		Error:      nil,
 	})
@@ -251,9 +252,9 @@ func MigrationObjectStorageHandler(ctx echo.Context) error {
 	logger.Info().Msg("migration object storage get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content:    "Migration-Object-Storage",
-		GCPRegions: GetGCPRegions(),
-		AWSRegions: GetAWSRegions(),
-		NCPRegions: GetNCPRegions(),
+		GCPRegions: service.GetRegions("gcp"),
+		AWSRegions: service.GetRegions("aws"),
+		NCPRegions: service.GetRegions("ncp"),
 		OS:         runtime.GOOS,
 		Error:      nil,
 	})
@@ -266,7 +267,7 @@ func MigrationLinuxToS3GetHandler(ctx echo.Context) error {
 	logger.Info().Msg("miglinux get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-Linux-S3",
-		Regions: GetAWSRegions(),
+		Regions: service.GetRegions("aws"),
 		OS:      runtime.GOOS,
 		Error:   nil,
 	})
@@ -277,7 +278,7 @@ func MigrationLinuxToGCPGetHandler(ctx echo.Context) error {
 	logger.Info().Msg("miglingcp get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-Linux-GCP",
-		Regions: GetGCPRegions(),
+		Regions: service.GetRegions("gcp"),
 		OS:      runtime.GOOS,
 		Error:   nil,
 	})
@@ -289,7 +290,7 @@ func MigrationLinuxToNCPGetHandler(ctx echo.Context) error {
 	logger.Info().Msg("miglinncp get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-Linux-NCP",
-		Regions: GetNCPRegions(),
+		Regions: service.GetRegions("ncp"),
 		OS:      runtime.GOOS,
 		Error:   nil,
 	})
@@ -303,7 +304,7 @@ func MigrationWindowsToS3GetHandler(ctx echo.Context) error {
 	logger.Info().Msg("migwins3 get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-Windows-S3",
-		Regions: GetAWSRegions(),
+		Regions: service.GetRegions("aws"),
 		OS:      runtime.GOOS,
 		TmpPath: tmpPath,
 		Error:   nil,
@@ -317,7 +318,7 @@ func MigrationWindowsToGCPGetHandler(ctx echo.Context) error {
 	logger.Info().Msg("migwingcp get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-Windows-GCP",
-		Regions: GetGCPRegions(),
+		Regions: service.GetRegions("gcp"),
 		OS:      runtime.GOOS,
 		TmpPath: tmpPath,
 		Error:   nil,
@@ -331,7 +332,7 @@ func MigrationWindowsToNCPGetHandler(ctx echo.Context) error {
 	logger.Info().Msg("migwinncp get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-Windows-NCP",
-		Regions: GetNCPRegions(),
+		Regions: service.GetRegions("ncp"),
 		OS:      runtime.GOOS,
 		TmpPath: tmpPath,
 		Error:   nil,
@@ -359,7 +360,7 @@ func MigrationS3ToLinuxGetHandler(ctx echo.Context) error {
 	logger.Info().Msg("migs3lin get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-S3-Linux",
-		Regions: GetAWSRegions(),
+		Regions: service.GetRegions("aws"),
 		Error:   nil,
 		OS:      runtime.GOOS,
 	})
@@ -372,7 +373,7 @@ func MigrationS3ToWindowsGetHandler(ctx echo.Context) error {
 	logger.Info().Msg("migs3win get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-S3-Windows",
-		Regions: GetAWSRegions(),
+		Regions: service.GetRegions("aws"),
 		TmpPath: tmpPath,
 		OS:      runtime.GOOS,
 		Error:   nil,
@@ -385,8 +386,8 @@ func MigrationS3ToGCPGetHandler(ctx echo.Context) error {
 	logger.Info().Msg("migs3gcp get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content:    "Migration-S3-GCP",
-		AWSRegions: GetAWSRegions(),
-		GCPRegions: GetGCPRegions(),
+		AWSRegions: service.GetRegions("aws"),
+		GCPRegions: service.GetRegions("gcp"),
 		OS:         runtime.GOOS,
 		Error:      nil,
 	})
@@ -398,8 +399,8 @@ func MigrationS3ToNCPGetHandler(ctx echo.Context) error {
 	logger.Info().Msg("migs3ncp get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content:    "Migration-S3-NCP",
-		AWSRegions: GetAWSRegions(),
-		NCPRegions: GetNCPRegions(),
+		AWSRegions: service.GetRegions("aws"),
+		NCPRegions: service.GetRegions("ncp"),
 		OS:         runtime.GOOS,
 		Error:      nil,
 	})
@@ -415,7 +416,7 @@ func MigrationGCPToLinuxGetHandler(ctx echo.Context) error {
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-GCP-Linux",
 		OS:      runtime.GOOS,
-		Regions: GetGCPRegions(),
+		Regions: service.GetRegions("gcp"),
 		Error:   nil,
 	})
 }
@@ -428,7 +429,7 @@ func MigrationGCPToWindowsGetHandler(ctx echo.Context) error {
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-GCP-Windows",
 		OS:      runtime.GOOS,
-		Regions: GetGCPRegions(),
+		Regions: service.GetRegions("gcp"),
 		TmpPath: tmpPath,
 		Error:   nil,
 	})
@@ -439,8 +440,8 @@ func MigrationGCPToS3GetHandler(ctx echo.Context) error {
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content:    "Migration-GCP-S3",
 		OS:         runtime.GOOS,
-		GCPRegions: GetGCPRegions(),
-		AWSRegions: GetAWSRegions(),
+		GCPRegions: service.GetRegions("gcp"),
+		AWSRegions: service.GetRegions("aws"),
 		Error:      nil,
 	})
 }
@@ -452,8 +453,8 @@ func MigrationGCPToNCPGetHandler(ctx echo.Context) error {
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content:    "Migration-GCP-NCP",
 		OS:         runtime.GOOS,
-		GCPRegions: GetGCPRegions(),
-		NCPRegions: GetNCPRegions(),
+		GCPRegions: service.GetRegions("gcp"),
+		NCPRegions: service.GetRegions("ncp"),
 		Error:      nil,
 	})
 }
@@ -467,7 +468,7 @@ func MigrationNCPToLinuxGetHandler(ctx echo.Context) error {
 	logger.Info().Msg("migncplin get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-NCP-Linux",
-		Regions: GetNCPRegions(),
+		Regions: service.GetRegions("ncp"),
 		OS:      runtime.GOOS,
 		Error:   nil,
 	})
@@ -480,7 +481,7 @@ func MigrationNCPToWindowsGetHandler(ctx echo.Context) error {
 	logger.Info().Msg("migncpwin get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-NCP-Windows",
-		Regions: GetNCPRegions(),
+		Regions: service.GetRegions("ncp"),
 		OS:      runtime.GOOS,
 		TmpPath: tmpPath,
 		Error:   nil,
@@ -493,9 +494,9 @@ func MigrationNCPToS3GetHandler(ctx echo.Context) error {
 	logger.Info().Msg("migncps3 get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content:    "Migration-NCP-S3",
-		NCPRegions: GetNCPRegions(),
+		NCPRegions: service.GetRegions("ncp"),
 		OS:         runtime.GOOS,
-		AWSRegions: GetAWSRegions(),
+		AWSRegions: service.GetRegions("aws"),
 		Error:      nil,
 	})
 }
@@ -506,9 +507,9 @@ func MigrationNCPToGCPGetHandler(ctx echo.Context) error {
 	logger.Info().Msg("migncpgcp get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content:    "Migration-NCP-GCP",
-		NCPRegions: GetNCPRegions(),
+		NCPRegions: service.GetRegions("ncp"),
 		OS:         runtime.GOOS,
-		GCPRegions: GetGCPRegions(),
+		GCPRegions: service.GetRegions("gcp"),
 		Error:      nil,
 	})
 }
@@ -520,9 +521,9 @@ func MigrationNoSQLHandler(ctx echo.Context) error {
 	logger.Info().Msg("migration no-sql get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content:    "Migration-No-SQL",
-		GCPRegions: GetGCPRegions(),
-		AWSRegions: GetAWSRegions(),
-		NCPRegions: GetNCPRegions(),
+		GCPRegions: service.GetRegions("gcp"),
+		AWSRegions: service.GetRegions("aws"),
+		NCPRegions: service.GetRegions("ncp"),
 		OS:         runtime.GOOS,
 		Error:      nil,
 	})
@@ -534,9 +535,9 @@ func MigrationDynamoDBToFirestoreGetHandler(ctx echo.Context) error {
 	logger.Info().Msg("migDNFS get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content:    "Migration-DynamoDB-Firestore",
-		AWSRegions: GetAWSRegions(),
+		AWSRegions: service.GetRegions("aws"),
 		OS:         runtime.GOOS,
-		GCPRegions: GetGCPRegions(),
+		GCPRegions: service.GetRegions("gcp"),
 		Error:      nil,
 	})
 }
@@ -547,7 +548,7 @@ func MigrationDynamoDBToMongoDBGetHandler(ctx echo.Context) error {
 	logger.Info().Msg("migDNMG get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-DynamoDB-MongoDB",
-		Regions: GetAWSRegions(),
+		Regions: service.GetRegions("aws"),
 		OS:      runtime.GOOS,
 		Error:   nil,
 	})
@@ -562,9 +563,9 @@ func MigrationFirestoreToDynamoDBGetHandler(ctx echo.Context) error {
 	logger.Info().Msg("migFSDN get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content:    "Migration-Firestore-DynamoDB",
-		AWSRegions: GetAWSRegions(),
+		AWSRegions: service.GetRegions("aws"),
 		OS:         runtime.GOOS,
-		GCPRegions: GetGCPRegions(),
+		GCPRegions: service.GetRegions("gcp"),
 		Error:      nil,
 	})
 }
@@ -575,7 +576,7 @@ func MigrationFirestoreToMongoDBGetHandler(ctx echo.Context) error {
 	logger.Info().Msg("migFSMG get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-Firestore-MongoDB",
-		Regions: GetGCPRegions(),
+		Regions: service.GetRegions("gcp"),
 		OS:      runtime.GOOS,
 		Error:   nil,
 	})
@@ -590,7 +591,7 @@ func MigrationMongoDBToDynamoDBGetHandler(ctx echo.Context) error {
 	logger.Info().Msg("migMGDN get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-MongoDB-DynamoDB",
-		Regions: GetAWSRegions(),
+		Regions: service.GetRegions("aws"),
 		OS:      runtime.GOOS,
 		Error:   nil,
 	})
@@ -602,7 +603,7 @@ func MigrationMongoDBToFirestoreGetHandler(ctx echo.Context) error {
 	logger.Info().Msg("migMGFS get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content: "Migration-MongoDB-Firestore",
-		Regions: GetGCPRegions(),
+		Regions: service.GetRegions("gcp"),
 		OS:      runtime.GOOS,
 		Error:   nil,
 	})

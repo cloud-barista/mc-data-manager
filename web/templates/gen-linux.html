@@ -23,13 +23,13 @@
     <div class="card-body">
         <!-- <form action="/generate/linux" method="POST"> -->
         <form id="genForm">
-            <div class="input-group mb-3">
-                <div class="form-floating">
-                    <input type="text" class="form-control" id="gent-targetHost" value="Linux" style="border: 0; background-color: white;" value="-" required disabled>
-                    <label for="gent-targetHost">Target</label>
+            <div class="card rounded-3 p-3 mb-3">
+                <div class="input-group mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="gent-targetHost" value="Linux" style="border: 0; background-color: white;" value="-" required disabled>
+                        <label for="gent-targetHost">Target</label>
+                    </div>
                 </div>
-            </div>
-            <div class="mb-3">
                 <div class="input-group">
                     <span class="input-group-text rounded-start"><i class="fas fa-folder"></i></span>
                     <div class="form-floating">
@@ -41,7 +41,7 @@
 
             {{ template "gen-data.html" . }}
 
-            <button type="submit" class="btn btn-primary rounded-1" id="submitBtn">Submit</button>
+            <button type="submit" class="btn btn-primary rounded-3 float-end" id="submitBtn">Submit</button>
             <input type="hidden" id="genTarget" value="linux">
             <input type="hidden" id="provider" value="linux">
 

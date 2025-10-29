@@ -10,8 +10,8 @@ It provides the following key features:
 
 
 ## Environments:
-* OS: Ubuntu 22.04 LTS, Windows 10 Pro
-* Go: 1.23
+* OS: Debian GNU/Linux 12 (bookworm)
+* Go: 1.25
 
 
 ## Installation and Testing Guide

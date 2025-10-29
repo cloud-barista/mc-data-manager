@@ -7,11 +7,7 @@
 // Scripts
 // 
 
-
-
-
 // for mc-data-manger
-
 window.addEventListener('DOMContentLoaded', event => {
 
     // Toggle the side navigation
@@ -76,7 +72,6 @@ function resultCollpase() {
     colp.show();
 }
 
-
 function convertCheckboxParams(obj) {
     for (const key in obj) {
         if (obj.hasOwnProperty(key)) {
@@ -121,18 +116,28 @@ function getInputValue(id) {
     return value !== "" ? value : null;
 }
 
-
 function generateFormSubmit() {
     const form = document.getElementById('genForm');
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        loadingButtonOn();
-        resultCollpase();
 
+        const target = document.getElementById('genTarget').value;
         const payload = new FormData(form);
         let jsonData = Object.fromEntries(payload);
         jsonData = convertCheckboxParams(jsonData)
+
+        const bucket = document.getElementById('newBucket')?.value;
+        if (
+            target === "objectstorage" &&
+            (!bucket || ["none", "-", ""].includes(bucket.trim()))
+        ) {
+            alert("please select or create bucket");
+            return
+        }
+
+        loadingButtonOn();
+        resultCollpase();
 
         const requestBody = new Object();
         requestBody.targetPoint = {
@@ -141,7 +146,6 @@ function generateFormSubmit() {
         console.log(JSON.stringify(jsonData))
 
         requestBody.targetPoint.provider = document.getElementById('targetPoint[provider]')?.value;
-        const target = document.getElementById('genTarget').value;
         
         // 객체 형태 맞춤
         const raw = jsonData?.["targetPoint[credentialId]"]?? null
@@ -152,11 +156,17 @@ function generateFormSubmit() {
         requestBody.targetPoint.region = jsonData?.["targetPoint[region]"]?? null
         delete requestBody.targetPoint["targetPoint[region]"]
         delete requestBody["targetPoint[region]"]
+
+        requestBody.targetPoint.bucket = jsonData?.["targetPoint[bucket]"]?? null
+        delete requestBody.targetPoint["targetPoint[bucket]"]
+        delete requestBody["targetPoint[bucket]"]
         
-        requestBody.dummy = requestBody.targetPoint
-        if ((requestBody.targetPoint.provider == "ncp") && (requestBody.targetPoint.endpoint == "")) {
-            requestBody.targetPoint.endpoint = "https://kr.object.ncloudstorage.com"
+        if (requestBody.targetPoint.provider != "ncp") {
+            delete requestBody.targetPoint.endpoint
         }
+
+        requestBody.dummy = requestBody.targetPoint
+
         const url = "/generate/" + target;
 
         let req;
@@ -218,15 +228,29 @@ function setSelectBox() {
             </div>
           `;
         } else if (selected === "gcp") {
-          formHtml = `
-            <div class="input-group mb-3">
-                <span class="input-group-text rounded-start">Credential Json</span>
-                <div class="form-floating">                    
-                    <textarea rows="10" class="form-control rounded-end" id="mig-gcp-json" name="gcpJson" placeholder="Input Credential Json" style="min-height: 300px; height: 300px" required></textarea>
-                    <label for="mig-gcp-json">Input Credential Json</label>
+            formHtml = `
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-key"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control rounded-end" id="gcp-s3-accessKey" name="s3accessKey" placeholder="S3 Access Key" required>
+                        <label for="gcp-s3-accessKey">S3 Access Key</label>
+                    </div>
                 </div>
-            </div>
-          `;
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
+                    <div class="form-floating">
+                        <input type="password" class="form-control rounded-end" id="gcp-s3-secretKey" name="s3secretKey" placeholder="S3 Secret Key" required>
+                        <label for="gcp-s3-secretKey">S3 Secret Key</label>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start">Credential Json</span>
+                    <div class="form-floating">                    
+                        <textarea rows="10" class="form-control rounded-end" id="mig-gcp-json" name="gcpJson" placeholder="Input Credential Json" style="min-height: 300px; height: 300px" required></textarea>
+                        <label for="mig-gcp-json">Input Credential Json</label>
+                    </div>
+                </div>
+            `;
         }
 
         $("#credential-dynamicForm").html(formHtml);
@@ -336,7 +360,6 @@ function setPicker() {
 
 function loadProfileList() {
     let url = "/credentials";
-
     let req;
 
         req = {
@@ -462,12 +485,24 @@ function migrationFormSubmit() {
 
         const payload = new FormData(form);
         let jsonData = formDataToObject(payload)
+        delete jsonData.sourceTime
+        delete jsonData.targetTime
+        delete jsonData.targetThread
+        delete jsonData.targetTableCount
+        delete jsonData.targetTableSize
+
         if(jsonData.sourcePoint.credentialId == "none") {
             alert("source credential not selected");
             return
         }
         if(jsonData.targetPoint.credentialId == "none") {
             alert("target credential not selected");
+            return
+        }
+        if(jsonData.targetPoint.bucket == "none" || jsonData.targetPoint.bucket == "-" || jsonData.targetPoint.bucket == ""
+            || jsonData.sourcePoint.bucket == "none" || jsonData.sourcePoint.bucket == "-" || jsonData.sourcePoint.bucket == ""
+        ) {
+            alert("please select or create bucket");
             return
         }
 
@@ -486,10 +521,10 @@ function migrationFormSubmit() {
 
         let url = "/migrate/" + service;
 
-        if ((jsonData.targetPoint.provider == "ncp") && (jsonData.targetPoint.endpoint == "")) {
+        if (jsonData.targetPoint.provider == "ncp" || jsonData.targetPoint.endpoint == "") {
             jsonData.targetPoint.endpoint = "https://kr.object.ncloudstorage.com"
         }
-        if ((jsonData.sourcePoint.provider == "ncp") && (jsonData.sourcePoint.endpoint == "")) {
+        if (jsonData.sourcePoint.provider == "ncp" || jsonData.sourcePoint.endpoint == "") {
             jsonData.sourcePoint.endpoint = "https://kr.object.ncloudstorage.com"
         }
 
@@ -601,6 +636,10 @@ function backUpFormSubmit() {
             alert("credential not selected");
             return
         }
+        if(jsonData.sourcePoint.bucket == "none" || jsonData.sourcePoint.bucket == "-" || jsonData.sourcePoint.bucket == "") {
+            alert("please select bucket");
+            return
+        }
         // console.log(provider)
 
         loadingButtonOn();
@@ -613,10 +652,7 @@ function backUpFormSubmit() {
         jsonData.sourcePoint.provider = provider
         // console.log(jsonData)
 
-        if ((jsonData.targetPoint.provider == "ncp") && (jsonData.targetPoint.endpoint == "")) {
-            jsonData.targetPoint.endpoint = "https://kr.object.ncloudstorage.com"
-        }
-        if ((jsonData.sourcePoint.provider == "ncp") && (jsonData.sourcePoint.endpoint == "")) {
+        if (service == "objectstorage" && provider == "ncp") {
             jsonData.sourcePoint.endpoint = "https://kr.object.ncloudstorage.com"
         }
 
@@ -660,9 +696,13 @@ function RestoreFormSubmit() {
         let jsonData = formDataToObject(payload)
 
         const provider = document.getElementById('targetPoint[provider]').value;
-        const service = document.getElementById('srcService').value;
+        const service = document.getElementById('targetService').value;
         if(service != "rdbms" && jsonData.targetPoint.credentialId == "none") {
             alert("credential not selected");
+            return
+        }
+        if(jsonData.targetPoint.bucket == "none" || jsonData.targetPoint.bucket == "-" || jsonData.targetPoint.bucket == "") {
+            alert("please select or create bucket");
             return
         }
 
@@ -674,13 +714,10 @@ function RestoreFormSubmit() {
         console.log(jsonData)
 
         jsonData.targetPoint.credentialId = parseInt(jsonData.targetPoint.credentialId);
-        jsonData.targetPoint.provider = provider
+        jsonData.targetPoint.provider = provider       
 
-        if ((jsonData.targetPoint.provider == "ncp") && (jsonData.targetPoint.endpoint == "")) {
+        if(service == "objectstorage" && provider == "ncp") {
             jsonData.targetPoint.endpoint = "https://kr.object.ncloudstorage.com"
-        }
-        if ((jsonData.sourcePoint.provider == "ncp") && (jsonData.sourcePoint.endpoint == "")) {
-            jsonData.sourcePoint.endpoint = "https://kr.object.ncloudstorage.com"
         }
 
         let req = {
@@ -747,10 +784,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     } 
 });
-
-
-
-
 
 document.addEventListener('DOMContentLoaded', function () {
     const genServiceLink = document.getElementById('genServiceLink');
@@ -862,8 +895,6 @@ window.addEventListener("message", async function (event) {
     }
 });
 
-
-
 // @@  
 function updateRegionsByProvider(prefix, provider) {
     const select = document.getElementById(prefix + "RegionSelect");
@@ -887,7 +918,6 @@ function updateRegionsByProvider(prefix, provider) {
       select.value = target.querySelector("option")?.value || "";
     }
 }
-
 
 function updateLabelByProvider(prefix, provider) {
     const service = document.getElementById("migService");

@@ -53,7 +53,8 @@ func ParseMySQLSysbenchOutput(out []byte) (MySQLSysbenchParsed, error) {
 
 	// 자주 쓰는 정규식
 	reUint := regexp.MustCompile(`([0-9]+)`)
-	reFloat := regexp.MustCompile(`([0-9]*\.?[0-9]+)`)
+	// reFloat := regexp.MustCompile(`:\s*([0-9]*\.?[0-9]+)\s*$`)
+	reFloat := regexp.MustCompile("(?:(?::\\s*)|^)\\s*([0-9]*\\.?[0-9]+)\\s*$")
 	// 패턴: "X: <num>  (<num> per sec.)"
 	reValueAndRate := regexp.MustCompile(`:\s*([0-9]+)\s*\(\s*([0-9]*\.?[0-9]+)\s*per sec\.\s*\)`)
 	// 패턴: "X: <num>  (<num> per sec.)" (0.00도 포함)
@@ -197,7 +198,7 @@ func splitBySlash(line string) (left string, right string) {
 		return line, ""
 	}
 	// left: "events (avg/stddev):  2170.0000"
-	left = parts[0]
+	left = parts[1]
 	// right: "0.00"
 	right = parts[len(parts)-1]
 	return strings.TrimSpace(left), strings.TrimSpace(right)
