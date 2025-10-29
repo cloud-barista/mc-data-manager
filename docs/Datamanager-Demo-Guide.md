@@ -38,72 +38,6 @@
 ### AWS, GCP, NCP Cloud DB 메뉴얼 설치 및 인증정보
 * [DB 설치 및 인증정보](../docs/Cloud-DB-Installation-and-Authentication-Information.md)
 
-### 프로필 설정 가이드
-* 위의 생성된 인증정보를 프로젝트의 루트디렉토리에 저장해야합니다.
-    > ./profile.json
-    ```json
-
-    [
-        {
-            "profileName": "default",
-            "credentials": {
-                "aws": {
-                    "accessKey": "",
-                    "secretKey": ""
-                },
-                "ncp": {
-                    "accessKey": "",
-                    "secretKey": ""
-                },
-                "gcp": {
-                    "type": "",
-                    "project_id": "",
-                    "private_key_id": "",
-                    "private_key": "",
-                    "client_email": "",
-                    "client_id": "",
-                    "auth_uri": "",
-                    "token_uri": "",
-                    "auth_provider_x509_cert_url": "",
-                    "client_x509_cert_url": "",
-                    "universe_domain": ""
-                }
-            }
-        },
-        {
-            "profileName": "admin",
-            "credentials": {
-                "aws": {
-                    "accessKey": "",
-                    "secretKey": ""
-                },
-                "ncp": {
-                    "accessKey": "",
-                    "secretKey": ""
-                },
-                "gcp": {
-                    "type": "",
-                    "project_id": "",
-                    "private_key_id": "",
-                    "private_key": "",
-                    "client_email": "",
-                    "client_id": "",
-                    "auth_uri": "",
-                    "token_uri": "",
-                    "auth_provider_x509_cert_url": "",
-                    "client_x509_cert_url": "",
-                    "universe_domain": ""
-                }
-            }
-        }
-    ]
-    ```
-* 아래의 명령어를 실행하여 프로필을 설정합니다.
-  
-  ```shell
-  bash ./scripts/init-settings.sh
-  ```
-
 
 ## 설치 및 사용 가이드
 * [Data Manager 도커가이드](../docs/Datamanager-Docker-Guide.md)
@@ -117,7 +51,7 @@
 ## 2. 오브젝트 스토리지
 ###  AWS S3 Generate
 1. data-manager server 접속 후 좌측 메뉴에서 데이터 생성 -> Object Storage -> AWS S3 순으로 클릭
-2. 사용자의 프로필과 리전 선택, 버킷 명을 입력한 다음 생성 할 데이터를 선택 및 용량 입력 후 생성 버튼 클릭
+2. Credential 과 리전 선택, 버킷을 선택 한 다음 생성 할 데이터를 선택 및 용량 입력 후 생성 버튼 클릭
 
 <p align="center"><img src="../docs/image/web/objectstorage/generate_s3.png" ></p>
 
