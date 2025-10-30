@@ -21,7 +21,9 @@
   
     사용하고자 하는 서비스계정에 Storage Admin 권한 추가
     * GCP : 
-      * https://cloud.google.com/storage../docs/access-control/iam-roles?hl=ko
+    ![GCP 권한 추가](image.png)
+      <!-- * https://cloud.google.com/storage../docs/access-control/iam-roles?hl=ko -->
+      * https://cloud.google.com/iam/docs/roles-permissions
       * https://console.cloud.google.com/apis/api/sqladmin.googleapis.com/
     
     서브 계정 사용 시 Object Storage 권한 추가
@@ -51,7 +53,7 @@
 ## 2. 오브젝트 스토리지
 ###  Dummy Data Generate
 1. data-manager server 접속 후 상단 메뉴에서 데이터 생성 -> Object Storage 선택
-2. Credential 과 리전 선택, 버킷을 선택 한 다음 생성 할 데이터를 선택 및 용량 입력 후 생성 버튼 클릭
+2. Credential 과 리전 선택, 버킷을 선택 혹은 생성할 버킷명을 입력, 생성할 데이터를 선택 및 용량 입력 후 생성 버튼 클릭
 
 <p align="center"><img src="../docs/image/web/objectstorage/generate_s3.png" ></p>
 
@@ -109,7 +111,7 @@
 
 ###   Migrate RDBMS
 1. data-manager server 접속 후 좌측 메뉴에서 MIGRATION -> SQL Database -> MySQL
-2. 사용자의 DB Connect Config를 입력하고 실행 버튼 클릭
+2. 사용자의 Source DB Connect Config와 Target DB Connect Config를 입력하고 실행 버튼 클릭
 
 <p align="center"><img src="../docs/image/web/RDBMS/migrate_rdbms.png" ></p>
 

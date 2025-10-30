@@ -82,6 +82,9 @@
             // mc-data-manager 서버 설정
             MC_DATA_MANAGER_PORT=
             MC_DATA_MANAGER_ALLOW_IP_RANGE= //허용 CIDR ex. 0.0.0.0/0
+
+            // tumblebug api URL 설정
+            TUMBLEBUG_URL=
             ```
 
     - Docker run
@@ -107,6 +110,7 @@
                     volumes:
                         - ./data:/app/data/
                         - ./scripts:/app/scripts/
+                    ...
             ```
         - 실행
             ```shell
