@@ -14,9 +14,25 @@
 - [Docker 공식 ](https://docs.docker.com/engine/install/ubuntu) 설치
 
 
-## Linux에서 Docker 설치 및 실행
+## Linux에서 datamanager, Docker 설치 및 실행
+1. git을 이용한 datamanager 설치
+    
+    ```bash
+    # git 설치
+    apt-get install git
+    
+    # 글로벌 설정
+    git config --global user.name "자신의 계정"
+    git config --global user.email "자신의 이메일"
+    
+    # git clone으로 datamanager 가져오기
+    git clone https://<자신의계정>@github.com/cloud-barista/mc-data-manager.git
+    # ex : git clone https://cloud-barista@github.com/cloud-barista/mc-data-manager.git
+    
+    # mc-data-manager로 이동
+    cd ./mc-data-manager
 
-1. apt-repo를 이용한 docker 설치
+2. apt-repo를 이용한 docker 설치
 
     - apt 패키지 업데이트
         ```bash
@@ -64,7 +80,7 @@
         sudo usermod -aG docker $USER && exec sudo su - $USER
         ```
 
-2. Linux에서 Docker 커맨드 실행
+3. Linux에서 Docker 커맨드 실행
     - Docker 환경변수 설정
 
         - .env 환경변수 설정
