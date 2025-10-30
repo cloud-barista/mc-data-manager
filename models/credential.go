@@ -24,7 +24,7 @@ import (
 type CredentialCreateRequest struct {
 	CspType        string          `json:"cspType"`
 	Name           string          `json:"name,omitempty"`
-	CredentialJson json.RawMessage `json:"credentialJson,omitempty"`
+	CredentialJson json.RawMessage `json:"credentialJson,omitempty" swaggertype:"object"`
 	S3AccessKey    string          `json:"s3AccessKey"`
 	S3SecretKey    string          `json:"s3SecretKey"`
 }
