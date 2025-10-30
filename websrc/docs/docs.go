@@ -1914,12 +1914,6 @@ const docTemplate = `{
         "models.BackupTask": {
             "type": "object",
             "properties": {
-                "dummy": {
-                    "$ref": "#/definitions/models.GenFileParams"
-                },
-                "operationId": {
-                    "type": "string"
-                },
                 "sourceFilter": {
                     "$ref": "#/definitions/models.ObjectFilterParams"
                 },

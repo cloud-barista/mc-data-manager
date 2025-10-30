@@ -120,7 +120,11 @@ type BasicBackupTask struct {
 	TargetPoint ProviderConfig `json:"targetPoint,omitempty"`
 }
 type BackupTask struct {
-	DataTask
+	BasicTask
+	Directory    string              `json:"Directory,omitempty" swaggerignore:"true"`
+	SourcePoint  ProviderConfig      `json:"sourcePoint,omitempty"`
+	TargetPoint  ProviderConfig      `json:"targetPoint,omitempty"`
+	SourceFilter *ObjectFilterParams `json:"sourceFilter,omitempty"`
 }
 
 type RestoreTask struct {
