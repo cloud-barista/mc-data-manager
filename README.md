@@ -20,5 +20,5 @@ This guide explains installation and command usage for Ubuntu 22.04.
 
 * [Data Manager API Guide](https://m-cmp.github.io/api/?url=https://raw.githubusercontent.com/cloud-barista/mc-data-manager/main/websrc/docs/swagger.yaml)
 * [Data Manager User Guide](docs/Datamanager-Usage-Guide.md)
-* [Data Manager Docker Guide](docs/Datamanager-Docker-Guide.md)
+* [Data Manager Install Guide](docs/Datamanager-Install-Guide.md)
 * [Data Manager Demo Guide](docs/Datamanager-Demo-Guide.md)
