@@ -42,7 +42,7 @@
 
 
 ## 설치 및 사용 가이드
-* [Data Manager 도커가이드](../docs/Datamanager-Docker-Guide.md)
+* [Data Manager 도커가이드](/docs/Datamanager-Install-Guide.md)
 
 ## 1. 오브젝트 스토리지
 ###  Dummy Data Generate
