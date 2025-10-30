@@ -32,7 +32,7 @@ import (
 //	@Tags			[Migrate]
 //	@Accept			json
 //	@Produce		json
-//	@Param			RequestBody		body	models.MigrateTask	true	"Parameters required for migration"
+//	@Param			RequestBody		body	models.MigrationParams	true	"Parameters required for migration"
 //	@Success		200			{object}	models.BasicResponse	"Successfully migrated data"
 //	@Failure		400			{object}	models.BasicResponse	"Invalid Request"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
