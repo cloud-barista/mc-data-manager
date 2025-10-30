@@ -108,11 +108,16 @@
 
 ###   Migrate RDBMS
 1. data-manager server 접속 후 좌측 메뉴에서 MIGRATION -> SQL Database -> MySQL
-2. 사용자의 Source DB Connect Config와 Target DB Connect Config를 입력하고 실행 버튼 클릭
-
+2. 사용자의 Source DB Connect Config를 입력하고 Next 버튼 클릭
 <p align="center"><img src="../docs/image/web/RDBMS/migrate_rdbms.png" ></p>
-
-3. 성공 및 실패는 아래 로그에서 확인이 가능합니다.
+3. Source Mysql에 대한 현재 테이블 수 및 스레드 확인을 위한 진단 버튼 클릭(Optional)
+<p align="center"><img src="../docs/image/web/RDBMS/migrate_rdbms2.png" ></p>
+4. 마이그레이션할 Target DB Connect Config를 입력하고 Next 버튼 클릭
+<p align="center"><img src="../docs/image/web/RDBMS/migrate_rdbms3.png" ></p>
+5. Target Mysql에 대한 동적 성능 진단 시, 진단 버튼 클릭(Optional)
+<p align="center"><img src="../docs/image/web/RDBMS/migrate_rdbms4.png" ></p>
+6. Submit 버튼 클릭<br>
+7. 성공 및 실패는 아래 로그에서 확인이 가능합니다.
 
 <p align="center"><img src="../docs/image/web/RDBMS/migrate_rdbms_result.png" ></p>
 

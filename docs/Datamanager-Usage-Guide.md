@@ -93,6 +93,10 @@
 
 
 ## 4. 데이터 마이그레이션
+<<<<<<< Updated upstream
 * [Data Manager Demo Guide](../docs/Datamanager-Demo-Guide.md) 참고
+=======
+* [Data Manager Demo Guide](./Datamanager-Demo-Guide.md) 참고
+>>>>>>> Stashed changes
 
 
