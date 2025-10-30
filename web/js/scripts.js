@@ -37,6 +37,8 @@ window.addEventListener('DOMContentLoaded', event => {
     if (document.getElementById('backForm')) {
         backUpFormSubmit();
         loadProfileList();
+        setPicker();
+        setFilterAccordion();
     }
     if (document.getElementById('restoreForm')) {
         RestoreFormSubmit();
@@ -257,12 +259,6 @@ function setSelectBox() {
       });
 }
 
-function setFilterAccordion() {
-    $("#btnFilterExpand").click(function() {
-        $("#filterContent").slideToggle("fast");
-    });
-}
-
 function credentialFormSubmit() {
     const form = document.getElementById('credentialForm');
 
@@ -340,6 +336,12 @@ function credentialFormSubmit() {
             });
 
         console.log("Generate progressing...");
+    });
+}
+
+function setFilterAccordion() {
+    $("#btnFilterExpand").click(function() {
+        $("#filterContent").slideToggle("fast");
     });
 }
 
@@ -639,6 +641,9 @@ function backUpFormSubmit() {
         if(jsonData.sourcePoint.bucket == "none" || jsonData.sourcePoint.bucket == "-" || jsonData.sourcePoint.bucket == "") {
             alert("please select bucket");
             return
+        }        
+        if(service == "objectstorage") {
+            applyFilter(jsonData)
         }
         // console.log(provider)
 
