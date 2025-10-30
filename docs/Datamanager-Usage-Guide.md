@@ -41,6 +41,10 @@
 - AWS & NCP (name, access_key, secret_key info) <p align="center"><img src="../docs/image/web/credential_create2.png" ></p>
 - GCP (name, access_key, secret_key info, Credential Json info) <p align="center"><img src="../docs/image/web/credential_create3.png" ></p>
 
+- mc-data-manager에 등록 시, mc-infra-manager에도 credential 등록 요청을 보내며 해당 요청이 성공해야 mc-data-manager에도 등록됩니다.
+  * 크레덴셜 등록 시, 아래 참고 링크와 같이 암호화되어 요청됩니다.
+  * 참고: https://github.com/cloud-barista/cb-tumblebug/discussions/1773
+
 3. 성공 및 실패는 아래 로그에서 확인 가능합니다.
 <p align="center"><img src="../docs/image/web/credential_create4.png" ></p>
 
