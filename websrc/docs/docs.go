@@ -1960,7 +1960,24 @@ const docTemplate = `{
             }
         },
         "models.CredentialCreateRequest": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "credentialJson": {
+                    "type": "object"
+                },
+                "cspType": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "s3AccessKey": {
+                    "type": "string"
+                },
+                "s3SecretKey": {
+                    "type": "string"
+                }
+            }
         },
         "models.DataTask": {
             "type": "object",
@@ -2070,12 +2087,6 @@ const docTemplate = `{
         "models.MigrateTask": {
             "type": "object",
             "properties": {
-                "dummy": {
-                    "$ref": "#/definitions/models.GenFileParams"
-                },
-                "operationId": {
-                    "type": "string"
-                },
                 "sourceFilter": {
                     "$ref": "#/definitions/models.ObjectFilterParams"
                 },
@@ -2090,6 +2101,9 @@ const docTemplate = `{
         "models.ObjectFilterParams": {
             "type": "object",
             "properties": {
+                "containExcludeYn": {
+                    "type": "string"
+                },
                 "contains": {
                     "type": "array",
                     "items": {
@@ -2115,6 +2129,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "path": {
+                    "type": "string"
+                },
+                "pathExcludeYn": {
                     "type": "string"
                 },
                 "sizeFilteringUnit": {

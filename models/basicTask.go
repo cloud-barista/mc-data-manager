@@ -107,7 +107,11 @@ type DataTask struct {
 	BasicDataTask
 }
 type MigrateTask struct {
-	DataTask
+	BasicTask
+	Directory    string              `json:"Directory,omitempty" swaggerignore:"true"`
+	SourcePoint  ProviderConfig      `json:"sourcePoint,omitempty"`
+	TargetPoint  ProviderConfig      `json:"targetPoint,omitempty"`
+	SourceFilter *ObjectFilterParams `json:"sourceFilter,omitempty"`
 }
 
 type BasicBackupTask struct {
