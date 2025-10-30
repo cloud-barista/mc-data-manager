@@ -14,9 +14,25 @@
 - [Docker 공식 ](https://docs.docker.com/engine/install/ubuntu) 설치
 
 
-## Linux에서 Docker 설치 및 실행
+## Linux에서 datamanager, Docker 설치 및 실행
+1. git을 이용한 datamanager 설치
+    
+    ```bash
+    # git 설치
+    apt-get install git
+    
+    # 글로벌 설정
+    git config --global user.name "자신의 계정"
+    git config --global user.email "자신의 이메일"
+    
+    # git clone으로 datamanager 가져오기
+    git clone https://<자신의계정>@github.com/cloud-barista/mc-data-manager.git
+    # ex : git clone https://cloud-barista@github.com/cloud-barista/mc-data-manager.git
+    
+    # mc-data-manager로 이동
+    cd ./mc-data-manager
 
-1. apt-repo를 이용한 docker 설치
+2. apt-repo를 이용한 docker 설치
 
     - apt 패키지 업데이트
         ```bash
@@ -25,31 +41,32 @@
     - 필수 패키지 설치
         ```shell
         sudo apt-get install \
-            ca-certificates \
-            curl \
-            gnupg \
-            lsb-release
+        ca-certificates curl
         ```
     - Docker의 공식 GPG 키 추가
         ```shell
-        sudo mkdir -p /etc/apt/keyrings
-        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+        sudo install -m 0755 -d /etc/apt/keyrings
+
+        sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+        
+        sudo chmod a+r /etc/apt/keyrings/docker.asc
         ```
 
     - Docker apt repository 설정
         ```shell
         echo \
-            "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-            $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+        "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
+        $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+        sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
         ```
 
     - Docker Engine 설치
-        ```bash
+        ```shell
         sudo apt-get update
-        sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+        sudo apt-get install \ docker-ce docker-ce-cli \ containerd.io \ docker-compose-plugin
         ```
     - Docker 설치 확인
-        ```bash
+        ```shell
         sudo docker --version
         ```
 
@@ -63,7 +80,7 @@
         sudo usermod -aG docker $USER && exec sudo su - $USER
         ```
 
-2. Linux에서 Docker 커맨드 실행
+3. Linux에서 Docker 커맨드 실행
     - Docker 환경변수 설정
 
         - .env 환경변수 설정
@@ -81,6 +98,9 @@
             // mc-data-manager 서버 설정
             MC_DATA_MANAGER_PORT=
             MC_DATA_MANAGER_ALLOW_IP_RANGE= //허용 CIDR ex. 0.0.0.0/0
+
+            // tumblebug api URL 설정
+            TUMBLEBUG_URL=
             ```
 
     - Docker run
@@ -106,6 +126,7 @@
                     volumes:
                         - ./data:/app/data/
                         - ./scripts:/app/scripts/
+                    ...
             ```
         - 실행
             ```shell

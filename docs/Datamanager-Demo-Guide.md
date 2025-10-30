@@ -21,7 +21,9 @@
   
     사용하고자 하는 서비스계정에 Storage Admin 권한 추가
     * GCP : 
-      * https://cloud.google.com/storage../docs/access-control/iam-roles?hl=ko
+    ![GCP 권한 추가](image.png)
+      <!-- * https://cloud.google.com/storage../docs/access-control/iam-roles?hl=ko -->
+      * https://cloud.google.com/iam/docs/roles-permissions
       * https://console.cloud.google.com/apis/api/sqladmin.googleapis.com/
     
     서브 계정 사용 시 Object Storage 권한 추가
@@ -38,86 +40,14 @@
 ### AWS, GCP, NCP Cloud DB 메뉴얼 설치 및 인증정보
 * [DB 설치 및 인증정보](../docs/Cloud-DB-Installation-and-Authentication-Information.md)
 
-### 프로필 설정 가이드
-* 위의 생성된 인증정보를 프로젝트의 루트디렉토리에 저장해야합니다.
-    > ./profile.json
-    ```json
-
-    [
-        {
-            "profileName": "default",
-            "credentials": {
-                "aws": {
-                    "accessKey": "",
-                    "secretKey": ""
-                },
-                "ncp": {
-                    "accessKey": "",
-                    "secretKey": ""
-                },
-                "gcp": {
-                    "type": "",
-                    "project_id": "",
-                    "private_key_id": "",
-                    "private_key": "",
-                    "client_email": "",
-                    "client_id": "",
-                    "auth_uri": "",
-                    "token_uri": "",
-                    "auth_provider_x509_cert_url": "",
-                    "client_x509_cert_url": "",
-                    "universe_domain": ""
-                }
-            }
-        },
-        {
-            "profileName": "admin",
-            "credentials": {
-                "aws": {
-                    "accessKey": "",
-                    "secretKey": ""
-                },
-                "ncp": {
-                    "accessKey": "",
-                    "secretKey": ""
-                },
-                "gcp": {
-                    "type": "",
-                    "project_id": "",
-                    "private_key_id": "",
-                    "private_key": "",
-                    "client_email": "",
-                    "client_id": "",
-                    "auth_uri": "",
-                    "token_uri": "",
-                    "auth_provider_x509_cert_url": "",
-                    "client_x509_cert_url": "",
-                    "universe_domain": ""
-                }
-            }
-        }
-    ]
-    ```
-* 아래의 명령어를 실행하여 프로필을 설정합니다.
-  
-  ```shell
-  bash ./scripts/init-settings.sh
-  ```
-
 
 ## 설치 및 사용 가이드
-* [Data Manager 도커가이드](../docs/Datamanager-Docker-Guide.md)
+* [Data Manager 도커가이드](/docs/Datamanager-Install-Guide.md)
 
-
-## 1. 서비스 생성
-1. 서비스 생성 요청을 한다.
-   - 해당 요청 이후 약 20분 정도의 대기시간이 필요하다.
-<p align="center"><img src="../docs/image/web/GenService.png" ></p>
-
-## 2. 오브젝트 스토리지
-###  AWS S3 Generate
-1. data-manager server 접속 후 좌측 메뉴에서 데이터 생성 -> Object Storage -> AWS S3 순으로 클릭
-2. 사용자의 프로필과 리전 선택, 버킷 명을 입력한 다음 생성 할 데이터를 선택 및 용량 입력 후 생성 버튼 클릭
+## 1. 오브젝트 스토리지
+###  Dummy Data Generate
+1. data-manager server 접속 후 상단 메뉴에서 데이터 생성 -> Object Storage 선택
+2. Credential 과 리전 선택, 버킷을 선택 혹은 생성할 버킷명을 입력, 생성할 데이터를 선택 및 용량 입력 후 생성 버튼 클릭
 
 <p align="center"><img src="../docs/image/web/objectstorage/generate_s3.png" ></p>
 
@@ -125,135 +55,137 @@
 
 <p align="center"><img src="../docs/image/web/objectstorage/generate_s3_result.png" ></p>
 
-###   Migrate from AWS S3 to NCP ObjectStorage 
+###   Migrate ObjectStorage 
 
-1. data-manager server 접속 후 좌측 메뉴에서 Migration -> Object Storage  -> AWS s3 to -> Naver Object Storage
-2. 사용자의 AWS 접속정보와 버킷명, 사용자의 Naver 접속정보와 버킷명을 입력 후 실행 버튼 클릭
+1. data-manager server 접속 후 상단 메뉴에서 Migration -> Object Storage 선택
+2. Source 의 Credential 정보 선택 -> 리전 선택 -> bucket 선택
+3. Target 의 Credential 정보 선택 -> 리전 선택 -> 버킷 리스트 또는 새로 버킷 생성을 선택 후 "Submit" 버튼 클릭
+<p align="center"><img src="../docs/image/web/objectstorage/migrate_obj.png" ></p>
 
-<p align="center"><img src="../docs/image/web/objectstorage/migrate_obj_aws_ncp.png" ></p>
-
-3. 성공 및 실패는 아래 로그에서 확인이 가능합니다.
-
-<p align="center"><img src="../docs/image/web/objectstorage/migrate_obj_aws_ncp_result.png" ></p>
-
-###   Backup NCP ObjectStorage 
-
-1. data-manager server 접속 후 좌측 메뉴에서 Backup 클릭
-2. Backup Service 항목에서 NCP, Objectstorage 선택
-3. 사용자의 Naver 접속정보와 버킷명, 백업 경로 입력 후 백업 버튼 클릭
-
-<p align="center"><img src="../docs/image/web/objectstorage/backup_obj_ncp.png" ></p>
+- Filtering option 선택 시 선택된 조건에 해당하는 데이터가 "포함 또는 예외" <p align="center"><img src="../docs/image/web/objectstorage/filtering.png" ></p>
 
 4. 성공 및 실패는 아래 로그에서 확인이 가능합니다.
 
-<p align="center"><img src="../docs/image/web/objectstorage/backup_obj_ncp_result.png" ></p>
+<p align="center"><img src="../docs/image/web/objectstorage/migrate_obj_result.png" ></p>
 
-###   Restore GCP ObjectStorage 
+###   Backup ObjectStorage 
 
-1. data-manager server 접속 후 좌측 메뉴에서  Restore 클릭
-2. Restore Service 항목에서 GCP, Objectstorage 선택
-3. 사용자의 GCP 접속정보와 버킷명, 복구 경로 입력 후 복구 버튼 클릭
+1. data-manager server 접속 후 상단 메뉴에서 Backup -> Object Storage 선택
+2. Source 에서 credential 선택 -> 리전 선택 -> bucket 선택
+3. Target에서 저장될 Path 입력
 
-<p align="center"><img src="../docs/image/web/objectstorage/restore_obj_gcp.png" ></p>
+<p align="center"><img src="../docs/image/web/objectstorage/backup_objectStorage.png" ></p>
+
+- Filtering option 선택 시 선택된 조건에 해당하는 데이터가 "포함 또는 예외" <p align="center"><img src="../docs/image/web/objectstorage/filtering.png" ></p>
 
 4. 성공 및 실패는 아래 로그에서 확인이 가능합니다.
 
-<p align="center"><img src="../docs/image/web/objectstorage/restore_obj_gcp_result.png" ></p>
+<p align="center"><img src="../docs/image/web/objectstorage/backup_obj_result.png" ></p>
 
-## 3. RDBMS
-###  GCP RDBMS Generate
-1. data-manager server 접속 후 좌측 메뉴에서 데이터 생성 -> SQL Database -> MySQL
+###   Restore ObjectStorage 
+
+1. data-manager server 접속 후 상단 메뉴에서 Restore 선택 -> Object Storage 선택
+2. Source에서 data 가 저장된 path 입력
+3. Target에서 credential 선택 -> 리전 선택 -> bucket 선택 후 "Submit" 클릭
+
+<p align="center"><img src="../docs/image/web/objectstorage/restore_obj.png" ></p>
+
+4. 성공 및 실패는 아래 로그에서 확인이 가능합니다.
+
+<p align="center"><img src="../docs/image/web/objectstorage/restore_obj_result.png" ></p>
+
+## 2. RDBMS
+###  RDBMS Generate
+1. data-manager server 접속 후 상단 메뉴에서 데이터 생성 -> SQL Database -> MySQL
 2. 사용자의 DB Connect Config를 입력하고 생성 버튼 클릭
 
-<p align="center"><img src="../docs/image/web/RDBMS/generate_rdbms_gcp.png" ></p>
+<p align="center"><img src="../docs/image/web/RDBMS/generate_rdbms.png" ></p>
 
 3. 성공 및 실패는 아래 로그에서 확인이 가능합니다.
 
-<p align="center"><img src="../docs/image/web/RDBMS/generate_rdbms_gcp_result.png" ></p>
+<p align="center"><img src="../docs/image/web/RDBMS/generate_rdbms_result.png" ></p>
 
 
-###   Migrate from GCP to AWS 
+###   Migrate RDBMS
 1. data-manager server 접속 후 좌측 메뉴에서 MIGRATION -> SQL Database -> MySQL
-2. 사용자의 DB Connect Config를 입력하고 실행 버튼 클릭
+2. 사용자의 Source DB Connect Config를 입력하고 Next 버튼 클릭
+<p align="center"><img src="../docs/image/web/RDBMS/migrate_rdbms.png" ></p>
+3. Source Mysql에 대한 현재 테이블 수 및 스레드 확인을 위한 진단 버튼 클릭(Optional)
+<p align="center"><img src="../docs/image/web/RDBMS/migrate_rdbms2.png" ></p>
+4. 마이그레이션할 Target DB Connect Config를 입력하고 Next 버튼 클릭
+<p align="center"><img src="../docs/image/web/RDBMS/migrate_rdbms3.png" ></p>
+5. Target Mysql에 대한 동적 성능 진단 시, 진단 버튼 클릭(Optional)
+<p align="center"><img src="../docs/image/web/RDBMS/migrate_rdbms4.png" ></p>
+6. Submit 버튼 클릭<br>
+7. 성공 및 실패는 아래 로그에서 확인이 가능합니다.
 
-<p align="center"><img src="../docs/image/web/RDBMS/migrate_rdbms_gcp_aws.png" ></p>
+<p align="center"><img src="../docs/image/web/RDBMS/migrate_rdbms_result.png" ></p>
 
-3. 성공 및 실패는 아래 로그에서 확인이 가능합니다.
-
-<p align="center"><img src="../docs/image/web/RDBMS/migrate_rdbms_gcp_aws_result.png" ></p>
-
-###   Back Up AWS RDBMS 
+###   Back Up RDBMS 
 1. data-manager server 접속 후 좌측 메뉴에서 Backup 클릭
 2. Backup Service 항목에서 AWS, RDBMS 선택
 3. 사용자의 DB Connect Config를 입력하고 실행 버튼 클릭
 
-<p align="center"><img src="../docs/image/web/RDBMS/backup_rdbms_aws.png" ></p>
+<p align="center"><img src="../docs/image/web/RDBMS/backup_rdbms.png" ></p>
 
 4. 성공 및 실패는 아래 로그에서 확인이 가능합니다.
 
-<p align="center"><img src="../docs/image/web/RDBMS/backup_rdbms_aws_resutl.png" ></p>
+<p align="center"><img src="../docs/image/web/RDBMS/backup_rdbms_result.png" ></p>
 
 
-###   Restore NCP RDBMS 
+###   Restore RDBMS 
 
 1. data-manager server 접속 후 좌측 메뉴에서  Restore 클릭
 2. Restore Service 항목에서 NCP, RDBMS 선택
 3. 사용자의 DB Connect Config를 입력하고 실행 버튼 클릭
 
-<p align="center"><img src="../docs/image/web/RDBMS/restore_rdbms_ncp.png" ></p>
+<p align="center"><img src="../docs/image/web/RDBMS/restore_rdbms.png" ></p>
 
 4. 성공 및 실패는 아래 로그에서 확인이 가능합니다.
 
-<p align="center"><img src="../docs/image/web/RDBMS/restore_rdbms_ncp_result.png" ></p>
+<p align="center"><img src="../docs/image/web/RDBMS/restore_rdbms_result.png" ></p>
 
-## 4. NRDBMS
-###  AWS NRDBMS Generate
+## 3. NRDBMS
+###  NRDBMS Generate
 1. data-manager server 접속 후 좌측 메뉴에서 데이터 생성 -> NO-SQL Database -> Google Firestore
 2. 사용자의 AWS 접속정보를 입력하고 생성 버튼 클릭
 
-<p align="center"><img src="../docs/image/web/NRDBMS/generate_nrdbms_aws.png" ></p>
+<p align="center"><img src="../docs/image/web/NRDBMS/generate_nrdbms.png" ></p>
 
 3. 성공 및 실패는 아래 로그에서 확인이 가능합니다.
 
-<p align="center"><img src="../docs/image/web/NRDBMS/generate_nrdbms_aws_result.png" ></p>
+<p align="center"><img src="../docs/image/web/NRDBMS/generate_nrdbms_result.png" ></p>
+
+###   Migrate from GCP to AWS 
+1. data-manager server 접속 후 좌측 메뉴에서 MIGRATION -> SQL Database -> MySQL
+2. 사용자의 DB Connect Config를 입력하고 실행 버튼 클릭
+
+<p align="center"><img src="../docs/image/web/NRDBMS/migrate_nrdbms.png" ></p>
+
+3. 성공 및 실패는 아래 로그에서 확인이 가능합니다.
+
+<p align="center"><img src="../docs/image/web/NRDBMS/migrate_nrdbms_result.png" ></p>
 
 ###   Back Up AWS NRDBMS 
 1. data-manager server 접속 후 좌측 메뉴에서 Backup 클릭
 2. Backup Service 항목에서 AWS, NRDBMS 선택
 3. 사용자의 DB Connect Config를 입력하고 실행 버튼 클릭
 
-<p align="center"><img src="../docs/image/web/NRDBMS/backup_nrdbms_aws.png" ></p>
+<p align="center"><img src="../docs/image/web/NRDBMS/backup_nrdbms.png" ></p>
 
 4. 성공 및 실패는 아래 로그에서 확인이 가능합니다.
 
-<p align="center"><img src="../docs/image/web/NRDBMS/backup_nrdbms_aws_result.png" ></p>
+<p align="center"><img src="../docs/image/web/NRDBMS/backup_nrdbms_result.png" ></p>
 
 
-###   Restore GCP NRDBMS 
+###   Restore NRDBMS 
 
 1. data-manager server 접속 후 좌측 메뉴에서  Restore 클릭
 2. Restore Service 항목에서 GCP, NRDBMS 선택
 3. 사용자의 GCP 접속정보 입력 후 복구 버튼 클릭
 
-<p align="center"><img src="../docs/image/web/NRDBMS/restore_nrdbms_gcp.png" ></p>
+<p align="center"><img src="../docs/image/web/NRDBMS/restore_nrdbms.png" ></p>
 
 4. 성공 및 실패는 아래 로그에서 확인이 가능합니다.
 
-<p align="center"><img src="../docs/image/web/NRDBMS/restore_nrdbms_gcp_result.png" ></p>
-
-
-###   Migrate from GCP to AWS 
-1. data-manager server 접속 후 좌측 메뉴에서 MIGRATION -> SQL Database -> MySQL
-2. 사용자의 DB Connect Config를 입력하고 실행 버튼 클릭
-
-<p align="center"><img src="../docs/image/web/NRDBMS/migrate_nrdbms_gcp_aws.png" ></p>
-
-3. 성공 및 실패는 아래 로그에서 확인이 가능합니다.
-
-<p align="center"><img src="../docs/image/web/NRDBMS/migrate_nrdbms_gcp_aws_result.png" ></p>
-
-
-## 5. 서비스 삭제
-1. 서비스 삭제 요청을 한다.
-   - 해당 요청 이후 약 10분 정도의 대기시간이 필요하다.
-<p align="center"><img src="../docs/image/web/DelService.png" ></p>
+<p align="center"><img src="../docs/image/web/NRDBMS/restore_nrdbms_result.png" ></p>

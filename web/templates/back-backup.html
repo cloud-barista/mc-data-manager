@@ -63,7 +63,7 @@
                     </div>
                 </div>
                 <div class="form-section mt-3" id="objectstorage" style="display:none;">
-                    <div class="input-group">
+                    <div class="input-group mb-3">
                         <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
                         <div class="form-floating">
                             <select class="form-select form-select-sm rounded-end" id="sourceBucket" name="sourcePoint[bucket]">
@@ -75,6 +75,7 @@
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </button>
                     </div>
+                    {{ template "filter.html" . }}
                 </div>
                 <div class="form-section" id="rdbms" style="display:none;">
                     <div class="input-group mb-3" id="rdbmsProvider">
@@ -273,6 +274,10 @@
 
         const allInputs = document.querySelectorAll('.form-section input, .form-section select, .form-section textarea');
         allInputs.forEach(function(input) {
+            if (input.closest('#filterContent')) {
+                return; // skip this input
+            }
+
             if (input.type === 'checkbox' || input.type === 'radio') {
                 input.checked = false;
             } else if (input.tagName.toLowerCase() === 'select') {
@@ -290,6 +295,10 @@
                 section.style.display = 'block';
                 let inputs = section.querySelectorAll('input, select, textarea');
                 inputs.forEach(function(input) {
+                    if (input.closest('#filterContent')) {
+                        return; // skip this input
+                    }
+
                     input.removeAttribute('disabled');
                     input.setAttribute('required', '');
                 });
@@ -297,6 +306,10 @@
                 section.style.display = 'none';
                 let inputs = section.querySelectorAll('input, select, textarea');
                 inputs.forEach(function(input) {
+                    if (input.closest('#filterContent')) {
+                        return; // skip this input
+                    }
+                    
                     input.setAttribute('disabled', '');
                     input.removeAttribute('required');
                 });
