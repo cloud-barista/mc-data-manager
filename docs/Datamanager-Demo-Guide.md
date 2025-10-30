@@ -44,13 +44,7 @@
 ## 설치 및 사용 가이드
 * [Data Manager 도커가이드](../docs/Datamanager-Docker-Guide.md)
 
-
-## 1. 서비스 생성
-1. 서비스 생성 요청을 한다.
-   - 해당 요청 이후 약 20분 정도의 대기시간이 필요하다.
-<p align="center"><img src="../docs/image/web/GenService.png" ></p>
-
-## 2. 오브젝트 스토리지
+## 1. 오브젝트 스토리지
 ###  Dummy Data Generate
 1. data-manager server 접속 후 상단 메뉴에서 데이터 생성 -> Object Storage 선택
 2. Credential 과 리전 선택, 버킷을 선택 혹은 생성할 버킷명을 입력, 생성할 데이터를 선택 및 용량 입력 후 생성 버튼 클릭
@@ -66,10 +60,11 @@
 1. data-manager server 접속 후 상단 메뉴에서 Migration -> Object Storage 선택
 2. Source 의 Credential 정보 선택 -> 리전 선택 -> bucket 선택
 3. Target 의 Credential 정보 선택 -> 리전 선택 -> 버킷 리스트 또는 새로 버킷 생성을 선택 후 "Submit" 버튼 클릭
-
 <p align="center"><img src="../docs/image/web/objectstorage/migrate_obj.png" ></p>
 
-3. 성공 및 실패는 아래 로그에서 확인이 가능합니다.
+- Filtering option 선택 시 선택된 조건에 해당하는 데이터가 "포함 또는 예외" <p align="center"><img src="../docs/image/web/objectstorage/filtering.png" ></p>
+
+4. 성공 및 실패는 아래 로그에서 확인이 가능합니다.
 
 <p align="center"><img src="../docs/image/web/objectstorage/migrate_obj_result.png" ></p>
 
@@ -80,6 +75,8 @@
 3. Target에서 저장될 Path 입력
 
 <p align="center"><img src="../docs/image/web/objectstorage/backup_objectStorage.png" ></p>
+
+- Filtering option 선택 시 선택된 조건에 해당하는 데이터가 "포함 또는 예외" <p align="center"><img src="../docs/image/web/objectstorage/filtering.png" ></p>
 
 4. 성공 및 실패는 아래 로그에서 확인이 가능합니다.
 
@@ -97,9 +94,9 @@
 
 <p align="center"><img src="../docs/image/web/objectstorage/restore_obj_result.png" ></p>
 
-## 3. RDBMS
+## 2. RDBMS
 ###  RDBMS Generate
-1. data-manager server 접속 후 좌측 메뉴에서 데이터 생성 -> SQL Database -> MySQL
+1. data-manager server 접속 후 상단 메뉴에서 데이터 생성 -> SQL Database -> MySQL
 2. 사용자의 DB Connect Config를 입력하고 생성 버튼 클릭
 
 <p align="center"><img src="../docs/image/web/RDBMS/generate_rdbms.png" ></p>
@@ -143,7 +140,7 @@
 
 <p align="center"><img src="../docs/image/web/RDBMS/restore_rdbms_result.png" ></p>
 
-## 4. NRDBMS
+## 3. NRDBMS
 ###  NRDBMS Generate
 1. data-manager server 접속 후 좌측 메뉴에서 데이터 생성 -> NO-SQL Database -> Google Firestore
 2. 사용자의 AWS 접속정보를 입력하고 생성 버튼 클릭
@@ -187,9 +184,3 @@
 4. 성공 및 실패는 아래 로그에서 확인이 가능합니다.
 
 <p align="center"><img src="../docs/image/web/NRDBMS/restore_nrdbms_result.png" ></p>
-
-
-## 5. 서비스 삭제
-1. 서비스 삭제 요청을 한다.
-   - 해당 요청 이후 약 10분 정도의 대기시간이 필요하다.
-<p align="center"><img src="../docs/image/web/DelService.png" ></p>
