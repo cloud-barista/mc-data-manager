@@ -13,8 +13,8 @@
 
 ## 사전 준비
 
-- linux (ubuntu 22.04) 대상
-- [Golang 1.23](https://go.dev/dl/) 설치
+- OS: Debian GNU/Linux 12 (bookworm)
+- [Golang 1.25](https://go.dev/dl/) 설치
 - CSP별 인증 정보
   - [aws](https://docs.aws.amazon.com/ko_kr/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey)
   - [gcp](https://developers.google.com/workspace/guides/create-credentials?hl=ko)
