@@ -80,7 +80,12 @@ func (osc *OSController) MGet(dirPath string, flt *filtering.ObjectFilter) error
 	// 	return err
 	// }
 
-	downlaodList, skipList := getDownloadList(fileList, srcObjList, dirPath, flt.PathExcludeYn)
+	path := ""
+	if flt != nil && flt.Path != "" {
+		path = strings.TrimPrefix(flt.Path, "/")
+	}
+
+	downlaodList, skipList := getDownloadList(fileList, srcObjList, path, flt.PathExcludeYn)
 
 	for _, skip := range skipList {
 		osc.logWrite("Info", fmt.Sprintf("skip file : %s", skip.Key), nil)
