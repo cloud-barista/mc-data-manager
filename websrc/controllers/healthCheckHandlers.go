@@ -49,7 +49,6 @@ func (h *HealthHandler) GetSystemReadyHandler(ctx echo.Context) error {
 	start := time.Now()
 	logger, logstrings := pageLogInit(ctx, "healthcheck-task", "Ready?", start)
 
-	// TODO - db 헬스체크 추가 예정
 	dbHealthy := h.isDatabaseHealthy()
 	if !dbHealthy {
 		errStr := "db is not healthy"
