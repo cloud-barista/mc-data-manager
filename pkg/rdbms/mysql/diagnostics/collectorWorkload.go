@@ -14,7 +14,7 @@ SELECT
     SUM(SUM_TIMER_WAIT)     AS total_latency_ps,
     MAX(MAX_TIMER_WAIT)     AS max_latency_ps
  FROM performance_schema.events_statements_summary_by_digest
-WHERE OBJECT_SCHEMA = ?
+WHERE SCHEMA_NAME = ?
   AND DIGEST_TEXT NOT LIKE 'COMMIT%'
   AND DIGEST_TEXT NOT LIKE 'ROLLBACK%'
   AND DIGEST_TEXT NOT LIKE 'START TRANSACTION%'
