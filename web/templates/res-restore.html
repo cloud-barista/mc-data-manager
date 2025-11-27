@@ -20,6 +20,7 @@
             <input type="hidden" id="backSource" value="restore">
             <input type="hidden" id="backDest" value="restore">
             <input type="hidden" id="targetPoint[provider]" value="none">
+            <input type="hidden" id="targetPoint[endpoint]" name="targetPoint[endpoint]" value="">
             <input type="hidden" id="targetService" value="objectstorage">
             <div class="card rounded-3 mb-3 p-3">
                 <div class="input-group mb-3">
@@ -72,6 +73,11 @@
                                     {{ range $index, $value := .NCPRegions }}
                                         <option value="{{ $value }}">{{ $value }}</option>
                                     {{ end }}
+                                </optgroup>
+                                <optgroup label="ALIBABA regions" data-provider="alibaba" style="display: none;">
+                                    {{ range $index, $value := .ALIBABARegions }}
+                                        <option value="{{ $value }}">{{ $value }}</option>
+                                    {{ end }}
                                 </optgroup>                            
                             </select>
                             <label for="targetRegionSelect">Select Region</label>
@@ -107,6 +113,7 @@
                             <option value="aws">AWS</option>
                             <option value="gcp">GCP</option>
                             <option value="ncp">NCP</option>
+                            <option value="alibaba">ALIBABA</option>
                         </select>
                     </div>
                     <div class="input-group mb-3">
@@ -182,12 +189,13 @@
 </div>
 
 <script>
-    const target = {
+const target = {
         btn: document.getElementById("targetBtn"),
         cred: document.getElementById("targetCredentialSelect"),
         region: document.getElementById("targetRegionSelect"),
         bucket: document.getElementById("targetBucket"),
         provider: document.getElementById("targetPoint[provider]"),
+        endpoint: document.getElementById("targetPoint[endpoint]"),
         service: document.getElementById("targetService")
     };
     const bucketInput = document.getElementById("newBucket");
@@ -237,6 +245,7 @@
                 aws: "AWS S3",
                 ncp: "Naver Object Storage",
                 gcp: "Google Cloud Storage",
+                alibaba: "Alibaba Cloud OSS",
             },
             rdbms: {
                 default: "MySQL",
@@ -357,7 +366,7 @@
         target.btn.disabled = true;
         target.btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;';
 
-        fetchBucketList(target.cred.value, target.region.value, target.provider.value)
+        fetchBucketList(target.cred.value, target.region.value, target.provider.value, target.endpoint.value)
             .then(json => {
                 resetBuckets(true)
 
@@ -402,7 +411,7 @@
         }
     }
 
-    function fetchBucketList(credentialId, region, provider) {
+    function fetchBucketList(credentialId, region, provider, endpoint) {
         const url = "/objectstorage/buckets";
         const jsonData = {
             "targetPoint": {
@@ -410,6 +419,11 @@
                 "region": region,
                 "provider": provider
             }
+        }
+        if (provider === "ncp") {
+            jsonData.targetPoint.endpoint = endpoint || "https://kr.object.ncloudstorage.com";
+        } else if (provider === "alibaba" && endpoint) {
+            jsonData.targetPoint.endpoint = endpoint;
         }
         const req = {
             method: 'POST',

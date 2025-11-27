@@ -22,6 +22,8 @@
             <input type="hidden" id="migService" value="objectstorage">
             <input type="hidden" id="sourcePoint[provider]" value="none">
             <input type="hidden" id="targetPoint[provider]" value="none">
+            <input type="hidden" id="sourcePoint[endpoint]" name="sourcePoint[endpoint]" value="">
+            <input type="hidden" id="targetPoint[endpoint]" name="targetPoint[endpoint]" value="">
                 <div class="card rounded-3 mb-3 p-3">
                     <div class="input-group mb-3">
                         <div class="form-floating">
@@ -55,6 +57,11 @@
                                 </optgroup>
                                 <optgroup label="NCP regions" data-provider="ncp" style="display: none;">
                                     {{ range $index, $value := .NCPRegions }}
+                                        <option value="{{ $value }}">{{ $value }}</option>
+                                    {{ end }}
+                                </optgroup>
+                                <optgroup label="ALIBABA regions" data-provider="alibaba" style="display: none;">
+                                    {{ range $index, $value := .ALIBABARegions }}
                                         <option value="{{ $value }}">{{ $value }}</option>
                                     {{ end }}
                                 </optgroup>                            
@@ -113,6 +120,11 @@
                                         {{ range $index, $value := .NCPRegions }}
                                             <option value="{{ $value }}">{{ $value }}</option>
                                         {{ end }}
+                                    </optgroup>
+                                    <optgroup label="ALIBABA regions" data-provider="alibaba" style="display: none;">
+                                        {{ range $index, $value := .ALIBABARegions }}
+                                            <option value="{{ $value }}">{{ $value }}</option>
+                                        {{ end }}
                                     </optgroup>                            
                                 </select>
                                 <label for="targetRegionSelect">Select Region</label>
@@ -149,14 +161,16 @@
         cred: document.getElementById("sourceCredentialSelect"),
         region: document.getElementById("sourceRegionSelect"),
         bucket: document.getElementById("sourceBucket"),
-        provider: document.getElementById("sourcePoint[provider]")
+        provider: document.getElementById("sourcePoint[provider]"),
+        endpoint: document.getElementById("sourcePoint[endpoint]")
     };
     const target = {
         btn: document.getElementById("targetBtn"),
         cred: document.getElementById("targetCredentialSelect"),
         region: document.getElementById("targetRegionSelect"),
         bucket: document.getElementById("targetBucket"),
-        provider: document.getElementById("targetPoint[provider]")
+        provider: document.getElementById("targetPoint[provider]"),
+        endpoint: document.getElementById("targetPoint[endpoint]")
     };
     const bucketInput = document.getElementById("newBucket");
 
@@ -207,7 +221,7 @@
         source.btn.disabled = true;
         source.btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;';
 
-        fetchBucketList(source.cred.value, source.region.value, source.provider.value)
+        fetchBucketList(source.cred.value, source.region.value, source.provider.value, source.endpoint.value)
             .then(json => {
                 source.bucket.replaceChildren();
                 
@@ -242,7 +256,7 @@
         target.btn.disabled = true;
         target.btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;';
 
-        fetchBucketList(target.cred.value, target.region.value, target.provider.value)
+        fetchBucketList(target.cred.value, target.region.value, target.provider.value, target.endpoint.value)
             .then(json => {
                 resetBuckets("target", true)
 
@@ -292,7 +306,7 @@
         }
     }
 
-    function fetchBucketList(credentialId, region, provider) {
+    function fetchBucketList(credentialId, region, provider, endpoint) {
         const url = "/objectstorage/buckets";
         const jsonData = {
             "targetPoint": {
@@ -300,6 +314,11 @@
                 "region": region,
                 "provider": provider
             }
+        }
+        if (provider === "ncp") {
+            jsonData.targetPoint.endpoint = endpoint || "https://kr.object.ncloudstorage.com";
+        } else if (provider === "alibaba" && endpoint) {
+            jsonData.targetPoint.endpoint = endpoint;
         }
         const req = {
             method: 'POST',

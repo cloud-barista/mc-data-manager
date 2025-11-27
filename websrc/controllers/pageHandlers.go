@@ -42,12 +42,13 @@ func DashBoardHandler(ctx echo.Context) error {
 
 	logger.Info().Msg("dashboard get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
-		Content:    "dashboard",
-		AWSRegions: service.GetRegions("aws"),
-		GCPRegions: service.GetRegions("gcp"),
-		NCPRegions: service.GetRegions("ncp"),
-		OS:         runtime.GOOS,
-		Error:      nil,
+		Content:        "dashboard",
+		AWSRegions:     service.GetRegions("aws"),
+		GCPRegions:     service.GetRegions("gcp"),
+		NCPRegions:     service.GetRegions("ncp"),
+		ALIBABARegions: service.GetRegions("alibaba"),
+		OS:             runtime.GOOS,
+		Error:          nil,
 	})
 }
 
@@ -59,12 +60,13 @@ func TaskRegisterHandler(ctx echo.Context) error {
 
 	logger.Info().Msg("Task get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
-		Content:    "Register-Task",
-		AWSRegions: service.GetRegions("aws"),
-		GCPRegions: service.GetRegions("gcp"),
-		NCPRegions: service.GetRegions("ncp"),
-		OS:         runtime.GOOS,
-		Error:      nil,
+		Content:        "Register-Task",
+		AWSRegions:     service.GetRegions("aws"),
+		GCPRegions:     service.GetRegions("gcp"),
+		NCPRegions:     service.GetRegions("ncp"),
+		ALIBABARegions: service.GetRegions("alibaba"),
+		OS:             runtime.GOOS,
+		Error:          nil,
 	})
 }
 
@@ -100,12 +102,13 @@ func GenerateObjectStorageGetHandler(ctx echo.Context) error {
 	logger := getLoggerFromContext(ctx)
 	logger.Info().Msg("gen object storage get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
-		Content:    "Generate-Object-Storage",
-		AWSRegions: service.GetRegions("aws"),
-		GCPRegions: service.GetRegions("gcp"),
-		NCPRegions: service.GetRegions("ncp"),
-		OS:         runtime.GOOS,
-		Error:      nil,
+		Content:        "Generate-Object-Storage",
+		AWSRegions:     service.GetRegions("aws"),
+		GCPRegions:     service.GetRegions("gcp"),
+		NCPRegions:     service.GetRegions("ncp"),
+		ALIBABARegions: service.GetRegions("alibaba"),
+		OS:             runtime.GOOS,
+		Error:          nil,
 	})
 }
 
@@ -141,6 +144,18 @@ func GenerateNCPGetHandler(ctx echo.Context) error {
 		OS:      runtime.GOOS,
 		Error:   nil,
 		Regions: service.GetRegions("ncp"),
+	})
+}
+
+func GenerateALIBABAGetHandler(ctx echo.Context) error {
+
+	logger := getLoggerFromContext(ctx)
+	logger.Info().Msg("genALIBABA get page accessed")
+	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
+		Content: "Generate-ALIBABA",
+		OS:      runtime.GOOS,
+		Error:   nil,
+		Regions: service.GetRegions("alibaba"),
 	})
 }
 
@@ -219,12 +234,13 @@ func BackupHandler(ctx echo.Context) error {
 	logger := getLoggerFromContext(ctx)
 	logger.Info().Msg("backup get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
-		Content:    "Backup",
-		AWSRegions: service.GetRegions("aws"),
-		GCPRegions: service.GetRegions("gcp"),
-		NCPRegions: service.GetRegions("ncp"),
-		OS:         runtime.GOOS,
-		Error:      nil,
+		Content:        "Backup",
+		AWSRegions:     service.GetRegions("aws"),
+		GCPRegions:     service.GetRegions("gcp"),
+		NCPRegions:     service.GetRegions("ncp"),
+		ALIBABARegions: service.GetRegions("alibaba"),
+		OS:             runtime.GOOS,
+		Error:          nil,
 	})
 }
 
@@ -235,12 +251,13 @@ func RestoreHandler(ctx echo.Context) error {
 	logger := getLoggerFromContext(ctx)
 	logger.Info().Msg("restore get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
-		Content:    "Restore",
-		AWSRegions: service.GetRegions("aws"),
-		GCPRegions: service.GetRegions("gcp"),
-		NCPRegions: service.GetRegions("ncp"),
-		OS:         runtime.GOOS,
-		Error:      nil,
+		Content:        "Restore",
+		AWSRegions:     service.GetRegions("aws"),
+		GCPRegions:     service.GetRegions("gcp"),
+		NCPRegions:     service.GetRegions("ncp"),
+		ALIBABARegions: service.GetRegions("alibaba"),
+		OS:             runtime.GOOS,
+		Error:          nil,
 	})
 }
 
@@ -251,12 +268,13 @@ func MigrationObjectStorageHandler(ctx echo.Context) error {
 	logger := getLoggerFromContext(ctx)
 	logger.Info().Msg("migration object storage get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
-		Content:    "Migration-Object-Storage",
-		GCPRegions: service.GetRegions("gcp"),
-		AWSRegions: service.GetRegions("aws"),
-		NCPRegions: service.GetRegions("ncp"),
-		OS:         runtime.GOOS,
-		Error:      nil,
+		Content:        "Migration-Object-Storage",
+		GCPRegions:     service.GetRegions("gcp"),
+		AWSRegions:     service.GetRegions("aws"),
+		NCPRegions:     service.GetRegions("ncp"),
+		ALIBABARegions: service.GetRegions("alibaba"),
+		OS:             runtime.GOOS,
+		Error:          nil,
 	})
 }
 

@@ -26,10 +26,11 @@ type BasicPageResponse struct {
 	OS      string  `json:"OS"`
 	TmpPath string  `json:"TmpPath"`
 
-	Regions    []string `json:"Regions"`
-	AWSRegions []string `json:"AWSRegions"`
-	GCPRegions []string `json:"GCPRegions"`
-	NCPRegions []string `json:"NCPRegions"`
+	Regions        []string `json:"Regions"`
+	AWSRegions     []string `json:"AWSRegions"`
+	GCPRegions     []string `json:"GCPRegions"`
+	NCPRegions     []string `json:"NCPRegions"`
+	ALIBABARegions []string `json:"ALIBABARegions"`
 }
 
 type BasicResponse struct {

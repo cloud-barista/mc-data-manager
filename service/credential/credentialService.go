@@ -70,7 +70,7 @@ func (c *CredentialService) CreateCredential(req models.CredentialCreateRequest)
 		return nil, err
 	}
 
-	if slices.Contains([]string{"aws", "ncp", "gcp"}, req.CspType) {
+	if slices.Contains([]string{"aws", "ncp", "gcp", "alibaba"}, req.CspType) {
 		terr := createTumblebugCredential(req)
 		if terr != nil {
 			return nil, terr
@@ -210,6 +210,16 @@ func getCredentialKeyValues(req models.CredentialCreateRequest) (map[string]stri
 			"ProjectID":   gcp.ProjectID,
 			"S3AccessKey": req.S3AccessKey,
 			"S3SecretKey": req.S3SecretKey,
+		}, nil
+	case "alibaba":
+		var alibaba models.AlibabaCredentials
+		if err := json.Unmarshal(req.CredentialJson, &alibaba); err != nil {
+			return nil, fmt.Errorf("invalid alibaba credential json: %w", err)
+		}
+
+		return map[string]string{
+			"ClientId":     alibaba.AccessKey,
+			"ClientSecret": alibaba.SecretKey,
 		}, nil
 	default:
 		return nil, fmt.Errorf("unsupported cspType: %q", req.CspType)

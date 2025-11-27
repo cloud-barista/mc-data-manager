@@ -60,20 +60,17 @@
                                 {{ range $index, $value := .NCPRegions }}
                                 <option value="{{ $value }}">{{ $value }}</option>
                                 {{ end }}
+                            </optgroup>
+                            <optgroup label="ALIBABA regions" data-provider="alibaba" style="display: none;">
+                                {{ range $index, $value := .ALIBABARegions }}
+                                <option value="{{ $value }}">{{ $value }}</option>
+                                {{ end }}
                             </optgroup>                            
                         </select>
                         <label for="targetRegionSelect">Select Region</label>
                     </div>
                 </div>
                 
-                <div class="input-group mb-3 d-none" id="ncp-endpoint-div">
-                    <span class="input-group-text rounded-start"><i class="fa-solid fa-location-dot"></i></span>
-                    <div class="form-floating">
-                        <input type="text" class="form-control rounded-end" id="gen-ncp-endpoint" name="endpoint" value="https://kr.object.ncloudstorage.com" placeholder="Endpoint">
-                        <label for="gen-ncp-endpoint">Endpoint</label>
-                    </div>
-                </div>
-    
                 <div class="input-group">
                     <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
                     <div class="form-floating">
@@ -101,6 +98,7 @@
             <button type="submit" class="btn btn-primary rounded-3 float-end" id="submitBtn">Submit</button>
             <input type="hidden" id="genTarget" value="objectstorage">
             <input type="hidden" id="targetPoint[provider]" value="none">
+            <input type="hidden" id="targetPoint[endpoint]" name="targetPoint[endpoint]" value="">
         </form>
     </div>
 </div>
@@ -111,6 +109,7 @@
         region: document.getElementById("targetRegionSelect"),
         bucket: document.getElementById("targetBucket"),
         provider: document.getElementById("targetPoint[provider]"),
+        endpoint: document.getElementById("targetPoint[endpoint]"),
         service: document.getElementById("targetService")
     };
     const bucketInput = document.getElementById("newBucket");
@@ -126,6 +125,7 @@
             aws: "AWS S3",
             ncp: "Naver Object Storage",
             gcp: "Google Cloud Storage",
+            alibaba: "Alibaba Object Storage",
         };
 
         let serviceName = serviceMap[provider] || "-";
@@ -136,23 +136,7 @@
 
     function updateFormVisibility() {
         const provider = target.provider.value;
-        const ncpDiv = document.getElementById('ncp-endpoint-div')
-        ncpDiv.style.display = 'none';
-
         updateLabel(provider)
-  
-        if(provider === 'ncp') {
-            ncpDiv.style.display = '';
-            ncpDiv.querySelectorAll('input').forEach(i => {
-                i.removeAttribute('disabled');
-                i.setAttribute('required', '');
-            })
-        } else {
-            ncpDiv.querySelectorAll('input').forEach(i => {
-                i.setAttribute('disabled', '');
-                i.removeAttribute('required');
-            })
-        }
     }
   
     updateFormVisibility();
@@ -194,7 +178,7 @@
         target.btn.disabled = true;
         target.btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;';
 
-        fetchBucketList(target.cred.value, target.region.value, target.provider.value)
+        fetchBucketList(target.cred.value, target.region.value, target.provider.value, target.endpoint.value)
             .then(json => {
                 resetBuckets(true)
 
@@ -239,7 +223,7 @@
         }
     }
 
-    function fetchBucketList(credentialId, region, provider) {
+    function fetchBucketList(credentialId, region, provider, endpoint) {
         const url = "/objectstorage/buckets";
         const jsonData = {
             "targetPoint": {
@@ -247,6 +231,11 @@
                 "region": region,
                 "provider": provider
             }
+        }
+        if (provider === "ncp") {
+            jsonData.targetPoint.endpoint = endpoint || "https://kr.object.ncloudstorage.com";
+        } else if (provider === "alibaba" && endpoint) {
+            jsonData.targetPoint.endpoint = endpoint;
         }
         const req = {
             method: 'POST',

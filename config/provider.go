@@ -22,9 +22,11 @@ import (
 
 	"cloud.google.com/go/firestore"
 	"cloud.google.com/go/storage"
+	"github.com/aliyun/alibabacloud-oss-go-sdk-v2/oss"
+	osscred "github.com/aliyun/alibabacloud-oss-go-sdk-v2/oss/credentials"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/credentials"
+	awscred "github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -41,7 +43,7 @@ func validateInputs(username, password, host *string, port *int) error {
 
 func newAWSConfig(accesskey, secretkey, region string) (*aws.Config, error) {
 	cfg, err := config.LoadDefaultConfig(context.TODO(),
-		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accesskey, secretkey, "")),
+		config.WithCredentialsProvider(awscred.NewStaticCredentialsProvider(accesskey, secretkey, "")),
 		config.WithRegion(region),
 		config.WithRetryMaxAttempts(5),
 	)
@@ -68,7 +70,7 @@ func newAWSConfigWithEndpoint(serviceID, accesskey, secretkey, region, endpoint 
 	})
 
 	cfg, err := config.LoadDefaultConfig(context.TODO(),
-		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accesskey, secretkey, "")),
+		config.WithCredentialsProvider(awscred.NewStaticCredentialsProvider(accesskey, secretkey, "")),
 		config.WithRegion(region),
 		config.WithRetryMaxAttempts(5),
 		config.WithEndpointResolver(customResolver),
@@ -155,6 +157,23 @@ func NewGCPClient(credentialsJson string) (*storage.Client, error) {
 	if err != nil {
 		return nil, err
 	}
+	return client, nil
+}
+
+func NewAlibabaClient(endpoint, region, accessKey, secretKey string) (*oss.Client, error) {
+	if endpoint == "" {
+		return nil, errors.New("endpoint is required")
+	}
+	if accessKey == "" || secretKey == "" {
+		return nil, errors.New("accessKey and secretKey are required")
+	}
+	cfg := oss.LoadDefaultConfig().
+		WithEndpoint(endpoint).
+		WithCredentialsProvider(osscred.NewStaticCredentialsProvider(accessKey, secretKey)).
+		WithRegion(region).
+		WithRetryMaxAttempts(5)
+
+	client := oss.NewClient(cfg)
 	return client, nil
 }
 

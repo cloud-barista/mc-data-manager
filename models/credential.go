@@ -79,6 +79,14 @@ func (cr *CredentialCreateRequest) GetCredential() (string, error) {
 
 		b, _ := json.Marshal(gcp)
 		return string(b), nil
+	case "alibaba":
+		var alibaba AlibabaCredentials
+		if err := json.Unmarshal(cr.CredentialJson, &alibaba); err != nil {
+			return "", fmt.Errorf("invalid alibaba credential json: %w", err)
+		}
+
+		b, _ := json.Marshal(alibaba)
+		return string(b), nil
 
 	default:
 		return "", fmt.Errorf("unsupported cspType: %q", cr.CspType)

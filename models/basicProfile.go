@@ -35,9 +35,10 @@ type TumblebugCredentialCreate struct {
 }
 
 type ProfileCredentials struct {
-	AWS AWSCredentials `json:"aws,omitempty"`
-	NCP NCPCredentials `json:"ncp,omitempty"`
-	GCP GCPCredentials `json:"gcp,omitempty"`
+	AWS     AWSCredentials     `json:"aws,omitempty"`
+	NCP     NCPCredentials     `json:"ncp,omitempty"`
+	GCP     GCPCredentials     `json:"gcp,omitempty"`
+	ALIBABA AlibabaCredentials `json:"alibaba,omitempty"`
 }
 
 type AWSCredentials struct {
@@ -62,6 +63,11 @@ type GCPCredentials struct {
 	AuthProviderCertURL string `json:"auth_provider_x509_cert_url" form:"auth_provider_x509_cert_url"`
 	ClientCertURL       string `json:"client_x509_cert_url" form:"client_x509_cert_url"`
 	UniverseDomain      string `json:"universe_domain" form:"universe_domain"`
+}
+
+type AlibabaCredentials struct {
+	AccessKey string `json:"accessKey" form:"accessKey"`
+	SecretKey string `json:"secretKey" form:"secretKey"`
 }
 
 type GCPCredentalCreateParams struct {

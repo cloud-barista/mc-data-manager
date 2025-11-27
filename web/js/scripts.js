@@ -118,6 +118,57 @@ function getInputValue(id) {
     return value !== "" ? value : null;
 }
 
+const ALIBABA_ENDPOINTS = Object.freeze({
+    "oss-cn-hangzhou": "https://oss-cn-hangzhou.aliyuncs.com",
+    "oss-cn-beijing": "https://oss-cn-beijing.aliyuncs.com",
+    "oss-cn-shanghai": "https://oss-cn-shanghai.aliyuncs.com",
+    "oss-cn-shenzhen": "https://oss-cn-shenzhen.aliyuncs.com",
+    "oss-ap-northeast-1": "https://oss-ap-northeast-1.aliyuncs.com",
+    "oss-ap-southeast-1": "https://oss-ap-southeast-1.aliyuncs.com",
+    "oss-ap-southeast-2": "https://oss-ap-southeast-2.aliyuncs.com",
+    "oss-ap-southeast-3": "https://oss-ap-southeast-3.aliyuncs.com",
+    "oss-ap-south-1": "https://oss-ap-south-1.aliyuncs.com",
+    "oss-eu-central-1": "https://oss-eu-central-1.aliyuncs.com",
+    "oss-eu-west-1": "https://oss-eu-west-1.aliyuncs.com",
+    "oss-us-east-1": "https://oss-us-east-1.aliyuncs.com",
+    "oss-us-west-1": "https://oss-us-west-1.aliyuncs.com",
+});
+
+function resolveAlibabaEndpoint(region) {
+    if (!region) {
+        return "";
+    }
+    const normalized = region.trim().toLowerCase();
+    return ALIBABA_ENDPOINTS[normalized] || `https://oss-${normalized}.aliyuncs.com`;
+}
+
+function emitAlibabaRegionEvent(prefix, provider, region) {
+    const normalized = region && region !== "none" ? region : null;
+    const detail = {
+        prefix,
+        provider,
+        region: normalized,
+    };
+    document.dispatchEvent(new CustomEvent("alibabaRegionChange", { detail }));
+}
+
+document.addEventListener("alibabaRegionChange", (event) => {
+    const { prefix, provider, region } = event.detail;
+    const hint = document.getElementById(`${prefix}AlibabaRegionHint`);
+    const endpointInput = document.getElementById(`${prefix}Point[endpoint]`);
+
+    if (!endpointInput) {
+        return;
+    }
+
+    if (provider === "alibaba") {
+        endpointInput.value = region ? resolveAlibabaEndpoint(region) : "";
+    } else {
+        endpointInput.value = "";
+    }
+    endpointInput.dispatchEvent(new Event("change"));
+});
+
 function generateFormSubmit() {
     const form = document.getElementById('genForm');
 
@@ -162,8 +213,18 @@ function generateFormSubmit() {
         requestBody.targetPoint.bucket = jsonData?.["targetPoint[bucket]"]?? null
         delete requestBody.targetPoint["targetPoint[bucket]"]
         delete requestBody["targetPoint[bucket]"]
+        const endpointRaw = jsonData?.["targetPoint[endpoint]"];
+        if (endpointRaw !== undefined) {
+            requestBody.targetPoint.endpoint = endpointRaw || null;
+            delete requestBody.targetPoint["targetPoint[endpoint]"];
+            delete requestBody["targetPoint[endpoint]"];
+        }
         
-        if (requestBody.targetPoint.provider != "ncp") {
+        if (requestBody.targetPoint.provider === "ncp" && !requestBody.targetPoint.endpoint) {
+            requestBody.targetPoint.endpoint = "https://kr.object.ncloudstorage.com"
+        } else if (requestBody.targetPoint.provider === "alibaba" && !requestBody.targetPoint.endpoint) {
+            requestBody.targetPoint.endpoint = resolveAlibabaEndpoint(requestBody.targetPoint.region)
+        } else if (!["ncp", "alibaba"].includes(requestBody.targetPoint.provider)) {
             delete requestBody.targetPoint.endpoint
         }
 
@@ -211,7 +272,7 @@ function setSelectBox() {
         const selected = $(this).val();
         let formHtml = "";
 
-        if (selected === "aws" || selected === "ncp") {
+        if (selected === "aws" || selected === "ncp" || selected === "alibaba") {
           formHtml = `
             <div class="input-group mb-3">
                 <span class="input-group-text rounded-start"><i class="fa-solid fa-key"></i></span>
@@ -525,12 +586,16 @@ function migrationFormSubmit() {
 
         let url = "/migrate/" + service;
 
-        if (jsonData.targetPoint.provider == "ncp" || jsonData.targetPoint.endpoint == "") {
-            jsonData.targetPoint.endpoint = "https://kr.object.ncloudstorage.com"
-        }
-        if (jsonData.sourcePoint.provider == "ncp" || jsonData.sourcePoint.endpoint == "") {
-            jsonData.sourcePoint.endpoint = "https://kr.object.ncloudstorage.com"
-        }
+        const ensureEndpoint = (point) => {
+            if (!point) return;
+            if (point.provider == "ncp" && !point.endpoint) {
+                point.endpoint = "https://kr.object.ncloudstorage.com";
+            } else if (point.provider == "alibaba" && !point.endpoint) {
+                point.endpoint = resolveAlibabaEndpoint(point.region);
+            }
+        };
+        ensureEndpoint(jsonData.targetPoint);
+        ensureEndpoint(jsonData.sourcePoint);
 
         console.log('jsonData: ', jsonData);
 
@@ -659,8 +724,12 @@ function backUpFormSubmit() {
         jsonData.sourcePoint.provider = provider
         // console.log(jsonData)
 
-        if (service == "objectstorage" && provider == "ncp") {
-            jsonData.sourcePoint.endpoint = "https://kr.object.ncloudstorage.com"
+        if (service == "objectstorage") {
+            if (provider == "ncp" && !jsonData.sourcePoint.endpoint) {
+                jsonData.sourcePoint.endpoint = "https://kr.object.ncloudstorage.com"
+            } else if (provider == "alibaba" && !jsonData.sourcePoint.endpoint) {
+                jsonData.sourcePoint.endpoint = resolveAlibabaEndpoint(jsonData.sourcePoint.region)
+            }
         }
 
         let req = {
@@ -723,8 +792,12 @@ function RestoreFormSubmit() {
         jsonData.targetPoint.credentialId = parseInt(jsonData.targetPoint.credentialId);
         jsonData.targetPoint.provider = provider       
 
-        if(service == "objectstorage" && provider == "ncp") {
-            jsonData.targetPoint.endpoint = "https://kr.object.ncloudstorage.com"
+        if(service == "objectstorage") {
+            if (provider == "ncp" && !jsonData.targetPoint.endpoint) {
+                jsonData.targetPoint.endpoint = "https://kr.object.ncloudstorage.com"
+            } else if (provider == "alibaba" && !jsonData.targetPoint.endpoint) {
+                jsonData.targetPoint.endpoint = resolveAlibabaEndpoint(jsonData.targetPoint.region)
+            }
         }
 
         let req = {
@@ -969,6 +1042,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const initProviderHandlers = (prefix) => {
         const credSelect = document.getElementById(prefix + "CredentialSelect");
         const providerInput = document.getElementById(prefix + "Point[provider]");
+        const regionSelect = document.getElementById(prefix + "RegionSelect");
         if (!credSelect || !providerInput) return;
 
         // 초기 렌더링 시 region 갱신
@@ -976,6 +1050,7 @@ document.addEventListener("DOMContentLoaded", () => {
         providerInput.value = initialProvider;
         updateRegionsByProvider(prefix, initialProvider);
         updateLabelByProvider(prefix, initialProvider);
+        emitAlibabaRegionEvent(prefix, initialProvider, regionSelect?.value || null);
 
         // 이벤트 핸들러 등록
         credSelect.addEventListener("change", (e) => {
@@ -984,7 +1059,14 @@ document.addEventListener("DOMContentLoaded", () => {
             providerInput.dispatchEvent(new Event('change'));
             updateRegionsByProvider(prefix, provider);
             updateLabelByProvider(prefix, provider);
+            emitAlibabaRegionEvent(prefix, provider, regionSelect?.value || null);
         });
+
+        if (regionSelect) {
+            regionSelect.addEventListener("change", () => {
+                emitAlibabaRegionEvent(prefix, providerInput.value, regionSelect.value);
+            });
+        }
     };
 
     // source/target 공통 처리
@@ -1011,6 +1093,7 @@ function getServiceName(service, provider) {
         aws: "AWS S3",
         ncp: "Naver Object Storage",
         gcp: "Google Cloud Storage",
+        alibaba: "Alibaba Object Storage",
       },
       rdbms: {
         default: "MySQL",

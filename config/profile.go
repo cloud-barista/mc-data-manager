@@ -191,6 +191,8 @@ func (fpm *FileProfileManager) LoadCredentialsByProfile(profileName string, prov
 		return credentials.NCP, nil
 	case "gcp":
 		return credentials.GCP, nil
+	case "alibaba":
+		return credentials.ALIBABA, nil
 	default:
 		return nil, errors.New("unsupported provider")
 	}
@@ -258,6 +260,13 @@ func (cred *CredentialManager) LoadCredentialsById(credentialId uint64) (interfa
 		var out models.GCPCredentials
 		if err := json.Unmarshal([]byte(decryptedJson), &out); err != nil {
 			return nil, fmt.Errorf("failed to parse gcp credential json: %w", err)
+		}
+		return out, nil
+
+	case "alibaba":
+		var out models.AlibabaCredentials
+		if err := json.Unmarshal([]byte(decryptedJson), &out); err != nil {
+			return nil, fmt.Errorf("failed to parse alibaba credential json: %w", err)
 		}
 		return out, nil
 
