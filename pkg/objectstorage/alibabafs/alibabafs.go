@@ -18,6 +18,7 @@ package alibabafs
 import (
 	"context"
 	"encoding/json"
+	"encoding/xml"
 	"errors"
 	"fmt"
 	"io"
@@ -135,8 +136,29 @@ func (f *AlibabaFS) DeleteBucket() error {
 
 // deleteObjectBatch deletes objects in manageable chunks.
 func (f *AlibabaFS) deleteObjectBatch(keys []string) error {
-	// TODO: marshal keys into the request body and invoke the OpenAPI client.
-	return ErrNotImplemented
+	path := "/tumblebug/resources/objectStorage/" + f.bucketName + "?delete=true"
+	method := http.MethodPost
+	connName := fmt.Sprintf("%s-%s", f.provider, f.region)
+
+	deleteReq := models.DeleteRequest{
+		XMLNS: "http://s3.amazonaws.com/doc/2006-03-01/",
+	}
+	for _, key := range keys {
+		deleteReq.Objects = append(deleteReq.Objects, models.S3Object{Key: key})
+	}
+	// 보기 좋게 들여쓰기된 XML 생성
+	output, err := xml.MarshalIndent(deleteReq, "", "    ")
+	if err != nil {
+		return err
+	}
+
+	// XML 헤더 추가
+	_, rerr := utils.RequestTumblebug(path, method, connName, []byte(xml.Header+string(output)))
+	if rerr != nil {
+		return err
+	}
+
+	return nil
 }
 
 // ObjectList yields the objects contained within the configured bucket.
@@ -227,16 +249,24 @@ func (f *AlibabaFS) BucketList() ([]models.Bucket, error) {
 
 // Open streams a single object from Alibaba Cloud OSS.
 func (f *AlibabaFS) Open(name string) (io.ReadCloser, error) {
-	// TODO: wire Alibaba download stream into an io.Reader.
-	return nil, ErrNotImplemented
+	ctx := f.ctx
+	if ctx == nil {
+		ctx = context.Background()
+	}
+
+	result, err := f.client.GetObject(ctx, &oss.GetObjectRequest{
+		Bucket: oss.Ptr(f.bucketName),
+		Key:    oss.Ptr(name),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return result.Body, nil
 }
 
 // Create opens a writer that uploads an object to the configured bucket.
 func (f *AlibabaFS) Create(name string) (io.WriteCloser, error) {
-	if f.client == nil {
-		return nil, fmt.Errorf("alibaba oss client is not configured")
-	}
-
 	ctx := f.ctx
 	if ctx == nil {
 		ctx = context.Background()

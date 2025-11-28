@@ -50,6 +50,7 @@ func GenerateRoutes(g *echo.Group) {
 	// g.POST("/firestore", controllers.GenerateFirestorePostHandler)
 
 	g.GET("/mongodb", controllers.GenerateMongoDBGetHandler)
+	//g.GET("/tablestorage", controllers.GenerateTableStorageGetHandler)
 	g.GET("/credential", controllers.GenerateCredentialGetHandler)
 	// g.POST("/mongodb", controllers.GenerateMongoDBPostHandler)
 

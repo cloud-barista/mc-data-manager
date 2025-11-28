@@ -194,16 +194,15 @@ func GetOS(params *models.ProviderConfig) (*osc.OSController, error) {
 			return nil, errors.New("credential load failed")
 		}
 
-		log.Info().Str("Endpoint", params.Endpoint).Msg("Alibaba Credentials")
 		log.Info().Str("Region", params.Region).Msg("Alibaba Region")
 		log.Info().Str("AccessKey", alibabac.AccessKey).Msg("Alibaba Credentials")
 		log.Info().Str("SecretKey", alibabac.SecretKey).Msg("Alibaba Credentials")
 		log.Info().Str("BucketName", params.Bucket).Msg("Alibaba BucketName")
-		ossc, err := config.NewAlibabaClient(params.Endpoint, params.Region, alibabac.AccessKey, alibabac.SecretKey)
+		ossc, err := config.NewAlibabaClient(params.Region, alibabac.AccessKey, alibabac.SecretKey)
 		if err != nil {
 			return nil, fmt.Errorf("NewAlibabaClient error : %v", err)
 		}
-		OSC, err = osc.New(alibabafs.New(models.ALIBABA, ossc, params.Endpoint, params.Bucket, params.Region))
+		OSC, err = osc.New(alibabafs.New(models.ALIBABA, ossc, "https://oss-"+params.Region+".aliyuncs.com", params.Bucket, params.Region))
 		if err != nil {
 			return nil, fmt.Errorf("osc error : %v", err)
 		}

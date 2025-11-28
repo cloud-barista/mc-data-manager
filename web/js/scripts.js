@@ -139,35 +139,8 @@ function resolveAlibabaEndpoint(region) {
         return "";
     }
     const normalized = region.trim().toLowerCase();
-    return ALIBABA_ENDPOINTS[normalized] || `https://oss-${normalized}.aliyuncs.com`;
+    return `https://oss-${normalized}.aliyuncs.com`;
 }
-
-function emitAlibabaRegionEvent(prefix, provider, region) {
-    const normalized = region && region !== "none" ? region : null;
-    const detail = {
-        prefix,
-        provider,
-        region: normalized,
-    };
-    document.dispatchEvent(new CustomEvent("alibabaRegionChange", { detail }));
-}
-
-document.addEventListener("alibabaRegionChange", (event) => {
-    const { prefix, provider, region } = event.detail;
-    const hint = document.getElementById(`${prefix}AlibabaRegionHint`);
-    const endpointInput = document.getElementById(`${prefix}Point[endpoint]`);
-
-    if (!endpointInput) {
-        return;
-    }
-
-    if (provider === "alibaba") {
-        endpointInput.value = region ? resolveAlibabaEndpoint(region) : "";
-    } else {
-        endpointInput.value = "";
-    }
-    endpointInput.dispatchEvent(new Event("change"));
-});
 
 function generateFormSubmit() {
     const form = document.getElementById('genForm');
@@ -1042,7 +1015,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const initProviderHandlers = (prefix) => {
         const credSelect = document.getElementById(prefix + "CredentialSelect");
         const providerInput = document.getElementById(prefix + "Point[provider]");
-        const regionSelect = document.getElementById(prefix + "RegionSelect");
+        //const regionSelect = document.getElementById(prefix + "RegionSelect");
         if (!credSelect || !providerInput) return;
 
         // 초기 렌더링 시 region 갱신
@@ -1050,7 +1023,6 @@ document.addEventListener("DOMContentLoaded", () => {
         providerInput.value = initialProvider;
         updateRegionsByProvider(prefix, initialProvider);
         updateLabelByProvider(prefix, initialProvider);
-        emitAlibabaRegionEvent(prefix, initialProvider, regionSelect?.value || null);
 
         // 이벤트 핸들러 등록
         credSelect.addEventListener("change", (e) => {
@@ -1059,14 +1031,7 @@ document.addEventListener("DOMContentLoaded", () => {
             providerInput.dispatchEvent(new Event('change'));
             updateRegionsByProvider(prefix, provider);
             updateLabelByProvider(prefix, provider);
-            emitAlibabaRegionEvent(prefix, provider, regionSelect?.value || null);
         });
-
-        if (regionSelect) {
-            regionSelect.addEventListener("change", () => {
-                emitAlibabaRegionEvent(prefix, providerInput.value, regionSelect.value);
-            });
-        }
     };
 
     // source/target 공통 처리
