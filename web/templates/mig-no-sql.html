@@ -63,7 +63,12 @@
                                 {{ range $index, $value := .NCPRegions }}
                                     <option value="{{ $value }}">{{ $value }}</option>
                                 {{ end }}
-                            </optgroup>                            
+                            </optgroup>
+                            <optgroup label="ALIBABA regions" data-provider="alibaba" style="display: none;">
+                                {{ range $index, $value := .ALIBABARegions }}
+                                    <option value="{{ $value }}">{{ $value }}</option>
+                                {{ end }}
+                            </optgroup>
                         </select>
                         <label for="sourceRegionSelect">Select Region</label>
                     </div>
@@ -149,7 +154,12 @@
                                 {{ range $index, $value := .NCPRegions }}
                                     <option value="{{ $value }}">{{ $value }}</option>
                                 {{ end }}
-                            </optgroup>                            
+                            </optgroup>
+                            <optgroup label="ALIBABA regions" data-provider="alibaba" style="display: none;">
+                                {{ range $index, $value := .ALIBABARegions }}
+                                    <option value="{{ $value }}">{{ $value }}</option>
+                                {{ end }}
+                            </optgroup>
                         </select>
                         <label for="targetRegionSelect">Select Region</label>
                     </div>

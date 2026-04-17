@@ -102,6 +102,25 @@ func NewNCPMongoDBClient(username, password, host string, port int) (*mongo.Clie
 	return mongo.Connect(context.Background(), newNCPMongoDBConfig(username, password, host, port))
 }
 
+func newAlibabaMongoDBConfig(username, password, host string, port int) *options.ClientOptions {
+	dc := true
+	return &options.ClientOptions{
+		Auth: &options.Credential{
+			Username: username,
+			Password: password,
+		},
+		Direct: &dc,
+		Hosts:  []string{fmt.Sprintf("%s:%d", host, port)},
+	}
+}
+
+func NewAlibabaMongoDBClient(username, password, host string, port int) (*mongo.Client, error) {
+	if err := validateInputs(&username, &password, &host, &port); err != nil {
+		return nil, err
+	}
+	return mongo.Connect(context.Background(), newAlibabaMongoDBConfig(username, password, host, port))
+}
+
 func NewS3Client(accesskey, secretkey, region string) (*s3.Client, error) {
 	cfg, err := newAWSConfig(accesskey, secretkey, region)
 	if err != nil {

@@ -121,7 +121,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-section mt-3" id="ncp-nrdbms" style="display:none;">
+                <div class="form-section mt-3" id="mongo-nrdbms" style="display:none;">
                     <div class="input-group mb-3">
                         <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
                         <div class="form-floating">
@@ -228,11 +228,13 @@ const source = {
                 aws: "AWS DynamoDB",
                 ncp: "Naver MongoDB",
                 gcp: "Google Firestore",
+                alibaba: "Alibaba MongoDB",
             },
             objectstorage: {
                 aws: "AWS S3",
                 ncp: "Naver Object Storage",
                 gcp: "Google Cloud Storage",
+                alibaba: "Alibaba Cloud OSS",
             },
             rdbms: {
                 default: "MySQL",
@@ -252,6 +254,10 @@ const source = {
     function updateFormVisibility() {
         const service = source.service.value;
         let idToShow = source.provider.value + '-' + service;
+
+        if (service === 'nrdbms' && (source.provider.value === 'ncp' || source.provider.value === 'alibaba')) {
+            idToShow = 'mongo-nrdbms';
+        }
 
         updateLabel(source.provider.value, service)
 
@@ -322,6 +328,16 @@ const source = {
                 });
             }
         }
+
+        // disable filter inputs for non-objectstorage services
+        const filterInputs = document.querySelectorAll('#filterContent input, #filterContent select, #filterContent textarea');
+        filterInputs.forEach(function(input) {
+            if (service === 'objectstorage') {
+                input.removeAttribute('disabled');
+            } else {
+                input.setAttribute('disabled', '');
+            }
+        });
     }
 
     source.service.addEventListener("change", () => {

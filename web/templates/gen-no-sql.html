@@ -60,7 +60,12 @@
                 {{ range $index, $value := .NCPRegions }}
                 <option value="{{ $value }}">{{ $value }}</option>
                 {{ end }}
-              </optgroup>                            
+              </optgroup>
+              <optgroup label="ALIBABA regions" data-provider="alibaba" style="display: none;">
+                {{ range $index, $value := .ALIBABARegions }}
+                <option value="{{ $value }}">{{ $value }}</option>
+                {{ end }}
+              </optgroup>
             </select>
             <label for="targetRegionSelect">Select Region</label>
           </div>
@@ -147,6 +152,7 @@
       aws: "AWS DynamoDB",
       ncp: "Naver MongoDB",
       gcp: "Google Firestore",
+      alibaba: "Alibaba MongoDB",
     };
 
     let serviceName = serviceMap[provider] || "-";
@@ -170,7 +176,7 @@
         i.removeAttribute('disabled');
         i.setAttribute('required', '');
       })
-    } else if(provider === 'ncp') {
+    } else if(provider === 'ncp' || provider === 'alibaba') {
       ncpDiv.style.display = '';
       ncpDiv.querySelectorAll('input').forEach(i => {
         i.removeAttribute('disabled');

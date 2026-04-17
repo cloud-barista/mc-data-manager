@@ -705,12 +705,14 @@ function backUpFormSubmit() {
             alert("credential not selected");
             return
         }
-        if(jsonData.sourcePoint.bucket == "none" || jsonData.sourcePoint.bucket == "-" || jsonData.sourcePoint.bucket == "") {
+        if(service == "objectstorage" && (jsonData.sourcePoint.bucket == "none" || jsonData.sourcePoint.bucket == "-" || jsonData.sourcePoint.bucket == "")) {
             alert("please select bucket");
             return
         }        
         if(service == "objectstorage") {
             applyFilter(jsonData)
+        } else {
+            delete jsonData.sourceFilter;
         }
         // console.log(provider)
 
@@ -1022,7 +1024,7 @@ function toggleDivs(prefix, provider, service) {
     const mongoDiv = document.getElementById(prefix + "MongoDiv");
     if (!regionDiv || !mongoDiv) return;
 
-    const showMongo = service === "nrdbms" && provider === "ncp";
+    const showMongo = service === "nrdbms" && (provider === "ncp" || provider === "alibaba");
 
     regionDiv.style.display = showMongo ? "none" : "";
     mongoDiv.style.display = showMongo ? "" : "none";
@@ -1088,6 +1090,7 @@ function getServiceName(service, provider) {
         aws: "AWS DynamoDB",
         ncp: "Naver MongoDB",
         gcp: "Google Firestore",
+        alibaba: "Alibaba MongoDB",
       },
       objectstorage: {
         aws: "AWS S3",

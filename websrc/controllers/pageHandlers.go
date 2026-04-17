@@ -175,12 +175,13 @@ func GenerateNoSQLGetHandler(ctx echo.Context) error {
 	logger := getLoggerFromContext(ctx)
 	logger.Info().Msg("gen nrdbms get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
-		Content:    "Generate-No-SQL",
-		AWSRegions: service.GetRegions("aws"),
-		GCPRegions: service.GetRegions("gcp"),
-		NCPRegions: service.GetRegions("ncp"),
-		OS:         runtime.GOOS,
-		Error:      nil,
+		Content:        "Generate-No-SQL",
+		AWSRegions:     service.GetRegions("aws"),
+		GCPRegions:     service.GetRegions("gcp"),
+		NCPRegions:     service.GetRegions("ncp"),
+		ALIBABARegions: service.GetRegions("alibaba"),
+		OS:             runtime.GOOS,
+		Error:          nil,
 	})
 }
 
@@ -538,12 +539,13 @@ func MigrationNoSQLHandler(ctx echo.Context) error {
 	logger := getLoggerFromContext(ctx)
 	logger.Info().Msg("migration no-sql get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
-		Content:    "Migration-No-SQL",
-		GCPRegions: service.GetRegions("gcp"),
-		AWSRegions: service.GetRegions("aws"),
-		NCPRegions: service.GetRegions("ncp"),
-		OS:         runtime.GOOS,
-		Error:      nil,
+		Content:        "Migration-No-SQL",
+		GCPRegions:     service.GetRegions("gcp"),
+		AWSRegions:     service.GetRegions("aws"),
+		NCPRegions:     service.GetRegions("ncp"),
+		ALIBABARegions: service.GetRegions("alibaba"),
+		OS:             runtime.GOOS,
+		Error:          nil,
 	})
 }
 

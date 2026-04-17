@@ -145,7 +145,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-section mt-3" id="ncp-nrdbms" style="display:none;">
+                <div class="form-section mt-3" id="mongo-nrdbms" style="display:none;">
                     <div class="input-group mb-3">
                         <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
                         <div class="form-floating">
@@ -240,6 +240,7 @@ const target = {
                 aws: "AWS DynamoDB",
                 ncp: "Naver MongoDB",
                 gcp: "Google Firestore",
+                alibaba: "Alibaba MongoDB",
             },
             objectstorage: {
                 aws: "AWS S3",
@@ -266,6 +267,10 @@ const target = {
         var provider = target.provider.value;
         var service = target.service.value;
         var idToShow = provider + '-' + service;
+
+        if (service === 'nrdbms' && (provider === 'ncp' || provider === 'alibaba')) {
+            idToShow = 'mongo-nrdbms';
+        }
 
         updateLabel(provider, service)
         
