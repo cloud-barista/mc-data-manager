@@ -67,25 +67,23 @@ func (w *ossWriter) Close() error {
 
 // CreateBucket will provision a bucket if it is not already present.
 func (f *AlibabaFS) CreateBucket() error {
-	path := "/tumblebug/resources/objectStorage/" + f.bucketName
-	method := http.MethodHead
+	nsId := utils.GetNsId()
 	connName := fmt.Sprintf("%s-%s", f.provider, f.region)
 
-	_, err := utils.RequestTumblebug(path, method, connName, nil)
-	if err != nil {
-		path = "/tumblebug/resources/objectStorage/" + f.bucketName
-		method = http.MethodPut
-
-		_, err := utils.RequestTumblebug(path, method, connName, nil)
-		if err != nil {
-			fmt.Println("create error: ", err.Error())
-			return err
-		}
-
+	headPath := "/tumblebug/ns/" + nsId + "/resources/objectStorage/" + f.bucketName
+	_, err := utils.RequestTumblebug(headPath, http.MethodHead, connName, nil)
+	if err == nil {
 		return nil
 	}
+
+	createBody := []byte(fmt.Sprintf(`{"bucketName":"%s","connectionName":"%s"}`, f.bucketName, connName))
+	createPath := "/tumblebug/ns/" + nsId + "/resources/objectStorage"
+	_, err = utils.RequestTumblebug(createPath, http.MethodPut, connName, createBody)
+	if err != nil {
+		fmt.Println("create error: ", err.Error())
+		return err
+	}
 	return nil
-	// return err
 }
 
 // DeleteBucket removes all objects in a bucket and deletes the bucket itself.
@@ -122,7 +120,8 @@ func (f *AlibabaFS) DeleteBucket() error {
 	}
 
 	// Delete the bucket
-	path := "/tumblebug/resources/objectStorage/" + f.bucketName
+	nsId := utils.GetNsId()
+	path := "/tumblebug/ns/" + nsId + "/resources/objectStorage/" + f.bucketName
 	method := http.MethodDelete
 	connName := fmt.Sprintf("%s-%s", f.provider, f.region)
 
@@ -136,7 +135,8 @@ func (f *AlibabaFS) DeleteBucket() error {
 
 // deleteObjectBatch deletes objects in manageable chunks.
 func (f *AlibabaFS) deleteObjectBatch(keys []string) error {
-	path := "/tumblebug/resources/objectStorage/" + f.bucketName + "?delete=true"
+	nsId := utils.GetNsId()
+	path := "/tumblebug/ns/" + nsId + "/resources/objectStorage/" + f.bucketName + "?delete=true"
 	method := http.MethodPost
 	connName := fmt.Sprintf("%s-%s", f.provider, f.region)
 
@@ -177,7 +177,8 @@ func (f *AlibabaFS) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*models
 	// 	query = &storage.Query{Prefix: pre}
 	// }
 
-	path := "/tumblebug/resources/objectStorage/" + f.bucketName
+	nsId := utils.GetNsId()
+	path := "/tumblebug/ns/" + nsId + "/resources/objectStorage/" + f.bucketName
 	method := http.MethodGet
 	connName := fmt.Sprintf("%s-%s", f.provider, f.region)
 
@@ -186,7 +187,7 @@ func (f *AlibabaFS) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*models
 		return nil, err
 	}
 
-	var resp models.ListBucketResult
+	var resp models.ObjectStorage
 	if err := json.Unmarshal(result, &resp); err != nil {
 		fmt.Println("error: ", err.Error())
 		return []*models.Object{}, fmt.Errorf("failed to get objects: %w", err)
@@ -223,7 +224,8 @@ func (f *AlibabaFS) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*models
 
 // BucketList returns all buckets that are available for the configured account.
 func (f *AlibabaFS) BucketList() ([]models.Bucket, error) {
-	path := "/tumblebug/resources/objectStorage"
+	nsId := utils.GetNsId()
+	path := "/tumblebug/ns/" + nsId + "/resources/objectStorage"
 	method := http.MethodGet
 	connName := fmt.Sprintf("%s-%s", f.provider, f.region)
 
@@ -233,18 +235,19 @@ func (f *AlibabaFS) BucketList() ([]models.Bucket, error) {
 	}
 
 	// Parse the response to extract public key and token ID
-	var res models.ListAllMyBucketsResult
+	var res models.ObjectStorageListResponse
 	if err := json.Unmarshal(body, &res); err != nil {
 		fmt.Println("error: ", err.Error())
 		return []models.Bucket{}, fmt.Errorf("failed to get buckets: %w", err)
 	}
 
-	// 버킷이 비어 있으면 빈 리스트 반환
-	if res.Buckets.Bucket == nil {
-		return []models.Bucket{}, nil
+	buckets := make([]models.Bucket, 0, len(res.ObjectStorage))
+	for _, os := range res.ObjectStorage {
+		buckets = append(buckets, models.Bucket{
+			Name: os.Name,
+		})
 	}
-
-	return res.Buckets.Bucket, nil
+	return buckets, nil
 }
 
 // Open streams a single object from Alibaba Cloud OSS.

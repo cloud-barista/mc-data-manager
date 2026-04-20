@@ -317,8 +317,6 @@
         }
         if (provider === "ncp") {
             jsonData.targetPoint.endpoint = endpoint || "https://kr.object.ncloudstorage.com";
-        } else if (provider === "alibaba" && endpoint) {
-            jsonData.targetPoint.endpoint = endpoint;
         }
         const req = {
             method: 'POST',
