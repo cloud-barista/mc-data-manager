@@ -31,6 +31,9 @@ type BasicPageResponse struct {
 	GCPRegions     []string `json:"GCPRegions"`
 	NCPRegions     []string `json:"NCPRegions"`
 	ALIBABARegions []string `json:"ALIBABARegions"`
+	IBMRegions     []string `json:"IBMRegions"`
+	KTRegions      []string `json:"KTRegions"`
+	TencentRegions []string `json:"TencentRegions"`
 }
 
 type BasicResponse struct {

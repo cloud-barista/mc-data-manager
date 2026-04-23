@@ -47,6 +47,9 @@ func DashBoardHandler(ctx echo.Context) error {
 		GCPRegions:     service.GetRegions("gcp"),
 		NCPRegions:     service.GetRegions("ncp"),
 		ALIBABARegions: service.GetRegions("alibaba"),
+		IBMRegions:     service.GetRegions("ibm"),
+		KTRegions:      service.GetRegions("kt"),
+		TencentRegions: service.GetRegions("tencent"),
 		OS:             runtime.GOOS,
 		Error:          nil,
 	})
@@ -65,6 +68,9 @@ func TaskRegisterHandler(ctx echo.Context) error {
 		GCPRegions:     service.GetRegions("gcp"),
 		NCPRegions:     service.GetRegions("ncp"),
 		ALIBABARegions: service.GetRegions("alibaba"),
+		IBMRegions:     service.GetRegions("ibm"),
+		KTRegions:      service.GetRegions("kt"),
+		TencentRegions: service.GetRegions("tencent"),
 		OS:             runtime.GOOS,
 		Error:          nil,
 	})
@@ -107,6 +113,9 @@ func GenerateObjectStorageGetHandler(ctx echo.Context) error {
 		GCPRegions:     service.GetRegions("gcp"),
 		NCPRegions:     service.GetRegions("ncp"),
 		ALIBABARegions: service.GetRegions("alibaba"),
+		IBMRegions:     service.GetRegions("ibm"),
+		KTRegions:      service.GetRegions("kt"),
+		TencentRegions: service.GetRegions("tencent"),
 		OS:             runtime.GOOS,
 		Error:          nil,
 	})
@@ -239,6 +248,9 @@ func BackupHandler(ctx echo.Context) error {
 		GCPRegions:     service.GetRegions("gcp"),
 		NCPRegions:     service.GetRegions("ncp"),
 		ALIBABARegions: service.GetRegions("alibaba"),
+		IBMRegions:     service.GetRegions("ibm"),
+		KTRegions:      service.GetRegions("kt"),
+		TencentRegions: service.GetRegions("tencent"),
 		OS:             runtime.GOOS,
 		Error:          nil,
 	})
@@ -256,6 +268,9 @@ func RestoreHandler(ctx echo.Context) error {
 		GCPRegions:     service.GetRegions("gcp"),
 		NCPRegions:     service.GetRegions("ncp"),
 		ALIBABARegions: service.GetRegions("alibaba"),
+		IBMRegions:     service.GetRegions("ibm"),
+		KTRegions:      service.GetRegions("kt"),
+		TencentRegions: service.GetRegions("tencent"),
 		OS:             runtime.GOOS,
 		Error:          nil,
 	})
@@ -269,10 +284,13 @@ func MigrationObjectStorageHandler(ctx echo.Context) error {
 	logger.Info().Msg("migration object storage get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
 		Content:        "Migration-Object-Storage",
-		GCPRegions:     service.GetRegions("gcp"),
 		AWSRegions:     service.GetRegions("aws"),
+		GCPRegions:     service.GetRegions("gcp"),
 		NCPRegions:     service.GetRegions("ncp"),
 		ALIBABARegions: service.GetRegions("alibaba"),
+		IBMRegions:     service.GetRegions("ibm"),
+		KTRegions:      service.GetRegions("kt"),
+		TencentRegions: service.GetRegions("tencent"),
 		OS:             runtime.GOOS,
 		Error:          nil,
 	})

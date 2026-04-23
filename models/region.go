@@ -40,3 +40,8 @@ type Location struct {
 	Latitude  float64 `json:"latitude"`
 	Longitude float64 `json:"longitude"`
 }
+
+// ProviderRegionList is the response from /tumblebug/provider/:providerName/region
+type ProviderRegionList struct {
+	Regions []RegionDetail `json:"regions"`
+}
