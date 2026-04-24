@@ -88,6 +88,42 @@ func (cr *CredentialCreateRequest) GetCredential() (string, error) {
 		b, _ := json.Marshal(alibaba)
 		return string(b), nil
 
+	case "ibm":
+		var ibm IBMCredentials
+		if err := json.Unmarshal(cr.CredentialJson, &ibm); err != nil {
+			return "", fmt.Errorf("invalid ibm credential json: %w", err)
+		}
+
+		b, _ := json.Marshal(ibm)
+		return string(b), nil
+
+	case "kt":
+		var kt KTCredentials
+		if err := json.Unmarshal(cr.CredentialJson, &kt); err != nil {
+			return "", fmt.Errorf("invalid kt credential json: %w", err)
+		}
+
+		out := map[string]string{
+			"identityEndpoint": KTIdentityEndpoint,
+			"username":         kt.Username,
+			"password":         kt.Password,
+			"domainName":       kt.DomainName,
+			"projectID":        kt.ProjectID,
+			"s3AccessKey":      kt.S3AccessKey,
+			"s3SecretKey":      kt.S3SecretKey,
+		}
+		b, _ := json.Marshal(out)
+		return string(b), nil
+
+	case "tencent":
+		var tencent TencentCredentials
+		if err := json.Unmarshal(cr.CredentialJson, &tencent); err != nil {
+			return "", fmt.Errorf("invalid tencent credential json: %w", err)
+		}
+
+		b, _ := json.Marshal(tencent)
+		return string(b), nil
+
 	default:
 		return "", fmt.Errorf("unsupported cspType: %q", cr.CspType)
 	}

@@ -160,15 +160,13 @@ func NewGCPClient(credentialsJson string) (*storage.Client, error) {
 	return client, nil
 }
 
-func NewAlibabaClient(endpoint, region, accessKey, secretKey string) (*oss.Client, error) {
-	if endpoint == "" {
-		return nil, errors.New("endpoint is required")
-	}
+func NewAlibabaClient(region, accessKey, secretKey string) (*oss.Client, error) {
+
 	if accessKey == "" || secretKey == "" {
 		return nil, errors.New("accessKey and secretKey are required")
 	}
 	cfg := oss.LoadDefaultConfig().
-		WithEndpoint(endpoint).
+		WithEndpoint("https://oss-" + region + ".aliyuncs.com").
 		WithCredentialsProvider(osscred.NewStaticCredentialsProvider(accessKey, secretKey)).
 		WithRegion(region).
 		WithRetryMaxAttempts(5)

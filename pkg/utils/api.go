@@ -8,6 +8,14 @@ import (
 	"os"
 )
 
+func GetNsId() string {
+	nsId := os.Getenv("TUMBLEBUG_NS_ID")
+	if nsId == "" {
+		nsId = "default"
+	}
+	return nsId
+}
+
 func RequestTumblebug(path string, method string, connName string, jsonBody []byte) ([]byte, error) {
 	baseUrl := os.Getenv("TUMBLEBUG_URL")
 	url := fmt.Sprintf("%s%s", baseUrl, path)
@@ -18,8 +26,14 @@ func RequestTumblebug(path string, method string, connName string, jsonBody []by
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	username := "default"
-	password := "default"
+	username := os.Getenv("TUMBLEBUG_USERNAME")
+	if username == "" {
+		username = "default"
+	}
+	password := os.Getenv("TUMBLEBUG_PASSWORD")
+	if password == "" {
+		password = "default"
+	}
 	req.SetBasicAuth(username, password)
 	req.Header.Add("Accept", "application/json")
 	if connName != "" {

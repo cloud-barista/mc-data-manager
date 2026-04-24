@@ -32,7 +32,10 @@ import (
 	"github.com/cloud-barista/mc-data-manager/pkg/nrdbms/ncpmgdb"
 	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/alibabafs"
 	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/gcpfs"
+	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/ibmfs"
+	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/ktfs"
 	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/s3fs"
+	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/tencentfs"
 	"github.com/cloud-barista/mc-data-manager/pkg/rdbms/mysql"
 	"github.com/cloud-barista/mc-data-manager/service/nrdbc"
 	"github.com/cloud-barista/mc-data-manager/service/osc"
@@ -113,20 +116,24 @@ func PreRun(task string, datamoldParams *models.CommandTask, use string) {
 
 func GetOS(params *models.ProviderConfig) (*osc.OSController, error) {
 	var OSC *osc.OSController
-	// log.Info().Str("ProfileName", params.ProfileName).Msg("GetOS")
 	log.Info().Int64("CredentialId", params.CredentialId).Msg("GetOS")
 	log.Info().Str("Provider", params.Provider).Msg("GetOS")
-	log.Info().Msg("Get  Credential")
-	credentailManager := config.NewAuthManager()
-	// creds, err := credentailManger.LoadCredentialsByProfile(params.ProfileName, params.Provider)
-	creds, err := credentailManager.LoadCredentialsById(uint64(params.CredentialId))
-	if err != nil {
-		log.Error().Err(err).Msg("credential load failed")
-		return nil, err
+
+	loadCreds := func() (interface{}, error) {
+		creds, err := config.NewAuthManager().LoadCredentialsById(uint64(params.CredentialId))
+		if err != nil {
+			log.Error().Err(err).Msg("credential load failed")
+		}
+		return creds, err
 	}
 
+	var err error
 	switch params.Provider {
 	case "aws":
+		creds, cerr := loadCreds()
+		if cerr != nil {
+			return nil, cerr
+		}
 		awsc, ok := creds.(models.AWSCredentials)
 		if !ok {
 			return nil, errors.New("credential load failed")
@@ -146,6 +153,10 @@ func GetOS(params *models.ProviderConfig) (*osc.OSController, error) {
 			return nil, fmt.Errorf("osc error : %v", err)
 		}
 	case "gcp":
+		creds, cerr := loadCreds()
+		if cerr != nil {
+			return nil, cerr
+		}
 		gcpc, ok := creds.(models.GCPCredentials)
 		if !ok {
 			return nil, errors.New("credential load failed")
@@ -170,6 +181,10 @@ func GetOS(params *models.ProviderConfig) (*osc.OSController, error) {
 			return nil, fmt.Errorf("osc error : %v", err)
 		}
 	case "ncp":
+		creds, cerr := loadCreds()
+		if cerr != nil {
+			return nil, cerr
+		}
 		ncpc, ok := creds.(models.NCPCredentials)
 		if !ok {
 			return nil, errors.New("credential load failed")
@@ -189,21 +204,45 @@ func GetOS(params *models.ProviderConfig) (*osc.OSController, error) {
 			return nil, fmt.Errorf("osc error : %v", err)
 		}
 	case "alibaba":
+		creds, cerr := loadCreds()
+		if cerr != nil {
+			return nil, cerr
+		}
 		alibabac, ok := creds.(models.AlibabaCredentials)
 		if !ok {
 			return nil, errors.New("credential load failed")
 		}
 
-		log.Info().Str("Endpoint", params.Endpoint).Msg("Alibaba Credentials")
 		log.Info().Str("Region", params.Region).Msg("Alibaba Region")
 		log.Info().Str("AccessKey", alibabac.AccessKey).Msg("Alibaba Credentials")
 		log.Info().Str("SecretKey", alibabac.SecretKey).Msg("Alibaba Credentials")
 		log.Info().Str("BucketName", params.Bucket).Msg("Alibaba BucketName")
-		ossc, err := config.NewAlibabaClient(params.Endpoint, params.Region, alibabac.AccessKey, alibabac.SecretKey)
+		ossc, err := config.NewAlibabaClient(params.Region, alibabac.AccessKey, alibabac.SecretKey)
 		if err != nil {
 			return nil, fmt.Errorf("NewAlibabaClient error : %v", err)
 		}
-		OSC, err = osc.New(alibabafs.New(models.ALIBABA, ossc, params.Endpoint, params.Bucket, params.Region))
+		OSC, err = osc.New(alibabafs.New(models.ALIBABA, ossc, "https://oss-"+params.Region+".aliyuncs.com", params.Bucket, params.Region))
+		if err != nil {
+			return nil, fmt.Errorf("osc error : %v", err)
+		}
+	case "ibm":
+		log.Info().Str("Region", params.Region).Msg("IBM Region")
+		log.Info().Str("BucketName", params.Bucket).Msg("IBM BucketName")
+		OSC, err = osc.New(ibmfs.New(models.IBM, params.Bucket, params.Region))
+		if err != nil {
+			return nil, fmt.Errorf("osc error : %v", err)
+		}
+	case "kt":
+		log.Info().Str("Region", params.Region).Msg("KT Region")
+		log.Info().Str("BucketName", params.Bucket).Msg("KT BucketName")
+		OSC, err = osc.New(ktfs.New(models.KT, params.Bucket, params.Region))
+		if err != nil {
+			return nil, fmt.Errorf("osc error : %v", err)
+		}
+	case "tencent":
+		log.Info().Str("Region", params.Region).Msg("Tencent Region")
+		log.Info().Str("BucketName", params.Bucket).Msg("Tencent BucketName")
+		OSC, err = osc.New(tencentfs.New(models.TENCENT, params.Bucket, params.Region))
 		if err != nil {
 			return nil, fmt.Errorf("osc error : %v", err)
 		}

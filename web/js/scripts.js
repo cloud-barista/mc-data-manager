@@ -139,35 +139,8 @@ function resolveAlibabaEndpoint(region) {
         return "";
     }
     const normalized = region.trim().toLowerCase();
-    return ALIBABA_ENDPOINTS[normalized] || `https://oss-${normalized}.aliyuncs.com`;
+    return `https://oss-${normalized}.aliyuncs.com`;
 }
-
-function emitAlibabaRegionEvent(prefix, provider, region) {
-    const normalized = region && region !== "none" ? region : null;
-    const detail = {
-        prefix,
-        provider,
-        region: normalized,
-    };
-    document.dispatchEvent(new CustomEvent("alibabaRegionChange", { detail }));
-}
-
-document.addEventListener("alibabaRegionChange", (event) => {
-    const { prefix, provider, region } = event.detail;
-    const hint = document.getElementById(`${prefix}AlibabaRegionHint`);
-    const endpointInput = document.getElementById(`${prefix}Point[endpoint]`);
-
-    if (!endpointInput) {
-        return;
-    }
-
-    if (provider === "alibaba") {
-        endpointInput.value = region ? resolveAlibabaEndpoint(region) : "";
-    } else {
-        endpointInput.value = "";
-    }
-    endpointInput.dispatchEvent(new Event("change"));
-});
 
 function generateFormSubmit() {
     const form = document.getElementById('genForm');
@@ -308,9 +281,95 @@ function setSelectBox() {
                 </div>
                 <div class="input-group mb-3">
                     <span class="input-group-text rounded-start">Credential Json</span>
-                    <div class="form-floating">                    
+                    <div class="form-floating">
                         <textarea rows="10" class="form-control rounded-end" id="mig-gcp-json" name="gcpJson" placeholder="Input Credential Json" style="min-height: 300px; height: 300px" required></textarea>
                         <label for="mig-gcp-json">Input Credential Json</label>
+                    </div>
+                </div>
+            `;
+        } else if (selected === "ibm") {
+            formHtml = `
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-key"></i></span>
+                    <div class="form-floating">
+                        <input type="password" class="form-control rounded-end" id="ibm-apiKey" name="apiKey" placeholder="API Key" required>
+                        <label for="ibm-apiKey">API Key</label>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-key"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control rounded-end" id="ibm-s3AccessKey" name="s3AccessKey" placeholder="S3 Access Key">
+                        <label for="ibm-s3AccessKey">S3 Access Key</label>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
+                    <div class="form-floating">
+                        <input type="password" class="form-control rounded-end" id="ibm-s3SecretKey" name="s3SecretKey" placeholder="S3 Secret Key">
+                        <label for="ibm-s3SecretKey">S3 Secret Key</label>
+                    </div>
+                </div>
+            `;
+        } else if (selected === "kt") {
+            formHtml = `
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-user"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control rounded-end" id="kt-username" name="username" placeholder="Username" required>
+                        <label for="kt-username">Username</label>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
+                    <div class="form-floating">
+                        <input type="password" class="form-control rounded-end" id="kt-password" name="password" placeholder="Password" required>
+                        <label for="kt-password">Password</label>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start">Domain Name</span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control rounded-end" id="kt-domainName" name="domainName" placeholder="Domain Name" required>
+                        <label for="kt-domainName">Domain Name</label>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start">Project ID</span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control rounded-end" id="kt-projectID" name="projectID" placeholder="Project ID" required>
+                        <label for="kt-projectID">Project ID</label>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-key"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control rounded-end" id="kt-s3AccessKey" name="s3AccessKey" placeholder="S3 Access Key">
+                        <label for="kt-s3AccessKey">S3 Access Key</label>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
+                    <div class="form-floating">
+                        <input type="password" class="form-control rounded-end" id="kt-s3SecretKey" name="s3SecretKey" placeholder="S3 Secret Key">
+                        <label for="kt-s3SecretKey">S3 Secret Key</label>
+                    </div>
+                </div>
+            `;
+        } else if (selected === "tencent") {
+            formHtml = `
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-id-card"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control rounded-end" id="tencent-secretId" name="secretId" placeholder="Secret ID" required>
+                        <label for="tencent-secretId">Secret ID</label>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
+                    <div class="form-floating">
+                        <input type="password" class="form-control rounded-end" id="tencent-secretKey" name="secretKey" placeholder="Secret Key" required>
+                        <label for="tencent-secretKey">Secret Key</label>
                     </div>
                 </div>
             `;
@@ -329,27 +388,58 @@ function credentialFormSubmit() {
         resultCollpase();
 
         const payload = new FormData(form);
-        let tempObject = Object.fromEntries(payload);        
-        let jsonData = {};        
-        const { cspType, name, accessKey, secretKey, s3accessKey, s3secretKey, gcpJson } = tempObject;
-        if (cspType != "gcp") {            
+        let tempObject = Object.fromEntries(payload);
+        let jsonData = {};
+        const { cspType, name } = tempObject;
+
+        if (cspType === "aws" || cspType === "ncp" || cspType === "alibaba") {
             jsonData = {
                 cspType,
                 name,
                 credentialJson: {
-                    accessKey,
-                    secretKey
+                    accessKey: tempObject.accessKey,
+                    secretKey: tempObject.secretKey
                 }
-            }
-        } else {
-            // const { cspType, name, type, project_id, private_key_id, private_key, client_email, client_id, auth_uri, token_uri, auth_provider_x509_cert_url, client_x509_cert_url, universe_domain } = tempObject;
+            };
+        } else if (cspType === "gcp") {
             jsonData = {
                 cspType,
                 name,
-                s3accessKey,
-                s3secretKey,
-                credentialJson: JSON.parse(gcpJson)
-            }
+                credentialJson: JSON.parse(tempObject.gcpJson)
+            };
+        } else if (cspType === "ibm") {
+            jsonData = {
+                cspType,
+                name,
+                credentialJson: {
+                    apiKey: tempObject.apiKey,
+                    s3AccessKey: tempObject.s3AccessKey || "",
+                    s3SecretKey: tempObject.s3SecretKey || ""
+                }
+            };
+        } else if (cspType === "kt") {
+            jsonData = {
+                cspType,
+                name,
+                credentialJson: {
+                    identityEndpoint: tempObject.identityEndpoint,
+                    username: tempObject.username,
+                    password: tempObject.password,
+                    domainName: tempObject.domainName,
+                    projectID: tempObject.projectID,
+                    s3AccessKey: tempObject.s3AccessKey || "",
+                    s3SecretKey: tempObject.s3SecretKey || ""
+                }
+            };
+        } else if (cspType === "tencent") {
+            jsonData = {
+                cspType,
+                name,
+                credentialJson: {
+                    secretId: tempObject.secretId,
+                    secretKey: tempObject.secretKey
+                }
+            };
         }
         // jsonData = convertCheckboxParams(jsonData)
         // jsonData.targetPoint = {
@@ -1044,7 +1134,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const initProviderHandlers = (prefix) => {
         const credSelect = document.getElementById(prefix + "CredentialSelect");
         const providerInput = document.getElementById(prefix + "Point[provider]");
-        const regionSelect = document.getElementById(prefix + "RegionSelect");
+        //const regionSelect = document.getElementById(prefix + "RegionSelect");
         if (!credSelect || !providerInput) return;
 
         // 초기 렌더링 시 region 갱신
@@ -1052,7 +1142,6 @@ document.addEventListener("DOMContentLoaded", () => {
         providerInput.value = initialProvider;
         updateRegionsByProvider(prefix, initialProvider);
         updateLabelByProvider(prefix, initialProvider);
-        emitAlibabaRegionEvent(prefix, initialProvider, regionSelect?.value || null);
 
         // 이벤트 핸들러 등록
         credSelect.addEventListener("change", (e) => {
@@ -1061,14 +1150,7 @@ document.addEventListener("DOMContentLoaded", () => {
             providerInput.dispatchEvent(new Event('change'));
             updateRegionsByProvider(prefix, provider);
             updateLabelByProvider(prefix, provider);
-            emitAlibabaRegionEvent(prefix, provider, regionSelect?.value || null);
         });
-
-        if (regionSelect) {
-            regionSelect.addEventListener("change", () => {
-                emitAlibabaRegionEvent(prefix, providerInput.value, regionSelect.value);
-            });
-        }
     };
 
     // source/target 공통 처리
@@ -1096,6 +1178,9 @@ function getServiceName(service, provider) {
         ncp: "Naver Object Storage",
         gcp: "Google Cloud Storage",
         alibaba: "Alibaba Object Storage",
+        ibm: "IBM Cloud Object Storage",
+        KT: "KT Cloud Object Storage",
+        tencent: "Tencent Cloud Object Storage",
       },
       rdbms: {
         default: "MySQL",
