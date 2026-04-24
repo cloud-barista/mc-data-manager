@@ -130,7 +130,7 @@ func (d *MysqlDBMS) ListDB(dst *[]string) error {
 			return err
 		}
 
-		if dbName != "information_schema" && dbName != "mysql" && dbName != "performance_schema" && dbName != "sys" {
+		if dbName != "information_schema" && dbName != "mysql" && dbName != "performance_schema" && dbName != "sys" && dbName != "__recycle_bin__" {
 			*dst = append(*dst, dbName)
 		}
 	}

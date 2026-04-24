@@ -711,6 +711,8 @@ function backUpFormSubmit() {
         }        
         if(service == "objectstorage") {
             applyFilter(jsonData)
+        } else {
+            delete jsonData.sourceFilter;  // rdbms/nrdbms면 filter 제거
         }
         // console.log(provider)
 

@@ -126,28 +126,20 @@ func (rdb *RDBController) PutDoc(sql string) error {
 	return nil
 }
 
-// Migration using put and get
-func (rdb *RDBController) Copy(dst *RDBController) error {
-	var dbList []string
+// Migration using put and get for a specific database
+func (rdb *RDBController) Copy(dst *RDBController, srcDbName string) error {
 	var sql string
-	if err := rdb.ListDB(&dbList); err != nil {
-		rdb.logWrite("Error", "ListDB error", err)
+	rdb.Client.SetTargetProvdier(dst.Client.GetProvdier())
+	if err := rdb.Get(srcDbName, &sql); err != nil {
+		rdb.logWrite("Error", "Get error", err)
 		return err
 	}
-	for _, db := range dbList {
-		sql = ""
-		rdb.Client.SetTargetProvdier(dst.Client.GetProvdier())
-		if err := rdb.Get(db, &sql); err != nil {
-			rdb.logWrite("Error", "Get error", err)
-			return err
-		}
 
-		if err := dst.Put(sql); err != nil {
-			rdb.logWrite("Error", "Get error", err)
-			return err
-		}
-		rdb.logWrite("Info", fmt.Sprintf("Migration success: src:/%s -> dst:/%s", db, db), nil)
+	if err := dst.Put(sql); err != nil {
+		rdb.logWrite("Error", "Put error", err)
+		return err
 	}
+	rdb.logWrite("Info", fmt.Sprintf("Migration success: src:/%s -> dst:/%s", srcDbName, srcDbName), nil)
 	return nil
 }
 

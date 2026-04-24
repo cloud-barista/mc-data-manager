@@ -90,6 +90,7 @@
                             <option value="aws">AWS</option>
                             <option value="gcp">GCP</option>
                             <option value="ncp">NCP</option>
+                            <option value="alibaba">ALIBABA</option>
                         </select>
                     </div>
                     <div class="input-group mb-3">
@@ -113,11 +114,18 @@
                             <label for="mysql-srcUsername">Username</label>
                         </div>
                     </div>
-                    <div class="input-group">
+                    <div class="input-group mb-3">
                         <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
                         <div class="form-floating">
                             <input type="password" class="form-control rounded-end" id="mysql-srcPassword" name="sourcePoint[password]" placeholder="Password">
                             <label for="mysql-srcPassword">Password</label>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text rounded-start"><i class="fa-solid fa-database"></i></span>
+                        <div class="form-floating">
+                            <input type="text" class="form-control rounded-end" id="mysql-srcDatabase" name="sourcePoint[databaseName]" placeholder="Database">
+                            <label for="mysql-srcDatabase">Database</label>
                         </div>
                     </div>
                 </div>
