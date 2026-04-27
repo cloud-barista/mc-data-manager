@@ -795,14 +795,14 @@ function backUpFormSubmit() {
             alert("credential not selected");
             return
         }
-        if(jsonData.sourcePoint.bucket == "none" || jsonData.sourcePoint.bucket == "-" || jsonData.sourcePoint.bucket == "") {
+        if(service == "objectstorage" && (jsonData.sourcePoint.bucket == "none" || jsonData.sourcePoint.bucket == "-" || jsonData.sourcePoint.bucket == "")) {
             alert("please select bucket");
             return
         }        
         if(service == "objectstorage") {
             applyFilter(jsonData)
         } else {
-            delete jsonData.sourceFilter;  // rdbms/nrdbms면 filter 제거
+            delete jsonData.sourceFilter;
         }
         // console.log(provider)
 
@@ -1114,14 +1114,17 @@ function toggleDivs(prefix, provider, service) {
     const mongoDiv = document.getElementById(prefix + "MongoDiv");
     if (!regionDiv || !mongoDiv) return;
 
-    const showMongo = service === "nrdbms" && provider === "ncp";
+    const showMongo = service === "nrdbms" && (provider === "ncp" || provider === "alibaba");
 
     regionDiv.style.display = showMongo ? "none" : "";
     mongoDiv.style.display = showMongo ? "" : "none";
 
     const regionSelect = regionDiv.querySelector("select");
     if (regionSelect) {
-        regionSelect.disabled = showMongo; // mongoDiv 보이면 regionSelect 비활성화
+        regionSelect.disabled = showMongo;
+        if (showMongo) {
+            regionSelect.removeAttribute('required');
+        }
     }
       // mongoDiv 하위 모든 input 제어
     const mongoInputs = mongoDiv.querySelectorAll("input");
@@ -1172,6 +1175,7 @@ function getServiceName(service, provider) {
         aws: "AWS DynamoDB",
         ncp: "Naver MongoDB",
         gcp: "Google Firestore",
+        alibaba: "Alibaba MongoDB",
       },
       objectstorage: {
         aws: "AWS S3",

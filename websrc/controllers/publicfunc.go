@@ -654,10 +654,8 @@ func getDataWithReBind(logger *zerolog.Logger, startTime time.Time, ctx echo.Con
 
 	if err := ctx.Bind(params); err != nil {
 		end := time.Now()
-		// fmt.Println("error: ", err.Error())
-		logger.Error().Err(err)
-		logger.Error().Msg("Failed to bind form data")
-		logger.Error().Interface("Params", string(bodyBytes))
+		logger.Error().Err(err).Msg("Failed to bind form data")
+		logger.Error().Str("Params", string(bodyBytes)).Msg("Request body")
 		logger.Error().Str("End time", end.Format("2006-01-02T15:04:05-07:00"))
 		logger.Error().Str("Elapsed time", end.Sub(startTime).String())
 		return false

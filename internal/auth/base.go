@@ -27,6 +27,7 @@ import (
 
 	"github.com/cloud-barista/mc-data-manager/config"
 	"github.com/cloud-barista/mc-data-manager/models"
+	"github.com/cloud-barista/mc-data-manager/pkg/nrdbms/alibabamgdb"
 	"github.com/cloud-barista/mc-data-manager/pkg/nrdbms/awsdnmdb"
 	"github.com/cloud-barista/mc-data-manager/pkg/nrdbms/gcpfsdb"
 	"github.com/cloud-barista/mc-data-manager/pkg/nrdbms/ncpmgdb"
@@ -342,6 +343,24 @@ func GetNRDMS(params *models.ProviderConfig) (*nrdbc.NRDBController, error) {
 			return nil, err
 		}
 		NRDBC, err = nrdbc.New(ncpmgdb.New(ncpnrdb, params.DatabaseName))
+		if err != nil {
+			return nil, err
+		}
+	case "alibaba":
+		log.Info().Str("Username", params.User).Msg("Alibaba Credentials")
+		log.Info().Str("Password", params.Password).Msg("Alibaba Credentials")
+		log.Info().Str("Host", params.Host).Msg("Alibaba Host")
+		log.Info().Str("Port", params.Port).Msg("Alibaba Port")
+		port, err := strconv.Atoi(params.Port)
+		if err != nil {
+			return nil, err
+		}
+
+		alibabanrdb, err := config.NewAlibabaMongoDBClient(params.User, params.Password, params.Host, port)
+		if err != nil {
+			return nil, err
+		}
+		NRDBC, err = nrdbc.New(alibabamgdb.New(alibabanrdb, params.DatabaseName))
 		if err != nil {
 			return nil, err
 		}

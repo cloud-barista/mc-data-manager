@@ -60,7 +60,12 @@
                 {{ range $index, $value := .NCPRegions }}
                 <option value="{{ $value }}">{{ $value }}</option>
                 {{ end }}
-              </optgroup>                            
+              </optgroup>
+              <optgroup label="ALIBABA regions" data-provider="alibaba" style="display: none;">
+                {{ range $index, $value := .ALIBABARegions }}
+                <option value="{{ $value }}">{{ $value }}</option>
+                {{ end }}
+              </optgroup>
             </select>
             <label for="targetRegionSelect">Select Region</label>
           </div>
@@ -147,6 +152,7 @@
       aws: "AWS DynamoDB",
       ncp: "Naver MongoDB",
       gcp: "Google Firestore",
+      alibaba: "Alibaba MongoDB",
     };
 
     let serviceName = serviceMap[provider] || "-";
@@ -164,13 +170,29 @@
 
     updateLabel(provider)
 
+    // NCP / Alibaba 인 경우 Region 선택 불필요
+    const regionSelect = document.getElementById('targetRegionSelect');
+    const regionInputGroup = regionSelect ? regionSelect.closest('.input-group') : null;
+    const isNonRegion = provider === 'ncp' || provider === 'alibaba';
+    if (regionInputGroup) {
+      if (isNonRegion) {
+        regionInputGroup.style.display = 'none';
+        regionSelect.removeAttribute('required');
+        regionSelect.setAttribute('disabled', '');
+      } else {
+        regionInputGroup.style.display = '';
+        regionSelect.removeAttribute('disabled');
+        regionSelect.setAttribute('required', '');
+      }
+    }
+
     if(provider === 'gcp') {
       gcpDiv.style.display = '';
       gcpDiv.querySelectorAll('input').forEach(i => {
         i.removeAttribute('disabled');
         i.setAttribute('required', '');
       })
-    } else if(provider === 'ncp') {
+    } else if(provider === 'ncp' || provider === 'alibaba') {
       ncpDiv.style.display = '';
       ncpDiv.querySelectorAll('input').forEach(i => {
         i.removeAttribute('disabled');

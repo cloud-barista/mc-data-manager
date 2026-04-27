@@ -144,7 +144,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-section mt-3" id="ncp-nrdbms" style="display:none;">
+                <div class="form-section mt-3" id="mongo-nrdbms" style="display:none;">
                     <div class="input-group mb-3">
                         <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
                         <div class="form-floating">
@@ -251,6 +251,7 @@ const source = {
                 aws: "AWS DynamoDB",
                 ncp: "Naver MongoDB",
                 gcp: "Google Firestore",
+                alibaba: "Alibaba MongoDB",
             },
             objectstorage: {
                 aws: "AWS S3",
@@ -277,6 +278,10 @@ const source = {
         const service = source.service.value;
         let idToShow = source.provider.value + '-' + service;
 
+        if (service === 'nrdbms' && (source.provider.value === 'ncp' || source.provider.value === 'alibaba')) {
+            idToShow = 'mongo-nrdbms';
+        }
+
         updateLabel(source.provider.value, service)
 
         const credentialDiv = document.getElementById("credentialDiv")
@@ -299,6 +304,22 @@ const source = {
                 input.removeAttribute('disabled');
                 input.setAttribute('required', '');
             })
+
+            // No-SQL + NCP/Alibaba 인 경우 Region 선택 불필요
+            const regionSelectWrapper = document.getElementById("sourceRegionSelect");
+            const regionInputGroup = regionSelectWrapper ? regionSelectWrapper.closest(".input-group") : null;
+            const isNoSqlNonRegion = service === 'nrdbms' && (source.provider.value === 'ncp' || source.provider.value === 'alibaba');
+            if (regionInputGroup) {
+                if (isNoSqlNonRegion) {
+                    regionInputGroup.style.display = "none";
+                    regionSelectWrapper.removeAttribute('required');
+                    regionSelectWrapper.setAttribute('disabled', '');
+                } else {
+                    regionInputGroup.style.display = "";
+                    regionSelectWrapper.removeAttribute('disabled');
+                    regionSelectWrapper.setAttribute('required', '');
+                }
+            }
 
             document.getElementById("rdbmsProvider").style.display = "none"
         }
