@@ -295,6 +295,22 @@ const target = {
                 input.setAttribute('required', '');
             })
 
+            // No-SQL + NCP/Alibaba 인 경우 Region 선택 불필요
+            const regionSelectWrapper = document.getElementById("targetRegionSelect");
+            const regionInputGroup = regionSelectWrapper ? regionSelectWrapper.closest(".input-group") : null;
+            const isNoSqlNonRegion = service === 'nrdbms' && (provider === 'ncp' || provider === 'alibaba');
+            if (regionInputGroup) {
+                if (isNoSqlNonRegion) {
+                    regionInputGroup.style.display = "none";
+                    regionSelectWrapper.removeAttribute('required');
+                    regionSelectWrapper.setAttribute('disabled', '');
+                } else {
+                    regionInputGroup.style.display = "";
+                    regionSelectWrapper.removeAttribute('disabled');
+                    regionSelectWrapper.setAttribute('required', '');
+                }
+            }
+
             document.getElementById("rdbmsProvider").style.display = "none"
         }
 

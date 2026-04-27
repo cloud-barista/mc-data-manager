@@ -170,6 +170,22 @@
 
     updateLabel(provider)
 
+    // NCP / Alibaba 인 경우 Region 선택 불필요
+    const regionSelect = document.getElementById('targetRegionSelect');
+    const regionInputGroup = regionSelect ? regionSelect.closest('.input-group') : null;
+    const isNonRegion = provider === 'ncp' || provider === 'alibaba';
+    if (regionInputGroup) {
+      if (isNonRegion) {
+        regionInputGroup.style.display = 'none';
+        regionSelect.removeAttribute('required');
+        regionSelect.setAttribute('disabled', '');
+      } else {
+        regionInputGroup.style.display = '';
+        regionSelect.removeAttribute('disabled');
+        regionSelect.setAttribute('required', '');
+      }
+    }
+
     if(provider === 'gcp') {
       gcpDiv.style.display = '';
       gcpDiv.querySelectorAll('input').forEach(i => {

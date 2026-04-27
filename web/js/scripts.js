@@ -1031,7 +1031,10 @@ function toggleDivs(prefix, provider, service) {
 
     const regionSelect = regionDiv.querySelector("select");
     if (regionSelect) {
-        regionSelect.disabled = showMongo; // mongoDiv 보이면 regionSelect 비활성화
+        regionSelect.disabled = showMongo;
+        if (showMongo) {
+            regionSelect.removeAttribute('required');
+        }
     }
       // mongoDiv 하위 모든 input 제어
     const mongoInputs = mongoDiv.querySelectorAll("input");
