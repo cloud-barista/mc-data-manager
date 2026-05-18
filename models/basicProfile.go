@@ -39,6 +39,9 @@ type ProfileCredentials struct {
 	NCP     NCPCredentials     `json:"ncp,omitempty"`
 	GCP     GCPCredentials     `json:"gcp,omitempty"`
 	ALIBABA AlibabaCredentials `json:"alibaba,omitempty"`
+	IBM     IBMCredentials     `json:"ibm,omitempty"`
+	KT      KTCredentials      `json:"kt,omitempty"`
+	TENCENT TencentCredentials `json:"tencent,omitempty"`
 }
 
 type AWSCredentials struct {
@@ -67,6 +70,28 @@ type GCPCredentials struct {
 
 type AlibabaCredentials struct {
 	AccessKey string `json:"accessKey" form:"accessKey"`
+	SecretKey string `json:"secretKey" form:"secretKey"`
+}
+
+type IBMCredentials struct {
+	ApiKey      string `json:"apiKey" form:"apiKey"`
+	S3AccessKey string `json:"s3AccessKey,omitempty" form:"s3AccessKey"`
+	S3SecretKey string `json:"s3SecretKey,omitempty" form:"s3SecretKey"`
+}
+
+const KTIdentityEndpoint = "https://api.ucloudbiz.olleh.com/d1/identity/v3/"
+
+type KTCredentials struct {
+	Username    string `json:"username" form:"username"`
+	Password    string `json:"password" form:"password"`
+	DomainName  string `json:"domainName" form:"domainName"`
+	ProjectID   string `json:"projectID" form:"projectID"`
+	S3AccessKey string `json:"s3AccessKey,omitempty" form:"s3AccessKey"`
+	S3SecretKey string `json:"s3SecretKey,omitempty" form:"s3SecretKey"`
+}
+
+type TencentCredentials struct {
+	SecretId  string `json:"secretId" form:"secretId"`
 	SecretKey string `json:"secretKey" form:"secretKey"`
 }
 

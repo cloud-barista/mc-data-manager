@@ -5421,17 +5421,19 @@
         "projectId": ""
       },
       "sourceFilter": {
-        "prefix": "datamold-dummy2244858493/sql/",
+        "path": "",
+        "pathExcludeYn": "",
         "contains": null,
+        "containExcludeYn": "",
         "suffixes": null,
         "exact": [
           "LibraryManagement_999.sql"
         ],
-        "regex": "",
         "minSize": null,
         "maxSize": null,
         "modifiedAfter": null,
-        "modifiedBefore": null
+        "modifiedBefore": null,
+        "sizeFilteringUnit": ""
       }
     },
     {
@@ -5493,17 +5495,19 @@
         "projectId": ""
       },
       "sourceFilter": {
-        "prefix": "datamold-dummy2244858493/sql/",
+        "path": "",
+        "pathExcludeYn": "",
         "contains": null,
+        "containExcludeYn": "",
         "suffixes": null,
         "exact": [
           "LibraryManagement_999.sql"
         ],
-        "regex": "",
         "minSize": null,
         "maxSize": null,
         "modifiedAfter": null,
-        "modifiedBefore": null
+        "modifiedBefore": null,
+        "sizeFilteringUnit": ""
       }
     },
     {
@@ -5565,17 +5569,19 @@
         "projectId": ""
       },
       "sourceFilter": {
-        "prefix": "datamold-dummy2244858493/sql/",
+        "path": "",
+        "pathExcludeYn": "",
         "contains": null,
+        "containExcludeYn": "",
         "suffixes": null,
         "exact": [
           "LibraryManagement_999.sql"
         ],
-        "regex": "",
         "minSize": null,
         "maxSize": null,
         "modifiedAfter": null,
-        "modifiedBefore": null
+        "modifiedBefore": null,
+        "sizeFilteringUnit": ""
       }
     },
     {
@@ -5637,17 +5643,19 @@
         "projectId": ""
       },
       "sourceFilter": {
-        "prefix": "datamold-dummy2244858493/sql/",
+        "path": "",
+        "pathExcludeYn": "",
         "contains": null,
+        "containExcludeYn": "",
         "suffixes": null,
         "exact": [
           "LibraryManagement_999.sql"
         ],
-        "regex": "",
         "minSize": null,
         "maxSize": null,
         "modifiedAfter": null,
-        "modifiedBefore": null
+        "modifiedBefore": null,
+        "sizeFilteringUnit": ""
       }
     },
     {
@@ -5709,17 +5717,19 @@
         "projectId": ""
       },
       "sourceFilter": {
-        "prefix": "datamold-dummy2244858493/sql/",
+        "path": "",
+        "pathExcludeYn": "",
         "contains": null,
+        "containExcludeYn": "",
         "suffixes": null,
         "exact": [
           "LibraryManagement_999.sql"
         ],
-        "regex": "",
         "minSize": null,
         "maxSize": null,
         "modifiedAfter": null,
-        "modifiedBefore": null
+        "modifiedBefore": null,
+        "sizeFilteringUnit": ""
       }
     },
     {
@@ -5781,17 +5791,19 @@
         "projectId": ""
       },
       "sourceFilter": {
-        "prefix": "datamold-dummy2244858493/sql/",
+        "path": "",
+        "pathExcludeYn": "",
         "contains": null,
+        "containExcludeYn": "",
         "suffixes": null,
         "exact": [
           "LibraryManagement_999.sql"
         ],
-        "regex": "",
         "minSize": null,
         "maxSize": null,
         "modifiedAfter": null,
-        "modifiedBefore": null
+        "modifiedBefore": null,
+        "sizeFilteringUnit": ""
       }
     },
     {
@@ -5853,19 +5865,21 @@
         "projectId": ""
       },
       "sourceFilter": {
-        "prefix": "datamold-dummy2244858493/sql/",
+        "path": "",
+        "pathExcludeYn": "",
         "contains": null,
+        "containExcludeYn": "",
         "suffixes": null,
         "exact": [
           "LibraryManagement_991.sql",
           "LibraryManagement_993.sql",
           "LibraryManagement_994.sql"
         ],
-        "regex": "",
         "minSize": null,
         "maxSize": null,
         "modifiedAfter": null,
-        "modifiedBefore": null
+        "modifiedBefore": null,
+        "sizeFilteringUnit": ""
       }
     },
     {
@@ -5927,19 +5941,21 @@
         "projectId": ""
       },
       "sourceFilter": {
-        "prefix": "datamold-dummy2244858493/sql/",
+        "path": "",
+        "pathExcludeYn": "",
         "contains": null,
+        "containExcludeYn": "",
         "suffixes": null,
         "exact": [
           "LibraryManagement_991.sql",
           "LibraryManagement_993.sql",
           "LibraryManagement_994.sql"
         ],
-        "regex": "",
         "minSize": null,
         "maxSize": null,
         "modifiedAfter": null,
-        "modifiedBefore": null
+        "modifiedBefore": null,
+        "sizeFilteringUnit": ""
       }
     },
     {
@@ -6001,15 +6017,17 @@
         "projectId": ""
       },
       "sourceFilter": {
-        "prefix": "datamold-dummy2244858493/sql/",
+        "path": "",
+        "pathExcludeYn": "",
         "contains": null,
+        "containExcludeYn": "",
         "suffixes": null,
         "exact": null,
-        "regex": "",
         "minSize": null,
         "maxSize": null,
         "modifiedAfter": null,
-        "modifiedBefore": null
+        "modifiedBefore": null,
+        "sizeFilteringUnit": ""
       }
     },
     {
@@ -6248,15 +6266,17 @@
         "projectId": ""
       },
       "sourceFilter": {
-        "prefix": "datamold-dummy2244858493/test1234/",
+        "path": "",
+        "pathExcludeYn": "",
         "contains": null,
+        "containExcludeYn": "",
         "suffixes": null,
         "exact": null,
-        "regex": "",
         "minSize": null,
         "maxSize": null,
         "modifiedAfter": null,
-        "modifiedBefore": null
+        "modifiedBefore": null,
+        "sizeFilteringUnit": ""
       }
     },
     {
@@ -6318,15 +6338,17 @@
         "projectId": ""
       },
       "sourceFilter": {
-        "prefix": "test1234/",
+        "path": "",
+        "pathExcludeYn": "",
         "contains": null,
+        "containExcludeYn": "",
         "suffixes": null,
         "exact": null,
-        "regex": "",
         "minSize": null,
         "maxSize": null,
         "modifiedAfter": null,
-        "modifiedBefore": null
+        "modifiedBefore": null,
+        "sizeFilteringUnit": ""
       }
     },
     {
@@ -6388,15 +6410,17 @@
         "projectId": ""
       },
       "sourceFilter": {
-        "prefix": "datamold-dummy2244858493/sql",
+        "path": "",
+        "pathExcludeYn": "",
         "contains": null,
+        "containExcludeYn": "",
         "suffixes": null,
         "exact": null,
-        "regex": "",
         "minSize": null,
         "maxSize": null,
         "modifiedAfter": null,
-        "modifiedBefore": null
+        "modifiedBefore": null,
+        "sizeFilteringUnit": ""
       }
     },
     {
@@ -6458,15 +6482,17 @@
         "projectId": ""
       },
       "sourceFilter": {
-        "prefix": "datamold-dummy2244858493/sql",
+        "path": "",
+        "pathExcludeYn": "",
         "contains": null,
+        "containExcludeYn": "",
         "suffixes": null,
         "exact": null,
-        "regex": "",
         "minSize": null,
         "maxSize": null,
         "modifiedAfter": null,
-        "modifiedBefore": null
+        "modifiedBefore": null,
+        "sizeFilteringUnit": ""
       }
     },
     {
@@ -6528,19 +6554,21 @@
         "projectId": ""
       },
       "sourceFilter": {
-        "prefix": "datamold-dummy2244858493/sql",
+        "path": "",
+        "pathExcludeYn": "",
         "contains": null,
+        "containExcludeYn": "",
         "suffixes": null,
         "exact": [
           "LibraryManagement_991.sql",
           "LibraryManagement_993.sql",
           "LibraryManagement_994.sql"
         ],
-        "regex": "",
         "minSize": null,
         "maxSize": null,
         "modifiedAfter": null,
-        "modifiedBefore": null
+        "modifiedBefore": null,
+        "sizeFilteringUnit": ""
       }
     },
     {
@@ -6602,15 +6630,17 @@
         "projectId": ""
       },
       "sourceFilter": {
-        "prefix": "datamold-dummy2244858493/sql",
+        "path": "",
+        "pathExcludeYn": "",
         "contains": null,
+        "containExcludeYn": "",
         "suffixes": null,
         "exact": null,
-        "regex": "",
         "minSize": null,
         "maxSize": null,
         "modifiedAfter": null,
-        "modifiedBefore": null
+        "modifiedBefore": null,
+        "sizeFilteringUnit": ""
       }
     },
     {
@@ -6672,17 +6702,19 @@
         "projectId": ""
       },
       "sourceFilter": {
-        "prefix": "datamold-dummy2244858493/sql",
+        "path": "",
+        "pathExcludeYn": "",
         "contains": null,
+        "containExcludeYn": "",
         "suffixes": null,
         "exact": [
           "LibraryManagement_991.sql"
         ],
-        "regex": "",
         "minSize": null,
         "maxSize": null,
         "modifiedAfter": null,
-        "modifiedBefore": null
+        "modifiedBefore": null,
+        "sizeFilteringUnit": ""
       }
     },
     {
@@ -6744,15 +6776,17 @@
         "projectId": ""
       },
       "sourceFilter": {
-        "prefix": "datamold-dummy2244858493/sql",
+        "path": "",
+        "pathExcludeYn": "",
         "contains": null,
+        "containExcludeYn": "",
         "suffixes": null,
         "exact": null,
-        "regex": "",
         "minSize": null,
         "maxSize": null,
         "modifiedAfter": null,
-        "modifiedBefore": null
+        "modifiedBefore": null,
+        "sizeFilteringUnit": ""
       }
     },
     {
@@ -6814,17 +6848,794 @@
         "projectId": ""
       },
       "sourceFilter": {
-        "prefix": "",
+        "path": "",
+        "pathExcludeYn": "",
         "contains": null,
+        "containExcludeYn": "",
         "suffixes": [
           "png"
         ],
         "exact": null,
-        "regex": "",
         "minSize": null,
         "maxSize": null,
         "modifiedAfter": null,
-        "modifiedBefore": null
+        "modifiedBefore": null,
+        "sizeFilteringUnit": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "nrdbms",
+        "taskType": "generate",
+        "taskId": "-task-0-20260417-154555"
+      },
+      "dummy": {
+        "dummyPath": "/var/folders/8d/dykp7pg5693fhf5_72hr16540000gn/T/datamold-dummy681617525",
+        "checkSQL": false,
+        "checkCSV": false,
+        "checkTXT": false,
+        "checkPNG": false,
+        "checkGIF": false,
+        "checkZIP": false,
+        "checkJSON": false,
+        "checkXML": false,
+        "checkServerJSON": true,
+        "checkServerSQL": false,
+        "sizeSQL": "",
+        "sizeCSV": "",
+        "sizeTXT": "",
+        "sizePNG": "",
+        "sizeGIF": "",
+        "sizeZIP": "",
+        "sizeJSON": "",
+        "sizeXML": "",
+        "sizeServerJSON": "1",
+        "sizeServerSQL": ""
+      },
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "credentialId": 0,
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "alibaba",
+        "region": "ap-northeast-1",
+        "credentialId": 1,
+        "path": "",
+        "bucket": "",
+        "endpoint": "https://oss-ap-northeast-1.aliyuncs.com",
+        "host": "dds-mj76dbe602390fa42.mongodb.ap-northeast-2.rds.aliyuncs.com",
+        "port": "3717",
+        "username": "root",
+        "password": "ㅂwe123!@#",
+        "databaseName": "admin",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "nrdbms",
+        "taskType": "generate",
+        "taskId": "-task-0-20260417-154747"
+      },
+      "dummy": {
+        "dummyPath": "/var/folders/8d/dykp7pg5693fhf5_72hr16540000gn/T/datamold-dummy1196488898",
+        "checkSQL": false,
+        "checkCSV": false,
+        "checkTXT": false,
+        "checkPNG": false,
+        "checkGIF": false,
+        "checkZIP": false,
+        "checkJSON": false,
+        "checkXML": false,
+        "checkServerJSON": true,
+        "checkServerSQL": false,
+        "sizeSQL": "",
+        "sizeCSV": "",
+        "sizeTXT": "",
+        "sizePNG": "",
+        "sizeGIF": "",
+        "sizeZIP": "",
+        "sizeJSON": "",
+        "sizeXML": "",
+        "sizeServerJSON": "1",
+        "sizeServerSQL": ""
+      },
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "credentialId": 0,
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "alibaba",
+        "region": "ap-northeast-1",
+        "credentialId": 1,
+        "path": "",
+        "bucket": "",
+        "endpoint": "https://oss-ap-northeast-1.aliyuncs.com",
+        "host": "dds-mj76dbe602390fa41311-pub.mongodb.ap-northeast-2.rds.aliyuncs.com",
+        "port": "3717",
+        "username": "root",
+        "password": "ㅂwe123!@#",
+        "databaseName": "database",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "nrdbms",
+        "taskType": "generate",
+        "taskId": "-task-0-20260417-155248"
+      },
+      "dummy": {
+        "dummyPath": "/var/folders/8d/dykp7pg5693fhf5_72hr16540000gn/T/datamold-dummy3618700754",
+        "checkSQL": false,
+        "checkCSV": false,
+        "checkTXT": false,
+        "checkPNG": false,
+        "checkGIF": false,
+        "checkZIP": false,
+        "checkJSON": false,
+        "checkXML": false,
+        "checkServerJSON": true,
+        "checkServerSQL": false,
+        "sizeSQL": "",
+        "sizeCSV": "",
+        "sizeTXT": "",
+        "sizePNG": "",
+        "sizeGIF": "",
+        "sizeZIP": "",
+        "sizeJSON": "",
+        "sizeXML": "",
+        "sizeServerJSON": "1",
+        "sizeServerSQL": ""
+      },
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "credentialId": 0,
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "alibaba",
+        "region": "ap-northeast-1",
+        "credentialId": 1,
+        "path": "",
+        "bucket": "",
+        "endpoint": "https://oss-ap-northeast-1.aliyuncs.com",
+        "host": "dds-mj76dbe602390fa41311-pub.mongodb.ap-northeast-2.rds.aliyuncs.com",
+        "port": "3717",
+        "username": "root",
+        "password": "qwe123!@#",
+        "databaseName": "database",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "nrdbms",
+        "taskType": "generate",
+        "taskId": "-task-0-20260417-161821"
+      },
+      "dummy": {
+        "dummyPath": "/var/folders/8d/dykp7pg5693fhf5_72hr16540000gn/T/datamold-dummy2021042541",
+        "checkSQL": false,
+        "checkCSV": false,
+        "checkTXT": false,
+        "checkPNG": false,
+        "checkGIF": false,
+        "checkZIP": false,
+        "checkJSON": false,
+        "checkXML": false,
+        "checkServerJSON": true,
+        "checkServerSQL": false,
+        "sizeSQL": "",
+        "sizeCSV": "",
+        "sizeTXT": "",
+        "sizePNG": "",
+        "sizeGIF": "",
+        "sizeZIP": "",
+        "sizeJSON": "",
+        "sizeXML": "",
+        "sizeServerJSON": "1",
+        "sizeServerSQL": ""
+      },
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "credentialId": 0,
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-1",
+        "credentialId": 2,
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "nrdbms",
+        "taskType": "generate",
+        "taskId": "-task-0-20260417-162010"
+      },
+      "dummy": {
+        "dummyPath": "/var/folders/8d/dykp7pg5693fhf5_72hr16540000gn/T/datamold-dummy1949661756",
+        "checkSQL": false,
+        "checkCSV": false,
+        "checkTXT": false,
+        "checkPNG": false,
+        "checkGIF": false,
+        "checkZIP": false,
+        "checkJSON": false,
+        "checkXML": false,
+        "checkServerJSON": true,
+        "checkServerSQL": false,
+        "sizeSQL": "",
+        "sizeCSV": "",
+        "sizeTXT": "",
+        "sizePNG": "",
+        "sizeGIF": "",
+        "sizeZIP": "",
+        "sizeJSON": "",
+        "sizeXML": "",
+        "sizeServerJSON": "1",
+        "sizeServerSQL": ""
+      },
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "credentialId": 0,
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "aws",
+        "region": "ap-northeast-2",
+        "credentialId": 2,
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "nrdbms",
+        "taskType": "generate",
+        "taskId": "-task-0-20260417-173239"
+      },
+      "dummy": {
+        "dummyPath": "/var/folders/8d/dykp7pg5693fhf5_72hr16540000gn/T/datamold-dummy285215639",
+        "checkSQL": false,
+        "checkCSV": false,
+        "checkTXT": false,
+        "checkPNG": false,
+        "checkGIF": false,
+        "checkZIP": false,
+        "checkJSON": false,
+        "checkXML": false,
+        "checkServerJSON": true,
+        "checkServerSQL": false,
+        "sizeSQL": "",
+        "sizeCSV": "",
+        "sizeTXT": "",
+        "sizePNG": "",
+        "sizeGIF": "",
+        "sizeZIP": "",
+        "sizeJSON": "",
+        "sizeXML": "",
+        "sizeServerJSON": "1",
+        "sizeServerSQL": ""
+      },
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "credentialId": 0,
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "alibaba",
+        "region": "ap-northeast-1",
+        "credentialId": 1,
+        "path": "",
+        "bucket": "",
+        "endpoint": "https://oss-ap-northeast-1.aliyuncs.com",
+        "host": "dds-mj76dbe602390fa41311-pub.mongodb.ap-northeast-2.rds.aliyuncs.com",
+        "port": "3717",
+        "username": "root",
+        "password": "qwe123!@#",
+        "databaseName": "databases",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "nrdbms",
+        "taskType": "backup",
+        "taskId": "-task-0-20260417-180916"
+      },
+      "dummy": {
+        "checkSQL": false,
+        "checkCSV": false,
+        "checkTXT": false,
+        "checkPNG": false,
+        "checkGIF": false,
+        "checkZIP": false,
+        "checkJSON": false,
+        "checkXML": false,
+        "checkServerJSON": false,
+        "checkServerSQL": false,
+        "sizeSQL": "",
+        "sizeCSV": "",
+        "sizeTXT": "",
+        "sizePNG": "",
+        "sizeGIF": "",
+        "sizeZIP": "",
+        "sizeJSON": "",
+        "sizeXML": "",
+        "sizeServerJSON": "",
+        "sizeServerSQL": ""
+      },
+      "sourcePoint": {
+        "provider": "alibaba",
+        "region": "ap-northeast-1",
+        "credentialId": 1,
+        "path": "",
+        "bucket": "",
+        "endpoint": "https://oss-ap-northeast-1.aliyuncs.com",
+        "host": "dds-mj76dbe602390fa41311-pub.mongodb.ap-northeast-2.rds.aliyuncs.com",
+        "port": "3717",
+        "username": "root",
+        "password": "qwe123!@#",
+        "databaseName": "databases",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "",
+        "region": "",
+        "credentialId": 0,
+        "path": "/Users/geontae/workspaces/namutech/mc-data-manager/data/backup",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "nrdbms",
+        "taskType": "restore",
+        "taskId": "-task-0-20260417-181053"
+      },
+      "dummy": {
+        "checkSQL": false,
+        "checkCSV": false,
+        "checkTXT": false,
+        "checkPNG": false,
+        "checkGIF": false,
+        "checkZIP": false,
+        "checkJSON": false,
+        "checkXML": false,
+        "checkServerJSON": false,
+        "checkServerSQL": false,
+        "sizeSQL": "",
+        "sizeCSV": "",
+        "sizeTXT": "",
+        "sizePNG": "",
+        "sizeGIF": "",
+        "sizeZIP": "",
+        "sizeJSON": "",
+        "sizeXML": "",
+        "sizeServerJSON": "",
+        "sizeServerSQL": ""
+      },
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "credentialId": 0,
+        "path": "/Users/geontae/workspaces/namutech/mc-data-manager/data/backup",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "alibaba",
+        "region": "ap-northeast-1",
+        "credentialId": 1,
+        "path": "",
+        "bucket": "",
+        "endpoint": "https://oss-ap-northeast-1.aliyuncs.com",
+        "host": "dds-mj76dbe602390fa41311-pub.mongodb.ap-northeast-2.rds.aliyuncs.com",
+        "port": "3717",
+        "username": "root",
+        "password": "qwe123!@#",
+        "databaseName": "databases",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "nrdbms",
+        "taskType": "migrate",
+        "taskId": "-task-0-20260417-181209"
+      },
+      "dummy": {
+        "checkSQL": false,
+        "checkCSV": false,
+        "checkTXT": false,
+        "checkPNG": false,
+        "checkGIF": false,
+        "checkZIP": false,
+        "checkJSON": false,
+        "checkXML": false,
+        "checkServerJSON": false,
+        "checkServerSQL": false,
+        "sizeSQL": "",
+        "sizeCSV": "",
+        "sizeTXT": "",
+        "sizePNG": "",
+        "sizeGIF": "",
+        "sizeZIP": "",
+        "sizeJSON": "",
+        "sizeXML": "",
+        "sizeServerJSON": "",
+        "sizeServerSQL": ""
+      },
+      "sourcePoint": {
+        "provider": "alibaba",
+        "region": "",
+        "credentialId": 1,
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "dds-mj76dbe602390fa41311-pub.mongodb.ap-northeast-2.rds.aliyuncs.com",
+        "port": "3717",
+        "username": "root",
+        "password": "qwe123!@#",
+        "databaseName": "databases",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "alibaba",
+        "region": "",
+        "credentialId": 1,
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "dds-mj76dbe602390fa41311-pub.mongodb.ap-northeast-2.rds.aliyuncs.com",
+        "port": "3717",
+        "username": "root",
+        "password": "qwe123!@#",
+        "databaseName": "databases2",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "nrdbms",
+        "taskType": "generate",
+        "taskId": "-task-0-20260424-141931"
+      },
+      "dummy": {
+        "dummyPath": "/tmp/datamold-dummy893324966",
+        "checkSQL": false,
+        "checkCSV": false,
+        "checkTXT": false,
+        "checkPNG": false,
+        "checkGIF": false,
+        "checkZIP": false,
+        "checkJSON": false,
+        "checkXML": false,
+        "checkServerJSON": true,
+        "checkServerSQL": false,
+        "sizeSQL": "",
+        "sizeCSV": "",
+        "sizeTXT": "",
+        "sizePNG": "",
+        "sizeGIF": "",
+        "sizeZIP": "",
+        "sizeJSON": "",
+        "sizeXML": "",
+        "sizeServerJSON": "1",
+        "sizeServerSQL": ""
+      },
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "credentialId": 0,
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "alibaba",
+        "region": "",
+        "credentialId": 1,
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "10.10.3.62",
+        "port": "27017",
+        "username": "root",
+        "password": "qwe123!@#",
+        "databaseName": "databases",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "nrdbms",
+        "taskType": "backup",
+        "taskId": "-task-0-20260424-143041"
+      },
+      "dummy": {
+        "checkSQL": false,
+        "checkCSV": false,
+        "checkTXT": false,
+        "checkPNG": false,
+        "checkGIF": false,
+        "checkZIP": false,
+        "checkJSON": false,
+        "checkXML": false,
+        "checkServerJSON": false,
+        "checkServerSQL": false,
+        "sizeSQL": "",
+        "sizeCSV": "",
+        "sizeTXT": "",
+        "sizePNG": "",
+        "sizeGIF": "",
+        "sizeZIP": "",
+        "sizeJSON": "",
+        "sizeXML": "",
+        "sizeServerJSON": "",
+        "sizeServerSQL": ""
+      },
+      "sourcePoint": {
+        "provider": "alibaba",
+        "region": "",
+        "credentialId": 1,
+        "path": "",
+        "bucket": "",
+        "endpoint": "https://oss-ap-northeast-1.aliyuncs.com",
+        "host": "10.10.3.63",
+        "port": "27017",
+        "username": "root",
+        "password": "qwe123!@#",
+        "databaseName": "databases",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "",
+        "region": "",
+        "credentialId": 0,
+        "path": "/Users/geontae/workspaces/namutech/mc-data-manager/data/backup",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "nrdbms",
+        "taskType": "generate",
+        "taskId": "-task-0-20260424-143215"
+      },
+      "dummy": {
+        "dummyPath": "/var/folders/8d/dykp7pg5693fhf5_72hr16540000gn/T/datamold-dummy1848932528",
+        "checkSQL": false,
+        "checkCSV": false,
+        "checkTXT": false,
+        "checkPNG": false,
+        "checkGIF": false,
+        "checkZIP": false,
+        "checkJSON": false,
+        "checkXML": false,
+        "checkServerJSON": true,
+        "checkServerSQL": false,
+        "sizeSQL": "",
+        "sizeCSV": "",
+        "sizeTXT": "",
+        "sizePNG": "",
+        "sizeGIF": "",
+        "sizeZIP": "",
+        "sizeJSON": "",
+        "sizeXML": "",
+        "sizeServerJSON": "1",
+        "sizeServerSQL": ""
+      },
+      "sourcePoint": {
+        "provider": "",
+        "region": "",
+        "credentialId": 0,
+        "path": "",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "alibaba",
+        "region": "ap-northeast-1",
+        "credentialId": 1,
+        "path": "",
+        "bucket": "",
+        "endpoint": "https://oss-ap-northeast-1.aliyuncs.com",
+        "host": "10.10.3.62",
+        "port": "27017",
+        "username": "root",
+        "password": "qwe123!@#",
+        "databaseName": "databases",
+        "databaseId": "",
+        "projectId": ""
+      }
+    },
+    {
+      "meta": {
+        "serviceType": "nrdbms",
+        "taskType": "backup",
+        "taskId": "-task-0-20260424-143250"
+      },
+      "dummy": {
+        "checkSQL": false,
+        "checkCSV": false,
+        "checkTXT": false,
+        "checkPNG": false,
+        "checkGIF": false,
+        "checkZIP": false,
+        "checkJSON": false,
+        "checkXML": false,
+        "checkServerJSON": false,
+        "checkServerSQL": false,
+        "sizeSQL": "",
+        "sizeCSV": "",
+        "sizeTXT": "",
+        "sizePNG": "",
+        "sizeGIF": "",
+        "sizeZIP": "",
+        "sizeJSON": "",
+        "sizeXML": "",
+        "sizeServerJSON": "",
+        "sizeServerSQL": ""
+      },
+      "sourcePoint": {
+        "provider": "alibaba",
+        "region": "",
+        "credentialId": 1,
+        "path": "",
+        "bucket": "",
+        "endpoint": "https://oss-ap-northeast-1.aliyuncs.com",
+        "host": "10.10.3.63",
+        "port": "27017",
+        "username": "root",
+        "password": "qwe123!@#",
+        "databaseName": "databases",
+        "databaseId": "",
+        "projectId": ""
+      },
+      "targetPoint": {
+        "provider": "",
+        "region": "",
+        "credentialId": 0,
+        "path": "/Users/geontae/workspaces/namutech/mc-data-manager/data/backup",
+        "bucket": "",
+        "endpoint": "",
+        "host": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "databaseName": "",
+        "databaseId": "",
+        "projectId": ""
       }
     }
   ],

@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strings"
 	"sync"
 	"time"
@@ -988,7 +989,7 @@ func handleRDBMSMigrateTask(params models.BasicDataTask) models.Status {
 	}
 
 	log.Info().Msg("Launch RDBController Copy")
-	if err := srcRDBC.Copy(dstRDBC); err != nil {
+	if err := srcRDBC.Copy(dstRDBC, params.SourcePoint.DatabaseName); err != nil {
 		log.Error().Err(err).Msg("Copy error copying into rdbms ")
 		return models.StatusFailed
 	}
@@ -1019,6 +1020,13 @@ func handleRDBMSBackupTask(params models.BasicDataTask) models.Status {
 		log.Error().Err(err).Msg("ListDB error ")
 		return models.StatusFailed
 	}
+
+	sourceDB := params.SourcePoint.DatabaseName
+	if !slices.Contains(dbList, sourceDB) {
+		log.Error().Msgf("database %q not found in server", sourceDB)
+		return models.StatusFailed
+	}
+	dbList = []string{sourceDB}
 
 	var sqlData string
 	for _, db := range dbList {

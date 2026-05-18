@@ -62,7 +62,22 @@
                                     {{ range $index, $value := .ALIBABARegions }}
                                         <option value="{{ $value }}">{{ $value }}</option>
                                     {{ end }}
-                                </optgroup>                            
+                                </optgroup>
+                                <optgroup label="IBM regions" data-provider="ibm" style="display: none;">
+                                    {{ range $index, $value := .IBMRegions }}
+                                        <option value="{{ $value }}">{{ $value }}</option>
+                                    {{ end }}
+                                </optgroup>
+                                <optgroup label="KT regions" data-provider="kt" style="display: none;">
+                                    {{ range $index, $value := .KTRegions }}
+                                        <option value="{{ $value }}">{{ $value }}</option>
+                                    {{ end }}
+                                </optgroup>
+                                <optgroup label="TENCENT regions" data-provider="tencent" style="display: none;">
+                                    {{ range $index, $value := .TencentRegions }}
+                                        <option value="{{ $value }}">{{ $value }}</option>
+                                    {{ end }}
+                                </optgroup>
                             </select>
                             <label for="sourceRegionSelect">Select Region</label>
                         </div>
@@ -90,6 +105,7 @@
                             <option value="aws">AWS</option>
                             <option value="gcp">GCP</option>
                             <option value="ncp">NCP</option>
+                            <option value="alibaba">ALIBABA</option>
                         </select>
                     </div>
                     <div class="input-group mb-3">
@@ -113,15 +129,22 @@
                             <label for="mysql-srcUsername">Username</label>
                         </div>
                     </div>
-                    <div class="input-group">
+                    <div class="input-group mb-3">
                         <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
                         <div class="form-floating">
                             <input type="password" class="form-control rounded-end" id="mysql-srcPassword" name="sourcePoint[password]" placeholder="Password">
                             <label for="mysql-srcPassword">Password</label>
                         </div>
                     </div>
+                    <div class="input-group">
+                        <span class="input-group-text rounded-start"><i class="fa-solid fa-database"></i></span>
+                        <div class="form-floating">
+                            <input type="text" class="form-control rounded-end" id="mysql-srcDatabase" name="sourcePoint[databaseName]" placeholder="Database">
+                            <label for="mysql-srcDatabase">Database</label>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-section mt-3" id="ncp-nrdbms" style="display:none;">
+                <div class="form-section mt-3" id="mongo-nrdbms" style="display:none;">
                     <div class="input-group mb-3">
                         <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
                         <div class="form-floating">
@@ -228,11 +251,13 @@ const source = {
                 aws: "AWS DynamoDB",
                 ncp: "Naver MongoDB",
                 gcp: "Google Firestore",
+                alibaba: "Alibaba MongoDB",
             },
             objectstorage: {
                 aws: "AWS S3",
                 ncp: "Naver Object Storage",
                 gcp: "Google Cloud Storage",
+                alibaba: "Alibaba Object Storage",
             },
             rdbms: {
                 default: "MySQL",
@@ -252,6 +277,10 @@ const source = {
     function updateFormVisibility() {
         const service = source.service.value;
         let idToShow = source.provider.value + '-' + service;
+
+        if (service === 'nrdbms' && (source.provider.value === 'ncp' || source.provider.value === 'alibaba')) {
+            idToShow = 'mongo-nrdbms';
+        }
 
         updateLabel(source.provider.value, service)
 
@@ -275,6 +304,22 @@ const source = {
                 input.removeAttribute('disabled');
                 input.setAttribute('required', '');
             })
+
+            // No-SQL + NCP/Alibaba 인 경우 Region 선택 불필요
+            const regionSelectWrapper = document.getElementById("sourceRegionSelect");
+            const regionInputGroup = regionSelectWrapper ? regionSelectWrapper.closest(".input-group") : null;
+            const isNoSqlNonRegion = service === 'nrdbms' && (source.provider.value === 'ncp' || source.provider.value === 'alibaba');
+            if (regionInputGroup) {
+                if (isNoSqlNonRegion) {
+                    regionInputGroup.style.display = "none";
+                    regionSelectWrapper.removeAttribute('required');
+                    regionSelectWrapper.setAttribute('disabled', '');
+                } else {
+                    regionInputGroup.style.display = "";
+                    regionSelectWrapper.removeAttribute('disabled');
+                    regionSelectWrapper.setAttribute('required', '');
+                }
+            }
 
             document.getElementById("rdbmsProvider").style.display = "none"
         }
