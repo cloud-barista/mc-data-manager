@@ -18,9 +18,6 @@ import (
 	"slices"
 	"strings"
 
-	// "fmt"
-	// "strings"
-
 	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/pkg/utils"
 	"github.com/cloud-barista/mc-data-manager/repository"
@@ -101,22 +98,18 @@ func (c *CredentialService) CreateCredential(req models.CredentialCreateRequest)
 	return &cred, nil
 }
 
-func (c *CredentialService) ListCredentials() ([]models.CredentialListResponse, error) {
-	credentials, err := c.credentialRepository.ListCredentials()
+func (c *CredentialService) ListCredentials() ([]models.ConnectionConfig, error) {
+	body, err := utils.RequestTumblebug("/tumblebug/connConfig", http.MethodGet, "", nil)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to list connection configs from tumblebug: %w", err)
 	}
 
-	responses := make([]models.CredentialListResponse, len(credentials))
-	for i, u := range credentials {
-		responses[i] = models.CredentialListResponse{
-			CredentialId: u.CredentialId,
-			CspType:      u.CspType,
-			Name:         u.Name,
-		}
+	var list models.ConnectionConfigList
+	if err := json.Unmarshal(body, &list); err != nil {
+		return nil, fmt.Errorf("failed to parse connection config list: %w", err)
 	}
 
-	return responses, nil
+	return list.ConnectionConfig, nil
 }
 
 func (c *CredentialService) GetCredentialById(id uint64) (*models.Credential, error) {

@@ -68,7 +68,7 @@ func preRunProfileE(pName, cmdName string, params *models.ProviderConfig) error 
 	// 	log.Info().Interface("credentials", srcCreds).Msg("initiate a profile scan")
 	// }
 
-	if srcCreds, err := credentailManager.LoadCredentialsById(uint64(params.CredentialId)); err != nil {
+	if srcCreds, err := credentailManager.LoadCredentialsByProvider(context.Background(), params.Provider); err != nil {
 		return fmt.Errorf("get config error : %s", err)
 
 	} else {
@@ -121,7 +121,7 @@ func GetOS(params *models.ProviderConfig) (*osc.OSController, error) {
 	log.Info().Str("Provider", params.Provider).Msg("GetOS")
 
 	loadCreds := func() (interface{}, error) {
-		creds, err := config.NewAuthManager().LoadCredentialsById(uint64(params.CredentialId))
+		creds, err := config.NewAuthManager().LoadCredentialsByProvider(context.Background(), params.Provider)
 		if err != nil {
 			log.Error().Err(err).Msg("credential load failed")
 		}
@@ -280,7 +280,7 @@ func GetNRDMS(params *models.ProviderConfig) (*nrdbc.NRDBController, error) {
 	log.Info().Msg("Get  Credential")
 	credentailManager := config.NewAuthManager()
 	// creds, err := credentailManger.LoadCredentialsByProfile(params.ProfileName, params.Provider)
-	creds, err := credentailManager.LoadCredentialsById(uint64(params.CredentialId))
+	creds, err := credentailManager.LoadCredentialsByProvider(context.Background(), params.Provider)
 	if err != nil {
 		log.Error().Err(err).Msg("credential load failed")
 		return nil, err
