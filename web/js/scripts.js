@@ -417,12 +417,18 @@ function loadProfileList() {
                 // resultText.value = json.Result;
                 // console.log(json);
 
+                const seen = new Set();
                 const options = json
+                .filter((item) => {
+                    if (seen.has(item.providerName)) return false;
+                    seen.add(item.providerName);
+                    return true;
+                })
                 .map((item) => {
                     return {
-                        label: `${item.cspType.toUpperCase()} - ${item.name}`,
-                        value: item.credentialId,
-                        provider: item.cspType
+                        label: `${item.providerName.toUpperCase()} - ${item.credentialName}`,
+                        value: item.providerName,
+                        provider: item.providerName
                     }
                 });
 

@@ -67,3 +67,4 @@ terraform.rc
 
 # Ignore db data
 data/mariadb
+data/mongodb

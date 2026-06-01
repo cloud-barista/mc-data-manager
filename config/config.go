@@ -70,6 +70,8 @@ func Init() {
 	}
 	log.Debug().Msgf("config params : %+v", Settings)
 	log.Info().Str("loglevel", Settings.Logger.LogLevel).Msg("Logger initialized with loglevel")
+
+	InitOpenBao()
 }
 
 // ConfigManager structure definition
