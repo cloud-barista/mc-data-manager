@@ -23,43 +23,48 @@ type BucketListResponse struct {
 	Buckets []Bucket `json:"buckets"`
 }
 
-type ListAllMyBucketsResult struct {
-	Owner   Owner `json:"Owner"`
-	Buckets struct {
-		Bucket []Bucket `json:"Bucket"`
-	} `json:"Buckets"`
+// ObjectStorageListResponse is the response body for GET /ns/{nsId}/resources/objectStorage
+type ObjectStorageListResponse struct {
+	ObjectStorage []ObjectStorage `json:"objectStorage"`
 }
 
-// 변환 후 구조
-type SimpleBuckets struct {
-	Buckets []Bucket `json:"Buckets"`
+// ObjectStorage represents a single object storage resource returned by CB-Tumblebug
+type ObjectStorage struct {
+	ResourceType     string           `json:"resourceType"`
+	ID               string           `json:"id"`
+	UID              string           `json:"uid"`
+	CspResourceName  string           `json:"cspResourceName"`
+	CspResourceId    string           `json:"cspResourceId"`
+	ConnectionName   string           `json:"connectionName"`
+	ConnectionConfig ConnectionConfig `json:"connectionConfig"`
+	Description      string           `json:"description"`
+	Status           string           `json:"status"`
+	Conditions       []Condition      `json:"conditions"`
+	Name             string           `json:"name"`
+	MaxKeys          int              `json:"maxKeys"`
+	Contents         []Content        `json:"contents"`
 }
 
-type Owner struct {
-	ID          string `json:"ID"`
-	DisplayName string `json:"DisplayName"`
+// Condition represents a status condition of an object storage resource
+type Condition struct {
+	Type               string `json:"type"`
+	Status             string `json:"status"`
+	Reason             string `json:"reason"`
+	LastTransitionTime string `json:"lastTransitionTime"`
+}
+
+// Content represents a single object within an object storage bucket
+type Content struct {
+	ETag         string    `json:"eTag"`
+	Key          string    `json:"key"`
+	LastModified time.Time `json:"lastModified"`
+	Size         int64     `json:"size"`
+	StorageClass string    `json:"storageClass"`
 }
 
 type Bucket struct {
 	Name         string `json:"Name"`
 	CreationDate string `json:"CreationDate"`
-}
-
-type ListBucketResult struct {
-	Name        string     `json:"Name"`
-	Prefix      string     `json:"Prefix"`
-	Marker      string     `json:"Marker"`
-	MaxKeys     int        `json:"MaxKeys"`
-	IsTruncated bool       `json:"IsTruncated"`
-	Contents    []Contents `json:"Contents"`
-}
-
-type Contents struct {
-	Key          string    `json:"Key"`
-	LastModified time.Time `json:"LastModified"`
-	ETag         string    `json:"ETag"`
-	Size         int64     `json:"Size"`
-	StorageClass string    `json:"StorageClass"`
 }
 
 type DeleteRequest struct {

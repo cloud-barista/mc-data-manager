@@ -137,7 +137,7 @@ func MigrationRDMFunc(datamoldParams *models.CommandTask) error {
 	}
 
 	log.Info().Msgf("Launch RDBController Copy")
-	if err := srcRDBC.Copy(dstRDBC); err != nil {
+	if err := srcRDBC.Copy(dstRDBC, datamoldParams.SourcePoint.DatabaseName); err != nil {
 		log.Error().Msgf("Copy error copying into rdbms : %v", err)
 		return err
 	}

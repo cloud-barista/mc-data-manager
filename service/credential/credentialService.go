@@ -67,7 +67,7 @@ func (c *CredentialService) CreateCredential(req models.CredentialCreateRequest)
 		return nil, err
 	}
 
-	if slices.Contains([]string{"aws", "ncp", "gcp", "alibaba"}, req.CspType) {
+	if slices.Contains([]string{"aws", "ncp", "gcp", "alibaba", "ibm", "kt", "tencent"}, req.CspType) {
 		terr := createTumblebugCredential(req)
 		if terr != nil {
 			return nil, terr
@@ -176,8 +176,8 @@ func getCredentialKeyValues(req models.CredentialCreateRequest) (map[string]stri
 		}
 
 		return map[string]string{
-			"ClientId":     aws.AccessKey,
-			"ClientSecret": aws.SecretKey,
+			"aws_access_key_id":     aws.AccessKey,
+			"aws_secret_access_key": aws.SecretKey,
 		}, nil
 	case "ncp":
 		var ncp models.NCPCredentials
@@ -186,8 +186,8 @@ func getCredentialKeyValues(req models.CredentialCreateRequest) (map[string]stri
 		}
 
 		return map[string]string{
-			"ClientId":     ncp.AccessKey,
-			"ClientSecret": ncp.SecretKey,
+			"ncloud_access_key": ncp.AccessKey,
+			"ncloud_secret_key": ncp.SecretKey,
 		}, nil
 	case "gcp":
 		var gcp models.GCPCredentials
@@ -196,13 +196,11 @@ func getCredentialKeyValues(req models.CredentialCreateRequest) (map[string]stri
 		}
 
 		return map[string]string{
-			// "client_id":      gcp.ClientID,
-			"ClientEmail": gcp.ClientEmail,
-			// "private_key_id": gcp.PrivateKeyID,
-			"PrivateKey":  gcp.PrivateKey,
-			"ProjectID":   gcp.ProjectID,
-			"S3AccessKey": req.S3AccessKey,
-			"S3SecretKey": req.S3SecretKey,
+			"client_email": gcp.ClientEmail,
+			"private_key":  gcp.PrivateKey,
+			"project_id":   gcp.ProjectID,
+			"S3AccessKey":  req.S3AccessKey,
+			"S3SecretKey":  req.S3SecretKey,
 		}, nil
 	case "alibaba":
 		var alibaba models.AlibabaCredentials
@@ -211,9 +209,49 @@ func getCredentialKeyValues(req models.CredentialCreateRequest) (map[string]stri
 		}
 
 		return map[string]string{
-			"ClientId":     alibaba.AccessKey,
-			"ClientSecret": alibaba.SecretKey,
+			"AccessKeyId":     alibaba.AccessKey,
+			"AccessKeySecret": alibaba.SecretKey,
 		}, nil
+
+	case "ibm":
+		var ibm models.IBMCredentials
+		if err := json.Unmarshal(req.CredentialJson, &ibm); err != nil {
+			return nil, fmt.Errorf("invalid ibm credential json: %w", err)
+		}
+
+		return map[string]string{
+			"ApiKey":      ibm.ApiKey,
+			"S3AccessKey": ibm.S3AccessKey,
+			"S3SecretKey": ibm.S3SecretKey,
+		}, nil
+
+	case "kt":
+		var kt models.KTCredentials
+		if err := json.Unmarshal(req.CredentialJson, &kt); err != nil {
+			return nil, fmt.Errorf("invalid kt credential json: %w", err)
+		}
+
+		return map[string]string{
+			"IdentityEndpoint": models.KTIdentityEndpoint,
+			"Username":         kt.Username,
+			"Password":         kt.Password,
+			"DomainName":       kt.DomainName,
+			"ProjectID":        kt.ProjectID,
+			"S3AccessKey":      kt.S3AccessKey,
+			"S3SecretKey":      kt.S3SecretKey,
+		}, nil
+
+	case "tencent":
+		var tencent models.TencentCredentials
+		if err := json.Unmarshal(req.CredentialJson, &tencent); err != nil {
+			return nil, fmt.Errorf("invalid tencent credential json: %w", err)
+		}
+
+		return map[string]string{
+			"SecretId":  tencent.SecretId,
+			"SecretKey": tencent.SecretKey,
+		}, nil
+
 	default:
 		return nil, fmt.Errorf("unsupported cspType: %q", req.CspType)
 	}
@@ -240,7 +278,6 @@ func getPublicKey() (string, string, error) {
 func encryptCredentialsWithPublicKey(publicKeyPem string, credentials map[string]string) ([]map[string]string, string, error) {
 	// PEM → rsa.PublicKey 변환
 	block, _ := pem.Decode([]byte(strings.ReplaceAll(publicKeyPem, `\n`, "\n")))
-	fmt.Println("block: ", block)
 	if block == nil {
 		return nil, "", fmt.Errorf("invalid public key PEM")
 	}

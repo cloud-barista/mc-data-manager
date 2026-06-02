@@ -1,19 +1,4 @@
-/*
-Copyright 2023 The Cloud-Barista Authors.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-	http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-package s3fs
+package ktfs
 
 import (
 	"bytes"
@@ -28,7 +13,6 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/filtering"
 	"github.com/cloud-barista/mc-data-manager/pkg/utils"
@@ -82,21 +66,29 @@ func (w *fakeWriteAt) WriteAt(p []byte, off int64) (n int, err error) {
 	return w.W.Write(p)
 }
 
-type S3FS struct {
+type KTFS struct {
 	provider   models.Provider
 	bucketName string
 	region     string
 
-	client     *s3.Client
 	ctx        context.Context
 	uploader   manager.Uploader
 	downloader manager.Downloader
 }
 
+func New(provider models.Provider, bucketName, region string) *KTFS {
+	return &KTFS{
+		provider:   provider,
+		bucketName: bucketName,
+		region:     region,
+		ctx:        context.Background(),
+	}
+}
+
 // Creating a Bucket
 //
 // Aws imposes location constraints when creating buckets
-func (f *S3FS) CreateBucket() error {
+func (f *KTFS) CreateBucket() error {
 	nsId := utils.GetNsId()
 	connName := fmt.Sprintf("%s-%s", f.provider, f.region)
 
@@ -118,7 +110,7 @@ func (f *S3FS) CreateBucket() error {
 
 // Delete Bucket
 // Check and delete all objects in the bucket and delete the bucket
-func (f *S3FS) DeleteBucket() error {
+func (f *KTFS) DeleteBucket() error {
 	objList, err := f.ObjectList()
 	if err != nil {
 		return err
@@ -165,7 +157,7 @@ func (f *S3FS) DeleteBucket() error {
 }
 
 // deleteObjectBatch deletes a batch of objects
-func (f *S3FS) deleteObjectBatch(keys []string) error {
+func (f *KTFS) deleteObjectBatch(keys []string) error {
 	nsId := utils.GetNsId()
 	path := "/tumblebug/ns/" + nsId + "/resources/objectStorage/" + f.bucketName + "?delete=true"
 	method := http.MethodPost
@@ -199,14 +191,14 @@ type presignedURLResponse struct {
 	Method       string `json:"method"`
 }
 
-// openWithTumblebug은 Tumblebug의 Presigned URL API를 통해 오브젝트를 다운로드합니다.
+// Tumblebug의 Presigned URL API를 통해 오브젝트를 다운로드합니다.
 //
 // 기존 Open()이 AWS SDK를 직접 사용하는 것과 달리,
 // 이 함수는 Tumblebug에 Presigned URL 발급을 요청한 뒤
 // 해당 URL로 HTTP GET을 수행하여 스트림을 반환합니다.
 //
 // POST /ns/{nsId}/resources/objectStorage/{osId}/object/{objectKey}/presignedUrl?operation=download
-func (f *S3FS) Open(name string) (io.ReadCloser, error) {
+func (f *KTFS) Open(name string) (io.ReadCloser, error) {
 	nsId := utils.GetNsId()
 	connName := fmt.Sprintf("%s-%s", f.provider, f.region)
 
@@ -232,7 +224,7 @@ func (f *S3FS) Open(name string) (io.ReadCloser, error) {
 	}
 
 	log.Debug().Str("key", name).Str("presignedURL", resp.PresignedURL).
-		Msg("[S3FS] openWithTumblebug: downloading via presigned URL")
+		Msg("[KTFS] openWithTumblebug: downloading via presigned URL")
 
 	httpResp, err := http.Get(resp.PresignedURL) //nolint:noctx
 	if err != nil {
@@ -281,7 +273,7 @@ func (w *tumblebugWriter) Close() error {
 		Str("key", w.name).
 		Str("method", http.MethodPut).
 		Int64("contentLength", req.ContentLength).
-		Msg("[S3FS] createWithTumblebug: sending PUT request")
+		Msg("[KTFS] createWithTumblebug: sending PUT request")
 
 	httpClient := &http.Client{}
 	httpResp, err := httpClient.Do(req)
@@ -296,7 +288,7 @@ func (w *tumblebugWriter) Close() error {
 		Str("key", w.name).
 		Int("statusCode", httpResp.StatusCode).
 		Str("responseBody", string(respBody)).
-		Msg("[S3FS] createWithTumblebug: PUT response")
+		Msg("[KTFS] createWithTumblebug: PUT response")
 
 	if httpResp.StatusCode != http.StatusOK && httpResp.StatusCode != http.StatusNoContent {
 		return fmt.Errorf("createWithTumblebug: unexpected status %d for %q, body: %s",
@@ -304,7 +296,7 @@ func (w *tumblebugWriter) Close() error {
 	}
 
 	log.Info().Str("key", w.name).Int("statusCode", httpResp.StatusCode).
-		Msg("[S3FS] createWithTumblebug: upload succeeded")
+		Msg("[KTFS] createWithTumblebug: upload succeeded")
 	return nil
 }
 
@@ -315,7 +307,7 @@ func (w *tumblebugWriter) Close() error {
 // 데이터를 버퍼링하여 Close() 시점에 Content-Length와 함께 HTTP PUT으로 전송합니다.
 //
 // POST /ns/{nsId}/resources/objectStorage/{osId}/object/{objectKey}/presignedUrl?operation=upload
-func (f *S3FS) Create(name string) (io.WriteCloser, error) {
+func (f *KTFS) Create(name string) (io.WriteCloser, error) {
 	nsId := utils.GetNsId()
 	connName := fmt.Sprintf("%s-%s", f.provider, f.region)
 
@@ -337,7 +329,7 @@ func (f *S3FS) Create(name string) (io.WriteCloser, error) {
 	}
 
 	log.Debug().Str("key", name).Str("presignedURL", resp.PresignedURL).
-		Msg("[S3FS] createWithTumblebug: presigned URL acquired")
+		Msg("[KTFS] createWithTumblebug: presigned URL acquired")
 
 	return &tumblebugWriter{
 		presignedURL: resp.PresignedURL,
@@ -346,102 +338,8 @@ func (f *S3FS) Create(name string) (io.WriteCloser, error) {
 	}, nil
 }
 
-// Open function using pipeline
-func (f *S3FS) OpenDeprecated(name string) (io.ReadCloser, error) {
-	pr, pw := io.Pipe()
-	ch := make(chan error)
-	ctx, cancel := context.WithCancel(f.ctx)
-	go func() {
-		defer cancel()
-		_, err := f.downloader.Download(
-			ctx,
-			&fakeWriteAt{W: pw},
-			&s3.GetObjectInput{
-				Bucket: aws.String(f.bucketName),
-				Key:    aws.String(name),
-			}, func(d *manager.Downloader) { d.Concurrency = 1 },
-		)
-		if cerr := pw.Close(); cerr != nil {
-			err = cerr
-		}
-		ch <- err
-	}()
-
-	return &reader{r: pr, ch: ch, cancel: cancel, chkClose: false}, nil
-}
-
-// Create function using pipeline
-func (f *S3FS) CreateDeprecated(name string) (io.WriteCloser, error) {
-	pr, pw := io.Pipe()
-	ch := make(chan error)
-	ctx, cancel := context.WithCancel(f.ctx)
-	go func() {
-		defer cancel()
-		_, err := f.uploader.Upload(ctx, &s3.PutObjectInput{
-			Bucket: aws.String(f.bucketName),
-			Key:    aws.String(name),
-			Body:   pr,
-		})
-		ch <- err
-	}()
-
-	return &writer{w: pw, ch: ch, cancel: cancel, chkClose: false}, nil
-}
-
-// Look up the list of objects in your bucket
-// func (f *S3FS) ObjectList() ([]*models.Object, error) {
-// 	var objlist []*models.Object
-// 	var ContinuationToken *string
-
-// 	for {
-// 		LOut, err := f.client.ListObjectsV2(
-// 			f.ctx,
-// 			&s3.ListObjectsV2Input{
-// 				Bucket:            aws.String(f.bucketName),
-// 				ContinuationToken: ContinuationToken,
-// 			},
-// 		)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-
-// 		for _, obj := range LOut.Contents {
-// 			objlist = append(objlist, &models.Object{
-// 				ETag:         *obj.ETag,
-// 				Key:          *obj.Key,
-// 				LastModified: *obj.LastModified,
-// 				Size:         *obj.Size,
-// 				StorageClass: string(obj.StorageClass),
-// 			})
-// 		}
-
-// 		if LOut.NextContinuationToken == nil {
-// 			break
-// 		}
-
-// 		ContinuationToken = LOut.NextContinuationToken
-// 	}
-
-// 	return objlist, nil
-// }
-
-func New(provider models.Provider, client *s3.Client, bucketName, region string) *S3FS {
-	sfs := &S3FS{
-		ctx:        context.TODO(),
-		provider:   provider,
-		bucketName: bucketName,
-		region:     region,
-		client:     client,
-	}
-
-	sfs.uploader = *manager.NewUploader(client, func(u *manager.Uploader) { u.Concurrency = 1; u.PartSize = 128 * 1024 * 1024 })
-	sfs.downloader = *manager.NewDownloader(client, func(d *manager.Downloader) { d.Concurrency = 1; d.PartSize = 128 * 1024 * 1024 })
-
-	return sfs
-}
-
-func (f *S3FS) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*models.Object, error) {
-	log.Debug().Msg("[S3FS] filtering")
+func (f *KTFS) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*models.Object, error) {
+	log.Debug().Msg("[KTFS] filtering")
 	var out []*models.Object
 	// var token *string
 
@@ -476,7 +374,7 @@ func (f *S3FS) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*models.Obje
 			}
 
 			log.Debug().Str("key", c.Key).Int64("size", c.Size).
-				Msg("[S3FS] candidate")
+				Msg("[KTFS] candidate")
 
 			matched := filtering.MatchCandidate(flt, c)
 			if !matched {
@@ -486,7 +384,7 @@ func (f *S3FS) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*models.Obje
 						Str("prefix", aws.ToString(prefix)).
 						Strs("exact", flt.Exact).
 						Str("modifiedDate", c.LastModified.String()).
-						Msg("[S3FS] filtered out")
+						Msg("[KTFS] filtered out")
 				}
 				continue
 			}
@@ -507,11 +405,11 @@ func (f *S3FS) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*models.Obje
 	return out, nil
 }
 
-func (f *S3FS) ObjectList() ([]*models.Object, error) {
+func (f *KTFS) ObjectList() ([]*models.Object, error) {
 	return f.ObjectListWithFilter(nil)
 }
 
-func (f *S3FS) BucketList() ([]models.Bucket, error) {
+func (f *KTFS) BucketList() ([]models.Bucket, error) {
 	nsId := utils.GetNsId()
 	path := "/tumblebug/ns/" + nsId + "/resources/objectStorage"
 	method := http.MethodGet

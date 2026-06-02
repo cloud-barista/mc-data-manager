@@ -78,7 +78,22 @@
                                     {{ range $index, $value := .ALIBABARegions }}
                                         <option value="{{ $value }}">{{ $value }}</option>
                                     {{ end }}
-                                </optgroup>                            
+                                </optgroup>
+                                <optgroup label="IBM regions" data-provider="ibm" style="display: none;">
+                                    {{ range $index, $value := .IBMRegions }}
+                                        <option value="{{ $value }}">{{ $value }}</option>
+                                    {{ end }}
+                                </optgroup>
+                                <optgroup label="KT regions" data-provider="kt" style="display: none;">
+                                    {{ range $index, $value := .KTRegions }}
+                                        <option value="{{ $value }}">{{ $value }}</option>
+                                    {{ end }}
+                                </optgroup>
+                                <optgroup label="TENCENT regions" data-provider="tencent" style="display: none;">
+                                    {{ range $index, $value := .TencentRegions }}
+                                        <option value="{{ $value }}">{{ $value }}</option>
+                                    {{ end }}
+                                </optgroup>
                             </select>
                             <label for="targetRegionSelect">Select Region</label>
                         </div>
@@ -145,7 +160,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-section mt-3" id="ncp-nrdbms" style="display:none;">
+                <div class="form-section mt-3" id="mongo-nrdbms" style="display:none;">
                     <div class="input-group mb-3">
                         <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
                         <div class="form-floating">
@@ -240,6 +255,7 @@ const target = {
                 aws: "AWS DynamoDB",
                 ncp: "Naver MongoDB",
                 gcp: "Google Firestore",
+                alibaba: "Alibaba MongoDB",
             },
             objectstorage: {
                 aws: "AWS S3",
@@ -267,6 +283,10 @@ const target = {
         var service = target.service.value;
         var idToShow = provider + '-' + service;
 
+        if (service === 'nrdbms' && (provider === 'ncp' || provider === 'alibaba')) {
+            idToShow = 'mongo-nrdbms';
+        }
+
         updateLabel(provider, service)
         
         const credentialDiv = document.getElementById("credentialDiv")
@@ -289,6 +309,22 @@ const target = {
                 input.removeAttribute('disabled');
                 input.setAttribute('required', '');
             })
+
+            // No-SQL + NCP/Alibaba 인 경우 Region 선택 불필요
+            const regionSelectWrapper = document.getElementById("targetRegionSelect");
+            const regionInputGroup = regionSelectWrapper ? regionSelectWrapper.closest(".input-group") : null;
+            const isNoSqlNonRegion = service === 'nrdbms' && (provider === 'ncp' || provider === 'alibaba');
+            if (regionInputGroup) {
+                if (isNoSqlNonRegion) {
+                    regionInputGroup.style.display = "none";
+                    regionSelectWrapper.removeAttribute('required');
+                    regionSelectWrapper.setAttribute('disabled', '');
+                } else {
+                    regionInputGroup.style.display = "";
+                    regionSelectWrapper.removeAttribute('disabled');
+                    regionSelectWrapper.setAttribute('required', '');
+                }
+            }
 
             document.getElementById("rdbmsProvider").style.display = "none"
         }

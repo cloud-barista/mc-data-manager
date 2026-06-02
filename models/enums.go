@@ -24,6 +24,9 @@ const (
 	NCP     Provider = "ncp"
 	OPM     Provider = "on-premise"
 	ALIBABA Provider = "alibaba"
+	IBM     Provider = "ibm"
+	KT      Provider = "kt"
+	TENCENT Provider = "tencent"
 )
 
 // Service type
