@@ -16,10 +16,13 @@ func ObjectstorageBucketsHandler(ctx echo.Context) error {
 
 	logger, _ := pageLogInit(ctx, "object storage", "get object storage bucket list", start)
 
+	filterKey := ctx.QueryParam("filterKey")
+	filterVal := ctx.QueryParam("filterVal")
+
 	params := models.DataTask{}
 	if !getDataWithReBind(logger, start, ctx, &params) {
-		return ctx.JSON(http.StatusInternalServerError, models.BucketListResponse{
-			Buckets: []models.Bucket{},
+		return ctx.JSON(http.StatusInternalServerError, models.ObjectStorageListResponse{
+			ObjectStorage: []models.ObjectStorage{},
 		})
 	}
 
@@ -28,19 +31,19 @@ func ObjectstorageBucketsHandler(ctx echo.Context) error {
 	OSC, err = auth.GetOS(&params.TargetPoint)
 	if err != nil {
 		log.Error().Msgf("OSController error importing into objectstorage : %v", err)
-		return ctx.JSON(http.StatusInternalServerError, models.BucketListResponse{
-			Buckets: []models.Bucket{},
+		return ctx.JSON(http.StatusInternalServerError, models.ObjectStorageListResponse{
+			ObjectStorage: []models.ObjectStorage{},
 		})
 	}
 
-	buckets, err := OSC.BucketList()
+	objectStorages, err := OSC.BucketList(filterKey, filterVal)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, models.BucketListResponse{
-			Buckets: []models.Bucket{},
+		return ctx.JSON(http.StatusInternalServerError, models.ObjectStorageListResponse{
+			ObjectStorage: []models.ObjectStorage{},
 		})
 	}
 
-	return ctx.JSON(http.StatusOK, models.BucketListResponse{
-		Buckets: buckets,
+	return ctx.JSON(http.StatusOK, models.ObjectStorageListResponse{
+		ObjectStorage: objectStorages,
 	})
 }

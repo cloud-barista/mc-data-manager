@@ -394,11 +394,11 @@ const source = {
             .then(json => {
                 source.bucket.replaceChildren();
                 
-                if(json.buckets.length > 0) {
-                    json.buckets.forEach(optionData => {
+                if(json.objectStorage.length > 0) {
+                    json.objectStorage.forEach(optionData => {
                         const option = document.createElement("option");
-                        option.value = optionData.Name;
-                        option.textContent = optionData.Name;
+                        option.value = optionData.name;
+                        option.textContent = optionData.name;
                         source.bucket.appendChild(option);
                     });
                 } else {
@@ -427,7 +427,10 @@ const source = {
     }
 
     function fetchBucketList(credentialId, region, provider, endpoint) {
-        const url = "/objectstorage/buckets";
+        let url = "/objectstorage/buckets";
+        if (provider) {
+            url += `?filterKey=providerName&filterVal=${encodeURIComponent(provider)}`;
+        }
         const jsonData = {
             "targetPoint": {
                 "credentialId": parseInt(credentialId),

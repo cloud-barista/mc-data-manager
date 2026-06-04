@@ -39,9 +39,14 @@ type ObjectStorage struct {
 	ConnectionConfig ConnectionConfig `json:"connectionConfig"`
 	Description      string           `json:"description"`
 	Status           string           `json:"status"`
+	SystemMessage    string           `json:"systemMessage"`
 	Conditions       []Condition      `json:"conditions"`
 	Name             string           `json:"name"`
+	CreationDate     string           `json:"creationDate"`
 	MaxKeys          int              `json:"maxKeys"`
+	IsTruncated      bool             `json:"isTruncated"`
+	Marker           string           `json:"marker"`
+	Prefix           string           `json:"prefix"`
 	Contents         []Content        `json:"contents"`
 }
 
@@ -49,6 +54,7 @@ type ObjectStorage struct {
 type Condition struct {
 	Type               string `json:"type"`
 	Status             string `json:"status"`
+	Message            string `json:"message"`
 	Reason             string `json:"reason"`
 	LastTransitionTime string `json:"lastTransitionTime"`
 }

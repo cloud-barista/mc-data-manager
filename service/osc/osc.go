@@ -27,7 +27,7 @@ type OSFS interface {
 	CreateBucket() error
 	DeleteBucket() error
 	ObjectList() ([]*models.Object, error)
-	BucketList() ([]models.Bucket, error)
+	BucketList(filterKey, filterVal string) ([]models.ObjectStorage, error)
 
 	Open(name string) (io.ReadCloser, error)
 	Create(name string) (io.WriteCloser, error)
@@ -132,8 +132,8 @@ func (o *OSController) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*mod
 	return out, nil
 }
 
-func (osc *OSController) BucketList() ([]models.Bucket, error) {
-	bucketList, err := osc.osfs.BucketList()
+func (osc *OSController) BucketList(filterKey, filterVal string) ([]models.ObjectStorage, error) {
+	bucketList, err := osc.osfs.BucketList(filterKey, filterVal)
 	if err != nil {
 		return bucketList, err
 	}
