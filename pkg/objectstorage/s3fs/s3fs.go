@@ -511,29 +511,24 @@ func (f *S3FS) ObjectList() ([]*models.Object, error) {
 	return f.ObjectListWithFilter(nil)
 }
 
-func (f *S3FS) BucketList() ([]models.Bucket, error) {
+func (f *S3FS) BucketList(filterKey, filterVal string) ([]models.ObjectStorage, error) {
 	nsId := utils.GetNsId()
 	path := "/tumblebug/ns/" + nsId + "/resources/objectStorage"
+	if filterKey != "" && filterVal != "" {
+		path += "?filterKey=" + url.QueryEscape(filterKey) + "&filterVal=" + url.QueryEscape(filterVal)
+	}
 	method := http.MethodGet
 	connName := fmt.Sprintf("%s-%s", f.provider, f.region)
 
 	body, err := utils.RequestTumblebug(path, method, connName, nil)
 	if err != nil {
-		return []models.Bucket{}, fmt.Errorf("failed to get buckets: %w", err)
+		return []models.ObjectStorage{}, fmt.Errorf("failed to get buckets: %w", err)
 	}
 
-	// Parse the response to extract public key and token ID
 	var res models.ObjectStorageListResponse
 	if err := json.Unmarshal(body, &res); err != nil {
-		fmt.Println("error: ", err.Error())
-		return []models.Bucket{}, fmt.Errorf("failed to get buckets: %w", err)
+		return []models.ObjectStorage{}, fmt.Errorf("failed to parse bucket list response: %w", err)
 	}
 
-	buckets := make([]models.Bucket, 0, len(res.ObjectStorage))
-	for _, os := range res.ObjectStorage {
-		buckets = append(buckets, models.Bucket{
-			Name: os.Name,
-		})
-	}
-	return buckets, nil
+	return res.ObjectStorage, nil
 }
