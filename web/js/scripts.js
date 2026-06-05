@@ -1065,9 +1065,17 @@ window.addEventListener("message", async function (event) {
     const data = event.data;
     console.log("iframeServer : Message received :", data);
     try {
-        // const nsId = data.projectInfo.ns_id
-        // business logic 
+        const nsId = data?.projectInfo?.ns_id;
+        if (!nsId) return;
 
+        sessionStorage.setItem("nsId", nsId);
+        console.log("iframeServer : nsId set :", nsId);
+
+        await fetch("/namespace", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ nsId }),
+        });
     } catch (error) {
         console.error("Error in processing message:", error);
     }

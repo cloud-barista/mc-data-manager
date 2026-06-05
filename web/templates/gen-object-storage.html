@@ -197,10 +197,10 @@
             .then(json => {
                 resetBuckets(true)
 
-                json.buckets.forEach(optionData => {
+                json.objectStorage.forEach(optionData => {
                     const option = document.createElement("option");
-                    option.value = optionData.Name;
-                    option.textContent = optionData.Name;
+                    option.value = optionData.name;
+                    option.textContent = optionData.name;
                     target.bucket.appendChild(option);
                 });
             })
@@ -239,7 +239,10 @@
     }
 
     function fetchBucketList(credentialId, region, provider, endpoint) {
-        const url = "/objectstorage/buckets";
+        let url = "/objectstorage/buckets";
+        if (provider) {
+            url += `?filterKey=providerName&filterVal=${encodeURIComponent(provider)}`;
+        }
         const jsonData = {
             "targetPoint": {
                 "credentialId": parseInt(credentialId),

@@ -6,9 +6,28 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"sync"
 )
 
+var (
+	runtimeNsId   string
+	runtimeNsIdMu sync.RWMutex
+)
+
+func SetNsId(nsId string) {
+	runtimeNsIdMu.Lock()
+	defer runtimeNsIdMu.Unlock()
+	runtimeNsId = nsId
+}
+
 func GetNsId() string {
+	runtimeNsIdMu.RLock()
+	if runtimeNsId != "" {
+		defer runtimeNsIdMu.RUnlock()
+		return runtimeNsId
+	}
+	runtimeNsIdMu.RUnlock()
+
 	nsId := os.Getenv("TUMBLEBUG_NS_ID")
 	if nsId == "" {
 		nsId = "default"
