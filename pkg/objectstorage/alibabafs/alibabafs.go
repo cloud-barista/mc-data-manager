@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 
 	"github.com/aliyun/alibabacloud-oss-go-sdk-v2/oss"
 	"github.com/cloud-barista/mc-data-manager/models"
@@ -223,31 +224,26 @@ func (f *AlibabaFS) ObjectListWithFilter(flt *filtering.ObjectFilter) ([]*models
 }
 
 // BucketList returns all buckets that are available for the configured account.
-func (f *AlibabaFS) BucketList() ([]models.Bucket, error) {
+func (f *AlibabaFS) BucketList(filterKey, filterVal string) ([]models.ObjectStorage, error) {
 	nsId := utils.GetNsId()
 	path := "/tumblebug/ns/" + nsId + "/resources/objectStorage"
+	if filterKey != "" && filterVal != "" {
+		path += "?filterKey=" + url.QueryEscape(filterKey) + "&filterVal=" + url.QueryEscape(filterVal)
+	}
 	method := http.MethodGet
 	connName := fmt.Sprintf("%s-%s", f.provider, f.region)
 
 	body, err := utils.RequestTumblebug(path, method, connName, nil)
 	if err != nil {
-		return []models.Bucket{}, fmt.Errorf("failed to get buckets: %w", err)
+		return []models.ObjectStorage{}, fmt.Errorf("failed to get buckets: %w", err)
 	}
 
-	// Parse the response to extract public key and token ID
 	var res models.ObjectStorageListResponse
 	if err := json.Unmarshal(body, &res); err != nil {
-		fmt.Println("error: ", err.Error())
-		return []models.Bucket{}, fmt.Errorf("failed to get buckets: %w", err)
+		return []models.ObjectStorage{}, fmt.Errorf("failed to parse bucket list response: %w", err)
 	}
 
-	buckets := make([]models.Bucket, 0, len(res.ObjectStorage))
-	for _, os := range res.ObjectStorage {
-		buckets = append(buckets, models.Bucket{
-			Name: os.Name,
-		})
-	}
-	return buckets, nil
+	return res.ObjectStorage, nil
 }
 
 // Open streams a single object from Alibaba Cloud OSS.

@@ -37,6 +37,9 @@ services:
       - /etc/localtime:/etc/localtime:ro # timezone
     env_file:
       - .env
+    environment:
+      - VAULT_ADDR=${VAULT_ADDR:-http://openbao:8200}
+      - VAULT_TOKEN=${VAULT_TOKEN:-}
     # Health check configuration
     # OK [ 2xx ,3xx}, ERR [4xx,5xx,...etc]
     healthcheck:
