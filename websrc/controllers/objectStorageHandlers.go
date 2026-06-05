@@ -11,6 +11,20 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// ObjectstorageBucketsHandler godoc
+//
+//	@ID			ObjectstorageBucketsHandler
+//	@Summary	List available buckets for a given provider
+//	@Description	Returns the list of buckets accessible with the given credentials. Optionally filters by a tag key/value pair.
+//	@Tags			[ObjectStorage]
+//	@Accept			json
+//	@Produce		json
+//	@Param			filterKey	query		string					false	"Tag key to filter buckets by"
+//	@Param			filterVal	query		string					false	"Tag value to filter buckets by (used with filterKey)"
+//	@Param			RequestBody	body		models.DataTask			true	"Provider credentials and connection info"
+//	@Success		200			{object}	models.ObjectStorageListResponse	"List of accessible buckets"
+//	@Failure		500			{object}	models.ObjectStorageListResponse	"Internal Server Error"
+//	@Router			/buckets [post]
 func ObjectstorageBucketsHandler(ctx echo.Context) error {
 	start := time.Now()
 

@@ -12,14 +12,17 @@ type setNsIdRequest struct {
 }
 
 // SetNsIdHandler godoc
-// @Summary Set the active namespace ID
-// @Description Sets the runtime nsId received from the parent page via postMessage
-// @Tags namespace
-// @Accept json
-// @Produce json
-// @Param body body setNsIdRequest true "namespace ID"
-// @Success 200 {object} map[string]string
-// @Router /namespace [post]
+//
+//	@ID			SetNsIdHandler
+//	@Summary	Set the active namespace ID
+//	@Description	Sets the runtime nsId received from the parent page via postMessage
+//	@Tags			[Namespace]
+//	@Accept			json
+//	@Produce		json
+//	@Param			RequestBody	body		setNsIdRequest		true	"Namespace ID to set"
+//	@Success		200			{object}	map[string]string	"Active namespace ID"
+//	@Failure		400			{object}	map[string]string	"Invalid Request"
+//	@Router			/namespace [post]
 func SetNsIdHandler(c echo.Context) error {
 	var req setNsIdRequest
 	if err := c.Bind(&req); err != nil || req.NsId == "" {
@@ -31,12 +34,14 @@ func SetNsIdHandler(c echo.Context) error {
 }
 
 // GetNsIdHandler godoc
-// @Summary Get the active namespace ID
-// @Description Returns the currently active nsId (runtime value or env default)
-// @Tags namespace
-// @Produce json
-// @Success 200 {object} map[string]string
-// @Router /namespace [get]
+//
+//	@ID			GetNsIdHandler
+//	@Summary	Get the active namespace ID
+//	@Description	Returns the currently active nsId (runtime value or env default)
+//	@Tags			[Namespace]
+//	@Produce		json
+//	@Success		200	{object}	map[string]string	"Active namespace ID"
+//	@Router			/namespace [get]
 func GetNsIdHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]string{"nsId": utils.GetNsId()})
 }

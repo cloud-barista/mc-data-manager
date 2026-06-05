@@ -1,5 +1,10 @@
 basePath: /
 definitions:
+  controllers.setNsIdRequest:
+    properties:
+      nsId:
+        type: string
+    type: object
   models.BackupTask:
     properties:
       sourceFilter:
@@ -25,6 +30,55 @@ definitions:
       Error:
         type: string
       Result:
+        type: string
+    type: object
+  models.Condition:
+    properties:
+      lastTransitionTime:
+        type: string
+      message:
+        type: string
+      reason:
+        type: string
+      status:
+        type: string
+      type:
+        type: string
+    type: object
+  models.ConnectionConfig:
+    properties:
+      configName:
+        type: string
+      credentialHolder:
+        type: string
+      credentialName:
+        type: string
+      driverName:
+        type: string
+      providerName:
+        type: string
+      regionDetail:
+        $ref: '#/definitions/models.RegionDetail'
+      regionRepresentative:
+        type: boolean
+      regionZoneInfo:
+        $ref: '#/definitions/models.RegionZoneInfo'
+      regionZoneInfoName:
+        type: string
+      verified:
+        type: boolean
+    type: object
+  models.Content:
+    properties:
+      eTag:
+        type: string
+      key:
+        type: string
+      lastModified:
+        type: string
+      size:
+        type: integer
+      storageClass:
         type: string
     type: object
   models.CredentialCreateRequest:
@@ -109,6 +163,15 @@ definitions:
       targetPoint:
         $ref: '#/definitions/models.ProviderConfig'
     type: object
+  models.Location:
+    properties:
+      display:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+    type: object
   models.MigrateTask:
     properties:
       sourceFilter:
@@ -149,6 +212,56 @@ definitions:
           type: string
         type: array
     type: object
+  models.ObjectStorage:
+    properties:
+      conditions:
+        items:
+          $ref: '#/definitions/models.Condition'
+        type: array
+      connectionConfig:
+        $ref: '#/definitions/models.ConnectionConfig'
+      connectionName:
+        type: string
+      contents:
+        items:
+          $ref: '#/definitions/models.Content'
+        type: array
+      creationDate:
+        type: string
+      cspResourceId:
+        type: string
+      cspResourceName:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      isTruncated:
+        type: boolean
+      marker:
+        type: string
+      maxKeys:
+        type: integer
+      name:
+        type: string
+      prefix:
+        type: string
+      resourceType:
+        type: string
+      status:
+        type: string
+      systemMessage:
+        type: string
+      uid:
+        type: string
+    type: object
+  models.ObjectStorageListResponse:
+    properties:
+      objectStorage:
+        items:
+          $ref: '#/definitions/models.ObjectStorage'
+        type: array
+    type: object
   models.ProviderConfig:
     properties:
       bucket:
@@ -176,6 +289,28 @@ definitions:
       region:
         type: string
       username:
+        type: string
+    type: object
+  models.RegionDetail:
+    properties:
+      description:
+        type: string
+      location:
+        $ref: '#/definitions/models.Location'
+      regionId:
+        type: string
+      regionName:
+        type: string
+      zones:
+        items:
+          type: string
+        type: array
+    type: object
+  models.RegionZoneInfo:
+    properties:
+      assignedRegion:
+        type: string
+      assignedZone:
         type: string
     type: object
   models.RestoreTask:
@@ -436,6 +571,42 @@ paths:
       summary: Export data from MySQL
       tags:
       - '[Backup]'
+  /buckets:
+    post:
+      consumes:
+      - application/json
+      description: Returns the list of buckets accessible with the given credentials.
+        Optionally filters by a tag key/value pair.
+      operationId: ObjectstorageBucketsHandler
+      parameters:
+      - description: Tag key to filter buckets by
+        in: query
+        name: filterKey
+        type: string
+      - description: Tag value to filter buckets by (used with filterKey)
+        in: query
+        name: filterVal
+        type: string
+      - description: Provider credentials and connection info
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.DataTask'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of accessible buckets
+          schema:
+            $ref: '#/definitions/models.ObjectStorageListResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ObjectStorageListResponse'
+      summary: List available buckets for a given provider
+      tags:
+      - '[ObjectStorage]'
   /credentials:
     get:
       description: Retrieve a list of all credentials in the system.
@@ -991,6 +1162,52 @@ paths:
       summary: Migrate data from RDBMS to RDBMS
       tags:
       - '[Migrate]'
+  /namespace:
+    get:
+      description: Returns the currently active nsId (runtime value or env default)
+      operationId: GetNsIdHandler
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Active namespace ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get the active namespace ID
+      tags:
+      - '[Namespace]'
+    post:
+      consumes:
+      - application/json
+      description: Sets the runtime nsId received from the parent page via postMessage
+      operationId: SetNsIdHandler
+      parameters:
+      - description: Namespace ID to set
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.setNsIdRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Active namespace ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Set the active namespace ID
+      tags:
+      - '[Namespace]'
   /readyZ:
     get:
       description: Get System Ready
