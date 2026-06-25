@@ -598,42 +598,6 @@ paths:
       summary: Export data from MySQL
       tags:
       - '[Backup]'
-  /buckets:
-    post:
-      consumes:
-      - application/json
-      description: Returns the list of buckets accessible with the given credentials.
-        Optionally filters by a tag key/value pair.
-      operationId: ObjectstorageBucketsHandler
-      parameters:
-      - description: Tag key to filter buckets by
-        in: query
-        name: filterKey
-        type: string
-      - description: Tag value to filter buckets by (used with filterKey)
-        in: query
-        name: filterVal
-        type: string
-      - description: Provider credentials and connection info
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/models.DataTask'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: List of accessible buckets
-          schema:
-            $ref: '#/definitions/models.ObjectStorageListResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.ObjectStorageListResponse'
-      summary: List available buckets for a given provider
-      tags:
-      - '[ObjectStorage]'
   /credentials:
     get:
       description: Retrieve a list of all credentials in the system.
@@ -1235,6 +1199,42 @@ paths:
       summary: Set the active namespace ID
       tags:
       - '[Namespace]'
+  /objectstorage/buckets:
+    post:
+      consumes:
+      - application/json
+      description: Returns the list of buckets accessible with the given credentials.
+        Optionally filters by a tag key/value pair.
+      operationId: ObjectstorageBucketsHandler
+      parameters:
+      - description: Tag key to filter buckets by
+        in: query
+        name: filterKey
+        type: string
+      - description: Tag value to filter buckets by (used with filterKey)
+        in: query
+        name: filterVal
+        type: string
+      - description: Provider credentials and connection info
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.DataTask'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of accessible buckets
+          schema:
+            $ref: '#/definitions/models.ObjectStorageListResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ObjectStorageListResponse'
+      summary: List available buckets for a given provider
+      tags:
+      - '[ObjectStorage]'
   /objectstorage/object:
     delete:
       consumes:

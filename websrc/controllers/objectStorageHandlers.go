@@ -1,30 +1,20 @@
 package controllers
 
 import (
+	"encoding/json"
+	"encoding/xml"
+	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/cloud-barista/mc-data-manager/internal/auth"
 	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/filtering"
+	"github.com/cloud-barista/mc-data-manager/pkg/utils"
 	"github.com/cloud-barista/mc-data-manager/service/osc"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 )
-
-func toObjectInfoList(objs []*models.Object) []*models.ObjectInfo {
-	out := make([]*models.ObjectInfo, 0, len(objs))
-	for _, o := range objs {
-		out = append(out, &models.ObjectInfo{
-			Key:          o.Key,
-			Size:         o.Size,
-			LastModified: o.LastModified,
-			ETag:         o.ETag,
-			StorageClass: o.StorageClass,
-		})
-	}
-	return out
-}
 
 // ObjectstorageBucketsHandler godoc
 //
@@ -39,7 +29,7 @@ func toObjectInfoList(objs []*models.Object) []*models.ObjectInfo {
 //	@Param			RequestBody	body		models.DataTask			true	"Provider credentials and connection info"
 //	@Success		200			{object}	models.ObjectStorageListResponse	"List of accessible buckets"
 //	@Failure		500			{object}	models.ObjectStorageListResponse	"Internal Server Error"
-//	@Router			/buckets [post]
+//	@Router			/objectstorage/buckets [post]
 func ObjectstorageBucketsHandler(ctx echo.Context) error {
 	start := time.Now()
 
@@ -99,29 +89,47 @@ func ObjectstorageObjectListHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, models.ObjectListResponse{Objects: []*models.ObjectInfo{}})
 	}
 
-	OSC, err := auth.GetOS(&params.TargetPoint)
+	connName := fmt.Sprintf("%s-%s", params.TargetPoint.Provider, params.TargetPoint.Region)
+	nsId := utils.GetNsId()
+	path := fmt.Sprintf("/tumblebug/ns/%s/resources/objectStorage/%s", nsId, params.TargetPoint.Bucket)
+
+	body, err := utils.RequestTumblebug(path, http.MethodGet, connName, nil)
 	if err != nil {
-		log.Error().Msgf("OSController error listing objects: %v", err)
+		log.Error().Msgf("RequestTumblebug error listing objects: %v", err)
 		return ctx.JSON(http.StatusInternalServerError, models.ObjectListResponse{Objects: []*models.ObjectInfo{}})
 	}
 
-	var objs []*models.Object
+	var osResp models.ObjectStorage
+	if err := json.Unmarshal(body, &osResp); err != nil {
+		log.Error().Msgf("Unmarshal error: %v", err)
+		return ctx.JSON(http.StatusInternalServerError, models.ObjectListResponse{Objects: []*models.ObjectInfo{}})
+	}
+
+	var flt *filtering.ObjectFilter
 	if params.SourceFilter != nil {
-		flt, ferr := filtering.FromParams(params.SourceFilter)
-		if ferr != nil {
-			log.Error().Msgf("ObjectFilter parse error: %v", ferr)
+		flt, err = filtering.FromParams(params.SourceFilter)
+		if err != nil {
+			log.Error().Msgf("ObjectFilter parse error: %v", err)
 			return ctx.JSON(http.StatusInternalServerError, models.ObjectListResponse{Objects: []*models.ObjectInfo{}})
 		}
-		objs, err = OSC.ObjectListWithFilter(flt)
-	} else {
-		objs, err = OSC.ObjectList()
-	}
-	if err != nil {
-		log.Error().Msgf("ObjectList error: %v", err)
-		return ctx.JSON(http.StatusInternalServerError, models.ObjectListResponse{Objects: []*models.ObjectInfo{}})
 	}
 
-	return ctx.JSON(http.StatusOK, models.ObjectListResponse{Objects: toObjectInfoList(objs)})
+	result := make([]*models.ObjectInfo, 0, len(osResp.Contents))
+	for _, o := range osResp.Contents {
+		c := filtering.Candidate{Key: o.Key, Size: o.Size, LastModified: o.LastModified}
+		if filtering.MatchCandidate(flt, c) {
+			result = append(result, &models.ObjectInfo{
+				Key:          o.Key,
+				Size:         o.Size,
+				LastModified: o.LastModified,
+				ETag:         o.ETag,
+				StorageClass: o.StorageClass,
+			})
+		}
+	}
+
+	jobEnd(logger, fmt.Sprintf("Listed %d objects", len(result)), start)
+	return ctx.JSON(http.StatusOK, models.ObjectListResponse{Objects: result})
 }
 
 // ObjectstorageDeleteObjectHandler godoc
@@ -151,13 +159,21 @@ func ObjectstorageDeleteObjectHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, models.BasicResponse{Result: "objectKey is required", Error: nil})
 	}
 
-	OSC, err := auth.GetOS(&params.TargetPoint)
+	deleteReq := models.DeleteRequest{
+		XMLNS:   "http://s3.amazonaws.com/doc/2006-03-01/",
+		Objects: []models.S3Object{{Key: params.ObjectKey}},
+	}
+	xmlOutput, err := xml.MarshalIndent(deleteReq, "", "    ")
 	if err != nil {
-		log.Error().Msgf("OSController error deleting object: %v", err)
+		log.Error().Msgf("XML marshal error: %v", err)
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{Result: logstrings.String(), Error: nil})
 	}
 
-	if err := OSC.DeleteObject(params.ObjectKey); err != nil {
+	connName := fmt.Sprintf("%s-%s", params.TargetPoint.Provider, params.TargetPoint.Region)
+	nsId := utils.GetNsId()
+	path := fmt.Sprintf("/tumblebug/ns/%s/resources/objectStorage/%s?delete=true", nsId, params.TargetPoint.Bucket)
+
+	if _, err := utils.RequestTumblebug(path, http.MethodPost, connName, []byte(xml.Header+string(xmlOutput))); err != nil {
 		log.Error().Msgf("DeleteObject error: %v", err)
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{Result: logstrings.String(), Error: nil})
 	}

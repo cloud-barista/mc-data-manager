@@ -301,59 +301,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/buckets": {
-            "post": {
-                "description": "Returns the list of buckets accessible with the given credentials. Optionally filters by a tag key/value pair.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[ObjectStorage]"
-                ],
-                "summary": "List available buckets for a given provider",
-                "operationId": "ObjectstorageBucketsHandler",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Tag key to filter buckets by",
-                        "name": "filterKey",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Tag value to filter buckets by (used with filterKey)",
-                        "name": "filterVal",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Provider credentials and connection info",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.DataTask"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "List of accessible buckets",
-                        "schema": {
-                            "$ref": "#/definitions/models.ObjectStorageListResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.ObjectStorageListResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/credentials": {
             "get": {
                 "description": "Retrieve a list of all credentials in the system.",
@@ -1252,6 +1199,59 @@ const docTemplate = `{
                             "additionalProperties": {
                                 "type": "string"
                             }
+                        }
+                    }
+                }
+            }
+        },
+        "/objectstorage/buckets": {
+            "post": {
+                "description": "Returns the list of buckets accessible with the given credentials. Optionally filters by a tag key/value pair.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[ObjectStorage]"
+                ],
+                "summary": "List available buckets for a given provider",
+                "operationId": "ObjectstorageBucketsHandler",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Tag key to filter buckets by",
+                        "name": "filterKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Tag value to filter buckets by (used with filterKey)",
+                        "name": "filterVal",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Provider credentials and connection info",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DataTask"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of accessible buckets",
+                        "schema": {
+                            "$ref": "#/definitions/models.ObjectStorageListResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ObjectStorageListResponse"
                         }
                     }
                 }
