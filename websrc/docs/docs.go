@@ -1204,6 +1204,86 @@ const docTemplate = `{
                 }
             }
         },
+        "/objectstorage/bucket": {
+            "put": {
+                "description": "Creates a bucket for the given provider. If the bucket already exists, the request is a no-op.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[ObjectStorage]"
+                ],
+                "summary": "Create a bucket",
+                "operationId": "ObjectstorageCreateBucketHandler",
+                "parameters": [
+                    {
+                        "description": "Provider credentials, connection info, and bucket name",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DataTask"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Bucket created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Empties the bucket by deleting all objects (in batches of 1000), then deletes the bucket itself.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[ObjectStorage]"
+                ],
+                "summary": "Delete a bucket and all its objects",
+                "operationId": "ObjectstorageDeleteBucketHandler",
+                "parameters": [
+                    {
+                        "description": "Provider credentials, connection info, and bucket name",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DataTask"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Bucket deleted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/objectstorage/buckets": {
             "post": {
                 "description": "Returns the list of buckets accessible with the given credentials. Optionally filters by a tag key/value pair.",
@@ -1257,7 +1337,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/objectstorage/object": {
+        "/objectstorage/buckets/object": {
             "delete": {
                 "description": "Deletes the object identified by objectKey from the bucket specified by the target connection.",
                 "consumes": [
@@ -1304,7 +1384,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/objectstorage/objects": {
+        "/objectstorage/buckets/objects": {
             "post": {
                 "description": "Returns all objects stored in the bucket specified by the target connection. Supports optional filter parameters.",
                 "consumes": [

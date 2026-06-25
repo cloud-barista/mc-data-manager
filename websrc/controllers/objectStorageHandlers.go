@@ -67,6 +67,129 @@ func ObjectstorageBucketsHandler(ctx echo.Context) error {
 	})
 }
 
+// ObjectstorageCreateBucketHandler godoc
+//
+//	@ID			ObjectstorageCreateBucketHandler
+//	@Summary	Create a bucket
+//	@Description	Creates a bucket for the given provider. If the bucket already exists, the request is a no-op.
+//	@Tags			[ObjectStorage]
+//	@Accept			json
+//	@Produce		json
+//	@Param			RequestBody	body		models.DataTask			true	"Provider credentials, connection info, and bucket name"
+//	@Success		200			{object}	models.BasicResponse	"Bucket created successfully"
+//	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
+//	@Router			/objectstorage/bucket [put]
+func ObjectstorageCreateBucketHandler(ctx echo.Context) error {
+	start := time.Now()
+
+	logger, logstrings := pageLogInit(ctx, "object storage", "create bucket", start)
+
+	params := models.DataTask{}
+	if !getDataWithReBind(logger, start, ctx, &params) {
+		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{Result: logstrings.String(), Error: nil})
+	}
+
+	connName := fmt.Sprintf("%s-%s", params.TargetPoint.Provider, params.TargetPoint.Region)
+	nsId := utils.GetNsId()
+	bucket := params.TargetPoint.Bucket
+
+	headPath := fmt.Sprintf("/tumblebug/ns/%s/resources/objectStorage/%s", nsId, bucket)
+	if _, err := utils.RequestTumblebug(headPath, http.MethodHead, connName, nil); err == nil {
+		jobEnd(logger, "Bucket already exists: "+bucket, start)
+		return ctx.JSON(http.StatusOK, models.BasicResponse{Result: logstrings.String(), Error: nil})
+	}
+
+	createBody := []byte(fmt.Sprintf(`{"bucketName":%q,"connectionName":%q}`, bucket, connName))
+	createPath := fmt.Sprintf("/tumblebug/ns/%s/resources/objectStorage", nsId)
+	if _, err := utils.RequestTumblebug(createPath, http.MethodPut, connName, createBody); err != nil {
+		log.Error().Msgf("CreateBucket error: %v", err)
+		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{Result: logstrings.String(), Error: nil})
+	}
+
+	jobEnd(logger, "Successfully created bucket: "+bucket, start)
+	return ctx.JSON(http.StatusOK, models.BasicResponse{Result: logstrings.String(), Error: nil})
+}
+
+// ObjectstorageDeleteBucketHandler godoc
+//
+//	@ID			ObjectstorageDeleteBucketHandler
+//	@Summary	Delete a bucket and all its objects
+//	@Description	Empties the bucket by deleting all objects (in batches of 1000), then deletes the bucket itself.
+//	@Tags			[ObjectStorage]
+//	@Accept			json
+//	@Produce		json
+//	@Param			RequestBody	body		models.DataTask			true	"Provider credentials, connection info, and bucket name"
+//	@Success		200			{object}	models.BasicResponse	"Bucket deleted successfully"
+//	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
+//	@Router			/objectstorage/bucket [delete]
+func ObjectstorageDeleteBucketHandler(ctx echo.Context) error {
+	start := time.Now()
+
+	logger, logstrings := pageLogInit(ctx, "object storage", "delete bucket", start)
+
+	params := models.DataTask{}
+	if !getDataWithReBind(logger, start, ctx, &params) {
+		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{Result: logstrings.String(), Error: nil})
+	}
+
+	connName := fmt.Sprintf("%s-%s", params.TargetPoint.Provider, params.TargetPoint.Region)
+	nsId := utils.GetNsId()
+	bucket := params.TargetPoint.Bucket
+
+	// 1. 오브젝트 목록 조회
+	listPath := fmt.Sprintf("/tumblebug/ns/%s/resources/objectStorage/%s", nsId, bucket)
+	body, err := utils.RequestTumblebug(listPath, http.MethodGet, connName, nil)
+	if err != nil {
+		log.Error().Msgf("ObjectList error: %v", err)
+		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{Result: logstrings.String(), Error: nil})
+	}
+
+	var osResp models.ObjectStorage
+	if err := json.Unmarshal(body, &osResp); err != nil {
+		log.Error().Msgf("Unmarshal error: %v", err)
+		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{Result: logstrings.String(), Error: nil})
+	}
+
+	// 2. 오브젝트 일괄 삭제 (1000개 단위)
+	const batchSize = 1000
+	deletePath := fmt.Sprintf("/tumblebug/ns/%s/resources/objectStorage/%s?delete=true", nsId, bucket)
+	keys := make([]string, 0, len(osResp.Contents))
+	for _, o := range osResp.Contents {
+		keys = append(keys, o.Key)
+	}
+	for i := 0; i < len(keys); i += batchSize {
+		end := i + batchSize
+		if end > len(keys) {
+			end = len(keys)
+		}
+		deleteReq := models.DeleteRequest{
+			XMLNS: "http://s3.amazonaws.com/doc/2006-03-01/",
+		}
+		for _, k := range keys[i:end] {
+			deleteReq.Objects = append(deleteReq.Objects, models.S3Object{Key: k})
+		}
+		xmlOutput, err := xml.MarshalIndent(deleteReq, "", "    ")
+		if err != nil {
+			log.Error().Msgf("XML marshal error: %v", err)
+			return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{Result: logstrings.String(), Error: nil})
+		}
+		if _, err := utils.RequestTumblebug(deletePath, http.MethodPost, connName, []byte(xml.Header+string(xmlOutput))); err != nil {
+			log.Error().Msgf("DeleteObjects error: %v", err)
+			return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{Result: logstrings.String(), Error: nil})
+		}
+	}
+
+	// 3. 버킷 삭제
+	bucketPath := fmt.Sprintf("/tumblebug/ns/%s/resources/objectStorage/%s", nsId, bucket)
+	if _, err := utils.RequestTumblebug(bucketPath, http.MethodDelete, connName, nil); err != nil {
+		log.Error().Msgf("DeleteBucket error: %v", err)
+		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{Result: logstrings.String(), Error: nil})
+	}
+
+	jobEnd(logger, "Successfully deleted bucket: "+bucket, start)
+	return ctx.JSON(http.StatusOK, models.BasicResponse{Result: logstrings.String(), Error: nil})
+}
+
 // ObjectstorageObjectListHandler godoc
 //
 //	@ID			ObjectstorageObjectListHandler
@@ -78,7 +201,7 @@ func ObjectstorageBucketsHandler(ctx echo.Context) error {
 //	@Param			RequestBody	body		models.DataTask				true	"Provider credentials, connection info, and optional sourceFilter"
 //	@Success		200			{object}	models.ObjectListResponse	"List of objects in the bucket"
 //	@Failure		500			{object}	models.ObjectListResponse	"Internal Server Error"
-//	@Router			/objectstorage/objects [post]
+//	@Router			/objectstorage/buckets/objects [post]
 func ObjectstorageObjectListHandler(ctx echo.Context) error {
 	start := time.Now()
 
@@ -144,7 +267,7 @@ func ObjectstorageObjectListHandler(ctx echo.Context) error {
 //	@Success		200			{object}	models.BasicResponse		"Object deleted successfully"
 //	@Failure		400			{object}	models.BasicResponse		"Bad Request — objectKey is empty"
 //	@Failure		500			{object}	models.BasicResponse		"Internal Server Error"
-//	@Router			/objectstorage/object [delete]
+//	@Router			/objectstorage/buckets/object [delete]
 func ObjectstorageDeleteObjectHandler(ctx echo.Context) error {
 	start := time.Now()
 
