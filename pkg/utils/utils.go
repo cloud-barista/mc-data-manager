@@ -48,10 +48,19 @@ func IsDir(path string) error {
 }
 
 func FileExists(filePath string) bool {
-	if fi, err := os.Stat(filePath); os.IsExist(err) {
-		return !fi.IsDir()
+	fi, err := os.Stat(filePath)
+	if err != nil {
+		return false
 	}
-	return false
+	return !fi.IsDir()
+}
+
+func DirExists(dirPath string) bool {
+	fi, err := os.Stat(dirPath)
+	if err != nil {
+		return false
+	}
+	return fi.IsDir()
 }
 
 // Enum Validation

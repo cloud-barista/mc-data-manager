@@ -31,6 +31,7 @@ type OSFS interface {
 
 	Open(name string) (io.ReadCloser, error)
 	Create(name string) (io.WriteCloser, error)
+	DeleteObject(name string) error
 }
 
 type OSController struct {
@@ -63,6 +64,10 @@ func (osc *OSController) DeleteBucket() error {
 		return err
 	}
 	return nil
+}
+
+func (osc *OSController) DeleteObject(name string) error {
+	return osc.osfs.DeleteObject(name)
 }
 
 func (osc *OSController) ObjectList() ([]*models.Object, error) {

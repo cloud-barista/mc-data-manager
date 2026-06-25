@@ -31,7 +31,7 @@ import (
 )
 
 func (osc *OSController) MGet(dirPath string, flt *filtering.ObjectFilter) error {
-	if !utils.FileExists(dirPath) {
+	if !utils.DirExists(dirPath) {
 		if err := os.MkdirAll(dirPath, 0755); err != nil {
 			osc.logWrite("Error", "MkdirAll error", err)
 			return err

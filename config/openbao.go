@@ -27,6 +27,61 @@ func InitOpenBao() {
 	log.Debug().Str("vaultAddr", VaultAddr).Bool("vaultTokenSet", VaultToken != "").Msg("[OpenBao] initialized")
 }
 
+// spiderKeyMap maps env-var format keys (stored by Tumblebug's credentialKeyMap) to
+// Spider-format keys (stored by admin-cli, which reads field names from Spider meta API).
+// Used as a fallback when the env-var key is absent — e.g. credentials registered via
+// admin-cli bypass Tumblebug's credentialKeyMap conversion and land in OpenBao as-is.
+var spiderKeyMap = map[string]map[string]string{
+	"aws": {
+		"AWS_ACCESS_KEY_ID":     "ClientId",
+		"AWS_SECRET_ACCESS_KEY": "ClientSecret",
+	},
+	"ncp": {
+		"NCLOUD_ACCESS_KEY": "ClientId",
+		"NCLOUD_SECRET_KEY": "ClientSecret",
+	},
+	"gcp": {
+		"private_key":  "PrivateKey",
+		"project_id":   "ProjectID",
+		"client_email": "ClientEmail",
+	},
+	"alibaba": {
+		"ALIBABA_CLOUD_ACCESS_KEY_ID":     "ClientId",
+		"ALIBABA_CLOUD_ACCESS_KEY_SECRET": "ClientSecret",
+	},
+	"ibm": { //IBM Credentials does not have a Spider format, but we include it here for completeness
+		"IC_API_KEY":      "IC_API_KEY",
+		"IBM_S3_ACCESS_KEY": "IBM_S3_ACCESS_KEY",
+		"IBM_S3_SECRET_KEY": "IBM_S3_SECRET_KEY",
+	},
+	"kt": {
+		"KT_USERNAME":     "Username",
+		"KT_PASSWORD":     "Password",
+		"KT_DOMAIN_NAME":  "DomainName",
+		"KT_PROJECT_ID":   "ProjectID",
+		"KT_S3_ACCESS_KEY": "S3AccessKey",
+		"KT_S3_SECRET_KEY": "S3SecretKey",
+	},
+	"tencent": {
+		"TENCENTCLOUD_SECRET_ID":  "ClientId",
+		"TENCENTCLOUD_SECRET_KEY": "ClientSecret",
+	},
+}
+
+// getString reads key from data, falling back to the Spider-format key for the given provider
+// when the primary key is absent.
+func getString(data map[string]interface{}, provider, key string) string {
+	if v := openbao.GetString(data, key); v != "" {
+		return v
+	}
+	if m, ok := spiderKeyMap[provider]; ok {
+		if fallback, ok := m[key]; ok {
+			return openbao.GetString(data, fallback)
+		}
+	}
+	return ""
+}
+
 // LoadCredentialsByProvider reads CSP credentials from OpenBao by provider name.
 // Path convention matches cb-tumblebug: secret/data/csp/{provider}
 func (cred *CredentialManager) LoadCredentialsByProvider(ctx context.Context, provider string) (interface{}, error) {
@@ -36,52 +91,53 @@ func (cred *CredentialManager) LoadCredentialsByProvider(ctx context.Context, pr
 		return nil, err
 	}
 
-	switch strings.ToLower(provider) {
+	p := strings.ToLower(provider)
+	switch p {
 	case "aws":
 		return models.AWSCredentials{
-			AccessKey: openbao.GetString(data, "AWS_ACCESS_KEY_ID"),
-			SecretKey: openbao.GetString(data, "AWS_SECRET_ACCESS_KEY"),
+			AccessKey: getString(data, p, "AWS_ACCESS_KEY_ID"),
+			SecretKey: getString(data, p, "AWS_SECRET_ACCESS_KEY"),
 		}, nil
 	case "ncp":
 		return models.NCPCredentials{
-			AccessKey: openbao.GetString(data, "NCLOUD_ACCESS_KEY"),
-			SecretKey: openbao.GetString(data, "NCLOUD_SECRET_KEY"),
+			AccessKey: getString(data, p, "NCLOUD_ACCESS_KEY"),
+			SecretKey: getString(data, p, "NCLOUD_SECRET_KEY"),
 		}, nil
 	case "gcp":
 		// OpenBao stores the private key with literal "\n" — convert to actual newlines.
-		privateKey := strings.ReplaceAll(openbao.GetString(data, "private_key"), `\n`, "\n")
+		privateKey := strings.ReplaceAll(getString(data, p, "private_key"), `\n`, "\n")
 		return models.GCPCredentials{
 			Type:         "service_account",
-			ProjectID:    openbao.GetString(data, "project_id"),
-			ClientEmail:  openbao.GetString(data, "client_email"),
+			ProjectID:    getString(data, p, "project_id"),
+			ClientEmail:  getString(data, p, "client_email"),
 			PrivateKey:   privateKey,
-			PrivateKeyID: openbao.GetString(data, "private_key_id"),
-			ClientID:     openbao.GetString(data, "client_id"),
+			PrivateKeyID: getString(data, p, "private_key_id"),
+			ClientID:     getString(data, p, "client_id"),
 		}, nil
 	case "alibaba":
 		return models.AlibabaCredentials{
-			AccessKey: openbao.GetString(data, "ALIBABA_CLOUD_ACCESS_KEY_ID"),
-			SecretKey: openbao.GetString(data, "ALIBABA_CLOUD_ACCESS_KEY_SECRET"),
+			AccessKey: getString(data, p, "ALIBABA_CLOUD_ACCESS_KEY_ID"),
+			SecretKey: getString(data, p, "ALIBABA_CLOUD_ACCESS_KEY_SECRET"),
 		}, nil
 	case "ibm":
 		return models.IBMCredentials{
-			ApiKey:      openbao.GetString(data, "IC_API_KEY"),
-			S3AccessKey: openbao.GetString(data, "S3_ACCESS_KEY"),
-			S3SecretKey: openbao.GetString(data, "S3_SECRET_KEY"),
+			ApiKey:      getString(data, p, "IC_API_KEY"),
+			S3AccessKey: getString(data, p, "IBM_S3_ACCESS_KEY"),
+			S3SecretKey: getString(data, p, "IBM_S3_SECRET_KEY"),
 		}, nil
 	case "kt":
 		return models.KTCredentials{
-			Username:    openbao.GetString(data, "KT_USERNAME"),
-			Password:    openbao.GetString(data, "KT_PASSWORD"),
-			DomainName:  openbao.GetString(data, "KT_DOMAIN_NAME"),
-			ProjectID:   openbao.GetString(data, "KT_PROJECT_ID"),
-			S3AccessKey: openbao.GetString(data, "KT_S3_ACCESS_KEY"),
-			S3SecretKey: openbao.GetString(data, "KT_S3_SECRET_KEY"),
+			Username:    getString(data, p, "KT_USERNAME"),
+			Password:    getString(data, p, "KT_PASSWORD"),
+			DomainName:  getString(data, p, "KT_DOMAIN_NAME"),
+			ProjectID:   getString(data, p, "KT_PROJECT_ID"),
+			S3AccessKey: getString(data, p, "KT_S3_ACCESS_KEY"),
+			S3SecretKey: getString(data, p, "KT_S3_SECRET_KEY"),
 		}, nil
 	case "tencent":
 		return models.TencentCredentials{
-			SecretId:  openbao.GetString(data, "TENCENTCLOUD_SECRET_ID"),
-			SecretKey: openbao.GetString(data, "TENCENTCLOUD_SECRET_KEY"),
+			SecretId:  getString(data, p, "TENCENTCLOUD_SECRET_ID"),
+			SecretKey: getString(data, p, "TENCENTCLOUD_SECRET_KEY"),
 		}, nil
 	default:
 		return nil, fmt.Errorf("unsupported provider: %s", provider)
