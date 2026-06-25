@@ -28,6 +28,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	awscred "github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"github.com/aws/aws-sdk-go-v2/service/rds"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -159,6 +160,15 @@ func NewDynamoDBClientWithEndpoint(accesskey, secretkey, region string, endpoint
 	}
 
 	return dynamodb.NewFromConfig(*cfg), nil
+}
+
+func NewAWSRDBClient(accesskey, secretkey, region string) (*rds.Client, error) {
+	cfg, err := newAWSConfig(accesskey, secretkey, region)
+	if err != nil {
+		return nil, err
+	}
+
+	return rds.NewFromConfig(*cfg), nil
 }
 
 func NewGCPClient(credentialsJson string) (*storage.Client, error) {
