@@ -75,17 +75,17 @@ func New(provider models.Provider, sqlDB *sql.DB, opts ...MysqlDBOption) *MysqlD
 func (d *MysqlDBMS) Exec(query string) error {
 	_, err := d.db.Exec(query)
 	if err != nil {
-		log.Error().Err(err).Str("query", query).Str("query", query).Msg("Failed to execute SQL query")
+		log.Error().Err(err).Msg("Failed to execute SQL query")
 		FormatNCPDatabaseCreateSQL(d.provider, &query)
 		_, retryErr := d.db.Exec(query)
 		if retryErr != nil {
-			log.Error().Err(retryErr).Str("Provider", string(d.provider)).Str("tagetProvider", string(d.provider)).Str("query", query).Msg("Failed to execute transformed NCP SQL query")
+			log.Error().Err(retryErr).Str("Provider", string(d.provider)).Str("tagetProvider", string(d.provider)).Msg("Failed to execute transformed NCP SQL query")
 			return retryErr
 		}
 		err = nil // If retry query Not Failed
 	}
 
-	log.Debug().Str("query", query).Msg("SQL query executed successfully")
+	log.Debug().Msg("SQL query executed successfully")
 	return err
 }
 
@@ -176,6 +176,7 @@ func (d *MysqlDBMS) ShowCreateDBSql(dbName string, dbCreateSql *string) error {
 	*dbCreateSql = addCharsetIfMissing(*dbCreateSql)
 	*dbCreateSql = addCollateIfMissing(*dbCreateSql)
 	*dbCreateSql = EnsureCharsetAndCollate(*dbCreateSql, extractCharacterSet(*dbCreateSql), extractCollation(*dbCreateSql))
+	*dbCreateSql += ";"
 
 	// If the target provider is NCP, modify the SQL to use NCP's specific procedure
 	if d.targetProvider == models.NCP {
@@ -186,11 +187,14 @@ func (d *MysqlDBMS) ShowCreateDBSql(dbName string, dbCreateSql *string) error {
 }
 
 func FormatNCPDatabaseCreateSQL(targetProvider models.Provider, dbCreateSql *string) {
-	if targetProvider == models.NCP {
-		dbName, charSet, collate := extractDatabaseInfo(*dbCreateSql)
-		fmt.Println(*dbCreateSql, "-", dbName, charSet, collate)
-		*dbCreateSql = fmt.Sprintf("CALL sys.ncp_create_db('%s', '%s', '%s');", dbName, charSet, collate)
+	if targetProvider != models.NCP {
+		return
 	}
+	re := regexp.MustCompile(`(?is)CREATE\s+DATABASE\b[^;]*;`)
+	*dbCreateSql = re.ReplaceAllStringFunc(*dbCreateSql, func(stmt string) string {
+		dbName, charSet, collate := extractDatabaseInfo(stmt)
+		return fmt.Sprintf("CALL sys.ncp_create_db('%s', '%s', '%s');", dbName, charSet, collate)
+	})
 }
 
 // Get table create sql
@@ -206,6 +210,7 @@ func (d *MysqlDBMS) ShowCreateTableSql(dbName, tableName string, tableCreateSql 
 	*tableCreateSql = removeSequenceOption(*tableCreateSql)
 	*tableCreateSql = adjustColumnsToTimestamp(*tableCreateSql)
 	*tableCreateSql = ReplaceCharsetAndCollate(*tableCreateSql)
+	*tableCreateSql += ";"
 	return nil
 }
 
