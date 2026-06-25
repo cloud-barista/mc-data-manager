@@ -156,6 +156,10 @@ func (f *IBMFS) DeleteBucket() error {
 	return nil
 }
 
+func (f *IBMFS) DeleteObject(name string) error {
+	return f.deleteObjectBatch([]string{name})
+}
+
 // deleteObjectBatch deletes a batch of objects
 func (f *IBMFS) deleteObjectBatch(keys []string) error {
 	nsId := utils.GetNsId()

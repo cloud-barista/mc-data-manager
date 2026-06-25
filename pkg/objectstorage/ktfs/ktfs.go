@@ -156,6 +156,10 @@ func (f *KTFS) DeleteBucket() error {
 	return nil
 }
 
+func (f *KTFS) DeleteObject(name string) error {
+	return f.deleteObjectBatch([]string{name})
+}
+
 // deleteObjectBatch deletes a batch of objects
 func (f *KTFS) deleteObjectBatch(keys []string) error {
 	nsId := utils.GetNsId()

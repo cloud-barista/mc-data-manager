@@ -1257,6 +1257,94 @@ const docTemplate = `{
                 }
             }
         },
+        "/objectstorage/object": {
+            "delete": {
+                "description": "Deletes the object identified by objectKey from the bucket specified by the target connection.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[ObjectStorage]"
+                ],
+                "summary": "Delete a single object from a bucket",
+                "operationId": "ObjectstorageDeleteObjectHandler",
+                "parameters": [
+                    {
+                        "description": "Target connection info and key of the object to delete",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ObjectDeleteRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Object deleted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request — objectKey is empty",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/objectstorage/objects": {
+            "post": {
+                "description": "Returns all objects stored in the bucket specified by the target connection. Supports optional filter parameters.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[ObjectStorage]"
+                ],
+                "summary": "List objects in a bucket",
+                "operationId": "ObjectstorageObjectListHandler",
+                "parameters": [
+                    {
+                        "description": "Provider credentials, connection info, and optional sourceFilter",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DataTask"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of objects in the bucket",
+                        "schema": {
+                            "$ref": "#/definitions/models.ObjectListResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ObjectListResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/readyZ": {
             "get": {
                 "description": "Get System Ready",
@@ -2311,6 +2399,17 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ObjectDeleteRequest": {
+            "type": "object",
+            "properties": {
+                "objectKey": {
+                    "type": "string"
+                },
+                "targetPoint": {
+                    "$ref": "#/definitions/models.ProviderConfig"
+                }
+            }
+        },
         "models.ObjectFilterParams": {
             "type": "object",
             "properties": {
@@ -2354,6 +2453,37 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "type": "string"
+                    }
+                }
+            }
+        },
+        "models.ObjectInfo": {
+            "type": "object",
+            "properties": {
+                "eTag": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "lastModified": {
+                    "type": "string"
+                },
+                "size": {
+                    "type": "integer"
+                },
+                "storageClass": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ObjectListResponse": {
+            "type": "object",
+            "properties": {
+                "objects": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ObjectInfo"
                     }
                 }
             }

@@ -156,6 +156,10 @@ func (f *TencentFS) DeleteBucket() error {
 	return nil
 }
 
+func (f *TencentFS) DeleteObject(name string) error {
+	return f.deleteObjectBatch([]string{name})
+}
+
 // deleteObjectBatch deletes a batch of objects
 func (f *TencentFS) deleteObjectBatch(keys []string) error {
 	nsId := utils.GetNsId()

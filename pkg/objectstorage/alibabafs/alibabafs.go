@@ -134,6 +134,10 @@ func (f *AlibabaFS) DeleteBucket() error {
 	return nil
 }
 
+func (f *AlibabaFS) DeleteObject(name string) error {
+	return f.deleteObjectBatch([]string{name})
+}
+
 // deleteObjectBatch deletes objects in manageable chunks.
 func (f *AlibabaFS) deleteObjectBatch(keys []string) error {
 	nsId := utils.GetNsId()

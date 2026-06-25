@@ -19,6 +19,26 @@ type ObjectFilterParams struct {
 	SizeFilteringUnit string   `json:"sizeFilteringUnit"`
 }
 
+// ObjectInfo is the JSON-serializable representation of a single object.
+type ObjectInfo struct {
+	Key          string    `json:"key"`
+	Size         int64     `json:"size"`
+	LastModified time.Time `json:"lastModified"`
+	ETag         string    `json:"eTag"`
+	StorageClass string    `json:"storageClass"`
+}
+
+// ObjectListResponse is the response body for object listing endpoints.
+type ObjectListResponse struct {
+	Objects []*ObjectInfo `json:"objects"`
+}
+
+// ObjectDeleteRequest is the request body for deleting a single object.
+type ObjectDeleteRequest struct {
+	TargetPoint ProviderConfig `json:"targetPoint"`
+	ObjectKey   string         `json:"objectKey"`
+}
+
 type BucketListResponse struct {
 	Buckets []Bucket `json:"buckets"`
 }

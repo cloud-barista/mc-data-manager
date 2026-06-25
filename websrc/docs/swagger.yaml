@@ -181,6 +181,13 @@ definitions:
       targetPoint:
         $ref: '#/definitions/models.ProviderConfig'
     type: object
+  models.ObjectDeleteRequest:
+    properties:
+      objectKey:
+        type: string
+      targetPoint:
+        $ref: '#/definitions/models.ProviderConfig'
+    type: object
   models.ObjectFilterParams:
     properties:
       containExcludeYn:
@@ -210,6 +217,26 @@ definitions:
       suffixes:
         items:
           type: string
+        type: array
+    type: object
+  models.ObjectInfo:
+    properties:
+      eTag:
+        type: string
+      key:
+        type: string
+      lastModified:
+        type: string
+      size:
+        type: integer
+      storageClass:
+        type: string
+    type: object
+  models.ObjectListResponse:
+    properties:
+      objects:
+        items:
+          $ref: '#/definitions/models.ObjectInfo'
         type: array
     type: object
   models.ObjectStorage:
@@ -1208,6 +1235,66 @@ paths:
       summary: Set the active namespace ID
       tags:
       - '[Namespace]'
+  /objectstorage/object:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes the object identified by objectKey from the bucket specified
+        by the target connection.
+      operationId: ObjectstorageDeleteObjectHandler
+      parameters:
+      - description: Target connection info and key of the object to delete
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.ObjectDeleteRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Object deleted successfully
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "400":
+          description: Bad Request — objectKey is empty
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Delete a single object from a bucket
+      tags:
+      - '[ObjectStorage]'
+  /objectstorage/objects:
+    post:
+      consumes:
+      - application/json
+      description: Returns all objects stored in the bucket specified by the target
+        connection. Supports optional filter parameters.
+      operationId: ObjectstorageObjectListHandler
+      parameters:
+      - description: Provider credentials, connection info, and optional sourceFilter
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.DataTask'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of objects in the bucket
+          schema:
+            $ref: '#/definitions/models.ObjectListResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ObjectListResponse'
+      summary: List objects in a bucket
+      tags:
+      - '[ObjectStorage]'
   /readyZ:
     get:
       description: Get System Ready

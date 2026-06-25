@@ -112,6 +112,10 @@ func (f *GCPfs) DeleteBucket() error {
 	return nil
 }
 
+func (f *GCPfs) DeleteObject(name string) error {
+	return f.deleteObjectBatch([]string{name})
+}
+
 // deleteObjectBatch deletes a batch of objects
 func (f *GCPfs) deleteObjectBatch(keys []string) error {
 	nsId := utils.GetNsId()
