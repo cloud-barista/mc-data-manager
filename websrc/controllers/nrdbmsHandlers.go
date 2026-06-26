@@ -21,7 +21,7 @@ import (
 //	@Param			RequestBody	body		models.DataTask				true	"Provider credentials and connection info"
 //	@Success		200			{object}	models.NRDBTableListResponse	"List of tables"
 //	@Failure		500			{object}	models.NRDBTableListResponse	"Internal Server Error"
-//	@Router			/nrdbms/tables [post]
+//	@Router			/db/nrdbms [post]
 func NRDBMSListTablesHandler(ctx echo.Context) error {
 	start := time.Now()
 
@@ -61,7 +61,7 @@ func NRDBMSListTablesHandler(ctx echo.Context) error {
 //	@Success		200			{object}	models.BasicResponse	"Table created successfully"
 //	@Failure		400			{object}	models.BasicResponse	"Bad Request — tableName is empty"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/nrdbms/table [put]
+//	@Router			/db/nrdbms [put]
 func NRDBMSCreateTableHandler(ctx echo.Context) error {
 	start := time.Now()
 
@@ -91,6 +91,50 @@ func NRDBMSCreateTableHandler(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, models.BasicResponse{Result: logstrings.String(), Error: nil})
 }
 
+// NRDBMSGetTableHandler godoc
+//
+//	@ID			NRDBMSGetTableHandler
+//	@Summary	Export data from a NRDBMS table
+//	@Description	Retrieves all items from the specified table (collection).
+//	@Description	Supported providers: aws (DynamoDB), gcp (Firestore), ncp (MongoDB), alibaba (MongoDB).
+//	@Tags			[NRDBMS]
+//	@Accept			json
+//	@Produce		json
+//	@Param			RequestBody	body		models.NRDBTableRequest		true	"Provider credentials, connection info, and table name"
+//	@Success		200			{object}	models.NRDBTableGetResponse	"Table data exported successfully"
+//	@Failure		400			{object}	models.NRDBTableGetResponse	"Bad Request — tableName is empty"
+//	@Failure		500			{object}	models.NRDBTableGetResponse	"Internal Server Error"
+//	@Router			/db/nrdbms/data [post]
+func NRDBMSGetTableHandler(ctx echo.Context) error {
+	start := time.Now()
+
+	logger, _ := pageLogInit(ctx, "nrdbms", "get NRDBMS table data", start)
+
+	params := models.NRDBTableRequest{}
+	if !getDataWithReBind(logger, start, ctx, &params) {
+		return ctx.JSON(http.StatusInternalServerError, models.NRDBTableGetResponse{Data: []map[string]interface{}{}})
+	}
+
+	if params.TableName == "" {
+		return ctx.JSON(http.StatusBadRequest, models.NRDBTableGetResponse{Data: []map[string]interface{}{}})
+	}
+
+	NRDBC, err := auth.GetNRDMS(&params.TargetPoint)
+	if err != nil {
+		logger.Error().Err(err).Msg("NRDBController creation failed")
+		return ctx.JSON(http.StatusInternalServerError, models.NRDBTableGetResponse{Data: []map[string]interface{}{}})
+	}
+
+	data := []map[string]interface{}{}
+	if err := NRDBC.Get(params.TableName, &data); err != nil {
+		logger.Error().Err(err).Msgf("Get table data failed: %s", params.TableName)
+		return ctx.JSON(http.StatusInternalServerError, models.NRDBTableGetResponse{Data: []map[string]interface{}{}})
+	}
+
+	jobEnd(logger, "Successfully exported table data: "+params.TableName, start)
+	return ctx.JSON(http.StatusOK, models.NRDBTableGetResponse{Data: data})
+}
+
 // NRDBMSDeleteTableHandler godoc
 //
 //	@ID			NRDBMSDeleteTableHandler
@@ -104,7 +148,7 @@ func NRDBMSCreateTableHandler(ctx echo.Context) error {
 //	@Success		200			{object}	models.BasicResponse	"Table deleted successfully"
 //	@Failure		400			{object}	models.BasicResponse	"Bad Request — tableName is empty"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/nrdbms/table [delete]
+//	@Router			/db/nrdbms [delete]
 func NRDBMSDeleteTableHandler(ctx echo.Context) error {
 	start := time.Now()
 

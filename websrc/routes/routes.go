@@ -63,17 +63,3 @@ func GenerateRoutes(g *echo.Group) {
 	g.PUT("/:id", controllers.UpdateGenerateHandler)     // Update an existing task by ID
 	g.DELETE("/:id", controllers.DeleteGeneratekHandler) // Delete a task by ID
 }
-
-func ObjectStorageRoutes(g *echo.Group) {
-	g.PUT("/buckets", controllers.ObjectstorageCreateBucketHandler)
-	g.DELETE("/buckets", controllers.ObjectstorageDeleteBucketHandler)
-	g.POST("/buckets", controllers.ObjectstorageBucketsHandler)
-	g.POST("/buckets/objects", controllers.ObjectstorageObjectListHandler)
-	g.DELETE("/buckets/object", controllers.ObjectstorageDeleteObjectHandler)
-}
-
-func NRDBMSRoutes(g *echo.Group) {
-	g.POST("/tables", controllers.NRDBMSListTablesHandler)
-	g.PUT("/table", controllers.NRDBMSCreateTableHandler)
-	g.DELETE("/table", controllers.NRDBMSDeleteTableHandler)
-}

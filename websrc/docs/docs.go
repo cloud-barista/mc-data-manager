@@ -449,6 +449,356 @@ const docTemplate = `{
                 }
             }
         },
+        "/db/nrdbms": {
+            "put": {
+                "description": "Creates a table (collection) with the given name. If the table already exists the request is a no-op.\nSupported providers: aws (DynamoDB), gcp (Firestore), ncp (MongoDB), alibaba (MongoDB).",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[NRDBMS]"
+                ],
+                "summary": "Create a table in a NRDBMS instance",
+                "operationId": "NRDBMSCreateTableHandler",
+                "parameters": [
+                    {
+                        "description": "Provider credentials, connection info, and table name",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.NRDBTableRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Table created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request — tableName is empty",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Returns the list of tables (collections) accessible with the given credentials.\nSupported providers: aws (DynamoDB), gcp (Firestore), ncp (MongoDB), alibaba (MongoDB).",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[NRDBMS]"
+                ],
+                "summary": "List tables in a NRDBMS instance",
+                "operationId": "NRDBMSListTablesHandler",
+                "parameters": [
+                    {
+                        "description": "Provider credentials and connection info",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DataTask"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of tables",
+                        "schema": {
+                            "$ref": "#/definitions/models.NRDBTableListResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.NRDBTableListResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes the table (collection) with the given name and all its data.\nSupported providers: aws (DynamoDB), gcp (Firestore), ncp (MongoDB), alibaba (MongoDB).",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[NRDBMS]"
+                ],
+                "summary": "Delete a table from a NRDBMS instance",
+                "operationId": "NRDBMSDeleteTableHandler",
+                "parameters": [
+                    {
+                        "description": "Provider credentials, connection info, and table name",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.NRDBTableRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Table deleted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request — tableName is empty",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/db/rdbms": {
+            "put": {
+                "description": "Provisions a new managed database instance for the requested CSP.\nOnly AWS with mysql/mariadb engines is supported. The instance is created publicly accessible.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[RDB Instance]"
+                ],
+                "summary": "Create an RDB (database) instance",
+                "operationId": "CreateRDBInstanceHandler",
+                "parameters": [
+                    {
+                        "description": "Instance specification",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RDBInstanceCreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Created instance (status: creating)",
+                        "schema": {
+                            "$ref": "#/definitions/models.DBInstance"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Returns managed database instances for the requested CSP and region.\nCredentials are resolved by provider (one credential per CSP). Only AWS is supported for now.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[RDB Instance]"
+                ],
+                "summary": "List RDB (database) instances for a given provider",
+                "operationId": "ListRDBInstancesHandler",
+                "parameters": [
+                    {
+                        "description": "Provider and region",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RDBInstanceListRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of database instances",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.DBInstance"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/db/rdbms/engine-versions": {
+            "post": {
+                "description": "Returns available mysql and mariadb engine versions for the requested CSP and region.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[RDB Instance]"
+                ],
+                "summary": "List available RDB engine versions",
+                "operationId": "ListRDBEngineVersionsHandler",
+                "parameters": [
+                    {
+                        "description": "Provider and region",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RDBEngineVersionsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Available engine versions",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.DBEngineVersion"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/db/rdbms/instance-class": {
+            "post": {
+                "description": "Returns the instance classes orderable for the given engine and version.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[RDB Instance]"
+                ],
+                "summary": "List orderable RDB instance classes",
+                "operationId": "ListRDBInstanceClassesHandler",
+                "parameters": [
+                    {
+                        "description": "Provider, region, engine, engineVersion",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RDBInstanceClassRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Available instance class names",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/generate": {
             "get": {
                 "description": "Retrieve a list of all Tasks in the system.",
@@ -1199,139 +1549,6 @@ const docTemplate = `{
                             "additionalProperties": {
                                 "type": "string"
                             }
-                        }
-                    }
-                }
-            }
-        },
-        "/nrdbms/table": {
-            "put": {
-                "description": "Creates a table (collection) with the given name. If the table already exists the request is a no-op.\nSupported providers: aws (DynamoDB), gcp (Firestore), ncp (MongoDB), alibaba (MongoDB).",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[NRDBMS]"
-                ],
-                "summary": "Create a table in a NRDBMS instance",
-                "operationId": "NRDBMSCreateTableHandler",
-                "parameters": [
-                    {
-                        "description": "Provider credentials, connection info, and table name",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.NRDBTableRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Table created successfully",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request — tableName is empty",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Deletes the table (collection) with the given name and all its data.\nSupported providers: aws (DynamoDB), gcp (Firestore), ncp (MongoDB), alibaba (MongoDB).",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[NRDBMS]"
-                ],
-                "summary": "Delete a table from a NRDBMS instance",
-                "operationId": "NRDBMSDeleteTableHandler",
-                "parameters": [
-                    {
-                        "description": "Provider credentials, connection info, and table name",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.NRDBTableRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Table deleted successfully",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request — tableName is empty",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/nrdbms/tables": {
-            "post": {
-                "description": "Returns the list of tables (collections) accessible with the given credentials.\nSupported providers: aws (DynamoDB), gcp (Firestore), ncp (MongoDB), alibaba (MongoDB).",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[NRDBMS]"
-                ],
-                "summary": "List tables in a NRDBMS instance",
-                "operationId": "NRDBMSListTablesHandler",
-                "parameters": [
-                    {
-                        "description": "Provider credentials and connection info",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.DataTask"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "List of tables",
-                        "schema": {
-                            "$ref": "#/definitions/models.NRDBTableListResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.NRDBTableListResponse"
                         }
                     }
                 }
@@ -2477,6 +2694,52 @@ const docTemplate = `{
                 }
             }
         },
+        "models.DBEngineVersion": {
+            "type": "object",
+            "properties": {
+                "engine": {
+                    "type": "string"
+                },
+                "engineVersion": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.DBInstance": {
+            "type": "object",
+            "properties": {
+                "endpoint": {
+                    "type": "string"
+                },
+                "engine": {
+                    "type": "string"
+                },
+                "engineVersion": {
+                    "type": "string"
+                },
+                "instanceClass": {
+                    "type": "string"
+                },
+                "instanceId": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "integer"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
         "models.DataTask": {
             "type": "object",
             "properties": {
@@ -2837,6 +3100,89 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.RDBEngineVersionsRequest": {
+            "type": "object",
+            "properties": {
+                "credentialId": {
+                    "type": "integer"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.RDBInstanceClassRequest": {
+            "type": "object",
+            "properties": {
+                "credentialId": {
+                    "type": "integer"
+                },
+                "engine": {
+                    "type": "string"
+                },
+                "engineVersion": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.RDBInstanceCreateRequest": {
+            "type": "object",
+            "properties": {
+                "allocatedStorage": {
+                    "type": "integer"
+                },
+                "credentialId": {
+                    "type": "integer"
+                },
+                "engine": {
+                    "type": "string"
+                },
+                "engineVersion": {
+                    "type": "string"
+                },
+                "instanceClass": {
+                    "type": "string"
+                },
+                "instanceId": {
+                    "type": "string"
+                },
+                "masterPassword": {
+                    "type": "string"
+                },
+                "masterUsername": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.RDBInstanceListRequest": {
+            "type": "object",
+            "properties": {
+                "credentialId": {
+                    "type": "integer"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "region": {
                     "type": "string"
                 }
             }

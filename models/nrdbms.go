@@ -10,3 +10,9 @@ type NRDBTableRequest struct {
 type NRDBTableListResponse struct {
 	Tables []string `json:"tables"`
 }
+
+// NRDBTableGetResponse is the response body for the NRDBMS table get (export) endpoint.
+type NRDBTableGetResponse struct {
+	Data  []map[string]interface{} `json:"data"`
+	Error *string                  `json:"error"`
+}

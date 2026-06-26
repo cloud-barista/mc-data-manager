@@ -94,6 +94,36 @@ definitions:
       s3SecretKey:
         type: string
     type: object
+  models.DBEngineVersion:
+    properties:
+      engine:
+        type: string
+      engineVersion:
+        type: string
+    type: object
+  models.DBInstance:
+    properties:
+      endpoint:
+        type: string
+      engine:
+        type: string
+      engineVersion:
+        type: string
+      instanceClass:
+        type: string
+      instanceId:
+        type: string
+      name:
+        type: string
+      port:
+        type: integer
+      provider:
+        type: string
+      region:
+        type: string
+      status:
+        type: string
+    type: object
   models.DataTask:
     properties:
       dummy:
@@ -330,6 +360,60 @@ definitions:
       region:
         type: string
       username:
+        type: string
+    type: object
+  models.RDBEngineVersionsRequest:
+    properties:
+      credentialId:
+        type: integer
+      provider:
+        type: string
+      region:
+        type: string
+    type: object
+  models.RDBInstanceClassRequest:
+    properties:
+      credentialId:
+        type: integer
+      engine:
+        type: string
+      engineVersion:
+        type: string
+      provider:
+        type: string
+      region:
+        type: string
+    type: object
+  models.RDBInstanceCreateRequest:
+    properties:
+      allocatedStorage:
+        type: integer
+      credentialId:
+        type: integer
+      engine:
+        type: string
+      engineVersion:
+        type: string
+      instanceClass:
+        type: string
+      instanceId:
+        type: string
+      masterPassword:
+        type: string
+      masterUsername:
+        type: string
+      provider:
+        type: string
+      region:
+        type: string
+    type: object
+  models.RDBInstanceListRequest:
+    properties:
+      credentialId:
+        type: integer
+      provider:
+        type: string
+      region:
         type: string
     type: object
   models.RegionDetail:
@@ -711,6 +795,250 @@ paths:
       summary: Get a Credential by ID
       tags:
       - '[Credential]'
+  /db/nrdbms:
+    delete:
+      consumes:
+      - application/json
+      description: |-
+        Deletes the table (collection) with the given name and all its data.
+        Supported providers: aws (DynamoDB), gcp (Firestore), ncp (MongoDB), alibaba (MongoDB).
+      operationId: NRDBMSDeleteTableHandler
+      parameters:
+      - description: Provider credentials, connection info, and table name
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.NRDBTableRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Table deleted successfully
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "400":
+          description: Bad Request — tableName is empty
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Delete a table from a NRDBMS instance
+      tags:
+      - '[NRDBMS]'
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Returns the list of tables (collections) accessible with the given credentials.
+        Supported providers: aws (DynamoDB), gcp (Firestore), ncp (MongoDB), alibaba (MongoDB).
+      operationId: NRDBMSListTablesHandler
+      parameters:
+      - description: Provider credentials and connection info
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.DataTask'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of tables
+          schema:
+            $ref: '#/definitions/models.NRDBTableListResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.NRDBTableListResponse'
+      summary: List tables in a NRDBMS instance
+      tags:
+      - '[NRDBMS]'
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Creates a table (collection) with the given name. If the table already exists the request is a no-op.
+        Supported providers: aws (DynamoDB), gcp (Firestore), ncp (MongoDB), alibaba (MongoDB).
+      operationId: NRDBMSCreateTableHandler
+      parameters:
+      - description: Provider credentials, connection info, and table name
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.NRDBTableRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Table created successfully
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "400":
+          description: Bad Request — tableName is empty
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Create a table in a NRDBMS instance
+      tags:
+      - '[NRDBMS]'
+  /db/rdbms:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Returns managed database instances for the requested CSP and region.
+        Credentials are resolved by provider (one credential per CSP). Only AWS is supported for now.
+      operationId: ListRDBInstancesHandler
+      parameters:
+      - description: Provider and region
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.RDBInstanceListRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of database instances
+          schema:
+            items:
+              $ref: '#/definitions/models.DBInstance'
+            type: array
+        "400":
+          description: Invalid Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List RDB (database) instances for a given provider
+      tags:
+      - '[RDB Instance]'
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Provisions a new managed database instance for the requested CSP.
+        Only AWS with mysql/mariadb engines is supported. The instance is created publicly accessible.
+      operationId: CreateRDBInstanceHandler
+      parameters:
+      - description: Instance specification
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.RDBInstanceCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Created instance (status: creating)'
+          schema:
+            $ref: '#/definitions/models.DBInstance'
+        "400":
+          description: Invalid Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create an RDB (database) instance
+      tags:
+      - '[RDB Instance]'
+  /db/rdbms/engine-versions:
+    post:
+      consumes:
+      - application/json
+      description: Returns available mysql and mariadb engine versions for the requested
+        CSP and region.
+      operationId: ListRDBEngineVersionsHandler
+      parameters:
+      - description: Provider and region
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.RDBEngineVersionsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Available engine versions
+          schema:
+            items:
+              $ref: '#/definitions/models.DBEngineVersion'
+            type: array
+        "400":
+          description: Invalid Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List available RDB engine versions
+      tags:
+      - '[RDB Instance]'
+  /db/rdbms/instance-class:
+    post:
+      consumes:
+      - application/json
+      description: Returns the instance classes orderable for the given engine and
+        version.
+      operationId: ListRDBInstanceClassesHandler
+      parameters:
+      - description: Provider, region, engine, engineVersion
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.RDBInstanceClassRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Available instance class names
+          schema:
+            items:
+              type: string
+            type: array
+        "400":
+          description: Invalid Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List orderable RDB instance classes
+      tags:
+      - '[RDB Instance]'
   /generate:
     get:
       description: Retrieve a list of all Tasks in the system.
@@ -1213,100 +1541,6 @@ paths:
       summary: Set the active namespace ID
       tags:
       - '[Namespace]'
-  /nrdbms/table:
-    delete:
-      consumes:
-      - application/json
-      description: |-
-        Deletes the table (collection) with the given name and all its data.
-        Supported providers: aws (DynamoDB), gcp (Firestore), ncp (MongoDB), alibaba (MongoDB).
-      operationId: NRDBMSDeleteTableHandler
-      parameters:
-      - description: Provider credentials, connection info, and table name
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/models.NRDBTableRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Table deleted successfully
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "400":
-          description: Bad Request — tableName is empty
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Delete a table from a NRDBMS instance
-      tags:
-      - '[NRDBMS]'
-    put:
-      consumes:
-      - application/json
-      description: |-
-        Creates a table (collection) with the given name. If the table already exists the request is a no-op.
-        Supported providers: aws (DynamoDB), gcp (Firestore), ncp (MongoDB), alibaba (MongoDB).
-      operationId: NRDBMSCreateTableHandler
-      parameters:
-      - description: Provider credentials, connection info, and table name
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/models.NRDBTableRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Table created successfully
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "400":
-          description: Bad Request — tableName is empty
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.BasicResponse'
-      summary: Create a table in a NRDBMS instance
-      tags:
-      - '[NRDBMS]'
-  /nrdbms/tables:
-    post:
-      consumes:
-      - application/json
-      description: |-
-        Returns the list of tables (collections) accessible with the given credentials.
-        Supported providers: aws (DynamoDB), gcp (Firestore), ncp (MongoDB), alibaba (MongoDB).
-      operationId: NRDBMSListTablesHandler
-      parameters:
-      - description: Provider credentials and connection info
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/models.DataTask'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: List of tables
-          schema:
-            $ref: '#/definitions/models.NRDBTableListResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.NRDBTableListResponse'
-      summary: List tables in a NRDBMS instance
-      tags:
-      - '[NRDBMS]'
   /objectstorage/buckets:
     delete:
       consumes:
