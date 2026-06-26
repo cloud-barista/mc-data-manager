@@ -78,7 +78,7 @@ func ObjectstorageBucketsHandler(ctx echo.Context) error {
 //	@Param			RequestBody	body		models.DataTask			true	"Provider credentials, connection info, and bucket name"
 //	@Success		200			{object}	models.BasicResponse	"Bucket created successfully"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/objectstorage/bucket [put]
+//	@Router			/objectstorage/buckets [put]
 func ObjectstorageCreateBucketHandler(ctx echo.Context) error {
 	start := time.Now()
 
@@ -121,7 +121,7 @@ func ObjectstorageCreateBucketHandler(ctx echo.Context) error {
 //	@Param			RequestBody	body		models.DataTask			true	"Provider credentials, connection info, and bucket name"
 //	@Success		200			{object}	models.BasicResponse	"Bucket deleted successfully"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/objectstorage/bucket [delete]
+//	@Router			/objectstorage/buckets [delete]
 func ObjectstorageDeleteBucketHandler(ctx echo.Context) error {
 	start := time.Now()
 

@@ -1204,7 +1204,140 @@ const docTemplate = `{
                 }
             }
         },
-        "/objectstorage/bucket": {
+        "/nrdbms/table": {
+            "put": {
+                "description": "Creates a table (collection) with the given name. If the table already exists the request is a no-op.\nSupported providers: aws (DynamoDB), gcp (Firestore), ncp (MongoDB), alibaba (MongoDB).",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[NRDBMS]"
+                ],
+                "summary": "Create a table in a NRDBMS instance",
+                "operationId": "NRDBMSCreateTableHandler",
+                "parameters": [
+                    {
+                        "description": "Provider credentials, connection info, and table name",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.NRDBTableRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Table created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request — tableName is empty",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes the table (collection) with the given name and all its data.\nSupported providers: aws (DynamoDB), gcp (Firestore), ncp (MongoDB), alibaba (MongoDB).",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[NRDBMS]"
+                ],
+                "summary": "Delete a table from a NRDBMS instance",
+                "operationId": "NRDBMSDeleteTableHandler",
+                "parameters": [
+                    {
+                        "description": "Provider credentials, connection info, and table name",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.NRDBTableRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Table deleted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request — tableName is empty",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/nrdbms/tables": {
+            "post": {
+                "description": "Returns the list of tables (collections) accessible with the given credentials.\nSupported providers: aws (DynamoDB), gcp (Firestore), ncp (MongoDB), alibaba (MongoDB).",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[NRDBMS]"
+                ],
+                "summary": "List tables in a NRDBMS instance",
+                "operationId": "NRDBMSListTablesHandler",
+                "parameters": [
+                    {
+                        "description": "Provider credentials and connection info",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DataTask"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of tables",
+                        "schema": {
+                            "$ref": "#/definitions/models.NRDBTableListResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.NRDBTableListResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/objectstorage/buckets": {
             "put": {
                 "description": "Creates a bucket for the given provider. If the bucket already exists, the request is a no-op.",
                 "consumes": [
@@ -1244,47 +1377,6 @@ const docTemplate = `{
                     }
                 }
             },
-            "delete": {
-                "description": "Empties the bucket by deleting all objects (in batches of 1000), then deletes the bucket itself.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "[ObjectStorage]"
-                ],
-                "summary": "Delete a bucket and all its objects",
-                "operationId": "ObjectstorageDeleteBucketHandler",
-                "parameters": [
-                    {
-                        "description": "Provider credentials, connection info, and bucket name",
-                        "name": "RequestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.DataTask"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Bucket deleted successfully",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.BasicResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/objectstorage/buckets": {
             "post": {
                 "description": "Returns the list of buckets accessible with the given credentials. Optionally filters by a tag key/value pair.",
                 "consumes": [
@@ -1332,6 +1424,45 @@ const docTemplate = `{
                         "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/models.ObjectStorageListResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Empties the bucket by deleting all objects (in batches of 1000), then deletes the bucket itself.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[ObjectStorage]"
+                ],
+                "summary": "Delete a bucket and all its objects",
+                "operationId": "ObjectstorageDeleteBucketHandler",
+                "parameters": [
+                    {
+                        "description": "Provider credentials, connection info, and bucket name",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DataTask"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Bucket deleted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
                         }
                     }
                 }
@@ -2473,6 +2604,28 @@ const docTemplate = `{
                 },
                 "sourcePoint": {
                     "$ref": "#/definitions/models.ProviderConfig"
+                },
+                "targetPoint": {
+                    "$ref": "#/definitions/models.ProviderConfig"
+                }
+            }
+        },
+        "models.NRDBTableListResponse": {
+            "type": "object",
+            "properties": {
+                "tables": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "models.NRDBTableRequest": {
+            "type": "object",
+            "properties": {
+                "tableName": {
+                    "type": "string"
                 },
                 "targetPoint": {
                     "$ref": "#/definitions/models.ProviderConfig"

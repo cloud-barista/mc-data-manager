@@ -181,6 +181,20 @@ definitions:
       targetPoint:
         $ref: '#/definitions/models.ProviderConfig'
     type: object
+  models.NRDBTableListResponse:
+    properties:
+      tables:
+        items:
+          type: string
+        type: array
+    type: object
+  models.NRDBTableRequest:
+    properties:
+      tableName:
+        type: string
+      targetPoint:
+        $ref: '#/definitions/models.ProviderConfig'
+    type: object
   models.ObjectDeleteRequest:
     properties:
       objectKey:
@@ -1199,7 +1213,128 @@ paths:
       summary: Set the active namespace ID
       tags:
       - '[Namespace]'
+  /nrdbms/table:
+    delete:
+      consumes:
+      - application/json
+      description: |-
+        Deletes the table (collection) with the given name and all its data.
+        Supported providers: aws (DynamoDB), gcp (Firestore), ncp (MongoDB), alibaba (MongoDB).
+      operationId: NRDBMSDeleteTableHandler
+      parameters:
+      - description: Provider credentials, connection info, and table name
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.NRDBTableRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Table deleted successfully
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "400":
+          description: Bad Request — tableName is empty
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Delete a table from a NRDBMS instance
+      tags:
+      - '[NRDBMS]'
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Creates a table (collection) with the given name. If the table already exists the request is a no-op.
+        Supported providers: aws (DynamoDB), gcp (Firestore), ncp (MongoDB), alibaba (MongoDB).
+      operationId: NRDBMSCreateTableHandler
+      parameters:
+      - description: Provider credentials, connection info, and table name
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.NRDBTableRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Table created successfully
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "400":
+          description: Bad Request — tableName is empty
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Create a table in a NRDBMS instance
+      tags:
+      - '[NRDBMS]'
+  /nrdbms/tables:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Returns the list of tables (collections) accessible with the given credentials.
+        Supported providers: aws (DynamoDB), gcp (Firestore), ncp (MongoDB), alibaba (MongoDB).
+      operationId: NRDBMSListTablesHandler
+      parameters:
+      - description: Provider credentials and connection info
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.DataTask'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of tables
+          schema:
+            $ref: '#/definitions/models.NRDBTableListResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.NRDBTableListResponse'
+      summary: List tables in a NRDBMS instance
+      tags:
+      - '[NRDBMS]'
   /objectstorage/buckets:
+    delete:
+      consumes:
+      - application/json
+      description: Empties the bucket by deleting all objects (in batches of 1000),
+        then deletes the bucket itself.
+      operationId: ObjectstorageDeleteBucketHandler
+      parameters:
+      - description: Provider credentials, connection info, and bucket name
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.DataTask'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Bucket deleted successfully
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Delete a bucket and all its objects
+      tags:
+      - '[ObjectStorage]'
     post:
       consumes:
       - application/json
@@ -1235,7 +1370,34 @@ paths:
       summary: List available buckets for a given provider
       tags:
       - '[ObjectStorage]'
-  /objectstorage/object:
+    put:
+      consumes:
+      - application/json
+      description: Creates a bucket for the given provider. If the bucket already
+        exists, the request is a no-op.
+      operationId: ObjectstorageCreateBucketHandler
+      parameters:
+      - description: Provider credentials, connection info, and bucket name
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.DataTask'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Bucket created successfully
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Create a bucket
+      tags:
+      - '[ObjectStorage]'
+  /objectstorage/buckets/object:
     delete:
       consumes:
       - application/json
@@ -1267,7 +1429,7 @@ paths:
       summary: Delete a single object from a bucket
       tags:
       - '[ObjectStorage]'
-  /objectstorage/objects:
+  /objectstorage/buckets/objects:
     post:
       consumes:
       - application/json

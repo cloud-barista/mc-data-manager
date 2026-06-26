@@ -212,6 +212,9 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 	objectStorageGroup := e.Group("/objectstorage")
 	routes.ObjectStorageRoutes(objectStorageGroup)
 
+	nrdbmsGroup := e.Group("/nrdbms")
+	routes.NRDBMSRoutes(nrdbmsGroup)
+
 	namespaceGroup := e.Group("/namespace")
 	routes.NamespaceRoutes(namespaceGroup)
 

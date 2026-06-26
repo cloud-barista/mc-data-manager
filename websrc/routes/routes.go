@@ -65,9 +65,15 @@ func GenerateRoutes(g *echo.Group) {
 }
 
 func ObjectStorageRoutes(g *echo.Group) {
-	g.PUT("/bucket", controllers.ObjectstorageCreateBucketHandler)
-	g.DELETE("/bucket", controllers.ObjectstorageDeleteBucketHandler)
+	g.PUT("/buckets", controllers.ObjectstorageCreateBucketHandler)
+	g.DELETE("/buckets", controllers.ObjectstorageDeleteBucketHandler)
 	g.POST("/buckets", controllers.ObjectstorageBucketsHandler)
 	g.POST("/buckets/objects", controllers.ObjectstorageObjectListHandler)
 	g.DELETE("/buckets/object", controllers.ObjectstorageDeleteObjectHandler)
+}
+
+func NRDBMSRoutes(g *echo.Group) {
+	g.POST("/tables", controllers.NRDBMSListTablesHandler)
+	g.PUT("/table", controllers.NRDBMSCreateTableHandler)
+	g.DELETE("/table", controllers.NRDBMSDeleteTableHandler)
 }
