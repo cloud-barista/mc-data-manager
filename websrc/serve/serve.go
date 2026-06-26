@@ -215,6 +215,9 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 	namespaceGroup := e.Group("/namespace")
 	routes.NamespaceRoutes(namespaceGroup)
 
+	dbGroup := e.Group("/db")
+	routes.RDBInstanceRoutes(dbGroup)
+
 	selfEndpoint := "localhost" + ":" + port
 	website := " http://" + selfEndpoint
 	apidashboard := " http://" + selfEndpoint + "/swagger/index.html"
