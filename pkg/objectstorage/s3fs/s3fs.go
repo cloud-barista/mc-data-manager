@@ -164,10 +164,6 @@ func (f *S3FS) DeleteBucket() error {
 	return nil
 }
 
-func (f *S3FS) DeleteObject(name string) error {
-	return f.deleteObjectBatch([]string{name})
-}
-
 // deleteObjectBatch deletes a batch of objects
 func (f *S3FS) deleteObjectBatch(keys []string) error {
 	nsId := utils.GetNsId()
