@@ -5,78 +5,1182 @@
 </ol>
 <h2 class="page-title">MySQL</h2>
 
-<div class="card mb-4 rounded-3 col-auto">
-    <ul class="nav nav-tabs pt-2 ps-2" id="serviceTabs">
-        <!-- <li class="nav-item">
-            {{if eq .OS "linux"}}
-            <a class="nav-link" href="/generate/linux">On-Premise</a>
-            {{else}}
-            <a class="nav-link" href="/generate/windows">On-Premise</a>
-            {{end}}
-        </li> -->
-        <li class="nav-item">
-            <a class="nav-link" href="/generate/objectstorage">Object Storage</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link active" href="#">SQL Database</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/generate/no-sql">No-SQL</a>
-        </li>
-    </ul>
-    <div class="card-body">
-        <!-- <form action="/generate/mysql" method="POST"> -->
-        <form id="genForm">
-            <div class="card rounded-3 p-3 mb-3">
+<form id="genForm">
+    <div class="card mb-4 rounded-3 col-auto">
+        <ul class="nav nav-tabs pt-2 ps-2" id="serviceTabs">
+            <li class="nav-item">
+                <a class="nav-link" href="/generate/objectstorage">Object Storage</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="#">SQL Database</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/generate/no-sql">No-SQL</a>
+            </li>
+        </ul>
+        <div class="card-body">
+            <!-- Credential + Region (테이블 조회용, 항상 노출) -->
+            <div class="row g-2 mb-3">
+                <div class="col">
+                    <div class="input-group">
+                        <span class="input-group-text rounded-start"><i class="bi bi-person-badge"></i></span>
+                        <div class="form-floating">
+                            <select class="form-select form-select-sm rounded-end" id="targetCredentialSelect" name="targetPoint[credentialId]">
+                                <option value="none" data-provider="none"> - </option>
+                            </select>
+                            <label for="targetCredentialSelect">provider - credential name</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="input-group">
+                        <span class="input-group-text rounded-start"><i class="bi bi-globe"></i></span>
+                        <div class="form-floating">
+                            <select class="form-select form-select-sm rounded-end" id="targetRegionSelect" name="targetPoint[region]">
+                                <option value="none" selected> - </option>
+                                <optgroup label="AWS regions" data-provider="aws" style="display:none;">
+                                    {{ range $index, $value := .AWSRegions }}
+                                    <option value="{{ $value }}">{{ $value }}</option>
+                                    {{ end }}
+                                </optgroup>
+                                <optgroup label="GCP regions" data-provider="gcp" style="display:none;">
+                                    {{ range $index, $value := .GCPRegions }}
+                                    <option value="{{ $value }}">{{ $value }}</option>
+                                    {{ end }}
+                                </optgroup>
+                                <optgroup label="NCP regions" data-provider="ncp" style="display:none;">
+                                    {{ range $index, $value := .NCPRegions }}
+                                    <option value="{{ $value }}">{{ $value }}</option>
+                                    {{ end }}
+                                </optgroup>
+                                <optgroup label="ALIBABA regions" data-provider="alibaba" style="display:none;">
+                                    {{ range $index, $value := .ALIBABARegions }}
+                                    <option value="{{ $value }}">{{ $value }}</option>
+                                    {{ end }}
+                                </optgroup>
+                                <optgroup label="IBM regions" data-provider="ibm" style="display:none;">
+                                    {{ range $index, $value := .IBMRegions }}
+                                    <option value="{{ $value }}">{{ $value }}</option>
+                                    {{ end }}
+                                </optgroup>
+                                <optgroup label="KT regions" data-provider="kt" style="display:none;">
+                                    {{ range $index, $value := .KTRegions }}
+                                    <option value="{{ $value }}">{{ $value }}</option>
+                                    {{ end }}
+                                </optgroup>
+                                <optgroup label="TENCENT regions" data-provider="tencent" style="display:none;">
+                                    {{ range $index, $value := .TencentRegions }}
+                                    <option value="{{ $value }}">{{ $value }}</option>
+                                    {{ end }}
+                                </optgroup>
+                            </select>
+                            <label for="targetRegionSelect">Select Region</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 툴바 -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted small fw-semibold">Instance List</span>
+                <div class="d-flex gap-2 align-items-center">
+                    <div class="input-group input-group-sm" style="width:200px;">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" id="instance-search" placeholder="Search by name">
+                    </div>
+                    <button type="button" class="btn btn-primary btn-sm" id="openCreateBtn" disabled>
+                        <i class="bi bi-plus-lg me-1"></i>Instance
+                    </button>
+                </div>
+            </div>
+
+            <!-- 폴링 배너 (offcanvas 닫혀 있을 때) -->
+            <div id="poll-toolbar-banner" class="d-none alert alert-primary py-1 px-3 mb-3 d-flex align-items-center justify-content-between small" role="alert">
+                <span>
+                    <span class="spinner-grow spinner-grow-sm me-2" role="status" aria-hidden="true"></span>
+                    생성 중:&nbsp;<strong id="poll-banner-id"></strong>
+                    &nbsp;|&nbsp;<i class="bi bi-clock me-1"></i><span id="poll-banner-elapsed">00:00</span>
+                </span>
+                <div class="d-flex gap-2 align-items-center">
+                    <button type="button" class="btn btn-outline-primary btn-sm py-0" id="poll-banner-check">↻ Check</button>
+                    <button type="button" class="btn btn-link btn-sm py-0 text-primary text-decoration-none" id="poll-banner-open">생성 화면 보기 →</button>
+                </div>
+            </div>
+
+            <!-- 테이블 (항상 노출) -->
+            <table class="table table-bordered table-sm mb-0">
+                <thead>
+                    <tr>
+                        <th style="width:36px;"></th>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Version</th>
+                        <th>Host (endpoint)</th>
+                        <th>Port</th>
+                        <th>InstanceClass</th>
+                    </tr>
+                </thead>
+                <tbody id="rdb-table-body">
+                    <tr>
+                        <td colspan="7" class="text-center text-muted small py-3">Credential과 Region을 선택하면 인스턴스 목록을 조회합니다</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div id="rdb-pagination" class="mt-2"></div>
+        </div>
+    </div>
+
+    <!-- ── Offcanvas: 인스턴스 생성 ──────────────────────── -->
+    <div class="offcanvas offcanvas-end" id="createOffcanvas" tabindex="-1" style="width: min(500px, 100vw);">
+        <div class="offcanvas-header border-bottom">
+            <h5 class="offcanvas-title fw-semibold" id="oc-title">
+                <i class="bi bi-plus-circle me-2 text-primary"></i>Create Instance
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <!-- 선택된 환경 표시 -->
+            <div class="alert alert-secondary py-2 px-3 mb-3 small">
+                <i class="bi bi-info-circle me-1"></i>
+                Target: <span id="oc-context-text" class="fw-semibold">—</span>
+            </div>
+
+            <!-- Engine / Version / Instance Class -->
+            <div id="section-db" class="d-none">
                 <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="bi bi-database-fill-gear"></i></span>
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="gent-targetHost" value="MySQL" style="border: 0; background-color: white;" value="-" required disabled>
-                        <label for="gent-targetHost">Target</label>
+                        <select class="form-select rounded-end" id="engine" name="engine">
+                            <option value="">-</option>
+                        </select>
+                        <label for="engine">Engine</label>
                     </div>
                 </div>
                 <div class="input-group mb-3">
-                    <span class="input-group-text rounded-start"><i class="fa-solid fa-cloud"></i></span>
-                    <select class="form-select" id="targetPoint[provider]" name="provider">
-                        <option value="aws">AWS</option>
-                        <option value="gcp">GCP</option>
-                        <option value="ncp">NCP</option>
-                        <option value="alibaba">ALIBABA</option>
-                        <option value="on-premise">On-premise</option>
-                    </select>
-                </div>
-                <div class="input-group mb-3">
-                    <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
+                    <span class="input-group-text rounded-start"><i class="bi bi-tag-fill"></i></span>
                     <div class="form-floating">
-                        <input type="text" class="form-control rounded-end" id="gen-mysql-host" name="host" placeholder="Host / IP" required>
-                        <label for="gen-mysql-host">Host / IP</label>
+                        <select class="form-select rounded-end" id="engineVersion" name="engineVersion">
+                            <option value="">-</option>
+                        </select>
+                        <label for="engineVersion">Engine Version</label>
                     </div>
                 </div>
+                <div class="input-group mb-0">
+                    <span class="input-group-text rounded-start"><i class="bi bi-collection-fill"></i></span>
+                    <div class="form-floating flex-grow-1 position-relative" id="icWrapper">
+                        <div class="form-select rounded-end d-flex align-items-center" id="icTrigger" role="combobox" tabindex="0"
+                             style="height:58px; cursor:pointer; user-select:none;">
+                            <span id="icTriggerText" class="text-muted">-</span>
+                        </div>
+                        <label>Instance Class</label>
+                        <div class="border rounded-2 shadow-sm bg-white position-absolute d-none" id="icPanel"
+                             style="top:calc(100% + 2px); left:0; z-index:1060; min-width:100%;">
+                            <div class="d-flex" style="max-height:200px;">
+                                <div id="icFamilyList" class="border-end" style="min-width:130px; width:45%; overflow-y:auto;"></div>
+                                <div id="icSizeList" style="flex:1; overflow-y:auto;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="instanceClass" name="instanceClass">
+                </div>
+            </div>
+
+            <!-- Instance config -->
+            <div id="section-instance" class="d-none mt-3">
                 <div class="input-group mb-3">
-                    <span class="input-group-text rounded-start"><i class="fa-solid fa-flag"></i></span>
+                    <span class="input-group-text rounded-start"><i class="bi bi-person-vcard-fill"></i></span>
                     <div class="form-floating">
-                        <input type="text" class="form-control rounded-end" id="gen-mysql-port" name="port" placeholder="Port" required>
-                        <label for="gen-mysql-port">Port</label>
+                        <input type="text" class="form-control rounded-end" id="gen-mysql-instanceId" autocomplete="off" name="instanceId" placeholder="Instance ID" required>
+                        <label for="gen-mysql-instanceId">Instance ID</label>
                     </div>
                 </div>
+                <div class="input-group mb-3" id="storage-group">
+                    <span class="input-group-text rounded-start"><i class="bi bi-archive-fill"></i></span>
+                    <div class="form-floating">
+                        <input type="number" class="form-control rounded-end" id="gen-mysql-allocatedStorage" autocomplete="off" name="allocatedStorage" placeholder="20" min="20" value="20" required>
+                        <label for="gen-mysql-allocatedStorage">Allocated Storage (GB)</label>
+                    </div>
+                    <div class="invalid-feedback ps-2">Please enter 20 GB or more.</div>
+                </div>
                 <div class="input-group mb-3">
-                    <span class="input-group-text rounded-start"><i class="fa-solid fa-user"></i></span>
+                    <span class="input-group-text rounded-start"><i class="bi bi-person-fill"></i></span>
                     <div class="form-floating">
                         <input type="text" class="form-control rounded-end" id="gen-mysql-username" autocomplete="username" name="username" placeholder="Username" required>
                         <label for="gen-mysql-username">Username</label>
                     </div>
                 </div>
-                <div class="input-group">
-                    <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
+                <div class="input-group mb-0">
+                    <span class="input-group-text rounded-start"><i class="bi bi-lock-fill"></i></span>
                     <div class="form-floating">
                         <input type="password" class="form-control rounded-end" id="gen-mysql-password" name="password" placeholder="Password" required>
                         <label for="gen-mysql-password">Password</label>
                     </div>
                 </div>
-            </div>       
-            <button type="submit" class="btn btn-primary rounded-3 float-end" id="submitBtn">Submit</button>
-            <input type="hidden" id="genTarget" value="rdbms">
-        </form>
+            </div>
+
+            <!-- Connection info -->
+            <div id="section-connect" class="d-none mt-3">
+                <div id="ic-mini-banner" class="d-none mb-3">
+                    <div class="d-flex align-items-center justify-content-between py-1 px-2 rounded border border-primary-subtle bg-primary-subtle small">
+                        <span class="text-primary">
+                            <span class="spinner-grow spinner-grow-sm me-1" role="status" aria-hidden="true"></span>
+                            자동 확인 중 (30초 간격)
+                        </span>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="text-muted"><i class="bi bi-clock me-1"></i><span id="ic-elapsed">00:00</span></span>
+                            <button type="button" class="btn btn-outline-primary btn-sm py-0 px-2" id="ic-check-btn" style="font-size:0.75rem;">↻ Check now</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start"><i class="bi bi-hdd-network-fill"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control rounded-end bg-light" id="connect-host" name="host" placeholder="—">
+                        <label for="connect-host">Host / IP</label>
+                    </div>
+                </div>
+                <div class="input-group mb-0">
+                    <span class="input-group-text rounded-start"><i class="bi bi-ethernet"></i></span>
+                    <div class="form-floating">
+                        <input type="text" class="form-control rounded-end bg-light" id="connect-port" name="port" placeholder="—">
+                        <label for="connect-port">Port</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="offcanvas-footer p-3 border-top">
+            <button type="button" class="btn btn-primary w-100" id="submitBtn" disabled>Save</button>
+        </div>
     </div>
-</div>
+
+    <input type="hidden" id="genTarget" value="rdbms">
+    <input type="hidden" id="targetPoint[provider]" value="none">
+</form>
+
+<style>
+.ic-family-item:hover  { background: #f0f0f0; cursor: pointer; }
+.ic-family-item.active { background: #0d6efd; color: #fff; }
+.ic-size-item:hover    { background: #f8f9fa; cursor: pointer; }
+@keyframes ic-spin      { to { transform: rotate(360deg); } }
+@keyframes ic-spin-slow { to { transform: rotate(360deg); } }
+.ic-spin      { animation: ic-spin 1.2s linear infinite; display: inline-block; }
+.ic-spin-slow { animation: ic-spin-slow 3s linear infinite; display: inline-block; }
+.offcanvas-footer { flex-shrink: 0; }
+.form-control:disabled, .datatable-input:disabled {
+    background-color: #E9ECEF !important;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const STATE_KEY = 'mc-gen-mysql';
+
+    let engineVersionData = [];
+    let instanceClassData = [];
+    let phase             = 1;
+    let selectedInstance  = null;
+    let allInstances      = [];
+    let currentPage       = 1;
+    let searchQuery       = '';
+    const PAGE_SIZE       = 10;
+    let pollTimerId       = null;
+    let elapsedTimerId    = null;
+    let pollStartTime     = null;
+    let pollingInstanceId = null;
+
+    const regionSelect        = document.getElementById('targetRegionSelect');
+    const engineSelect        = document.getElementById('engine');
+    const engineVersionSelect = document.getElementById('engineVersion');
+    const icWrapper           = document.getElementById('icWrapper');
+    const icTrigger           = document.getElementById('icTrigger');
+    const icTriggerText       = document.getElementById('icTriggerText');
+    const icPanel             = document.getElementById('icPanel');
+    const icFamilyList        = document.getElementById('icFamilyList');
+    const icSizeList          = document.getElementById('icSizeList');
+    const icHidden            = document.getElementById('instanceClass');
+    const actionBtn           = document.getElementById('submitBtn');
+    const openCreateBtn       = document.getElementById('openCreateBtn');
+    const sectionDb           = document.getElementById('section-db');
+    const sectionInstance     = document.getElementById('section-instance');
+    const sectionConnect      = document.getElementById('section-connect');
+    const icMiniBanner        = document.getElementById('ic-mini-banner');
+    const icElapsed           = document.getElementById('ic-elapsed');
+    const offcanvasEl         = document.getElementById('createOffcanvas');
+    const pollToolbarBanner   = document.getElementById('poll-toolbar-banner');
+    const pollBannerId        = document.getElementById('poll-banner-id');
+    const pollBannerElapsed   = document.getElementById('poll-banner-elapsed');
+
+    const offcanvas = new bootstrap.Offcanvas(offcanvasEl, { backdrop: true, scroll: false });
+
+    function getProvider() { return document.getElementById('targetPoint[provider]')?.value || ''; }
+
+    function esc(s) {
+        return String(s == null ? '—' : s)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    // ── 인스턴스 생성 버튼 활성화 (region 선택 시) ────────
+    function updateCreateBtn() {
+        const region = regionSelect.value;
+        openCreateBtn.disabled = !region || region === 'none';
+    }
+
+    // ── Offcanvas 컨텍스트 표시 업데이트 ─────────────────
+    function updateOcContext() {
+        const credSel  = document.getElementById('targetCredentialSelect');
+        const credText = credSel.options[credSel.selectedIndex]?.textContent?.trim() || '—';
+        const region   = regionSelect.value;
+        document.getElementById('oc-context-text').textContent =
+            (region && region !== 'none') ? `${credText} / ${region}` : '—';
+    }
+
+    document.getElementById('instance-search').addEventListener('input', function () {
+        searchQuery = this.value;
+        currentPage = 1;
+        applyFilter();
+    });
+
+    openCreateBtn.addEventListener('click', () => {
+        updateOcContext();
+        if (phase === 1 && engineVersionData.length > 0 && sectionDb.classList.contains('d-none')) {
+            const engines = [...new Set(engineVersionData.map(d => d.engine))];
+            resetSelect(engineSelect, '-');
+            engines.forEach(engine => {
+                const opt = document.createElement('option');
+                opt.value = engine; opt.textContent = engine;
+                engineSelect.appendChild(opt);
+            });
+            resetSelect(engineVersionSelect, '-');
+            icReset();
+            sectionDb.classList.remove('d-none');
+        }
+        offcanvas.show();
+    });
+    offcanvasEl.addEventListener('show.bs.offcanvas', () => {
+        pollToolbarBanner.classList.add('d-none');
+    });
+    offcanvasEl.addEventListener('hide.bs.offcanvas', () => {
+        if (pollingInstanceId) pollToolbarBanner.classList.remove('d-none');
+    });
+
+    document.getElementById('poll-banner-open').addEventListener('click', () => {
+        updateOcContext();
+        offcanvas.show();
+    });
+    document.getElementById('poll-banner-check').addEventListener('click', () => {
+        if (pollingInstanceId) pollStatus();
+    });
+
+    // ── sessionStorage ────────────────────────────────────
+    function saveState() {
+        try {
+            sessionStorage.setItem(STATE_KEY, JSON.stringify({
+                credentialId:        document.getElementById('targetCredentialSelect').value,
+                provider:            getProvider(),
+                region:              regionSelect.value,
+                engine:              engineSelect.value,
+                engineVersion:       engineVersionSelect.value,
+                instanceClass:       icHidden.value,
+                instanceId:          document.getElementById('gen-mysql-instanceId').value,
+                allocatedStorage:    document.getElementById('gen-mysql-allocatedStorage').value,
+                username:            document.getElementById('gen-mysql-username').value,
+                connectHost:         document.getElementById('connect-host').value,
+                connectPort:         document.getElementById('connect-port').value,
+                phase,
+                pollingInstanceId,
+                pollStartTime,
+                showSectionDb:       !sectionDb.classList.contains('d-none'),
+                showSectionInstance: !sectionInstance.classList.contains('d-none'),
+                showSectionConnect:  !sectionConnect.classList.contains('d-none'),
+            }));
+        } catch (e) { console.warn('saveState:', e); }
+    }
+
+    function clearState() { sessionStorage.removeItem(STATE_KEY); }
+
+    async function restoreState() {
+        const raw = sessionStorage.getItem(STATE_KEY);
+        if (!raw) return;
+        let s;
+        try { s = JSON.parse(raw); } catch { return; }
+
+        const credSel = document.getElementById('targetCredentialSelect');
+        if (s.credentialId) {
+            credSel.value = s.credentialId;
+            const opt  = credSel.options[credSel.selectedIndex];
+            const prov = opt?.dataset?.provider || s.provider || '';
+            if (prov && prov !== 'none') {
+                document.getElementById('targetPoint[provider]').value = prov;
+                document.querySelectorAll('#targetRegionSelect optgroup').forEach(og => {
+                    og.style.display = og.dataset.provider === prov ? '' : 'none';
+                });
+            }
+        }
+
+        if (!s.region || s.region === 'none') return;
+        regionSelect.value = s.region;
+        updateCreateBtn();
+        updateOcContext();
+
+        const provider = getProvider();
+        if (!provider || provider === 'none') return;
+
+        loadTable();
+
+        // Engine versions
+        let evData;
+        try {
+            const res = await fetch('/db/rdbms/engine-versions', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ provider, region: s.region })
+            });
+            if (!res.ok) return;
+            evData = await res.json();
+        } catch { return; }
+
+        engineVersionData = Array.isArray(evData) ? evData : [];
+        const engines = [...new Set(engineVersionData.map(d => d.engine))];
+        resetSelect(engineSelect, '-');
+        engines.forEach(e => {
+            const opt = document.createElement('option');
+            opt.value = e; opt.textContent = e;
+            engineSelect.appendChild(opt);
+        });
+        const savedEngine = engines.includes(s.engine) ? s.engine : engines[0];
+        if (!savedEngine) { sectionDb.classList.remove('d-none'); return; }
+        engineSelect.value = savedEngine;
+
+        const versions = engineVersionData.filter(d => d.engine === savedEngine).map(d => d.engineVersion);
+        resetSelect(engineVersionSelect, '-');
+        versions.forEach(v => {
+            const opt = document.createElement('option');
+            opt.value = v; opt.textContent = v;
+            engineVersionSelect.appendChild(opt);
+        });
+        const savedVersion = versions.includes(s.engineVersion) ? s.engineVersion : versions[0];
+        if (!savedVersion) { sectionDb.classList.remove('d-none'); return; }
+        engineVersionSelect.value = savedVersion;
+        sectionDb.classList.remove('d-none');
+
+        // Instance classes
+        let icData;
+        try {
+            const res = await fetch('/db/rdbms/instance-class', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ provider, region: s.region, engine: savedEngine, engineVersion: savedVersion })
+            });
+            if (!res.ok) return;
+            icData = await res.json();
+        } catch { return; }
+
+        instanceClassData = Array.isArray(icData) ? icData : [];
+        const families = [...new Set(instanceClassData.map(c => c.split('.').slice(0, 2).join('.')))];
+        icFamilyList.innerHTML = '';
+        icSizeList.innerHTML   = '';
+        families.forEach(f => {
+            const div = document.createElement('div');
+            div.className = 'ic-family-item px-3 py-2 small';
+            div.textContent = f;
+            div.addEventListener('click', e => { e.stopPropagation(); icSelectFamily(f, div); });
+            icFamilyList.appendChild(div);
+        });
+        if (s.instanceClass && instanceClassData.includes(s.instanceClass)) {
+            icHidden.value = s.instanceClass;
+            icTriggerText.textContent = s.instanceClass;
+            icTriggerText.classList.remove('text-muted');
+            const savedFamily = s.instanceClass.split('.').slice(0, 2).join('.');
+            const familyEl = [...icFamilyList.querySelectorAll('.ic-family-item')]
+                .find(el => el.textContent.trim() === savedFamily);
+            if (familyEl) icSelectFamily(savedFamily, familyEl);
+        }
+
+        if (s.instanceId)       document.getElementById('gen-mysql-instanceId').value = s.instanceId;
+        if (s.allocatedStorage) document.getElementById('gen-mysql-allocatedStorage').value = s.allocatedStorage;
+        if (s.username)         document.getElementById('gen-mysql-username').value = s.username;
+        if (s.showSectionInstance) sectionInstance.classList.remove('d-none');
+
+        if (s.showSectionConnect) {
+            sectionConnect.classList.remove('d-none');
+            if (s.connectHost) document.getElementById('connect-host').value = s.connectHost;
+            if (s.connectPort) document.getElementById('connect-port').value = s.connectPort;
+        }
+
+        phase = s.phase || 1;
+
+        if (phase === 2) setCreationFieldsDisabled(true);
+
+        if (s.pollingInstanceId && phase === 1) {
+            pollingInstanceId = s.pollingInstanceId;
+            pollStartTime     = s.pollStartTime || Date.now();
+            pollBannerId.textContent = pollingInstanceId;
+            pollToolbarBanner.classList.remove('d-none');
+            icMiniBanner.classList.remove('d-none');
+            startElapsedTimer();
+            pollTimerId = setInterval(pollStatus, 30000);
+            document.addEventListener('visibilitychange', onVisibilityChange);
+            setTimeout(pollStatus, 1000);
+        }
+
+        updateButton();
+    }
+
+    function waitForCredentials() {
+        return new Promise(resolve => {
+            const credSel = document.getElementById('targetCredentialSelect');
+            if (credSel.options.length > 1) { resolve(); return; }
+            const obs = new MutationObserver(() => {
+                if (credSel.options.length > 1) { obs.disconnect(); resolve(); }
+            });
+            obs.observe(credSel, { childList: true });
+            setTimeout(() => { obs.disconnect(); resolve(); }, 3000);
+        });
+    }
+
+    // ── Status 배지 ───────────────────────────────────────
+    function statusBadge(status) {
+        const s = (status || '').toLowerCase();
+        let icon, cls;
+        if (s === 'available') {
+            icon = 'bi-check-circle-fill'; cls = 'text-success';
+        } else if (s === 'creating') {
+            icon = 'bi-hourglass-split ic-spin'; cls = 'text-primary';
+        } else if (s.startsWith('configuring') || s === 'modifying' || s === 'upgrading') {
+            icon = 'bi-gear-fill ic-spin-slow'; cls = 'text-info';
+        } else if (s === 'stopped' || s === 'stopping') {
+            icon = 'bi-pause-circle-fill'; cls = 'text-warning';
+        } else if (s === 'deleting' || s === 'deleted') {
+            icon = 'bi-trash3-fill'; cls = 'text-danger';
+        } else if (s.startsWith('failed') || s.startsWith('incompatible')) {
+            icon = 'bi-exclamation-circle-fill'; cls = 'text-danger';
+        } else {
+            icon = 'bi-dash-circle'; cls = 'text-secondary';
+        }
+        return `<span class="${cls} small"><i class="bi ${icon} me-1"></i>${esc(status)}</span>`;
+    }
+
+    function makeRow(i) {
+        const available = (i.status || '').toLowerCase() === 'available';
+        const iid = i.instanceId || i.name || '';
+        const isChecked = selectedInstance && selectedInstance.instanceId === iid;
+        return `<tr>
+            <td class="text-center align-middle" style="width:36px;">
+                <input type="checkbox" class="form-check-input rdb-row-check"
+                    ${available ? '' : 'disabled'}
+                    ${isChecked ? 'checked' : ''}
+                    data-instance-id="${esc(iid)}"
+                    data-engine="${esc(i.engine || '')}"
+                    data-engine-version="${esc(i.engineVersion || '')}"
+                    data-instance-class="${esc(i.instanceClass || '')}"
+                    data-allocated-storage="${esc(String(i.allocatedStorage || ''))}"
+                    data-endpoint="${esc(i.endpoint || '')}"
+                    data-port="${esc(String(i.port || ''))}">
+            </td>
+            <td class="small">${esc(i.name || i.instanceId)}</td>
+            <td>${statusBadge(i.status)}</td>
+            <td class="small">${esc(i.engineVersion)}</td>
+            <td class="small text-truncate" style="max-width:200px;" title="${esc(i.endpoint)}">${esc(i.endpoint)}</td>
+            <td class="small">${esc(String(i.port))}</td>
+            <td class="small">${esc(i.instanceClass)}</td>
+        </tr>`;
+    }
+
+    function renderTable(instances) {
+        allInstances = instances || [];
+        currentPage  = 1;
+        applyFilter();
+    }
+
+    function applyFilter() {
+        const q        = searchQuery.trim().toLowerCase();
+        const filtered = q
+            ? allInstances.filter(i => (i.name || i.instanceId || '').toLowerCase().includes(q))
+            : allInstances;
+
+        const tbody      = document.getElementById('rdb-table-body');
+        const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+        if (currentPage > totalPages) currentPage = totalPages;
+
+        if (!filtered.length) {
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted small py-3">No instances found</td></tr>';
+        } else {
+            const start = (currentPage - 1) * PAGE_SIZE;
+            tbody.innerHTML = filtered.slice(start, start + PAGE_SIZE).map(makeRow).join('');
+            tbody.querySelectorAll('.rdb-row-check').forEach(cb => {
+                cb.addEventListener('change', onInstanceCheckChange);
+            });
+        }
+
+        renderPagination(totalPages, filtered.length);
+    }
+
+    function renderPagination(totalPages, totalFiltered) {
+        const container = document.getElementById('rdb-pagination');
+        if (totalPages <= 1) { container.innerHTML = ''; return; }
+
+        const range = [];
+        if (totalPages <= 7) {
+            for (let p = 1; p <= totalPages; p++) range.push(p);
+        } else {
+            range.push(1);
+            if (currentPage > 3) range.push('...');
+            const s = Math.max(2, currentPage - 1);
+            const e = Math.min(totalPages - 1, currentPage + 1);
+            for (let p = s; p <= e; p++) range.push(p);
+            if (currentPage < totalPages - 2) range.push('...');
+            range.push(totalPages);
+        }
+
+        const prev = `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${currentPage - 1}">‹</a></li>`;
+        const next = `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${currentPage + 1}">›</a></li>`;
+        const pages = range.map(p =>
+            p === '...'
+                ? `<li class="page-item disabled"><span class="page-link">…</span></li>`
+                : `<li class="page-item ${p === currentPage ? 'active' : ''}"><a class="page-link" href="#" data-page="${p}">${p}</a></li>`
+        ).join('');
+
+        container.innerHTML = `<nav><ul class="pagination pagination-sm mb-0 justify-content-center">${prev}${pages}${next}</ul></nav>`;
+        container.querySelectorAll('a.page-link').forEach(link => {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                const p = parseInt(link.dataset.page);
+                if (!isNaN(p) && p >= 1 && p <= totalPages && p !== currentPage) {
+                    currentPage = p;
+                    applyFilter();
+                }
+            });
+        });
+    }
+
+    function onInstanceCheckChange(e) {
+        document.querySelectorAll('.rdb-row-check').forEach(other => {
+            if (other !== e.target) other.checked = false;
+        });
+        if (e.target.checked) {
+            const d = e.target.dataset;
+            selectedInstance = {
+                instanceId:       d.instanceId,
+                engine:           d.engine,
+                engineVersion:    d.engineVersion,
+                instanceClass:    d.instanceClass,
+                allocatedStorage: d.allocatedStorage,
+                endpoint:         d.endpoint,
+                port:             d.port
+            };
+            openCreateBtn.innerHTML = '<i class="bi bi-plus-lg me-1"></i>Sample Data';
+            enterSelectMode();
+        } else {
+            selectedInstance = null;
+            openCreateBtn.innerHTML = '<i class="bi bi-plus-lg me-1"></i>Instance';
+            exitSelectMode();
+        }
+    }
+
+    function enterSelectMode() {
+        const inst = selectedInstance;
+
+        // Engine select
+        if (inst.engine && ![...engineSelect.options].some(o => o.value === inst.engine)) {
+            const opt = document.createElement('option');
+            opt.value = inst.engine; opt.textContent = inst.engine;
+            engineSelect.appendChild(opt);
+        }
+        if (inst.engine) engineSelect.value = inst.engine;
+
+        // Engine Version select
+        if (inst.engineVersion && ![...engineVersionSelect.options].some(o => o.value === inst.engineVersion)) {
+            const opt = document.createElement('option');
+            opt.value = inst.engineVersion; opt.textContent = inst.engineVersion;
+            engineVersionSelect.appendChild(opt);
+        }
+        if (inst.engineVersion) engineVersionSelect.value = inst.engineVersion;
+
+        // Instance Class
+        icHidden.value = inst.instanceClass || '';
+        icTriggerText.textContent = inst.instanceClass || '-';
+        icTriggerText.classList.toggle('text-muted', !inst.instanceClass);
+
+        // Instance fields
+        document.getElementById('gen-mysql-instanceId').value      = inst.instanceId;
+        document.getElementById('gen-mysql-allocatedStorage').value = inst.allocatedStorage || '';
+        document.getElementById('connect-host').value              = inst.endpoint;
+        document.getElementById('connect-port').value              = inst.port;
+
+        // Username + Password: editable and clear
+        document.getElementById('gen-mysql-username').value = '';
+        document.getElementById('gen-mysql-password').value = '';
+
+        setCreationFieldsDisabled(true);
+
+        sectionDb.classList.remove('d-none');
+        sectionInstance.classList.remove('d-none');
+        sectionConnect.classList.remove('d-none');
+
+        document.getElementById('oc-title').innerHTML = '<i class="bi bi-plus-circle me-2 text-primary"></i>Create Sample Data';
+        document.getElementById('storage-group').classList.add('d-none');
+
+        phase = 3;
+        updateButton();
+        bootstrap.Offcanvas.getOrCreateInstance(offcanvasEl).show();
+    }
+
+    function exitSelectMode() {
+        document.getElementById('oc-title').innerHTML = '<i class="bi bi-plus-circle me-2 text-primary"></i>Create Instance';
+        document.getElementById('storage-group').classList.remove('d-none');
+        phase = 1;
+        setCreationFieldsDisabled(false);
+        document.getElementById('gen-mysql-instanceId').value       = '';
+        document.getElementById('gen-mysql-allocatedStorage').value  = '20';
+        document.getElementById('gen-mysql-username').value          = '';
+        document.getElementById('gen-mysql-password').value          = '';
+        document.getElementById('connect-host').value                = '';
+        document.getElementById('connect-port').value                = '';
+        sectionInstance.classList.add('d-none');
+        sectionConnect.classList.add('d-none');
+        updateButton();
+        const bsOC = bootstrap.Offcanvas.getInstance(offcanvasEl);
+        if (bsOC) bsOC.hide();
+    }
+
+    async function loadTable() {
+        const provider = getProvider();
+        const region   = regionSelect.value;
+        if (!provider || provider === 'none' || !region || region === 'none') {
+            allInstances = [];
+            document.getElementById('rdb-table-body').innerHTML =
+                '<tr><td colspan="7" class="text-center text-muted small py-3">When you select a Credential and Region, the instance list is retrieved.</td></tr>';
+            document.getElementById('rdb-pagination').innerHTML = '';
+            return;
+        }
+        try {
+            const res = await fetch('/db/rdbms', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ provider, region })
+            });
+            if (!res.ok) { renderTable([]); return; }
+            renderTable(await res.json());
+        } catch (e) { console.error('loadTable:', e); renderTable([]); }
+    }
+
+    // ── button state ──────────────────────────────────────
+    function resetSelect(sel, placeholder) {
+        sel.replaceChildren();
+        const opt = document.createElement('option');
+        opt.value = ''; opt.textContent = placeholder;
+        sel.appendChild(opt);
+    }
+
+    function updateButton() {
+        if (phase === 2) {
+            const pw = document.getElementById('gen-mysql-password').value.trim();
+            actionBtn.disabled = !pw;
+            actionBtn.textContent = 'Submit';
+            return;
+        }
+        if (phase === 3) {
+            const un = document.getElementById('gen-mysql-username').value.trim();
+            const pw = document.getElementById('gen-mysql-password').value.trim();
+            actionBtn.disabled = !(un && pw);
+            actionBtn.textContent = 'Submit';
+            return;
+        }
+        const storageEl = document.getElementById('gen-mysql-allocatedStorage');
+        const storageOk = storageEl.value !== '' && Number(storageEl.value) >= 20;
+        const ok = document.getElementById('gen-mysql-instanceId').value.trim()
+            && storageOk
+            && document.getElementById('gen-mysql-username').value.trim()
+            && document.getElementById('gen-mysql-password').value.trim()
+            && icHidden.value;
+        actionBtn.disabled = !ok;
+        actionBtn.textContent = 'Save';
+    }
+
+    ['gen-mysql-instanceId', 'gen-mysql-username'].forEach(id => {
+        document.getElementById(id).addEventListener('input', () => { updateButton(); saveState(); });
+    });
+    document.getElementById('gen-mysql-allocatedStorage').addEventListener('input', function () {
+        const invalid = this.value !== '' && Number(this.value) < 20;
+        this.classList.toggle('is-invalid', invalid);
+        this.closest('.form-floating').classList.toggle('is-invalid', invalid);
+        updateButton();
+        saveState();
+    });
+    document.getElementById('gen-mysql-password').addEventListener('input', updateButton);
+
+    actionBtn.addEventListener('click', async () => {
+        if (phase === 1) await handleSave();
+        else await handleSubmit();
+    });
+
+    // ── Save ──────────────────────────────────────────────
+    async function handleSave() {
+        const provider         = getProvider();
+        const region           = regionSelect.value;
+        const engine           = engineSelect.value;
+        const engineVersion    = engineVersionSelect.value;
+        const instanceId       = document.getElementById('gen-mysql-instanceId').value.trim();
+        const allocatedStorage = parseInt(document.getElementById('gen-mysql-allocatedStorage').value, 10);
+        const masterUsername   = document.getElementById('gen-mysql-username').value.trim();
+        const masterPassword   = document.getElementById('gen-mysql-password').value.trim();
+        const instanceClass    = icHidden.value;
+
+        actionBtn.disabled = true;
+        actionBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;Creating...';
+
+        try {
+            const res = await fetch('/db/rdbms', {
+                method: 'PUT', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ provider, region, instanceId, instanceClass, engine, engineVersion, masterUsername, masterPassword, allocatedStorage })
+            });
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err.error || `HTTP ${res.status}`);
+            }
+            const instance = await res.json();
+            document.getElementById('connect-port').value = String(instance.port || '');
+            sectionConnect.classList.remove('d-none');
+            loadTable();
+
+            if (instance.status === 'available' && instance.endpoint) {
+                onInstanceReady(instance.endpoint);
+            } else {
+                startPolling(instance.instanceId);
+            }
+            saveState();
+        } catch (err) {
+            alert('Failed to create instance: ' + err.message);
+            actionBtn.disabled = false;
+            actionBtn.textContent = 'Save';
+        }
+    }
+
+    // ── Submit (phase 2) ──────────────────────────────────
+    async function handleSubmit() {
+        const credRaw     = document.getElementById('targetCredentialSelect').value;
+        const targetPoint = {
+            provider:        getProvider(),
+            credentialId:    credRaw ? parseInt(credRaw, 10) : null,
+            region:          regionSelect.value,
+            host:            document.getElementById('connect-host').value,
+            port:            document.getElementById('connect-port').value,
+            username:        document.getElementById('gen-mysql-username').value.trim(),
+            password:        document.getElementById('gen-mysql-password').value.trim(),
+            instanceId:      document.getElementById('gen-mysql-instanceId').value.trim(),
+            allocatedStorage: document.getElementById('gen-mysql-allocatedStorage').value,
+            instanceClass:   icHidden.value,
+            bucket:          null
+        };
+
+        loadingButtonOn();
+        resultCollpase();
+
+        try {
+            const res = await fetch('/generate/rdbms', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ targetPoint, dummy: targetPoint })
+            });
+            if (!res.ok) throw new Error('Network response was not ok');
+            const json = await res.json();
+            document.getElementById('resultText').value = json.Result;
+
+            resetAfterSubmit();
+            const bsOC = bootstrap.Offcanvas.getInstance(offcanvasEl);
+            if (bsOC) bsOC.hide();
+        } catch (err) {
+            alert(err.message || err);
+        } finally {
+            updateButton();
+        }
+    }
+
+    function resetAfterSubmit() {
+        document.querySelectorAll('.rdb-row-check').forEach(cb => cb.checked = false);
+        selectedInstance = null;
+        openCreateBtn.innerHTML = '<i class="bi bi-plus-lg me-1"></i>Instance';
+        document.getElementById('oc-title').innerHTML = '<i class="bi bi-plus-circle me-2 text-primary"></i>Instance';
+        document.getElementById('storage-group').classList.remove('d-none');
+        phase = 1;
+        clearState();
+        resetSelect(engineSelect, '-');
+        resetSelect(engineVersionSelect, '-');
+        icReset();
+        document.getElementById('gen-mysql-instanceId').value       = '';
+        document.getElementById('gen-mysql-allocatedStorage').value  = '20';
+        document.getElementById('gen-mysql-username').value          = '';
+        document.getElementById('gen-mysql-password').value          = '';
+        document.getElementById('connect-host').value                = '';
+        document.getElementById('connect-port').value                = '';
+        sectionDb.classList.add('d-none');
+    }
+
+    function setCreationFieldsDisabled(disabled) {
+        engineSelect.disabled         = disabled;
+        engineVersionSelect.disabled  = disabled;
+        icTrigger.style.pointerEvents = disabled ? 'none' : '';
+        icTrigger.style.cursor        = disabled ? 'default' : '';
+        icTrigger.style.backgroundColor = disabled ? '#E9ECEF' : '';
+        ['gen-mysql-instanceId', 'gen-mysql-allocatedStorage', 'connect-host', 'connect-port'].forEach(id => {
+            const el = document.getElementById(id);
+            el.readOnly = disabled;
+            el.classList.toggle('bg-light', disabled);
+        });
+    }
+
+    function onInstanceReady(endpoint) {
+        stopPolling();
+        document.getElementById('connect-host').value = endpoint;
+        setCreationFieldsDisabled(true);
+        loadTable();
+        phase = 2;
+        updateButton();
+        saveState();
+    }
+
+    // ── 경과 시간 타이머 ──────────────────────────────────
+    function startElapsedTimer() {
+        if (elapsedTimerId) clearInterval(elapsedTimerId);
+        elapsedTimerId = setInterval(() => {
+            const sec = Math.floor((Date.now() - pollStartTime) / 1000);
+            const txt = `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
+            icElapsed.textContent        = txt;
+            pollBannerElapsed.textContent = txt;
+        }, 1000);
+    }
+
+    // ── 폴링 ─────────────────────────────────────────────
+    function startPolling(instanceId) {
+        pollingInstanceId = instanceId;
+        pollStartTime     = Date.now();
+        pollBannerId.textContent = instanceId;
+        icMiniBanner.classList.remove('d-none');
+        icElapsed.textContent = '00:00';
+        if (!offcanvasEl.classList.contains('show')) {
+            pollToolbarBanner.classList.remove('d-none');
+        }
+        startElapsedTimer();
+        pollTimerId = setInterval(pollStatus, 30000);
+        setTimeout(pollStatus, 5000);
+        document.addEventListener('visibilitychange', onVisibilityChange);
+    }
+
+    function stopPolling() {
+        if (pollTimerId)    { clearInterval(pollTimerId);    pollTimerId    = null; }
+        if (elapsedTimerId) { clearInterval(elapsedTimerId); elapsedTimerId = null; }
+        document.removeEventListener('visibilitychange', onVisibilityChange);
+        pollingInstanceId = null;
+        icMiniBanner.classList.add('d-none');
+        pollToolbarBanner.classList.add('d-none');
+    }
+
+    function onVisibilityChange() {
+        if (document.visibilityState === 'visible' && pollingInstanceId) pollStatus();
+    }
+
+    async function pollStatus() {
+        if (!pollingInstanceId) return;
+        try {
+            const res = await fetch('/db/rdbms', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ provider: getProvider(), region: regionSelect.value })
+            });
+            if (!res.ok) return;
+            const instances = await res.json();
+            renderTable(instances);
+            const found = Array.isArray(instances)
+                ? instances.find(i => i.instanceId === pollingInstanceId)
+                : null;
+            if (found && found.status === 'available' && found.endpoint) {
+                document.getElementById('connect-port').value = String(found.port || '');
+                onInstanceReady(found.endpoint);
+            }
+        } catch (e) { console.error('pollStatus:', e); }
+    }
+
+    document.getElementById('ic-check-btn').addEventListener('click', () => {
+        if (pollingInstanceId) pollStatus();
+    });
+
+    // ── 2-panel IC dropdown ───────────────────────────────
+    function icOpenPanel()  { icPanel.classList.remove('d-none'); }
+    function icClosePanel() { icPanel.classList.add('d-none'); }
+
+    function icSelectFamily(family, familyEl) {
+        icFamilyList.querySelectorAll('.ic-family-item').forEach(el => el.classList.remove('active'));
+        familyEl.classList.add('active');
+        const sizes = instanceClassData.filter(c => c.startsWith(family + '.'));
+        icSizeList.innerHTML = '';
+        sizes.forEach(s => {
+            const div = document.createElement('div');
+            div.className = 'ic-size-item px-3 py-2 small';
+            div.textContent = s.slice(family.length + 1);
+            div.addEventListener('click', e => {
+                e.stopPropagation();
+                icHidden.value = s;
+                icTriggerText.textContent = s;
+                icTriggerText.classList.remove('text-muted');
+                icClosePanel();
+                sectionInstance.classList.remove('d-none');
+                updateButton();
+                saveState();
+            });
+            icSizeList.appendChild(div);
+        });
+    }
+
+    function icLoadFamilies(classes) {
+        instanceClassData = Array.isArray(classes) ? classes : [];
+        const families = [...new Set(instanceClassData.map(c => c.split('.').slice(0, 2).join('.')))];
+        icFamilyList.innerHTML = '';
+        icSizeList.innerHTML   = '';
+        families.forEach(f => {
+            const div = document.createElement('div');
+            div.className = 'ic-family-item px-3 py-2 small';
+            div.textContent = f;
+            div.addEventListener('click', e => { e.stopPropagation(); icSelectFamily(f, div); });
+            icFamilyList.appendChild(div);
+        });
+        icHidden.value = '';
+        icTriggerText.textContent = '-';
+        icTriggerText.classList.add('text-muted');
+        const firstEl = icFamilyList.querySelector('.ic-family-item');
+        if (firstEl) {
+            icSelectFamily(families[0], firstEl);
+            const firstSize = icSizeList.querySelector('.ic-size-item');
+            if (firstSize) firstSize.click();
+        }
+    }
+
+    function icReset() {
+        stopPolling();
+        instanceClassData = [];
+        icHidden.value    = '';
+        icTriggerText.textContent = '-';
+        icTriggerText.classList.add('text-muted');
+        icClosePanel();
+        // phase 2(생성 완료)일 때는 readonly·phase를 건드리지 않음
+        if (phase !== 2) {
+            sectionInstance.classList.add('d-none');
+            sectionConnect.classList.add('d-none');
+            setCreationFieldsDisabled(false);
+            phase = 1;
+        }
+        updateButton();
+    }
+
+    icTrigger.addEventListener('click', () => {
+        if (phase === 2 || !instanceClassData.length) return;
+        if (icPanel.classList.contains('d-none')) icOpenPanel();
+        else icClosePanel();
+    });
+    icTrigger.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); icTrigger.click(); }
+        if (e.key === 'Escape') icClosePanel();
+    });
+    document.addEventListener('click', e => {
+        if (!icWrapper.contains(e.target)) icClosePanel();
+    });
+
+    // ── engine / version ──────────────────────────────────
+    function populateEngines(data) {
+        engineVersionData = Array.isArray(data) ? data : [];
+        const engines = [...new Set(engineVersionData.map(d => d.engine))];
+        resetSelect(engineSelect, '-');
+        engines.forEach(engine => {
+            const opt = document.createElement('option');
+            opt.value = engine; opt.textContent = engine;
+            engineSelect.appendChild(opt);
+        });
+        resetSelect(engineVersionSelect, '-');
+        icReset();
+        sectionDb.classList.remove('d-none');
+        if (engineSelect.options.length > 1) {
+            engineSelect.selectedIndex = 1;
+            engineSelect.dispatchEvent(new Event('change'));
+        }
+    }
+
+    function populateVersions(selectedEngine) {
+        const versions = engineVersionData.filter(d => d.engine === selectedEngine).map(d => d.engineVersion);
+        resetSelect(engineVersionSelect, '-');
+        versions.forEach(v => {
+            const opt = document.createElement('option');
+            opt.value = v; opt.textContent = v;
+            engineVersionSelect.appendChild(opt);
+        });
+        icReset();
+        if (engineVersionSelect.options.length > 1) {
+            engineVersionSelect.selectedIndex = 1;
+            engineVersionSelect.dispatchEvent(new Event('change'));
+        }
+    }
+
+    regionSelect.addEventListener('change', async function () {
+        const provider = getProvider();
+        const region   = this.value;
+        document.querySelectorAll('.rdb-row-check').forEach(cb => cb.checked = false);
+        selectedInstance = null;
+        openCreateBtn.innerHTML = '<i class="bi bi-plus-lg me-1"></i>Instance';
+        resetSelect(engineSelect, '-');
+        resetSelect(engineVersionSelect, '-');
+        phase = 1;
+        icReset();
+        sectionDb.classList.add('d-none');
+        document.getElementById('gen-mysql-instanceId').value      = '';
+        document.getElementById('gen-mysql-allocatedStorage').value = '20';
+        document.getElementById('gen-mysql-username').value         = '';
+        document.getElementById('gen-mysql-password').value         = '';
+        document.getElementById('connect-host').value               = '';
+        document.getElementById('connect-port').value               = '';
+        updateCreateBtn();
+        updateOcContext();
+        loadTable();
+        saveState();
+        if (!provider || provider === 'none' || !region || region === 'none') return;
+        try {
+            const res = await fetch('/db/rdbms/engine-versions', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ provider, region })
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            populateEngines(await res.json());
+        } catch (e) { console.error('engine-versions:', e); }
+    });
+
+    engineSelect.addEventListener('change', function () {
+        if (this.value) populateVersions(this.value);
+    });
+
+    engineVersionSelect.addEventListener('change', async function () {
+        const provider = getProvider(), region = regionSelect.value;
+        const engine = engineSelect.value, engineVersion = this.value;
+        icReset();
+        if (!provider || provider === 'none' || !region || region === 'none' || !engine || !engineVersion) return;
+        try {
+            const res = await fetch('/db/rdbms/instance-class', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ provider, region, engine, engineVersion })
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            icLoadFamilies(await res.json());
+        } catch (e) { console.error('instance-class:', e); }
+    });
+
+    document.getElementById('targetCredentialSelect').addEventListener('change', function () {
+        clearState();
+        resetSelect(engineSelect, '-');
+        resetSelect(engineVersionSelect, '-');
+        icReset();
+        sectionDb.classList.add('d-none');
+        updateOcContext();
+        // scripts.js가 동기적으로 provider/region을 설정한 뒤 테이블 조회
+        setTimeout(() => { updateCreateBtn(); updateOcContext(); loadTable(); }, 0);
+    });
+
+    // ── 초기화 ───────────────────────────────────────────
+    updateCreateBtn();
+    waitForCredentials().then(() => restoreState().catch(console.error));
+});
+</script>
 
 {{ end }}

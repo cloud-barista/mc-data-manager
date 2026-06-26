@@ -527,16 +527,14 @@ function loadProfileList() {
 
         fetch(url, req)
             .then(response => {
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 return response.json();
             })
             .then(json => {
-                // const resultText = document.getElementById('resultText');
-                // resultText.value = json.Result;
-                // console.log(json);
-
                 const seen = new Set();
-                const options = json
+                const options = (Array.isArray(json) ? json : [])
                 .filter((item) => {
+                    if (item.providerName !== 'aws') return false;  // AWS만 호출
                     if (seen.has(item.providerName)) return false;
                     seen.add(item.providerName);
                     return true;
