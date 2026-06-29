@@ -115,6 +115,43 @@ func CreateRDBInstanceHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, instance)
 }
 
+// DeleteRDBInstanceHandler godoc
+//
+//	@ID			DeleteRDBInstanceHandler
+//	@Summary	Delete an RDB (database) instance
+//	@Description	Deletes the database instance identified by instanceId. The final snapshot is skipped.
+//	@Tags			[RDB Instance]
+//	@Accept			json
+//	@Produce		json
+//	@Param			RequestBody	body		models.RDBInstanceDeleteRequest	true	"Provider, region, instanceId"
+//	@Success		200			{object}	models.DBInstance				"Deleted instance (status: deleting)"
+//	@Failure		400			{object}	map[string]string				"Invalid Request"
+//	@Failure		500			{object}	map[string]string				"Internal Server Error"
+//	@Router			/db/rdbms [delete]
+func DeleteRDBInstanceHandler(c echo.Context) error {
+	var req models.RDBInstanceDeleteRequest
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid request body"})
+	}
+	if req.Provider == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "provider is required"})
+	}
+	if req.Region == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "region is required"})
+	}
+	if req.InstanceID == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "instanceId is required"})
+	}
+
+	instance, err := rdbinstance.DeleteInstance(c.Request().Context(), req.Provider, req.Region, req.InstanceID)
+	if err != nil {
+		log.Error().Err(err).Str("provider", req.Provider).Str("instanceId", req.InstanceID).Msg("delete RDB instance failed")
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, instance)
+}
+
 // ListRDBEngineVersionsHandler godoc
 //
 //	@ID			ListRDBEngineVersionsHandler

@@ -120,6 +120,27 @@ func (p *AWSProvider) ListInstanceClasses(ctx context.Context, engine, engineVer
 	return distinctInstanceClasses(options), nil
 }
 
+// buildDeleteInput maps an instance identifier to an RDS DeleteDBInstanceInput.
+// SkipFinalSnapshot is fixed to true so deletion does not require a snapshot id.
+func buildDeleteInput(instanceID string) *rds.DeleteDBInstanceInput {
+	return &rds.DeleteDBInstanceInput{
+		DBInstanceIdentifier: awssdk.String(instanceID),
+		SkipFinalSnapshot:    awssdk.Bool(true),
+	}
+}
+
+// DeleteInstance deletes an RDS instance and returns its (deleting) state.
+func (p *AWSProvider) DeleteInstance(ctx context.Context, instanceID string) (models.DBInstance, error) {
+	out, err := p.client.DeleteDBInstance(ctx, buildDeleteInput(instanceID))
+	if err != nil {
+		return models.DBInstance{}, fmt.Errorf("failed to delete RDS instance: %w", err)
+	}
+	if out.DBInstance == nil {
+		return models.DBInstance{}, fmt.Errorf("RDS delete returned no instance")
+	}
+	return toDBInstance(*out.DBInstance, p.region), nil
+}
+
 // ListInstances returns all RDS instances in the provider's region.
 func (p *AWSProvider) ListInstances(ctx context.Context) ([]models.DBInstance, error) {
 	var instances []types.DBInstance

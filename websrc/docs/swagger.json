@@ -442,6 +442,323 @@
                 }
             }
         },
+        "/db/rdbms": {
+            "put": {
+                "description": "Provisions a new managed database instance for the requested CSP.\nOnly AWS with mysql/mariadb engines is supported. The instance is created publicly accessible.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[RDB Instance]"
+                ],
+                "summary": "Create an RDB (database) instance",
+                "operationId": "CreateRDBInstanceHandler",
+                "parameters": [
+                    {
+                        "description": "Instance specification",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RDBInstanceCreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Created instance (status: creating)",
+                        "schema": {
+                            "$ref": "#/definitions/models.DBInstance"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Returns managed database instances for the requested CSP and region.\nCredentials are resolved by provider (one credential per CSP). Only AWS is supported for now.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[RDB Instance]"
+                ],
+                "summary": "List RDB (database) instances for a given provider",
+                "operationId": "ListRDBInstancesHandler",
+                "parameters": [
+                    {
+                        "description": "Provider and region",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RDBInstanceListRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of database instances",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.DBInstance"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes the database instance identified by instanceId. The final snapshot is skipped.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[RDB Instance]"
+                ],
+                "summary": "Delete an RDB (database) instance",
+                "operationId": "DeleteRDBInstanceHandler",
+                "parameters": [
+                    {
+                        "description": "Provider, region, instanceId",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RDBInstanceDeleteRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted instance (status: deleting)",
+                        "schema": {
+                            "$ref": "#/definitions/models.DBInstance"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/db/rdbms/databases": {
+            "post": {
+                "description": "Connects directly to the database instance using the target connection\ninfo and returns the names of the databases it contains (SHOW DATABASES).",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[RDB Instance]"
+                ],
+                "summary": "List databases inside an RDB instance",
+                "operationId": "ListRDBDatabasesHandler",
+                "parameters": [
+                    {
+                        "description": "Target connection info (host, port, username, password)",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DataTask"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Database names",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/db/rdbms/engine-versions": {
+            "post": {
+                "description": "Returns available mysql and mariadb engine versions for the requested CSP and region.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[RDB Instance]"
+                ],
+                "summary": "List available RDB engine versions",
+                "operationId": "ListRDBEngineVersionsHandler",
+                "parameters": [
+                    {
+                        "description": "Provider and region",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RDBEngineVersionsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Available engine versions",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.DBEngineVersion"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/db/rdbms/instance-class": {
+            "post": {
+                "description": "Returns the instance classes orderable for the given engine and version.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[RDB Instance]"
+                ],
+                "summary": "List orderable RDB instance classes",
+                "operationId": "ListRDBInstanceClassesHandler",
+                "parameters": [
+                    {
+                        "description": "Provider, region, engine, engineVersion",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RDBInstanceClassRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Available instance class names",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/generate": {
             "get": {
                 "description": "Retrieve a list of all Tasks in the system.",
@@ -1197,6 +1514,86 @@
                 }
             }
         },
+        "/objectstorage/bucket": {
+            "put": {
+                "description": "Creates a bucket for the given provider. If the bucket already exists, the request is a no-op.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[ObjectStorage]"
+                ],
+                "summary": "Create a bucket",
+                "operationId": "ObjectstorageCreateBucketHandler",
+                "parameters": [
+                    {
+                        "description": "Provider credentials, connection info, and bucket name",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DataTask"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Bucket created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Empties the bucket by deleting all objects (in batches of 1000), then deletes the bucket itself.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[ObjectStorage]"
+                ],
+                "summary": "Delete a bucket and all its objects",
+                "operationId": "ObjectstorageDeleteBucketHandler",
+                "parameters": [
+                    {
+                        "description": "Provider credentials, connection info, and bucket name",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DataTask"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Bucket deleted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/objectstorage/buckets": {
             "post": {
                 "description": "Returns the list of buckets accessible with the given credentials. Optionally filters by a tag key/value pair.",
@@ -1250,7 +1647,7 @@
                 }
             }
         },
-        "/objectstorage/object": {
+        "/objectstorage/buckets/object": {
             "delete": {
                 "description": "Deletes the object identified by objectKey from the bucket specified by the target connection.",
                 "consumes": [
@@ -1297,7 +1694,7 @@
                 }
             }
         },
-        "/objectstorage/objects": {
+        "/objectstorage/buckets/objects": {
             "post": {
                 "description": "Returns all objects stored in the bucket specified by the target connection. Supports optional filter parameters.",
                 "consumes": [
@@ -2259,6 +2656,52 @@
                 }
             }
         },
+        "models.DBEngineVersion": {
+            "type": "object",
+            "properties": {
+                "engine": {
+                    "type": "string"
+                },
+                "engineVersion": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.DBInstance": {
+            "type": "object",
+            "properties": {
+                "endpoint": {
+                    "type": "string"
+                },
+                "engine": {
+                    "type": "string"
+                },
+                "engineVersion": {
+                    "type": "string"
+                },
+                "instanceClass": {
+                    "type": "string"
+                },
+                "instanceId": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "integer"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
         "models.DataTask": {
             "type": "object",
             "properties": {
@@ -2597,6 +3040,106 @@
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.RDBEngineVersionsRequest": {
+            "type": "object",
+            "properties": {
+                "credentialId": {
+                    "type": "integer"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.RDBInstanceClassRequest": {
+            "type": "object",
+            "properties": {
+                "credentialId": {
+                    "type": "integer"
+                },
+                "engine": {
+                    "type": "string"
+                },
+                "engineVersion": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.RDBInstanceCreateRequest": {
+            "type": "object",
+            "properties": {
+                "allocatedStorage": {
+                    "type": "integer"
+                },
+                "credentialId": {
+                    "type": "integer"
+                },
+                "engine": {
+                    "type": "string"
+                },
+                "engineVersion": {
+                    "type": "string"
+                },
+                "instanceClass": {
+                    "type": "string"
+                },
+                "instanceId": {
+                    "type": "string"
+                },
+                "masterPassword": {
+                    "type": "string"
+                },
+                "masterUsername": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.RDBInstanceDeleteRequest": {
+            "type": "object",
+            "properties": {
+                "credentialId": {
+                    "type": "integer"
+                },
+                "instanceId": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.RDBInstanceListRequest": {
+            "type": "object",
+            "properties": {
+                "credentialId": {
+                    "type": "integer"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "region": {
                     "type": "string"
                 }
             }

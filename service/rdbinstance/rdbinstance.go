@@ -61,6 +61,21 @@ func CreateInstance(ctx context.Context, provider, region string, spec rdbinstan
 	return p.CreateInstance(ctx, spec)
 }
 
+// DeleteInstance resolves credentials for the provider and deletes an instance.
+func DeleteInstance(ctx context.Context, provider, region, instanceID string) (models.DBInstance, error) {
+	creds, err := config.NewAuthManager().LoadCredentialsByProvider(ctx, provider)
+	if err != nil {
+		return models.DBInstance{}, fmt.Errorf("credential load failed: %w", err)
+	}
+
+	p, err := providerFor(provider, creds, region)
+	if err != nil {
+		return models.DBInstance{}, err
+	}
+
+	return p.DeleteInstance(ctx, instanceID)
+}
+
 // ListEngineVersions returns available DB engine versions for the provider.
 func ListEngineVersions(ctx context.Context, provider, region string) ([]models.DBEngineVersion, error) {
 	creds, err := config.NewAuthManager().LoadCredentialsByProvider(ctx, provider)

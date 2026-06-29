@@ -25,6 +25,7 @@ type CreateSpec struct {
 type Provider interface {
 	ListInstances(ctx context.Context) ([]models.DBInstance, error)
 	CreateInstance(ctx context.Context, spec CreateSpec) (models.DBInstance, error)
+	DeleteInstance(ctx context.Context, instanceID string) (models.DBInstance, error)
 	ListEngineVersions(ctx context.Context) ([]models.DBEngineVersion, error)
 	ListInstanceClasses(ctx context.Context, engine, engineVersion string) ([]string, error)
 }
