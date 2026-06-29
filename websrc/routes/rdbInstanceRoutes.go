@@ -12,4 +12,5 @@ func RDBInstanceRoutes(g *echo.Group) {
 	g.PUT("/rdbms", controllers.CreateRDBInstanceHandler)
 	g.POST("/rdbms/engine-versions", controllers.ListRDBEngineVersionsHandler)
 	g.POST("/rdbms/instance-class", controllers.ListRDBInstanceClassesHandler)
+	g.POST("/rdbms/databases", controllers.ListRDBDatabasesHandler)
 }

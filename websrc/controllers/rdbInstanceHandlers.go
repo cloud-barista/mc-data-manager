@@ -3,7 +3,9 @@ package controllers
 import (
 	"net/http"
 	"strings"
+	"time"
 
+	"github.com/cloud-barista/mc-data-manager/internal/auth"
 	"github.com/cloud-barista/mc-data-manager/models"
 	rdbinstancepkg "github.com/cloud-barista/mc-data-manager/pkg/rdbinstance"
 	"github.com/cloud-barista/mc-data-manager/service/rdbinstance"
@@ -188,4 +190,42 @@ func ListRDBInstanceClassesHandler(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, classes)
+}
+
+// ListRDBDatabasesHandler godoc
+//
+//	@ID			ListRDBDatabasesHandler
+//	@Summary	List databases inside an RDB instance
+//	@Description	Connects directly to the database instance using the target connection
+//	@Description	info and returns the names of the databases it contains (SHOW DATABASES).
+//	@Tags			[RDB Instance]
+//	@Accept			json
+//	@Produce		json
+//	@Param			RequestBody	body		models.DataTask		true	"Target connection info (host, port, username, password)"
+//	@Success		200			{array}		string				"Database names"
+//	@Failure		500			{object}	map[string]string	"Internal Server Error"
+//	@Router			/db/rdbms/databases [post]
+func ListRDBDatabasesHandler(ctx echo.Context) error {
+	start := time.Now()
+
+	logger, _ := pageLogInit(ctx, "rdb database", "list databases in instance", start)
+
+	params := models.DataTask{}
+	if !getDataWithReBind(logger, start, ctx, &params) {
+		return ctx.JSON(http.StatusInternalServerError, map[string]string{"error": "invalid request body"})
+	}
+
+	rdbCtrl, err := auth.GetRDMS(&params.TargetPoint)
+	if err != nil {
+		log.Error().Err(err).Msg("GetRDMS error listing databases")
+		return ctx.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	dbList := []string{}
+	if err := rdbCtrl.ListDB(&dbList); err != nil {
+		log.Error().Err(err).Msg("ListDB error")
+		return ctx.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	return ctx.JSON(http.StatusOK, dbList)
 }
