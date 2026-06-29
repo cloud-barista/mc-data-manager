@@ -22,6 +22,12 @@ type RDBInstanceCreateRequest struct {
 	AllocatedStorage int32  `json:"allocatedStorage"`
 }
 
+// RDBInstanceDeleteRequest is the DELETE body for deleting an RDB instance.
+type RDBInstanceDeleteRequest struct {
+	BaseParams
+	InstanceID string `json:"instanceId"`
+}
+
 // RDBEngineVersionsRequest is the POST body for listing available DB engine versions.
 type RDBEngineVersionsRequest struct {
 	BaseParams

@@ -195,3 +195,17 @@ func TestDistinctInstanceClasses_DedupAndSort(t *testing.T) {
 		}
 	}
 }
+
+func TestBuildDeleteInput_SkipsFinalSnapshot(t *testing.T) {
+	in := buildDeleteInput("my-db")
+
+	if in == nil {
+		t.Fatal("expected non-nil input")
+	}
+	if awssdk.ToString(in.DBInstanceIdentifier) != "my-db" {
+		t.Errorf("DBInstanceIdentifier = %q, want my-db", awssdk.ToString(in.DBInstanceIdentifier))
+	}
+	if !awssdk.ToBool(in.SkipFinalSnapshot) {
+		t.Error("SkipFinalSnapshot = false, want true (fixed)")
+	}
+}

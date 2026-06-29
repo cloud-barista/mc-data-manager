@@ -449,6 +449,323 @@ const docTemplate = `{
                 }
             }
         },
+        "/db/rdbms": {
+            "put": {
+                "description": "Provisions a new managed database instance for the requested CSP.\nOnly AWS with mysql/mariadb engines is supported. The instance is created publicly accessible.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[RDB Instance]"
+                ],
+                "summary": "Create an RDB (database) instance",
+                "operationId": "CreateRDBInstanceHandler",
+                "parameters": [
+                    {
+                        "description": "Instance specification",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RDBInstanceCreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Created instance (status: creating)",
+                        "schema": {
+                            "$ref": "#/definitions/models.DBInstance"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Returns managed database instances for the requested CSP and region.\nCredentials are resolved by provider (one credential per CSP). Only AWS is supported for now.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[RDB Instance]"
+                ],
+                "summary": "List RDB (database) instances for a given provider",
+                "operationId": "ListRDBInstancesHandler",
+                "parameters": [
+                    {
+                        "description": "Provider and region",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RDBInstanceListRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of database instances",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.DBInstance"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes the database instance identified by instanceId. The final snapshot is skipped.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[RDB Instance]"
+                ],
+                "summary": "Delete an RDB (database) instance",
+                "operationId": "DeleteRDBInstanceHandler",
+                "parameters": [
+                    {
+                        "description": "Provider, region, instanceId",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RDBInstanceDeleteRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted instance (status: deleting)",
+                        "schema": {
+                            "$ref": "#/definitions/models.DBInstance"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/db/rdbms/databases": {
+            "post": {
+                "description": "Connects directly to the database instance using the target connection\ninfo and returns the names of the databases it contains (SHOW DATABASES).",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[RDB Instance]"
+                ],
+                "summary": "List databases inside an RDB instance",
+                "operationId": "ListRDBDatabasesHandler",
+                "parameters": [
+                    {
+                        "description": "Target connection info (host, port, username, password)",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DataTask"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Database names",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/db/rdbms/engine-versions": {
+            "post": {
+                "description": "Returns available mysql and mariadb engine versions for the requested CSP and region.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[RDB Instance]"
+                ],
+                "summary": "List available RDB engine versions",
+                "operationId": "ListRDBEngineVersionsHandler",
+                "parameters": [
+                    {
+                        "description": "Provider and region",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RDBEngineVersionsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Available engine versions",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.DBEngineVersion"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/db/rdbms/instance-class": {
+            "post": {
+                "description": "Returns the instance classes orderable for the given engine and version.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "[RDB Instance]"
+                ],
+                "summary": "List orderable RDB instance classes",
+                "operationId": "ListRDBInstanceClassesHandler",
+                "parameters": [
+                    {
+                        "description": "Provider, region, engine, engineVersion",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RDBInstanceClassRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Available instance class names",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/db/nrdbms": {
             "put": {
                 "description": "Creates a table (collection) with the given name. If the table already exists the request is a no-op.\nSupported providers: aws (DynamoDB), gcp (Firestore), ncp (MongoDB), alibaba (MongoDB).",
@@ -3163,6 +3480,23 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "masterUsername": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.RDBInstanceDeleteRequest": {
+            "type": "object",
+            "properties": {
+                "credentialId": {
+                    "type": "integer"
+                },
+                "instanceId": {
                     "type": "string"
                 },
                 "provider": {
