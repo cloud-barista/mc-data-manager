@@ -38,7 +38,7 @@
                             <label for="sourceCredentialSelect">provider - credential name</label>
                         </div>
                     </div>
-                    <div class="input-group">
+                    <div class="input-group mb-3">
                         <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span>
                         <div class="form-floating">
                             <select class="form-select form-select-sm rounded-end" id="sourceRegionSelect" name="sourcePoint[region]">
@@ -99,48 +99,78 @@
                     {{ template "filter.html" . }}
                 </div>
                 <div class="form-section" id="rdbms" style="display:none;">
-                    <div class="input-group mb-3" id="rdbmsProvider">
-                        <span class="input-group-text rounded-start"><i class="fa-solid fa-cloud"></i></span>
-                        <select class="form-select rounded-end" id="provider" name="provider">
-                            <option value="aws">AWS</option>
-                            <option value="gcp">GCP</option>
-                            <option value="ncp">NCP</option>
-                            <option value="alibaba">ALIBABA</option>
-                        </select>
-                    </div>
-                    <div class="input-group mb-3">
-                        <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
-                        <div class="form-floating">
-                            <input type="text" class="form-control rounded-end" id="mysql-srcHost" name="sourcePoint[host]" placeholder="Host / IP">
-                            <label for="mysql-srcHost">Host / IP</label>
+                    <!-- Instance search + table -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-muted small fw-semibold">Instance List</span>
+                        <div class="input-group input-group-sm" style="width:200px;">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input type="text" class="form-control" id="rdbms-search" placeholder="Search by name">
                         </div>
                     </div>
-                    <div class="input-group mb-3">
-                        <span class="input-group-text rounded-start"><i class="fa-solid fa-flag"></i></span>
-                        <div class="form-floating">
-                            <input type="text" class="form-control rounded-end" id="mysql-srcPort" name="sourcePoint[port]" placeholder="Port">
-                            <label for="mysql-srcPort">Port</label>
+                    <table class="table table-bordered table-sm mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width:36px;"></th>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Version</th>
+                                <th>Host (endpoint)</th>
+                                <th>Port</th>
+                                <th>InstanceClass</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rdbms-table-body">
+                            <tr><td colspan="8" class="text-center text-muted small py-3">Credential과 Region을 선택하면 인스턴스 목록을 조회합니다</td></tr>
+                        </tbody>
+                    </table>
+                    <div id="rdbms-pagination" class="mt-2"></div>
+
+                    <!-- Connect section: shown after instance selected -->
+                    <div id="rdbms-connect-section" style="display:none;" class="mt-3">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
+                            <div class="form-floating">
+                                <input type="text" class="form-control rounded-end bg-light" id="mysql-srcHost" name="sourcePoint[host]" placeholder="Host / IP" readonly>
+                                <label for="mysql-srcHost">Host / IP</label>
+                            </div>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-flag"></i></span>
+                            <div class="form-floating">
+                                <input type="text" class="form-control rounded-end bg-light" id="mysql-srcPort" name="sourcePoint[port]" placeholder="Port" readonly>
+                                <label for="mysql-srcPort">Port</label>
+                            </div>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-user"></i></span>
+                            <div class="form-floating">
+                                <input type="text" class="form-control rounded-end" id="mysql-srcUsername" name="sourcePoint[username]" placeholder="Username" autocomplete="username">
+                                <label for="mysql-srcUsername">Username</label>
+                            </div>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
+                            <div class="form-floating">
+                                <input type="password" class="form-control rounded-end" id="mysql-srcPassword" name="sourcePoint[password]" placeholder="Password">
+                                <label for="mysql-srcPassword">Password</label>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end mb-2">
+                            <button type="button" class="btn btn-secondary btn-sm" id="rdbms-load-db-btn">Load Databases</button>
                         </div>
                     </div>
-                    <div class="input-group mb-3">
-                        <span class="input-group-text rounded-start"><i class="fa-solid fa-user"></i></span>
-                        <div class="form-floating">
-                            <input type="text" class="form-control rounded-end" id="mysql-srcUsername" name="sourcePoint[username]" placeholder="Username">
-                            <label for="mysql-srcUsername">Username</label>
-                        </div>
-                    </div>
-                    <div class="input-group mb-3">
-                        <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
-                        <div class="form-floating">
-                            <input type="password" class="form-control rounded-end" id="mysql-srcPassword" name="sourcePoint[password]" placeholder="Password">
-                            <label for="mysql-srcPassword">Password</label>
-                        </div>
-                    </div>
-                    <div class="input-group">
-                        <span class="input-group-text rounded-start"><i class="fa-solid fa-database"></i></span>
-                        <div class="form-floating">
-                            <input type="text" class="form-control rounded-end" id="mysql-srcDatabase" name="sourcePoint[databaseName]" placeholder="Database">
-                            <label for="mysql-srcDatabase">Database</label>
+
+                    <!-- Database section: shown after Load Databases -->
+                    <div id="rdbms-db-section" style="display:none;" class="mt-2">
+                        <div class="input-group">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-database"></i></span>
+                            <div class="form-floating">
+                                <select class="form-select rounded-end" id="mysql-srcDatabase" name="sourcePoint[databaseName]">
+                                    <option value="">- Select Database -</option>
+                                </select>
+                                <label for="mysql-srcDatabase">Database</label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -201,7 +231,13 @@
         </form>
     </div>
 </div>
-<script>    
+<style>
+@keyframes ic-spin      { to { transform: rotate(360deg); } }
+@keyframes ic-spin-slow { to { transform: rotate(360deg); } }
+.ic-spin      { animation: ic-spin 1.2s linear infinite; display: inline-block; }
+.ic-spin-slow { animation: ic-spin-slow 3s linear infinite; display: inline-block; }
+</style>
+<script>
 const source = {
         btn: document.getElementById("sourceBtn"),
         cred: document.getElementById("sourceCredentialSelect"),
@@ -287,14 +323,13 @@ const source = {
         const credentialDiv = document.getElementById("credentialDiv")
         if(service === 'rdbms') {
             idToShow = 'rdbms';
-            credentialDiv.style.display = "none"
+            credentialDiv.style.display = ""
             credentialDiv.querySelectorAll("select").forEach(input => {
-                input.selectedIndex = 0; 
-                input.setAttribute('disabled', '');
-                input.removeAttribute('required');
+                input.removeAttribute('disabled');
             })
-
-            document.getElementById("rdbmsProvider").style.display = ""
+            // reset rdbms sub-sections when switching to rdbms tab
+            document.getElementById("rdbms-connect-section").style.display = "none";
+            document.getElementById("rdbms-db-section").style.display = "none";
         } else {
             if(service === 'objectstorage') {
                 idToShow = 'objectstorage';
@@ -321,7 +356,6 @@ const source = {
                 }
             }
 
-            document.getElementById("rdbmsProvider").style.display = "none"
         }
 
         const allInputs = document.querySelectorAll('.form-section input, .form-section select, .form-section textarea');
@@ -347,8 +381,8 @@ const source = {
                 section.style.display = 'block';
                 let inputs = section.querySelectorAll('input, select, textarea');
                 inputs.forEach(function(input) {
-                    if (input.closest('#filterContent')) {
-                        return; // skip this input
+                    if (input.closest('#filterContent') || !input.name) {
+                        return; // skip UI-only inputs (no name attr) and filter inputs
                     }
 
                     input.removeAttribute('disabled');
@@ -358,10 +392,10 @@ const source = {
                 section.style.display = 'none';
                 let inputs = section.querySelectorAll('input, select, textarea');
                 inputs.forEach(function(input) {
-                    if (input.closest('#filterContent')) {
+                    if (input.closest('#filterContent') || !input.name) {
                         return; // skip this input
                     }
-                    
+
                     input.setAttribute('disabled', '');
                     input.removeAttribute('required');
                 });
@@ -375,12 +409,21 @@ const source = {
     })
 
     source.cred.addEventListener("change", () => {
-        console.log("credential changed")
-        resetBuckets();
+        if (source.service.value === 'rdbms') {
+            resetRdbmsTable();
+            // initProviderHandlers가 먼저 실행돼 region을 업데이트한 뒤 로드
+            setTimeout(loadRdbmsTable, 0);
+        } else {
+            resetBuckets();
+        }
     })
 
     source.region.addEventListener("change", () => {
-        resetBuckets();
+        if (source.service.value === 'rdbms') {
+            loadRdbmsTable();
+        } else {
+            resetBuckets();
+        }
     })
 
     source.btn.addEventListener("click", () => {
@@ -485,6 +528,164 @@ const source = {
     //         });
     //     }
     // }
+
+    // ── RDBMS instance table ──────────────────────────────────────────
+    let srcRdbmsAllRows = [], srcRdbmsPage = 1;
+    const SRC_PAGE_SIZE = 10;
+
+    function rdbmsStatusBadge(status) {
+        const s = (status || '').toLowerCase();
+        let icon, cls;
+        if (s === 'available') {
+            icon = 'bi-check-circle-fill'; cls = 'text-success';
+        } else if (s === 'creating') {
+            icon = 'bi-hourglass-split ic-spin'; cls = 'text-primary';
+        } else if (s.startsWith('configuring') || s === 'modifying' || s === 'upgrading') {
+            icon = 'bi-gear-fill ic-spin-slow'; cls = 'text-info';
+        } else if (s === 'stopped' || s === 'stopping') {
+            icon = 'bi-pause-circle-fill'; cls = 'text-warning';
+        } else if (s === 'deleting' || s === 'deleted') {
+            icon = 'bi-trash3-fill'; cls = 'text-danger';
+        } else if (s.startsWith('failed') || s.startsWith('incompatible')) {
+            icon = 'bi-exclamation-circle-fill'; cls = 'text-danger';
+        } else {
+            icon = 'bi-dash-circle'; cls = 'text-secondary';
+        }
+        return `<span class="${cls} small"><i class="bi ${icon} me-1"></i>${status || '-'}</span>`;
+    }
+
+    function makeSrcRdbmsRow(inst) {
+        return `<tr class="src-rdbms-row" style="cursor:pointer;"
+                    data-endpoint="${inst.endpoint || ''}"
+                    data-port="${inst.port || ''}">
+                    <td class="text-center align-middle" style="width:36px;"><input type="checkbox" class="form-check-input src-rdbms-check"></td>
+                    <td class="small">${inst.instanceId || '-'}</td>
+                    <td class="small">${inst.name || '-'}</td>
+                    <td>${rdbmsStatusBadge(inst.status)}</td>
+                    <td class="small">${inst.engineVersion || '-'}</td>
+                    <td class="small text-truncate" style="max-width:200px;" title="${inst.endpoint || ''}">${inst.endpoint || '-'}</td>
+                    <td class="small">${inst.port || '-'}</td>
+                    <td class="small">${inst.instanceClass || '-'}</td>
+                </tr>`;
+    }
+
+    function applySrcRdbmsFilter() {
+        const q = (document.getElementById('rdbms-search').value || '').toLowerCase();
+        return q ? srcRdbmsAllRows.filter(r => (r.name || r.instanceId || '').toLowerCase().includes(q)) : srcRdbmsAllRows;
+    }
+
+    function renderSrcRdbmsPagination(total) {
+        const pages = Math.ceil(total / SRC_PAGE_SIZE) || 1;
+        const el = document.getElementById('rdbms-pagination');
+        if (pages <= 1) { el.innerHTML = ''; return; }
+        let html = '<ul class="pagination pagination-sm mb-0">';
+        for (let i = 1; i <= pages; i++) {
+            html += `<li class="page-item${i === srcRdbmsPage ? ' active' : ''}"><a class="page-link src-rdbms-page" href="#" data-page="${i}">${i}</a></li>`;
+        }
+        html += '</ul>';
+        el.innerHTML = html;
+        el.querySelectorAll('.src-rdbms-page').forEach(a => {
+            a.addEventListener('click', e => { e.preventDefault(); srcRdbmsPage = +a.dataset.page; renderSrcRdbmsTable(); });
+        });
+    }
+
+    function renderSrcRdbmsTable() {
+        const filtered = applySrcRdbmsFilter();
+        const start = (srcRdbmsPage - 1) * SRC_PAGE_SIZE;
+        const page = filtered.slice(start, start + SRC_PAGE_SIZE);
+        const tbody = document.getElementById('rdbms-table-body');
+        tbody.innerHTML = page.length
+            ? page.map(makeSrcRdbmsRow).join('')
+            : '<tr><td colspan="8" class="text-center text-muted small py-3">No instances found</td></tr>';
+        tbody.querySelectorAll('.src-rdbms-row').forEach(row => {
+            row.addEventListener('click', () => onSrcRdbmsRowClick(row));
+        });
+        renderSrcRdbmsPagination(filtered.length);
+    }
+
+    function onSrcRdbmsRowClick(row) {
+        document.querySelectorAll('.src-rdbms-check').forEach(c => c.checked = false);
+        row.querySelector('.src-rdbms-check').checked = true;
+        document.getElementById('mysql-srcHost').value = row.dataset.endpoint;
+        document.getElementById('mysql-srcPort').value = row.dataset.port;
+        document.getElementById('rdbms-connect-section').style.display = '';
+        document.getElementById('rdbms-db-section').style.display = 'none';
+    }
+
+    function resetRdbmsTable() {
+        srcRdbmsAllRows = []; srcRdbmsPage = 1;
+        document.getElementById('rdbms-table-body').innerHTML =
+            '<tr><td colspan="8" class="text-center text-muted small py-3">Credential과 Region을 선택하면 인스턴스 목록을 조회합니다</td></tr>';
+        document.getElementById('rdbms-pagination').innerHTML = '';
+        document.getElementById('rdbms-connect-section').style.display = 'none';
+        document.getElementById('rdbms-db-section').style.display = 'none';
+    }
+
+    function loadRdbmsTable() {
+        const provider = source.provider.value;
+        const region   = source.region.value;
+        if (!provider || provider === 'none' || !region || region === 'none') return;
+
+        const tbody = document.getElementById('rdbms-table-body');
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center py-3"><span class="spinner-border spinner-border-sm"></span></td></tr>';
+        document.getElementById('rdbms-connect-section').style.display = 'none';
+        document.getElementById('rdbms-db-section').style.display = 'none';
+
+        fetch('/db/rdbms', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ provider, region })
+        })
+        .then(r => r.ok ? r.json() : Promise.reject(r.status))
+        .then(json => {
+            srcRdbmsAllRows = json || [];
+            srcRdbmsPage = 1;
+            renderSrcRdbmsTable();
+        })
+        .catch(err => {
+            console.error('loadRdbmsTable:', err);
+            srcRdbmsAllRows = []; srcRdbmsPage = 1;
+            renderSrcRdbmsTable();
+        });
+    }
+
+    function loadRdbmsDatabases() {
+        const host = document.getElementById('mysql-srcHost').value;
+        const port = document.getElementById('mysql-srcPort').value;
+        const username = document.getElementById('mysql-srcUsername').value;
+        const password = document.getElementById('mysql-srcPassword').value;
+        const provider = source.provider.value;
+        const region = source.region.value;
+        if (!host || !port || !username || !password) {
+            alert('Host, Port, Username, Password를 모두 입력해주세요.');
+            return;
+        }
+        const btn = document.getElementById('rdbms-load-db-btn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+        fetch('/db/rdbms/databases', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ targetPoint: { provider, region, host, port, username, password } })
+        })
+        .then(r => r.ok ? r.json() : Promise.reject(r.status))
+        .then(json => {
+            const sel = document.getElementById('mysql-srcDatabase');
+            sel.innerHTML = '<option value="-">-</option>';
+            (Array.isArray(json) ? json : json.databases || []).forEach(db => {
+                const opt = document.createElement('option');
+                opt.value = db; opt.textContent = db;
+                sel.appendChild(opt);
+            });
+            document.getElementById('rdbms-db-section').style.display = '';
+        })
+        .catch(err => alert(`DB 조회 실패: ${err}`))
+        .finally(() => { btn.disabled = false; btn.innerHTML = 'Load Databases'; });
+    }
+
+    document.getElementById('rdbms-search').addEventListener('input', () => { srcRdbmsPage = 1; renderSrcRdbmsTable(); });
+    document.getElementById('rdbms-load-db-btn').addEventListener('click', loadRdbmsDatabases);
 
     updateFormVisibility();
 </script>

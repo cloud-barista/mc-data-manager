@@ -534,7 +534,8 @@ function loadProfileList() {
                 const seen = new Set();
                 const options = (Array.isArray(json) ? json : [])
                 .filter((item) => {
-                    if (item.providerName !== 'aws') return false;  // AWS만 호출
+                    const awsOnlyPage = ['/generate/mysql', '/migrate/mysql', '/backup/register', '/restore/register'].some(p => window.location.pathname.includes(p));
+                    if (awsOnlyPage && item.providerName !== 'aws') return false;
                     if (seen.has(item.providerName)) return false;
                     seen.add(item.providerName);
                     return true;

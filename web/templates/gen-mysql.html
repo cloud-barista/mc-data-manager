@@ -20,63 +20,57 @@
         </ul>
         <div class="card-body">
             <!-- Credential + Region (테이블 조회용, 항상 노출) -->
-            <div class="row g-2 mb-3">
-                <div class="col">
-                    <div class="input-group">
-                        <span class="input-group-text rounded-start"><i class="bi bi-person-badge"></i></span>
-                        <div class="form-floating">
-                            <select class="form-select form-select-sm rounded-end" id="targetCredentialSelect" name="targetPoint[credentialId]">
-                                <option value="none" data-provider="none"> - </option>
-                            </select>
-                            <label for="targetCredentialSelect">provider - credential name</label>
-                        </div>
-                    </div>
+            <div class="input-group mb-3 me-1">
+                <span class="input-group-text rounded-start"><i class="bi bi-person-badge"></i></span>
+                <div class="form-floating">
+                    <select class="form-select form-select-sm rounded-end" id="targetCredentialSelect" name="targetPoint[credentialId]">
+                        <option value="none" data-provider="none"> - </option>
+                    </select>
+                    <label for="targetCredentialSelect">provider - credential name</label>
                 </div>
-                <div class="col">
-                    <div class="input-group">
-                        <span class="input-group-text rounded-start"><i class="bi bi-globe"></i></span>
-                        <div class="form-floating">
-                            <select class="form-select form-select-sm rounded-end" id="targetRegionSelect" name="targetPoint[region]">
-                                <option value="none" selected> - </option>
-                                <optgroup label="AWS regions" data-provider="aws" style="display:none;">
-                                    {{ range $index, $value := .AWSRegions }}
-                                    <option value="{{ $value }}">{{ $value }}</option>
-                                    {{ end }}
-                                </optgroup>
-                                <optgroup label="GCP regions" data-provider="gcp" style="display:none;">
-                                    {{ range $index, $value := .GCPRegions }}
-                                    <option value="{{ $value }}">{{ $value }}</option>
-                                    {{ end }}
-                                </optgroup>
-                                <optgroup label="NCP regions" data-provider="ncp" style="display:none;">
-                                    {{ range $index, $value := .NCPRegions }}
-                                    <option value="{{ $value }}">{{ $value }}</option>
-                                    {{ end }}
-                                </optgroup>
-                                <optgroup label="ALIBABA regions" data-provider="alibaba" style="display:none;">
-                                    {{ range $index, $value := .ALIBABARegions }}
-                                    <option value="{{ $value }}">{{ $value }}</option>
-                                    {{ end }}
-                                </optgroup>
-                                <optgroup label="IBM regions" data-provider="ibm" style="display:none;">
-                                    {{ range $index, $value := .IBMRegions }}
-                                    <option value="{{ $value }}">{{ $value }}</option>
-                                    {{ end }}
-                                </optgroup>
-                                <optgroup label="KT regions" data-provider="kt" style="display:none;">
-                                    {{ range $index, $value := .KTRegions }}
-                                    <option value="{{ $value }}">{{ $value }}</option>
-                                    {{ end }}
-                                </optgroup>
-                                <optgroup label="TENCENT regions" data-provider="tencent" style="display:none;">
-                                    {{ range $index, $value := .TencentRegions }}
-                                    <option value="{{ $value }}">{{ $value }}</option>
-                                    {{ end }}
-                                </optgroup>
-                            </select>
-                            <label for="targetRegionSelect">Select Region</label>
-                        </div>
-                    </div>
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text rounded-start"><i class="bi bi-globe"></i></span>
+                <div class="form-floating">
+                    <select class="form-select form-select-sm rounded-end" id="targetRegionSelect" name="targetPoint[region]">
+                        <option value="none" selected> - </option>
+                        <optgroup label="AWS regions" data-provider="aws" style="display:none;">
+                            {{ range $index, $value := .AWSRegions }}
+                            <option value="{{ $value }}">{{ $value }}</option>
+                            {{ end }}
+                        </optgroup>
+                        <optgroup label="GCP regions" data-provider="gcp" style="display:none;">
+                            {{ range $index, $value := .GCPRegions }}
+                            <option value="{{ $value }}">{{ $value }}</option>
+                            {{ end }}
+                        </optgroup>
+                        <optgroup label="NCP regions" data-provider="ncp" style="display:none;">
+                            {{ range $index, $value := .NCPRegions }}
+                            <option value="{{ $value }}">{{ $value }}</option>
+                            {{ end }}
+                        </optgroup>
+                        <optgroup label="ALIBABA regions" data-provider="alibaba" style="display:none;">
+                            {{ range $index, $value := .ALIBABARegions }}
+                            <option value="{{ $value }}">{{ $value }}</option>
+                            {{ end }}
+                        </optgroup>
+                        <optgroup label="IBM regions" data-provider="ibm" style="display:none;">
+                            {{ range $index, $value := .IBMRegions }}
+                            <option value="{{ $value }}">{{ $value }}</option>
+                            {{ end }}
+                        </optgroup>
+                        <optgroup label="KT regions" data-provider="kt" style="display:none;">
+                            {{ range $index, $value := .KTRegions }}
+                            <option value="{{ $value }}">{{ $value }}</option>
+                            {{ end }}
+                        </optgroup>
+                        <optgroup label="TENCENT regions" data-provider="tencent" style="display:none;">
+                            {{ range $index, $value := .TencentRegions }}
+                            <option value="{{ $value }}">{{ $value }}</option>
+                            {{ end }}
+                        </optgroup>
+                    </select>
+                    <label for="targetRegionSelect">Select Region</label>
                 </div>
             </div>
 
@@ -112,6 +106,7 @@
                 <thead>
                     <tr>
                         <th style="width:36px;"></th>
+                        <th>ID</th>
                         <th>Name</th>
                         <th>Status</th>
                         <th>Version</th>
@@ -122,7 +117,7 @@
                 </thead>
                 <tbody id="rdb-table-body">
                     <tr>
-                        <td colspan="7" class="text-center text-muted small py-3">Credential과 Region을 선택하면 인스턴스 목록을 조회합니다</td>
+                        <td colspan="8" class="text-center text-muted small py-3">Credential과 Region을 선택하면 인스턴스 목록을 조회합니다</td>
                     </tr>
                 </tbody>
             </table>
@@ -343,6 +338,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     openCreateBtn.addEventListener('click', () => {
         updateOcContext();
+        if (phase === 3) {
+            // 인스턴스 선택 상태: enterSelectMode가 이미 폼을 채워둠, 바로 show
+            offcanvas.show();
+            return;
+        }
         if (phase === 1 && engineVersionData.length > 0 && sectionDb.classList.contains('d-none')) {
             const engines = [...new Set(engineVersionData.map(d => d.engine))];
             resetSelect(engineSelect, '-');
@@ -576,6 +576,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     data-endpoint="${esc(i.endpoint || '')}"
                     data-port="${esc(String(i.port || ''))}">
             </td>
+            <td class="small">${esc(i.instanceId || '-')}</td>
             <td class="small">${esc(i.name || i.instanceId)}</td>
             <td>${statusBadge(i.status)}</td>
             <td class="small">${esc(i.engineVersion)}</td>
@@ -602,7 +603,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (currentPage > totalPages) currentPage = totalPages;
 
         if (!filtered.length) {
-            tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted small py-3">No instances found</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted small py-3">No instances found</td></tr>';
         } else {
             const start = (currentPage - 1) * PAGE_SIZE;
             tbody.innerHTML = filtered.slice(start, start + PAGE_SIZE).map(makeRow).join('');
@@ -706,10 +707,6 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('connect-host').value              = inst.endpoint;
         document.getElementById('connect-port').value              = inst.port;
 
-        // Username + Password: editable and clear
-        document.getElementById('gen-mysql-username').value = '';
-        document.getElementById('gen-mysql-password').value = '';
-
         setCreationFieldsDisabled(true);
 
         sectionDb.classList.remove('d-none');
@@ -717,11 +714,9 @@ document.addEventListener('DOMContentLoaded', function () {
         sectionConnect.classList.remove('d-none');
 
         document.getElementById('oc-title').innerHTML = '<i class="bi bi-plus-circle me-2 text-primary"></i>Create Sample Data';
-        document.getElementById('storage-group').classList.add('d-none');
 
         phase = 3;
         updateButton();
-        bootstrap.Offcanvas.getOrCreateInstance(offcanvasEl).show();
     }
 
     function exitSelectMode() {
@@ -748,7 +743,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!provider || provider === 'none' || !region || region === 'none') {
             allInstances = [];
             document.getElementById('rdb-table-body').innerHTML =
-                '<tr><td colspan="7" class="text-center text-muted small py-3">When you select a Credential and Region, the instance list is retrieved.</td></tr>';
+                '<tr><td colspan="8" class="text-center text-muted small py-3">When you select a Credential and Region, the instance list is retrieved.</td></tr>';
             document.getElementById('rdb-pagination').innerHTML = '';
             return;
         }
@@ -859,7 +854,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const credRaw     = document.getElementById('targetCredentialSelect').value;
         const targetPoint = {
             provider:        getProvider(),
-            credentialId:    credRaw ? parseInt(credRaw, 10) : null,
             region:          regionSelect.value,
             host:            document.getElementById('connect-host').value,
             port:            document.getElementById('connect-port').value,
@@ -868,7 +862,6 @@ document.addEventListener('DOMContentLoaded', function () {
             instanceId:      document.getElementById('gen-mysql-instanceId').value.trim(),
             allocatedStorage: document.getElementById('gen-mysql-allocatedStorage').value,
             instanceClass:   icHidden.value,
-            bucket:          null
         };
 
         loadingButtonOn();
