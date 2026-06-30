@@ -34,7 +34,7 @@ func (osc *OSController) MPut(dirPath string) error {
 		return err
 	}
 
-	if utils.FileExists(dirPath) {
+	if !utils.DirExists(dirPath) {
 		err := errors.New("directory does not exist")
 		osc.logWrite("Error", "FileExists error", err)
 		return err

@@ -173,9 +173,16 @@ func GenerateMySQLGetHandler(ctx echo.Context) error {
 	logger := getLoggerFromContext(ctx)
 	logger.Info().Msg("genmysql get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
-		Content: "Generate-MySQL",
-		OS:      runtime.GOOS,
-		Error:   nil,
+		Content:        "Generate-MySQL",
+		AWSRegions:     service.GetRegions("aws"),
+		GCPRegions:     service.GetRegions("gcp"),
+		NCPRegions:     service.GetRegions("ncp"),
+		ALIBABARegions: service.GetRegions("alibaba"),
+		IBMRegions:     service.GetRegions("ibm"),
+		KTRegions:      service.GetRegions("kt"),
+		TencentRegions: service.GetRegions("tencent"),
+		OS:             runtime.GOOS,
+		Error:          nil,
 	})
 }
 
@@ -383,9 +390,16 @@ func MigrationMySQLGetHandler(ctx echo.Context) error {
 	logger := getLoggerFromContext(ctx)
 	logger.Info().Msg("migmysql get page accessed")
 	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
-		Content: "Migration-MySQL",
-		Error:   nil,
-		OS:      runtime.GOOS,
+		Content:        "Migration-MySQL",
+		AWSRegions:     service.GetRegions("aws"),
+		GCPRegions:     service.GetRegions("gcp"),
+		NCPRegions:     service.GetRegions("ncp"),
+		ALIBABARegions: service.GetRegions("alibaba"),
+		IBMRegions:     service.GetRegions("ibm"),
+		KTRegions:      service.GetRegions("kt"),
+		TencentRegions: service.GetRegions("tencent"),
+		Error:          nil,
+		OS:             runtime.GOOS,
 	})
 }
 
