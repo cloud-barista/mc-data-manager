@@ -50,21 +50,21 @@ var spiderKeyMap = map[string]map[string]string{
 		"ALIBABA_CLOUD_ACCESS_KEY_SECRET": "ClientSecret",
 	},
 	"ibm": { //IBM Credentials does not have a Spider format, but we include it here for completeness
-		"IC_API_KEY":      "IC_API_KEY",
+		"IC_API_KEY":        "IC_API_KEY",
 		"IBM_S3_ACCESS_KEY": "IBM_S3_ACCESS_KEY",
 		"IBM_S3_SECRET_KEY": "IBM_S3_SECRET_KEY",
 	},
 	"kt": {
-		"KT_USERNAME":     "Username",
-		"KT_PASSWORD":     "Password",
-		"KT_DOMAIN_NAME":  "DomainName",
-		"KT_PROJECT_ID":   "ProjectID",
+		"KT_USERNAME":      "Username",
+		"KT_PASSWORD":      "Password",
+		"KT_DOMAIN_NAME":   "DomainName",
+		"KT_PROJECT_ID":    "ProjectID",
 		"KT_S3_ACCESS_KEY": "S3AccessKey",
 		"KT_S3_SECRET_KEY": "S3SecretKey",
 	},
 	"tencent": {
-		"TENCENTCLOUD_SECRET_ID":  "ClientId",
-		"TENCENTCLOUD_SECRET_KEY": "ClientSecret",
+		"TENCENTCLOUD_SECRET_ID":  "TENCENTCLOUD_SECRET_ID",
+		"TENCENTCLOUD_SECRET_KEY": "TENCENTCLOUD_SECRET_KEY",
 	},
 }
 
