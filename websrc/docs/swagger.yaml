@@ -94,6 +94,36 @@ definitions:
       s3SecretKey:
         type: string
     type: object
+  models.DBEngineVersion:
+    properties:
+      engine:
+        type: string
+      engineVersion:
+        type: string
+    type: object
+  models.DBInstance:
+    properties:
+      endpoint:
+        type: string
+      engine:
+        type: string
+      engineVersion:
+        type: string
+      instanceClass:
+        type: string
+      instanceId:
+        type: string
+      name:
+        type: string
+      port:
+        type: integer
+      provider:
+        type: string
+      region:
+        type: string
+      status:
+        type: string
+    type: object
   models.DataTask:
     properties:
       dummy:
@@ -181,6 +211,27 @@ definitions:
       targetPoint:
         $ref: '#/definitions/models.ProviderConfig'
     type: object
+  models.NRDBTableListResponse:
+    properties:
+      tables:
+        items:
+          type: string
+        type: array
+    type: object
+  models.NRDBTableRequest:
+    properties:
+      tableName:
+        type: string
+      targetPoint:
+        $ref: '#/definitions/models.ProviderConfig'
+    type: object
+  models.ObjectDeleteRequest:
+    properties:
+      objectKey:
+        type: string
+      targetPoint:
+        $ref: '#/definitions/models.ProviderConfig'
+    type: object
   models.ObjectFilterParams:
     properties:
       containExcludeYn:
@@ -210,6 +261,26 @@ definitions:
       suffixes:
         items:
           type: string
+        type: array
+    type: object
+  models.ObjectInfo:
+    properties:
+      eTag:
+        type: string
+      key:
+        type: string
+      lastModified:
+        type: string
+      size:
+        type: integer
+      storageClass:
+        type: string
+    type: object
+  models.ObjectListResponse:
+    properties:
+      objects:
+        items:
+          $ref: '#/definitions/models.ObjectInfo'
         type: array
     type: object
   models.ObjectStorage:
@@ -289,6 +360,71 @@ definitions:
       region:
         type: string
       username:
+        type: string
+    type: object
+  models.RDBEngineVersionsRequest:
+    properties:
+      credentialId:
+        type: integer
+      provider:
+        type: string
+      region:
+        type: string
+    type: object
+  models.RDBInstanceClassRequest:
+    properties:
+      credentialId:
+        type: integer
+      engine:
+        type: string
+      engineVersion:
+        type: string
+      provider:
+        type: string
+      region:
+        type: string
+    type: object
+  models.RDBInstanceCreateRequest:
+    properties:
+      allocatedStorage:
+        type: integer
+      credentialId:
+        type: integer
+      engine:
+        type: string
+      engineVersion:
+        type: string
+      instanceClass:
+        type: string
+      instanceId:
+        type: string
+      masterPassword:
+        type: string
+      masterUsername:
+        type: string
+      provider:
+        type: string
+      region:
+        type: string
+    type: object
+  models.RDBInstanceDeleteRequest:
+    properties:
+      credentialId:
+        type: integer
+      instanceId:
+        type: string
+      provider:
+        type: string
+      region:
+        type: string
+    type: object
+  models.RDBInstanceListRequest:
+    properties:
+      credentialId:
+        type: integer
+      provider:
+        type: string
+      region:
         type: string
     type: object
   models.RegionDetail:
@@ -571,42 +707,6 @@ paths:
       summary: Export data from MySQL
       tags:
       - '[Backup]'
-  /buckets:
-    post:
-      consumes:
-      - application/json
-      description: Returns the list of buckets accessible with the given credentials.
-        Optionally filters by a tag key/value pair.
-      operationId: ObjectstorageBucketsHandler
-      parameters:
-      - description: Tag key to filter buckets by
-        in: query
-        name: filterKey
-        type: string
-      - description: Tag value to filter buckets by (used with filterKey)
-        in: query
-        name: filterVal
-        type: string
-      - description: Provider credentials and connection info
-        in: body
-        name: RequestBody
-        required: true
-        schema:
-          $ref: '#/definitions/models.DataTask'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: List of accessible buckets
-          schema:
-            $ref: '#/definitions/models.ObjectStorageListResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.ObjectStorageListResponse'
-      summary: List available buckets for a given provider
-      tags:
-      - '[ObjectStorage]'
   /credentials:
     get:
       description: Retrieve a list of all credentials in the system.
@@ -706,6 +806,469 @@ paths:
       summary: Get a Credential by ID
       tags:
       - '[Credential]'
+  /db/rdbms:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes the database instance identified by instanceId. The final
+        snapshot is skipped.
+      operationId: DeleteRDBInstanceHandler
+      parameters:
+      - description: Provider, region, instanceId
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.RDBInstanceDeleteRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Deleted instance (status: deleting)'
+          schema:
+            $ref: '#/definitions/models.DBInstance'
+        "400":
+          description: Invalid Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete an RDB (database) instance
+      tags:
+      - '[RDB Instance]'
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Returns managed database instances for the requested CSP and region.
+        Credentials are resolved by provider (one credential per CSP). Only AWS is supported for now.
+      operationId: ListRDBInstancesHandler
+      parameters:
+      - description: Provider and region
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.RDBInstanceListRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of database instances
+          schema:
+            items:
+              $ref: '#/definitions/models.DBInstance'
+            type: array
+        "400":
+          description: Invalid Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List RDB (database) instances for a given provider
+      tags:
+      - '[RDB Instance]'
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Provisions a new managed database instance for the requested CSP.
+        Only AWS with mysql/mariadb engines is supported. The instance is created publicly accessible.
+      operationId: CreateRDBInstanceHandler
+      parameters:
+      - description: Instance specification
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.RDBInstanceCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Created instance (status: creating)'
+          schema:
+            $ref: '#/definitions/models.DBInstance'
+        "400":
+          description: Invalid Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create an RDB (database) instance
+      tags:
+      - '[RDB Instance]'
+  /db/rdbms/databases:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Connects directly to the database instance using the target connection
+        info and returns the names of the databases it contains (SHOW DATABASES).
+      operationId: ListRDBDatabasesHandler
+      parameters:
+      - description: Target connection info (host, port, username, password)
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.DataTask'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Database names
+          schema:
+            items:
+              type: string
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List databases inside an RDB instance
+      tags:
+      - '[RDB Instance]'
+  /db/rdbms/engine-versions:
+    post:
+      consumes:
+      - application/json
+      description: Returns available mysql and mariadb engine versions for the requested
+        CSP and region.
+      operationId: ListRDBEngineVersionsHandler
+      parameters:
+      - description: Provider and region
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.RDBEngineVersionsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Available engine versions
+          schema:
+            items:
+              $ref: '#/definitions/models.DBEngineVersion'
+            type: array
+        "400":
+          description: Invalid Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List available RDB engine versions
+      tags:
+      - '[RDB Instance]'
+  /db/rdbms/instance-class:
+    post:
+      consumes:
+      - application/json
+      description: Returns the instance classes orderable for the given engine and
+        version.
+      operationId: ListRDBInstanceClassesHandler
+      parameters:
+      - description: Provider, region, engine, engineVersion
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.RDBInstanceClassRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Available instance class names
+          schema:
+            items:
+              type: string
+            type: array
+        "400":
+          description: Invalid Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List orderable RDB instance classes
+      tags:
+      - '[RDB Instance]'
+  /db/nrdbms:
+    delete:
+      consumes:
+      - application/json
+      description: |-
+        Deletes the table (collection) with the given name and all its data.
+        Supported providers: aws (DynamoDB), gcp (Firestore), ncp (MongoDB), alibaba (MongoDB).
+      operationId: NRDBMSDeleteTableHandler
+      parameters:
+      - description: Provider credentials, connection info, and table name
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.NRDBTableRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Table deleted successfully
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "400":
+          description: Bad Request — tableName is empty
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Delete a table from a NRDBMS instance
+      tags:
+      - '[NRDBMS]'
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Returns the list of tables (collections) accessible with the given credentials.
+        Supported providers: aws (DynamoDB), gcp (Firestore), ncp (MongoDB), alibaba (MongoDB).
+      operationId: NRDBMSListTablesHandler
+      parameters:
+      - description: Provider credentials and connection info
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.DataTask'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of tables
+          schema:
+            $ref: '#/definitions/models.NRDBTableListResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.NRDBTableListResponse'
+      summary: List tables in a NRDBMS instance
+      tags:
+      - '[NRDBMS]'
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Creates a table (collection) with the given name. If the table already exists the request is a no-op.
+        Supported providers: aws (DynamoDB), gcp (Firestore), ncp (MongoDB), alibaba (MongoDB).
+      operationId: NRDBMSCreateTableHandler
+      parameters:
+      - description: Provider credentials, connection info, and table name
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.NRDBTableRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Table created successfully
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "400":
+          description: Bad Request — tableName is empty
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Create a table in a NRDBMS instance
+      tags:
+      - '[NRDBMS]'
+  /db/rdbms:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Returns managed database instances for the requested CSP and region.
+        Credentials are resolved by provider (one credential per CSP). Only AWS is supported for now.
+      operationId: ListRDBInstancesHandler
+      parameters:
+      - description: Provider and region
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.RDBInstanceListRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of database instances
+          schema:
+            items:
+              $ref: '#/definitions/models.DBInstance'
+            type: array
+        "400":
+          description: Invalid Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List RDB (database) instances for a given provider
+      tags:
+      - '[RDB Instance]'
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Provisions a new managed database instance for the requested CSP.
+        Only AWS with mysql/mariadb engines is supported. The instance is created publicly accessible.
+      operationId: CreateRDBInstanceHandler
+      parameters:
+      - description: Instance specification
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.RDBInstanceCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Created instance (status: creating)'
+          schema:
+            $ref: '#/definitions/models.DBInstance'
+        "400":
+          description: Invalid Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create an RDB (database) instance
+      tags:
+      - '[RDB Instance]'
+  /db/rdbms/engine-versions:
+    post:
+      consumes:
+      - application/json
+      description: Returns available mysql and mariadb engine versions for the requested
+        CSP and region.
+      operationId: ListRDBEngineVersionsHandler
+      parameters:
+      - description: Provider and region
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.RDBEngineVersionsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Available engine versions
+          schema:
+            items:
+              $ref: '#/definitions/models.DBEngineVersion'
+            type: array
+        "400":
+          description: Invalid Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List available RDB engine versions
+      tags:
+      - '[RDB Instance]'
+  /db/rdbms/instance-class:
+    post:
+      consumes:
+      - application/json
+      description: Returns the instance classes orderable for the given engine and
+        version.
+      operationId: ListRDBInstanceClassesHandler
+      parameters:
+      - description: Provider, region, engine, engineVersion
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.RDBInstanceClassRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Available instance class names
+          schema:
+            items:
+              type: string
+            type: array
+        "400":
+          description: Invalid Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List orderable RDB instance classes
+      tags:
+      - '[RDB Instance]'
   /generate:
     get:
       description: Retrieve a list of all Tasks in the system.
@@ -1208,6 +1771,211 @@ paths:
       summary: Set the active namespace ID
       tags:
       - '[Namespace]'
+  /objectstorage/bucket:
+    delete:
+      consumes:
+      - application/json
+      description: Empties the bucket by deleting all objects (in batches of 1000),
+        then deletes the bucket itself.
+      operationId: ObjectstorageDeleteBucketHandler
+      parameters:
+      - description: Provider credentials, connection info, and bucket name
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.DataTask'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Bucket deleted successfully
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Delete a bucket and all its objects
+      tags:
+      - '[ObjectStorage]'
+    put:
+      consumes:
+      - application/json
+      description: Creates a bucket for the given provider. If the bucket already
+        exists, the request is a no-op.
+      operationId: ObjectstorageCreateBucketHandler
+      parameters:
+      - description: Provider credentials, connection info, and bucket name
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.DataTask'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Bucket created successfully
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Create a bucket
+      tags:
+      - '[ObjectStorage]'
+  /objectstorage/buckets:
+    delete:
+      consumes:
+      - application/json
+      description: Empties the bucket by deleting all objects (in batches of 1000),
+        then deletes the bucket itself.
+      operationId: ObjectstorageDeleteBucketHandler
+      parameters:
+      - description: Provider credentials, connection info, and bucket name
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.DataTask'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Bucket deleted successfully
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Delete a bucket and all its objects
+      tags:
+      - '[ObjectStorage]'
+    post:
+      consumes:
+      - application/json
+      description: Returns the list of buckets accessible with the given credentials.
+        Optionally filters by a tag key/value pair.
+      operationId: ObjectstorageBucketsHandler
+      parameters:
+      - description: Tag key to filter buckets by
+        in: query
+        name: filterKey
+        type: string
+      - description: Tag value to filter buckets by (used with filterKey)
+        in: query
+        name: filterVal
+        type: string
+      - description: Provider credentials and connection info
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.DataTask'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of accessible buckets
+          schema:
+            $ref: '#/definitions/models.ObjectStorageListResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ObjectStorageListResponse'
+      summary: List available buckets for a given provider
+      tags:
+      - '[ObjectStorage]'
+    put:
+      consumes:
+      - application/json
+      description: Creates a bucket for the given provider. If the bucket already
+        exists, the request is a no-op.
+      operationId: ObjectstorageCreateBucketHandler
+      parameters:
+      - description: Provider credentials, connection info, and bucket name
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.DataTask'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Bucket created successfully
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Create a bucket
+      tags:
+      - '[ObjectStorage]'
+  /objectstorage/buckets/object:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes the object identified by objectKey from the bucket specified
+        by the target connection.
+      operationId: ObjectstorageDeleteObjectHandler
+      parameters:
+      - description: Target connection info and key of the object to delete
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.ObjectDeleteRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Object deleted successfully
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "400":
+          description: Bad Request — objectKey is empty
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Delete a single object from a bucket
+      tags:
+      - '[ObjectStorage]'
+  /objectstorage/buckets/objects:
+    post:
+      consumes:
+      - application/json
+      description: Returns all objects stored in the bucket specified by the target
+        connection. Supports optional filter parameters.
+      operationId: ObjectstorageObjectListHandler
+      parameters:
+      - description: Provider credentials, connection info, and optional sourceFilter
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.DataTask'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of objects in the bucket
+          schema:
+            $ref: '#/definitions/models.ObjectListResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ObjectListResponse'
+      summary: List objects in a bucket
+      tags:
+      - '[ObjectStorage]'
   /readyZ:
     get:
       description: Get System Ready

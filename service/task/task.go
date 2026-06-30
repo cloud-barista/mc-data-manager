@@ -1229,7 +1229,7 @@ func handleNRDBMSBackupTask(params models.BasicDataTask) models.Status {
 		return models.StatusFailed
 	}
 
-	if !utils.FileExists(params.TargetPoint.Path) {
+	if !utils.DirExists(params.TargetPoint.Path) {
 		log.Info().Msg("directory does not exist")
 		log.Info().Msg("Make Directory")
 		err = os.MkdirAll(params.TargetPoint.Path, 0755)

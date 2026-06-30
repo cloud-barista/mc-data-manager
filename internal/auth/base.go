@@ -259,7 +259,7 @@ func GetRDMS(params *models.ProviderConfig) (*rdbc.RDBController, error) {
 	log.Info().Str("Password", params.Password).Msg("GetRDMS")
 	log.Info().Str("Host", params.Host).Msg("GetRDMS")
 	log.Info().Str("Port", params.Port).Msg("GetRDMS")
-	dst, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/", params.User, params.Password, params.Host, params.Port))
+	dst, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/?multiStatements=true", params.User, params.Password, params.Host, params.Port))
 	if err != nil {
 		return nil, fmt.Errorf("failed to open DB: %w", err)
 	}

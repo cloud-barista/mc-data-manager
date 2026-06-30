@@ -30,7 +30,7 @@ func GetNsId() string {
 
 	nsId := os.Getenv("TUMBLEBUG_NS_ID")
 	if nsId == "" {
-		nsId = "default"
+		nsId = "ws01"
 	}
 	return nsId
 }

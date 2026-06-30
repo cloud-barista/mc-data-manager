@@ -16,7 +16,6 @@ limitations under the License.
 package rdbc
 
 import (
-	"bufio"
 	"fmt"
 	"strings"
 
@@ -89,27 +88,37 @@ func (rdb *RDBController) ListDB(dst *[]string) error {
 }
 
 // sql import each line With Transaction
+// func (rdb *RDBController) Put(sql string) error {
+
+// 	var err error
+// 	scanner := bufio.NewScanner(strings.NewReader(sql))
+// 	scanner.Split(splitLine)
+
+// 	for scanner.Scan() {
+// 		line := scanner.Text()
+// 		line = strings.ReplaceAll(line, "\n", "")
+// 		if line != "" {
+// 			err = rdb.Client.Exec(line)
+// 			if err != nil {
+// 				log.Error().Msgf("err Line : %+v", line)
+// 				rdb.logWrite("Error", "sql exec error", err)
+// 				return err
+// 			}
+// 		}
+// 	}
+
+// 	err = scanner.Err()
+// 	if err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
+
+// sql import all at once (drives session-scope statements like USE on a single connection)
 func (rdb *RDBController) Put(sql string) error {
-
-	var err error
-	scanner := bufio.NewScanner(strings.NewReader(sql))
-	scanner.Split(splitLine)
-
-	for scanner.Scan() {
-		line := scanner.Text()
-		line = strings.ReplaceAll(line, "\n", "")
-		if line != "" {
-			err = rdb.Client.Exec(line)
-			if err != nil {
-				log.Error().Msgf("err Line : %+v", line)
-				rdb.logWrite("Error", "sql exec error", err)
-				return err
-			}
-		}
-	}
-
-	err = scanner.Err()
-	if err != nil {
+	if err := rdb.Client.Exec(sql); err != nil {
+		// log.Error().Msgf("err SQL : %+v", sql)
+		rdb.logWrite("Error", "sql exec error", err)
 		return err
 	}
 	return nil

@@ -527,16 +527,15 @@ function loadProfileList() {
 
         fetch(url, req)
             .then(response => {
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 return response.json();
             })
             .then(json => {
-                // const resultText = document.getElementById('resultText');
-                // resultText.value = json.Result;
-                // console.log(json);
-
                 const seen = new Set();
-                const options = json
+                const options = (Array.isArray(json) ? json : [])
                 .filter((item) => {
+                    const awsOnlyPage = ['/generate/mysql', '/migrate/mysql', '/backup/register', '/restore/register'].some(p => window.location.pathname.includes(p));
+                    if (awsOnlyPage && item.providerName !== 'aws') return false;
                     if (seen.has(item.providerName)) return false;
                     seen.add(item.providerName);
                     return true;
