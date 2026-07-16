@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"encoding/json"
-	"encoding/xml"
 	"fmt"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/cloud-barista/mc-data-manager/internal/auth"
@@ -114,7 +114,7 @@ func ObjectstorageCreateBucketHandler(ctx echo.Context) error {
 //
 //	@ID			ObjectstorageDeleteBucketHandler
 //	@Summary	Delete a bucket and all its objects
-//	@Description	Empties the bucket by deleting all objects (in batches of 1000), then deletes the bucket itself.
+//	@Description	Deletes the bucket and all its contents via Tumblebug with option=force.
 //	@Tags			[ObjectStorage]
 //	@Accept			json
 //	@Produce		json
@@ -136,51 +136,9 @@ func ObjectstorageDeleteBucketHandler(ctx echo.Context) error {
 	nsId := utils.GetNsId()
 	bucket := params.TargetPoint.Bucket
 
-	// 1. 오브젝트 목록 조회
-	listPath := fmt.Sprintf("/tumblebug/ns/%s/resources/objectStorage/%s", nsId, bucket)
-	body, err := utils.RequestTumblebug(listPath, http.MethodGet, connName, nil)
-	if err != nil {
-		log.Error().Msgf("ObjectList error: %v", err)
-		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{Result: logstrings.String(), Error: nil})
-	}
-
-	var osResp models.ObjectStorage
-	if err := json.Unmarshal(body, &osResp); err != nil {
-		log.Error().Msgf("Unmarshal error: %v", err)
-		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{Result: logstrings.String(), Error: nil})
-	}
-
-	// 2. 오브젝트 일괄 삭제 (1000개 단위)
-	const batchSize = 1000
-	deletePath := fmt.Sprintf("/tumblebug/ns/%s/resources/objectStorage/%s?delete=true", nsId, bucket)
-	keys := make([]string, 0, len(osResp.Contents))
-	for _, o := range osResp.Contents {
-		keys = append(keys, o.Key)
-	}
-	for i := 0; i < len(keys); i += batchSize {
-		end := i + batchSize
-		if end > len(keys) {
-			end = len(keys)
-		}
-		deleteReq := models.DeleteRequest{
-			XMLNS: "http://s3.amazonaws.com/doc/2006-03-01/",
-		}
-		for _, k := range keys[i:end] {
-			deleteReq.Objects = append(deleteReq.Objects, models.S3Object{Key: k})
-		}
-		xmlOutput, err := xml.MarshalIndent(deleteReq, "", "    ")
-		if err != nil {
-			log.Error().Msgf("XML marshal error: %v", err)
-			return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{Result: logstrings.String(), Error: nil})
-		}
-		if _, err := utils.RequestTumblebug(deletePath, http.MethodPost, connName, []byte(xml.Header+string(xmlOutput))); err != nil {
-			log.Error().Msgf("DeleteObjects error: %v", err)
-			return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{Result: logstrings.String(), Error: nil})
-		}
-	}
-
-	// 3. 버킷 삭제
-	bucketPath := fmt.Sprintf("/tumblebug/ns/%s/resources/objectStorage/%s", nsId, bucket)
+	// option=force: 내용물 포함 강제 삭제 (Spider force=true).
+	// option=empty는 오브젝트만 비우고 CSP 버킷 삭제가 완료되지 않은 채 204를 반환하는 사례가 있어 사용하지 않음.
+	bucketPath := fmt.Sprintf("/tumblebug/ns/%s/resources/objectStorage/%s?option=force", nsId, bucket)
 	if _, err := utils.RequestTumblebug(bucketPath, http.MethodDelete, connName, nil); err != nil {
 		log.Error().Msgf("DeleteBucket error: %v", err)
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{Result: logstrings.String(), Error: nil})
@@ -282,21 +240,13 @@ func ObjectstorageDeleteObjectHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, models.BasicResponse{Result: "objectKey is required", Error: nil})
 	}
 
-	deleteReq := models.DeleteRequest{
-		XMLNS:   "http://s3.amazonaws.com/doc/2006-03-01/",
-		Objects: []models.S3Object{{Key: params.ObjectKey}},
-	}
-	xmlOutput, err := xml.MarshalIndent(deleteReq, "", "    ")
-	if err != nil {
-		log.Error().Msgf("XML marshal error: %v", err)
-		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{Result: logstrings.String(), Error: nil})
-	}
-
 	connName := fmt.Sprintf("%s-%s", params.TargetPoint.Provider, params.TargetPoint.Region)
 	nsId := utils.GetNsId()
-	path := fmt.Sprintf("/tumblebug/ns/%s/resources/objectStorage/%s?delete=true", nsId, params.TargetPoint.Bucket)
+	// objectKey는 슬래시를 포함하므로 반드시 %2F로 인코딩해야 Tumblebug 라우트에 매칭됨
+	path := fmt.Sprintf("/tumblebug/ns/%s/resources/objectStorage/%s/object/%s",
+		nsId, params.TargetPoint.Bucket, url.PathEscape(params.ObjectKey))
 
-	if _, err := utils.RequestTumblebug(path, http.MethodPost, connName, []byte(xml.Header+string(xmlOutput))); err != nil {
+	if _, err := utils.RequestTumblebug(path, http.MethodDelete, connName, nil); err != nil {
 		log.Error().Msgf("DeleteObject error: %v", err)
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{Result: logstrings.String(), Error: nil})
 	}

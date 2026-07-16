@@ -47,7 +47,7 @@ func TestMain(m *testing.M) {
 	}
 
 	// Srdbc db들을 Drdbc로 이전
-	if err := Srdbc.Copy(Drdbc); err != nil {
+	if err := Srdbc.Copy(Drdbc, "LibraryManagement"); err != nil {
 		panic(err)
 	}
 }

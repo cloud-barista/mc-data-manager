@@ -3,273 +3,158 @@
 </ol>
 <h2 class="page-title">Object Storage</h2>
 
-<div class="card mb-4 rounded-3 col-auto">
-    <ul class="nav nav-tabs pt-2 ps-2" id="serviceTabs">
-        <!-- <li class="nav-item">
-            {{if eq .OS "linux"}}
-            <a class="nav-link" href="/generate/linux">On-Premise</a>
-            {{else}}
-            <a class="nav-link" href="/generate/windows">On-Premise</a>
-            {{end}}
-        </li> -->
-        <li class="nav-item">
-            <a class="nav-link active" href="#">Object Storage</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/generate/mysql">SQL Database</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/generate/no-sql">No-SQL</a>
-        </li>
-    </ul>
-    <div class="card-body">
-        <!-- <form action="/generate/aws" method="POST"> -->
-        <form id="genForm">
-            <div class="card rounded-3 p-3 mb-3">
-                <div class="input-group mb-3">
-                    <div class="form-floating">
-                        <input type="text" class="form-control" id="targetPointLabel" value="-" style="border: 0; background-color: white;" value="-" required disabled>
-                        <label for="targetPointLabel">Target</label>
-                    </div>
-                </div>
-                <div class="input-group mb-3 me-1">
-                    <span class="input-group-text rounded-start"><i class="fa-solid fa-user-secret"></i></span>
-                    <div class="form-floating">
-                        <select class="form-select form-select-sm rounded-end" id="targetCredentialSelect" name="targetPoint[credentialId]">
-                            <option value="none" data-provider="none"> - </option>
-                        </select>
-                        <label for="targetCredentialSelect">provider - credential name</label>
-                    </div>
-                </div>
-                <div class="input-group mb-3 me-1">
-                    <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span>
-                    <div class="form-floating">
-                        <select class="form-select form-select-sm rounded-end" id="targetRegionSelect" name="targetPoint[region]">
-                            <option value="none" selected> - </option>
-                            <optgroup label="AWS regions" data-provider="aws" style="display: none;">
-                                {{ range $index, $value := .AWSRegions }}
-                                <option value="{{ $value }}">{{ $value }}</option>
-                                {{ end }}
-                            </optgroup>
-                            <optgroup label="GCP regions" data-provider="gcp" style="display: none;">
-                                {{ range $index, $value := .GCPRegions }}
-                                <option value="{{ $value }}">{{ $value }}</option>
-                                {{ end }}
-                            </optgroup>
-                            <optgroup label="NCP regions" data-provider="ncp" style="display: none;">
-                                {{ range $index, $value := .NCPRegions }}
-                                <option value="{{ $value }}">{{ $value }}</option>
-                                {{ end }}
-                            </optgroup>
-                            <optgroup label="ALIBABA regions" data-provider="alibaba" style="display: none;">
-                                {{ range $index, $value := .ALIBABARegions }}
-                                <option value="{{ $value }}">{{ $value }}</option>
-                                {{ end }}
-                            </optgroup>
-                            <optgroup label="IBM regions" data-provider="ibm" style="display: none;">
-                                {{ range $index, $value := .IBMRegions }}
-                                <option value="{{ $value }}">{{ $value }}</option>
-                                {{ end }}
-                            </optgroup>
-                            <optgroup label="KT regions" data-provider="kt" style="display: none;">
-                                {{ range $index, $value := .KTRegions }}
-                                <option value="{{ $value }}">{{ $value }}</option>
-                                {{ end }}
-                            </optgroup>
-                            <optgroup label="TENCENT regions" data-provider="tencent" style="display: none;">
-                                {{ range $index, $value := .TencentRegions }}
-                                <option value="{{ $value }}">{{ $value }}</option>
-                                {{ end }}
-                            </optgroup>
-                        </select>
-                        <label for="targetRegionSelect">Select Region</label>
-                    </div>
-                </div>
-                
-                <div class="input-group">
-                    <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
-                    <div class="form-floating">
-                        <!-- <input type="text" class="form-control rounded-end" id="gen-s3-bucket" name="bucket" placeholder="Bucket" required> -->
-                        <select class="form-select form-select-sm rounded-end" id="targetBucket" name="targetPoint[bucket]">
-                            <option value="-" selected>-</option>
-                        </select>
-                        <label for="targetBucket">Bucket</label>
-                    </div>
-                    <button type="button" class="btn btn-primary rounded-3 ms-2" id="targetBtn">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </button>
-                </div>
-                <div class="input-group mt-3" id="targetNewBucket" style="display: none;">
-                    <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
-                    <div class="form-floating">
-                        <input type="text" class="form-control rounded-end" id="newBucket" name="targetPoint[bucket]" placeholder="Bucket">
-                        <label for="newBucket">New Bucket</label>
-                    </div>
+<form id="genForm">
+    <div class="card mb-4 rounded-3 col-auto">
+        <ul class="nav nav-tabs pt-2 ps-2" id="serviceTabs">
+            <li class="nav-item">
+                <a class="nav-link active" href="#">Object Storage</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/generate/mysql">SQL Database</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/generate/no-sql">No-SQL</a>
+            </li>
+        </ul>
+        <div class="card-body">
+            <!-- Target label -->
+            <div class="input-group mb-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="targetPointLabel" value="-" style="border: 0; background-color: white;" required disabled>
+                    <label for="targetPointLabel">Target</label>
                 </div>
             </div>
 
-            {{ template "gen-data.html" . }}
+            <!-- Credential + Region (버킷 조회용, 항상 노출) -->
+            <div class="input-group mb-3 me-1">
+                <span class="input-group-text rounded-start"><i class="bi bi-person-badge"></i></span>
+                <div class="form-floating">
+                    <select class="form-select form-select-sm rounded-end" id="targetCredentialSelect" name="targetPoint[credentialId]">
+                        <option value="none" data-provider="none"> - </option>
+                    </select>
+                    <label for="targetCredentialSelect">provider - credential name</label>
+                </div>
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text rounded-start"><i class="bi bi-globe"></i></span>
+                <div class="form-floating">
+                    <select class="form-select form-select-sm rounded-end" id="targetRegionSelect" name="targetPoint[region]">
+                        <option value="none" selected> - </option>
+                        {{ template "region-optgroups-csp.html" . }}
+                    </select>
+                    <label for="targetRegionSelect">Select Region</label>
+                </div>
+            </div>
 
-            <button type="submit" class="btn btn-primary rounded-3 float-end" id="submitBtn">Submit</button>
-            <input type="hidden" id="genTarget" value="objectstorage">
-            <input type="hidden" id="targetPoint[provider]" value="none">
-            <input type="hidden" id="targetPoint[endpoint]" name="targetPoint[endpoint]" value="">
-        </form>
+            <!-- 툴바 -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted small fw-semibold">Bucket List</span>
+                <div class="d-flex gap-2 align-items-center">
+                    <div class="input-group input-group-sm" style="width:200px;">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" id="gen-bkt-search" placeholder="Search by name">
+                    </div>
+                    <button type="button" class="btn btn-danger btn-sm" id="deleteInstanceBtn" disabled>
+                        <i class="bi bi-trash3 me-1"></i>Delete
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm" id="openCreateBtn" disabled>
+                        <i class="bi bi-plus-lg me-1"></i>Bucket
+                    </button>
+                </div>
+            </div>
+
+            <!-- 버킷 테이블 (항상 노출) — 목록/생성/삭제/탐색은 공용 BucketPanel(scripts.js)이 담당 -->
+            <table class="table table-bordered table-sm mb-0">
+                <thead>
+                    <tr>
+                        <th style="width:36px;"></th>
+                        <th>Resource ID</th>
+                        <th>Name</th>
+                        <th>Region</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th style="width:76px;"></th>
+                    </tr>
+                </thead>
+                <tbody id="gen-bkt-body">
+                    <tr>
+                        <td colspan="7" class="text-center text-muted small py-3">Select a credential to list buckets</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div id="gen-bkt-pagination" class="mt-2"></div>
+        </div>
     </div>
-</div>
+
+    {{ template "gen-data.html" . }}
+
+    <!-- 로드 시 아래 스크립트가 gen-data.html 카드 내부로 이동시킴 -->
+    <div class="d-flex justify-content-end mt-3" id="submitArea">
+        <button type="submit" class="btn btn-primary rounded-3" id="submitBtn" disabled>Submit</button>
+    </div>
+    <input type="hidden" id="genTarget" value="objectstorage">
+    <input type="hidden" id="targetPoint[provider]" value="none">
+    <input type="hidden" id="targetPoint[endpoint]" name="targetPoint[endpoint]" value="">
+    <!-- Target Bucket: 행 클릭 또는 셀렉트로 기존 버킷만 선택 (새 버킷은 + Bucket으로 생성).
+         scripts.js generateFormSubmit이 #newBucket 값을 참조. 로드 시 gen-data 카드 상단으로 이동됨 -->
+    <div class="mb-3" id="targetBucketArea">
+        <div class="input-group">
+            <span class="input-group-text rounded-start"><i class="bi bi-bucket"></i></span>
+            <div class="form-floating">
+                <select class="form-select rounded-end" id="newBucket" name="targetPoint[bucket]">
+                    <option value="">- Select Bucket -</option>
+                </select>
+                <label for="newBucket">Target Bucket</label>
+            </div>
+        </div>
+        <div class="text-muted small ps-2 mt-1">Click a bucket in the list or choose one from the dropdown. Use + Bucket to create a new one.</div>
+    </div>
+
+    <!-- 버킷 생성/오브젝트 탐색 Offcanvas + 삭제 모달 (공용 파셜) -->
+    {{ template "bucket-panel.html" . }}
+</form>
+
 <script>
-    const target = {
-        btn: document.getElementById("targetBtn"),
-        cred: document.getElementById("targetCredentialSelect"),
-        region: document.getElementById("targetRegionSelect"),
-        bucket: document.getElementById("targetBucket"),
-        provider: document.getElementById("targetPoint[provider]"),
-        endpoint: document.getElementById("targetPoint[endpoint]"),
-        service: document.getElementById("targetService")
-    };
-    const bucketInput = document.getElementById("newBucket");
+document.addEventListener('DOMContentLoaded', function () {
+    // Target Bucket 필드와 Submit 버튼을 데이터 선택 카드(gen-data.html이 렌더링하는 .card.p-3)
+    // 내부로 이동. gen-data.html은 다른 페이지(gen-linux 등)와 공유되는 템플릿이라 직접 수정하지 않음.
+    const genDataCard = document.querySelector('#genForm > .card.p-3');
+    const submitArea  = document.getElementById('submitArea');
+    const targetBucketArea = document.getElementById('targetBucketArea');
+    if (genDataCard) {
+        if (targetBucketArea) genDataCard.prepend(targetBucketArea);
+        if (submitArea) genDataCard.appendChild(submitArea);
+    }
 
-    document.addEventListener("DOMContentLoaded", () => {      
-        target.provider.addEventListener('change', e => {
-            updateFormVisibility()
-        });
+    const providerInput = document.getElementById('targetPoint[provider]');
+    const targetBucketInput = document.getElementById('newBucket');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function updateTargetLabel() {
+        document.getElementById('targetPointLabel').value = getServiceName('objectstorage', providerInput.value || '');
+    }
+    function updateSubmitBtn() {
+        submitBtn.disabled = !targetBucketInput.value.trim();
+    }
+
+    // 버킷 목록/생성/삭제/탐색 — 공용 BucketPanel (bucket-panel.html 파셜, mig/backup/restore와 동일)
+    // scripts.js initProviderHandlers가 credential 변경 시 provider hidden을 세팅하고
+    // change 이벤트를 dispatch → BucketPanel이 자동 재조회한다
+    BucketPanel.init({
+        prefix: 'gen-bkt',
+        cred: document.getElementById('targetCredentialSelect'),
+        region: document.getElementById('targetRegionSelect'),
+        provider: providerInput,
+        endpoint: document.getElementById('targetPoint[endpoint]'),
+        bucketInput: targetBucketInput,
+        deleteBtn: document.getElementById('deleteInstanceBtn'),
+        createBtn: document.getElementById('openCreateBtn'),
     });
 
-    function updateLabel(provider) {
-        const serviceMap = {
-            aws: "AWS S3",
-            ncp: "Naver Object Storage",
-            gcp: "Google Cloud Storage",
-            alibaba: "Alibaba Object Storage",
-        };
-
-        let serviceName = serviceMap[provider] || "-";
-
-        const select = document.getElementById("targetPointLabel");   // label 갱신
-        select.value = serviceName
-    }
-
-    function updateFormVisibility() {
-        const provider = target.provider.value;
-        updateLabel(provider)
-    }
-  
-    updateFormVisibility();
-
-    target.bucket.addEventListener("change", () => {
-        toggleNewBucket()
-    })
-
-    target.cred.addEventListener("change", () => {
-        console.log("credential changed")
-        const cred = target.cred.value;
-        if (cred == "none" || !cred) {
-            resetBuckets(false);
-            toggleNewBucket()
-
-            return
-        }
-        resetBuckets(true)
-        toggleNewBucket()
-    })
-
-    target.region.addEventListener("change", () => {
-        console.log("region changed")
-        const region = target.region.value;
-        if (region == "none" || !region) {
-            resetBuckets(false);
-            toggleNewBucket()
-
-            return
-        }
-        resetBuckets(true)
-        toggleNewBucket()
-    })
-
-    target.btn.addEventListener("click", () => {
-        if (target.region.value == "none" || !target.region.value) {
-            return;
-        }
-        target.btn.disabled = true;
-        target.btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;';
-
-        fetchBucketList(target.cred.value, target.region.value, target.provider.value, target.endpoint.value)
-            .then(json => {
-                resetBuckets(true)
-
-                json.objectStorage.forEach(optionData => {
-                    const option = document.createElement("option");
-                    option.value = optionData.name;
-                    option.textContent = optionData.name;
-                    target.bucket.appendChild(option);
-                });
-            })
-            .catch(reason => {
-                console.log(reason);
-                alert(reason);
-            })
-            .finally(() => {
-                target.btn.disabled = false;
-                target.btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i>';
-                toggleNewBucket()
-            })
-    });
-
-    function resetBuckets(hardReset) {
-        let option = document.createElement("option");
-        if(!hardReset) {
-            option.value = "none";
-            option.textContent = "-";
-        } else {
-            option.value = "new";
-            option.textContent = "create new bucket";
-        }
-        target.bucket.replaceChildren(option);        
-    }
-
-    function toggleNewBucket() {
-        const newBucketDiv = document.getElementById("targetNewBucket")
-        if (target.bucket.value == "new") {
-            newBucketDiv.style.display = ""
-            bucketInput.value = ""
-        } else {
-            newBucketDiv.style.display = "none"
-            bucketInput.value = target.bucket.value
-        }
-    }
-
-    function fetchBucketList(credentialId, region, provider, endpoint) {
-        let url = "/objectstorage/buckets";
-        if (provider) {
-            url += `?filterKey=providerName&filterVal=${encodeURIComponent(provider)}`;
-        }
-        const jsonData = {
-            "targetPoint": {
-                "credentialId": parseInt(credentialId),
-                "region": region,
-                "provider": provider
-            }
-        }
-        if (provider === "ncp") {
-            jsonData.targetPoint.endpoint = endpoint || "https://kr.object.ncloudstorage.com";
-        } else if (provider === "alibaba" && endpoint) {
-            jsonData.targetPoint.endpoint = endpoint;
-        }
-        const req = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(jsonData)
-        }
-
-        return fetch(url, req)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        
-                        return response.json();
-                    });
-    }
-  </script>
+    // BucketPanel이 선택 변경 시 bucketInput에 input 이벤트를 dispatch한다
+    targetBucketInput.addEventListener('input', updateSubmitBtn);
+    providerInput.addEventListener('change', updateTargetLabel);
+    updateTargetLabel();
+    updateSubmitBtn();
+});
+</script>

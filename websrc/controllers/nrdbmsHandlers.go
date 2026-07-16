@@ -6,7 +6,10 @@ import (
 
 	"github.com/cloud-barista/mc-data-manager/internal/auth"
 	"github.com/cloud-barista/mc-data-manager/models"
+	nrdbinstancepkg "github.com/cloud-barista/mc-data-manager/pkg/nrdbinstance"
+	"github.com/cloud-barista/mc-data-manager/service/nrdbinstance"
 	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog/log"
 )
 
 // NRDBMSListTablesHandler godoc
@@ -21,7 +24,7 @@ import (
 //	@Param			RequestBody	body		models.DataTask				true	"Provider credentials and connection info"
 //	@Success		200			{object}	models.NRDBTableListResponse	"List of tables"
 //	@Failure		500			{object}	models.NRDBTableListResponse	"Internal Server Error"
-//	@Router			/db/nrdbms [post]
+//	@Router			/db/nrdbms/tables [post]
 func NRDBMSListTablesHandler(ctx echo.Context) error {
 	start := time.Now()
 
@@ -48,6 +51,46 @@ func NRDBMSListTablesHandler(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, models.NRDBTableListResponse{Tables: tables})
 }
 
+// NRDBMSListDatabasesHandler godoc
+//
+//	@ID			NRDBMSListDatabasesHandler
+//	@Summary	List databases in a NRDBMS (MongoDB) instance
+//	@Description	Connects to the MongoDB server using the target connection info
+//	@Description	and returns the names of the databases on the server.
+//	@Description	Supported providers: ncp (MongoDB), alibaba (MongoDB).
+//	@Tags			[NRDBMS]
+//	@Accept			json
+//	@Produce		json
+//	@Param			RequestBody	body		models.DataTask		true	"Target connection info (host, port, username, password)"
+//	@Success		200			{array}		string				"Database names"
+//	@Failure		500			{object}	map[string]string	"Internal Server Error"
+//	@Router			/db/nrdbms/databases [post]
+func NRDBMSListDatabasesHandler(ctx echo.Context) error {
+	start := time.Now()
+
+	logger, _ := pageLogInit(ctx, "nrdbms", "list databases in instance", start)
+
+	params := models.DataTask{}
+	if !getDataWithReBind(logger, start, ctx, &params) {
+		return ctx.JSON(http.StatusInternalServerError, map[string]string{"error": "invalid request body"})
+	}
+
+	NRDBC, err := auth.GetNRDMS(&params.TargetPoint)
+	if err != nil {
+		logger.Error().Err(err).Msg("NRDBController creation failed")
+		return ctx.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	dbList, err := NRDBC.ListDatabases()
+	if err != nil {
+		logger.Error().Err(err).Msg("ListDatabases failed")
+		return ctx.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	jobEnd(logger, "Successfully listed databases", start)
+	return ctx.JSON(http.StatusOK, dbList)
+}
+
 // NRDBMSCreateTableHandler godoc
 //
 //	@ID			NRDBMSCreateTableHandler
@@ -61,7 +104,7 @@ func NRDBMSListTablesHandler(ctx echo.Context) error {
 //	@Success		200			{object}	models.BasicResponse	"Table created successfully"
 //	@Failure		400			{object}	models.BasicResponse	"Bad Request — tableName is empty"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/db/nrdbms [put]
+//	@Router			/db/nrdbms/tables [put]
 func NRDBMSCreateTableHandler(ctx echo.Context) error {
 	start := time.Now()
 
@@ -104,7 +147,7 @@ func NRDBMSCreateTableHandler(ctx echo.Context) error {
 //	@Success		200			{object}	models.NRDBTableGetResponse	"Table data exported successfully"
 //	@Failure		400			{object}	models.NRDBTableGetResponse	"Bad Request — tableName is empty"
 //	@Failure		500			{object}	models.NRDBTableGetResponse	"Internal Server Error"
-//	@Router			/db/nrdbms/data [post]
+//	@Router			/db/nrdbms/tables/data [post]
 func NRDBMSGetTableHandler(ctx echo.Context) error {
 	start := time.Now()
 
@@ -148,7 +191,7 @@ func NRDBMSGetTableHandler(ctx echo.Context) error {
 //	@Success		200			{object}	models.BasicResponse	"Table deleted successfully"
 //	@Failure		400			{object}	models.BasicResponse	"Bad Request — tableName is empty"
 //	@Failure		500			{object}	models.BasicResponse	"Internal Server Error"
-//	@Router			/db/nrdbms [delete]
+//	@Router			/db/nrdbms/tables [delete]
 func NRDBMSDeleteTableHandler(ctx echo.Context) error {
 	start := time.Now()
 
@@ -176,4 +219,224 @@ func NRDBMSDeleteTableHandler(ctx echo.Context) error {
 
 	jobEnd(logger, "Successfully deleted table: "+params.TableName, start)
 	return ctx.JSON(http.StatusOK, models.BasicResponse{Result: logstrings.String(), Error: nil})
+}
+
+// ListNRDBEngineVersionsHandler godoc
+//
+//	@ID			ListNRDBEngineVersionsHandler
+//	@Summary	List available NRDB engine versions
+//	@Description	Returns available NoSQL engine versions for the requested CSP and region.
+//	@Description	Alibaba: MongoDB versions (4.4, 5.0, 6.0, 7.0). GCP Firestore returns empty.
+//	@Tags			[NRDB Instance]
+//	@Accept			json
+//	@Produce		json
+//	@Param			RequestBody	body		models.NRDBEngineVersionsRequest	true	"Provider and region"
+//	@Success		200			{array}		models.NRDBEngineVersion			"Available engine versions"
+//	@Failure		400			{object}	map[string]string					"Invalid Request"
+//	@Failure		500			{object}	map[string]string					"Internal Server Error"
+//	@Router			/db/nrdbms/engine-versions [post]
+func ListNRDBEngineVersionsHandler(c echo.Context) error {
+	var req models.NRDBEngineVersionsRequest
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid request body"})
+	}
+	if req.Provider == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "provider is required"})
+	}
+	if req.Region == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "region is required"})
+	}
+
+	versions, err := nrdbinstance.ListEngineVersions(c.Request().Context(), req.Provider, req.Region)
+	if err != nil {
+		log.Error().Err(err).Str("provider", req.Provider).Str("region", req.Region).Msg("list NRDB engine versions failed")
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, versions)
+}
+
+// ListNRDBInstanceClassesHandler godoc
+//
+//	@ID			ListNRDBInstanceClassesHandler
+//	@Summary	List orderable NRDB instance classes
+//	@Description	Returns the instance classes orderable for the given engine version.
+//	@Description	Alibaba: MongoDB instance classes (e.g. dds.mongo.mid). GCP Firestore returns empty.
+//	@Tags			[NRDB Instance]
+//	@Accept			json
+//	@Produce		json
+//	@Param			RequestBody	body		models.NRDBInstanceClassRequest	true	"Provider, region, engineVersion"
+//	@Success		200			{array}		string							"Available instance class names"
+//	@Failure		400			{object}	map[string]string				"Invalid Request"
+//	@Failure		500			{object}	map[string]string				"Internal Server Error"
+//	@Router			/db/nrdbms/instance-class [post]
+func ListNRDBInstanceClassesHandler(c echo.Context) error {
+	var req models.NRDBInstanceClassRequest
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid request body"})
+	}
+	if req.Provider == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "provider is required"})
+	}
+	if req.Region == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "region is required"})
+	}
+	if req.EngineVersion == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "engineVersion is required"})
+	}
+
+	classes, err := nrdbinstance.ListInstanceClasses(c.Request().Context(), req.Provider, req.Region, req.EngineVersion)
+	if err != nil {
+		log.Error().Err(err).Str("provider", req.Provider).Str("engineVersion", req.EngineVersion).Msg("list NRDB instance classes failed")
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, classes)
+}
+
+// ListNRDBInstancesHandler godoc
+//
+//	@ID			ListNRDBInstancesHandler
+//	@Summary	List NRDB (NoSQL) instances for a given provider
+//	@Description	Returns managed NoSQL database instances for the requested CSP and region.
+//	@Description	GCP: Firestore Databases. Credentials are resolved by provider.
+//	@Tags			[NRDB Instance]
+//	@Accept			json
+//	@Produce		json
+//	@Param			RequestBody	body		models.NRDBInstanceListRequest	true	"Provider and region"
+//	@Success		200			{array}		models.NRDBInstance				"List of NRDB instances"
+//	@Failure		400			{object}	map[string]string				"Invalid Request"
+//	@Failure		500			{object}	map[string]string				"Internal Server Error"
+//	@Router			/db/nrdbms [post]
+func ListNRDBInstancesHandler(c echo.Context) error {
+	var req models.NRDBInstanceListRequest
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid request body"})
+	}
+	if req.Provider == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "provider is required"})
+	}
+	if req.Region == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "region is required"})
+	}
+
+	instances, err := nrdbinstance.ListInstances(c.Request().Context(), req.Provider, req.Region)
+	if err != nil {
+		log.Error().Err(err).Str("provider", req.Provider).Str("region", req.Region).Msg("list NRDB instances failed")
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, instances)
+}
+
+// CreateNRDBInstanceHandler godoc
+//
+//	@ID			CreateNRDBInstanceHandler
+//	@Summary	Create an NRDB (NoSQL) instance
+//	@Description	Provisions a new managed NoSQL database instance for the requested CSP.
+//	@Description	GCP: creates a Firestore Database. type defaults to "FIRESTORE_NATIVE" if omitted.
+//	@Tags			[NRDB Instance]
+//	@Accept			json
+//	@Produce		json
+//	@Param			RequestBody	body		models.NRDBInstanceCreateRequest	true	"Instance specification"
+//	@Success		200			{object}	models.NRDBInstance					"Created instance (status: creating)"
+//	@Failure		400			{object}	map[string]string					"Invalid Request"
+//	@Failure		500			{object}	map[string]string					"Internal Server Error"
+//	@Router			/db/nrdbms [put]
+func CreateNRDBInstanceHandler(c echo.Context) error {
+	var req models.NRDBInstanceCreateRequest
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid request body"})
+	}
+
+	log.Info().
+		Str("provider", req.Provider).
+		Str("region", req.Region).
+		Str("instanceId", req.InstanceID).
+		Str("engineVersion", req.EngineVersion).
+		Str("instanceClass", req.InstanceClass).
+		Int32("allocatedStorage", req.AllocatedStorage).
+		Str("masterUsername", req.MasterUsername).
+		Msg("CreateNRDBInstance request body")
+
+	if req.Provider == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "provider is required"})
+	}
+	if req.Region == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "region is required"})
+	}
+	if req.InstanceID == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "instanceId is required"})
+	}
+
+	if req.Provider == "alibaba" || req.Provider == "ncp" {
+		missing := map[string]string{
+			"engineVersion":  req.EngineVersion,
+			"instanceClass":  req.InstanceClass,
+			"masterUsername": req.MasterUsername,
+			"masterPassword": req.MasterPassword,
+		}
+		for field, val := range missing {
+			if val == "" {
+				return c.JSON(http.StatusBadRequest, map[string]string{"error": field + " is required"})
+			}
+		}
+		if req.AllocatedStorage <= 0 && req.Provider != "ncp" {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "allocatedStorage must be greater than 0"})
+		}
+	}
+
+	spec := nrdbinstancepkg.CreateSpec{
+		InstanceID:       req.InstanceID,
+		EngineVersion:    req.EngineVersion,
+		InstanceClass:    req.InstanceClass,
+		AllocatedStorage: req.AllocatedStorage,
+		MasterUsername:   req.MasterUsername,
+		MasterPassword:   req.MasterPassword,
+	}
+
+	instance, err := nrdbinstance.CreateInstance(c.Request().Context(), req.Provider, req.Region, spec)
+	if err != nil {
+		log.Error().Err(err).Str("provider", req.Provider).Str("instanceId", req.InstanceID).Msg("create NRDB instance failed")
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, instance)
+}
+
+// DeleteNRDBInstanceHandler godoc
+//
+//	@ID			DeleteNRDBInstanceHandler
+//	@Summary	Delete an NRDB (NoSQL) instance
+//	@Description	Deletes the NoSQL database instance identified by instanceId.
+//	@Tags			[NRDB Instance]
+//	@Accept			json
+//	@Produce		json
+//	@Param			RequestBody	body		models.NRDBInstanceDeleteRequest	true	"Provider, region, instanceId"
+//	@Success		200			{object}	models.NRDBInstance					"Deleted instance (status: deleting)"
+//	@Failure		400			{object}	map[string]string					"Invalid Request"
+//	@Failure		500			{object}	map[string]string					"Internal Server Error"
+//	@Router			/db/nrdbms [delete]
+func DeleteNRDBInstanceHandler(c echo.Context) error {
+	var req models.NRDBInstanceDeleteRequest
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid request body"})
+	}
+	if req.Provider == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "provider is required"})
+	}
+	if req.Region == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "region is required"})
+	}
+	if req.InstanceID == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "instanceId is required"})
+	}
+
+	instance, err := nrdbinstance.DeleteInstance(c.Request().Context(), req.Provider, req.Region, req.InstanceID)
+	if err != nil {
+		log.Error().Err(err).Str("provider", req.Provider).Str("instanceId", req.InstanceID).Msg("delete NRDB instance failed")
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, instance)
 }

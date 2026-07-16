@@ -16,6 +16,7 @@ func TestToDBInstances_MapsFields(t *testing.T) {
 			EngineVersion:        awssdk.String("8.0.35"),
 			DBInstanceStatus:     awssdk.String("available"),
 			DBInstanceClass:      awssdk.String("db.t3.micro"),
+			PubliclyAccessible:   awssdk.Bool(true),
 			Endpoint: &types.Endpoint{
 				Address: awssdk.String("my-db.abc123.ap-northeast-2.rds.amazonaws.com"),
 				Port:    awssdk.Int32(3306),
@@ -58,6 +59,27 @@ func TestToDBInstances_MapsFields(t *testing.T) {
 	}
 	if got.Region != "ap-northeast-2" {
 		t.Errorf("Region = %q, want ap-northeast-2", got.Region)
+	}
+}
+
+func TestToDBInstance_PrivateEndpointIsDash(t *testing.T) {
+	db := types.DBInstance{
+		DBInstanceIdentifier: awssdk.String("private-db"),
+		DBInstanceStatus:     awssdk.String("available"),
+		PubliclyAccessible:   awssdk.Bool(false),
+		Endpoint: &types.Endpoint{
+			Address: awssdk.String("private-db.abc123.ap-northeast-2.rds.amazonaws.com"),
+			Port:    awssdk.Int32(3306),
+		},
+	}
+
+	got := toDBInstance(db, "ap-northeast-2")
+
+	if got.Endpoint != "-" {
+		t.Errorf("Endpoint = %q, want \"-\" for private instance", got.Endpoint)
+	}
+	if got.Port != 3306 {
+		t.Errorf("Port = %d, want 3306", got.Port)
 	}
 }
 

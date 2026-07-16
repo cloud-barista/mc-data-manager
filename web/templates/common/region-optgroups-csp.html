@@ -1,0 +1,51 @@
+<!-- Object Storage 계열 화면용 region optgroup 공용 파셜 — 8사.
+     사용법: select 안에서 이 파일명으로 template 액션을 호출한다.
+     (주의: html/template은 HTML 주석 안의 액션도 실행하므로 여기에
+      사용 예시를 액션 문법 그대로 적으면 자기 자신을 무한 재귀 include한다)
+
+     scripts.js의 OBJECTSTORAGE_EXCLUDED_PROVIDERS는 azure/openstack만 제외하므로
+     나머지 8사는 모두 credential 목록에 뜬다 → optgroup도 8사 전부 있어야 한다.
+     (하나라도 빠지면 해당 provider 선택 시 리전 목록이 조용히 비어 선택 불가.
+      scripts.js의 optgroup 노출 로직이 `if (target)`이라 에러도 나지 않는다.)
+
+     사용처: gen-object-storage, back-backup, res-restore, mig-object-storage(src/tgt) -->
+<optgroup label="AWS regions" data-provider="aws" style="display:none;">
+    {{ range $index, $value := .AWSRegions }}
+    <option value="{{ $value }}">{{ $value }}</option>
+    {{ end }}
+</optgroup>
+<optgroup label="GCP regions" data-provider="gcp" style="display:none;">
+    {{ range $index, $value := .GCPRegions }}
+    <option value="{{ $value }}">{{ $value }}</option>
+    {{ end }}
+</optgroup>
+<optgroup label="NCP regions" data-provider="ncp" style="display:none;">
+    {{ range $index, $value := .NCPRegions }}
+    <option value="{{ $value }}">{{ $value }}</option>
+    {{ end }}
+</optgroup>
+<optgroup label="ALIBABA regions" data-provider="alibaba" style="display:none;">
+    {{ range $index, $value := .ALIBABARegions }}
+    <option value="{{ $value }}">{{ $value }}</option>
+    {{ end }}
+</optgroup>
+<optgroup label="IBM regions" data-provider="ibm" style="display:none;">
+    {{ range $index, $value := .IBMRegions }}
+    <option value="{{ $value }}">{{ $value }}</option>
+    {{ end }}
+</optgroup>
+<optgroup label="KT regions" data-provider="kt" style="display:none;">
+    {{ range $index, $value := .KTRegions }}
+    <option value="{{ $value }}">{{ $value }}</option>
+    {{ end }}
+</optgroup>
+<optgroup label="TENCENT regions" data-provider="tencent" style="display:none;">
+    {{ range $index, $value := .TencentRegions }}
+    <option value="{{ $value }}">{{ $value }}</option>
+    {{ end }}
+</optgroup>
+<optgroup label="NHN regions" data-provider="nhn" style="display:none;">
+    {{ range $index, $value := .NHNRegions }}
+    <option value="{{ $value }}">{{ $value }}</option>
+    {{ end }}
+</optgroup>

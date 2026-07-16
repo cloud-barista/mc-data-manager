@@ -8,10 +8,15 @@ import (
 	"fmt"
 	"strings"
 
+	"encoding/json"
+
 	"github.com/cloud-barista/mc-data-manager/config"
 	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/pkg/rdbinstance"
+	alibabaprovider "github.com/cloud-barista/mc-data-manager/pkg/rdbinstance/alibaba"
 	awsprovider "github.com/cloud-barista/mc-data-manager/pkg/rdbinstance/aws"
+	gcpprovider "github.com/cloud-barista/mc-data-manager/pkg/rdbinstance/gcp"
+	ncpprovider "github.com/cloud-barista/mc-data-manager/pkg/rdbinstance/ncp"
 )
 
 // providerFor selects and constructs the provider implementation for the given
@@ -24,8 +29,28 @@ func providerFor(provider string, creds interface{}, region string) (rdbinstance
 			return nil, fmt.Errorf("invalid credentials for aws: expected AWSCredentials")
 		}
 		return awsprovider.New(awsc.AccessKey, awsc.SecretKey, region)
-	case "gcp", "ncp", "alibaba":
-		return nil, fmt.Errorf("provider %q is not implemented yet", strings.ToLower(provider))
+	case "alibaba":
+		alic, ok := creds.(models.AlibabaCredentials)
+		if !ok {
+			return nil, fmt.Errorf("invalid credentials for alibaba: expected AlibabaCredentials")
+		}
+		return alibabaprovider.New(alic.AccessKey, alic.SecretKey, region)
+	case "gcp":
+		gcpc, ok := creds.(models.GCPCredentials)
+		if !ok {
+			return nil, fmt.Errorf("invalid credentials for gcp: expected GCPCredentials")
+		}
+		credJSON, err := json.Marshal(gcpc)
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal GCP credentials: %w", err)
+		}
+		return gcpprovider.New(credJSON, gcpc.ProjectID, region)
+	case "ncp":
+		ncpc, ok := creds.(models.NCPCredentials)
+		if !ok {
+			return nil, fmt.Errorf("invalid credentials for ncp: expected NCPCredentials")
+		}
+		return ncpprovider.New(ncpc.AccessKey, ncpc.SecretKey, region)
 	default:
 		return nil, fmt.Errorf("unsupported provider: %s", provider)
 	}

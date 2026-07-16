@@ -40,6 +40,13 @@ var spiderKeyMap = map[string]map[string]string{
 		"NCLOUD_ACCESS_KEY": "ClientId",
 		"NCLOUD_SECRET_KEY": "ClientSecret",
 	},
+	"nhn": { // NHN has no Spider format, so map keys to themselves
+		"NHN_USERNAME":          "NHN_USERNAME",
+		"NHN_PASSWORD":          "NHN_PASSWORD",
+		"NHN_TENANT_ID":         "NHN_TENANT_ID",
+		"NHN_DOMAIN_NAME":       "NHN_DOMAIN_NAME",
+		"NHN_IDENTITY_ENDPOINT": "NHN_IDENTITY_ENDPOINT",
+	},
 	"gcp": {
 		"private_key":  "PrivateKey",
 		"project_id":   "ProjectID",
@@ -102,6 +109,14 @@ func (cred *CredentialManager) LoadCredentialsByProvider(ctx context.Context, pr
 		return models.NCPCredentials{
 			AccessKey: getString(data, p, "NCLOUD_ACCESS_KEY"),
 			SecretKey: getString(data, p, "NCLOUD_SECRET_KEY"),
+		}, nil
+	case "nhn":
+		return models.NHNCredentials{
+			Username:         getString(data, p, "NHN_USERNAME"),
+			Password:         getString(data, p, "NHN_PASSWORD"),
+			TenantID:         getString(data, p, "NHN_TENANT_ID"),
+			DomainName:       getString(data, p, "NHN_DOMAIN_NAME"),
+			IdentityEndpoint: getString(data, p, "NHN_IDENTITY_ENDPOINT"),
 		}, nil
 	case "gcp":
 		// OpenBao stores the private key with literal "\n" — convert to actual newlines.

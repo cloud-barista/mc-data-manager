@@ -45,58 +45,53 @@
                         <div class="form-floating">
                             <select class="form-select form-select-sm rounded-end" id="sourceRegionSelect" name="sourcePoint[region]">
                                 <option value="none" selected> - </option>
-                                <optgroup label="AWS regions" data-provider="aws" style="display: none;">
-                                    {{ range $index, $value := .AWSRegions }}
-                                        <option value="{{ $value }}">{{ $value }}</option>
-                                    {{ end }}
-                                </optgroup>
-                                <optgroup label="GCP regions" data-provider="gcp" style="display: none;">
-                                    {{ range $index, $value := .GCPRegions }}
-                                        <option value="{{ $value }}">{{ $value }}</option>
-                                    {{ end }}
-                                </optgroup>
-                                <optgroup label="NCP regions" data-provider="ncp" style="display: none;">
-                                    {{ range $index, $value := .NCPRegions }}
-                                        <option value="{{ $value }}">{{ $value }}</option>
-                                    {{ end }}
-                                </optgroup>
-                                <optgroup label="ALIBABA regions" data-provider="alibaba" style="display: none;">
-                                    {{ range $index, $value := .ALIBABARegions }}
-                                        <option value="{{ $value }}">{{ $value }}</option>
-                                    {{ end }}
-                                </optgroup>
-                                <optgroup label="IBM regions" data-provider="ibm" style="display: none;">
-                                    {{ range $index, $value := .IBMRegions }}
-                                        <option value="{{ $value }}">{{ $value }}</option>
-                                    {{ end }}
-                                </optgroup>
-                                <optgroup label="KT regions" data-provider="kt" style="display: none;">
-                                    {{ range $index, $value := .KTRegions }}
-                                        <option value="{{ $value }}">{{ $value }}</option>
-                                    {{ end }}
-                                </optgroup>
-                                <optgroup label="TENCENT regions" data-provider="tencent" style="display: none;">
-                                    {{ range $index, $value := .TencentRegions }}
-                                        <option value="{{ $value }}">{{ $value }}</option>
-                                    {{ end }}
-                                </optgroup>
+                                {{ template "region-optgroups-csp.html" . }}
                             </select>
                             <label for="sourceRegionSelect">Select Region</label>
                         </div>
                     </div>
-                    <div class="input-group mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted small fw-semibold">Bucket List</span>
+                        <div class="d-flex gap-2 align-items-center">
+                            <div class="input-group input-group-sm" style="width:200px;">
+                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control" id="src-bkt-search" placeholder="Search by name">
+                            </div>
+                            <button type="button" class="btn btn-danger btn-sm" id="src-bkt-deleteInstanceBtn" disabled>
+                                <i class="bi bi-trash3 me-1"></i>Delete
+                            </button>
+                            <button type="button" class="btn btn-primary btn-sm" id="src-bkt-createBtn" disabled>
+                                <i class="bi bi-plus-lg me-1"></i>Bucket
+                            </button>
+                        </div>
+                    </div>
+                    <table class="table table-bordered table-sm mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width:36px;"></th>
+                                <th>Resource ID</th>
+                                <th>Name</th>
+                                <th>Region</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th style="width:76px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="src-bkt-body">
+                            <tr><td colspan="7" class="text-center text-muted small py-3">Select a credential to list buckets</td></tr>
+                        </tbody>
+                    </table>
+                    <div id="src-bkt-pagination" class="mt-2"></div>
+                    <div class="input-group mt-3">
                         <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
                         <div class="form-floating">
-                            <!-- <input type="text" class="form-control rounded-end" id="mig-aws-bucket" name="sourcePoint[bucket]" placeholder="Bucket" required> -->
-                            <select class="form-select form-select-sm rounded-end" id="sourceBucket" name="sourcePoint[bucket]">
-                                <option value="-" selected>-</option>
+                            <select class="form-select rounded-end" id="sourceBucket" name="sourcePoint[bucket]">
+                                <option value="">- Select Bucket -</option>
                             </select>
-                            <label for="sourceBucket">Bucket</label>
+                            <label for="sourceBucket">Source Bucket</label>
                         </div>
-                        <button type="button" class="btn btn-primary rounded-3 ms-2" id="sourceBtn">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </button>
-                    </div> 
+                    </div>
+                    <div class="text-muted small ps-2 mt-1 mb-2">Click a bucket in the list or choose one from the dropdown.</div>
                     {{ template "filter.html" . }}
                 </div>
                 <div class="card rounded-3 mb-3 p-3">
@@ -121,264 +116,84 @@
                             <div class="form-floating">
                                 <select class="form-select form-select-sm rounded-end" id="targetRegionSelect" name="targetPoint[region]">
                                     <option value="none" selected> - </option>
-                                    <optgroup label="AWS regions" data-provider="aws" style="display: none;">
-                                        {{ range $index, $value := .AWSRegions }}
-                                            <option value="{{ $value }}">{{ $value }}</option>
-                                        {{ end }}
-                                    </optgroup>
-                                    <optgroup label="GCP regions" data-provider="gcp" style="display: none;">
-                                        {{ range $index, $value := .GCPRegions }}
-                                            <option value="{{ $value }}">{{ $value }}</option>
-                                        {{ end }}
-                                    </optgroup>
-                                    <optgroup label="NCP regions" data-provider="ncp" style="display: none;">
-                                        {{ range $index, $value := .NCPRegions }}
-                                            <option value="{{ $value }}">{{ $value }}</option>
-                                        {{ end }}
-                                    </optgroup>
-                                    <optgroup label="ALIBABA regions" data-provider="alibaba" style="display: none;">
-                                        {{ range $index, $value := .ALIBABARegions }}
-                                            <option value="{{ $value }}">{{ $value }}</option>
-                                        {{ end }}
-                                    </optgroup>
-                                    <optgroup label="IBM regions" data-provider="ibm" style="display: none;">
-                                        {{ range $index, $value := .IBMRegions }}
-                                            <option value="{{ $value }}">{{ $value }}</option>
-                                        {{ end }}
-                                    </optgroup>
-                                    <optgroup label="KT regions" data-provider="kt" style="display: none;">
-                                        {{ range $index, $value := .KTRegions }}
-                                            <option value="{{ $value }}">{{ $value }}</option>
-                                        {{ end }}
-                                    </optgroup>
-                                    <optgroup label="TENCENT regions" data-provider="tencent" style="display: none;">
-                                        {{ range $index, $value := .TencentRegions }}
-                                            <option value="{{ $value }}">{{ $value }}</option>
-                                        {{ end }}
-                                    </optgroup>
+                                    {{ template "region-optgroups-csp.html" . }}
                                 </select>
                                 <label for="targetRegionSelect">Select Region</label>
                             </div>
                         </div>
-                        <div class="input-group">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted small fw-semibold">Bucket List</span>
+                            <div class="d-flex gap-2 align-items-center">
+                                <div class="input-group input-group-sm" style="width:200px;">
+                                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                    <input type="text" class="form-control" id="tgt-bkt-search" placeholder="Search by name">
+                                </div>
+                                <button type="button" class="btn btn-danger btn-sm" id="tgt-bkt-deleteInstanceBtn" disabled>
+                                    <i class="bi bi-trash3 me-1"></i>Delete
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm" id="tgt-bkt-createBtn" disabled>
+                                    <i class="bi bi-plus-lg me-1"></i>Bucket
+                                </button>
+                            </div>
+                        </div>
+                        <table class="table table-bordered table-sm mb-0">
+                            <thead>
+                                <tr>
+                                    <th style="width:36px;"></th>
+                                    <th>Resource ID</th>
+                                    <th>Name</th>
+                                    <th>Region</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th style="width:76px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tgt-bkt-body">
+                                <tr><td colspan="7" class="text-center text-muted small py-3">Select a credential to list buckets</td></tr>
+                            </tbody>
+                        </table>
+                        <div id="tgt-bkt-pagination" class="mt-2"></div>
+                        <div class="input-group mt-3">
                             <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
                             <div class="form-floating">
-                                <select class="form-select form-select-sm rounded-end" id="targetBucket" name="targetPoint[bucket]">
-                                    <option value="-" selected>-</option>
+                                <select class="form-select rounded-end" id="targetBucket" name="targetPoint[bucket]">
+                                    <option value="">- Select Bucket -</option>
                                 </select>
-                                <label for="targetBucket">Bucket</label>
-                            </div>
-                            <button type="button" class="btn btn-primary rounded-3 ms-2" id="targetBtn">
-                                <i class="fa-solid fa-magnifying-glass"></i>
-                            </button>
-                        </div>
-                        <div class="input-group mt-3" id="targetNewBucket" style="display: none;">
-                            <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
-                            <div class="form-floating">
-                                <input type="text" class="form-control rounded-end" id="newBucket" name="targetPoint[bucket]" placeholder="Bucket">
-                                <label for="newBucket">New Bucket</label>
+                                <label for="targetBucket">Target Bucket</label>
                             </div>
                         </div>
+                        <div class="text-muted small ps-2 mt-1">Click a bucket in the list or choose one from the dropdown. Use + Bucket to create a new one.</div>
                     </div>
                 </div>
             <button type="submit" class="btn btn-primary rounded-3 float-end" id="submitBtn">Submit</button>
         </form>
     </div>
 </div>
+
+{{ template "bucket-panel.html" . }}
+
 <script>
-    const source = {
-        btn: document.getElementById("sourceBtn"),
-        cred: document.getElementById("sourceCredentialSelect"),
-        region: document.getElementById("sourceRegionSelect"),
-        bucket: document.getElementById("sourceBucket"),
-        provider: document.getElementById("sourcePoint[provider]"),
-        endpoint: document.getElementById("sourcePoint[endpoint]")
-    };
-    const target = {
-        btn: document.getElementById("targetBtn"),
-        cred: document.getElementById("targetCredentialSelect"),
-        region: document.getElementById("targetRegionSelect"),
-        bucket: document.getElementById("targetBucket"),
-        provider: document.getElementById("targetPoint[provider]"),
-        endpoint: document.getElementById("targetPoint[endpoint]")
-    };
-    const bucketInput = document.getElementById("newBucket");
-
-    target.bucket.addEventListener("change", () => {
-        toggleNewBucket()
-    })
-
-    source.cred.addEventListener("change", () => {
-        console.log("credential changed")
-        resetBuckets("source", false);
-    })
-
-    target.cred.addEventListener("change", () => {
-        console.log("credential changed")
-        const cred = target.cred.value;
-        if (cred == "none" || !cred) {
-            resetBuckets("target", false);
-            toggleNewBucket()
-
-            return
-        }
-        resetBuckets("target", true)
-        toggleNewBucket()
-    })
-
-    source.region.addEventListener("change", () => {
-        console.log("region changed")
-        resetBuckets("source", false);
-    })
-
-    target.region.addEventListener("change", () => {
-        console.log("region changed")
-        const region = target.region.value;
-        if (region == "none" || !region) {
-            resetBuckets("target", false);
-            toggleNewBucket()
-
-            return
-        }
-        resetBuckets("target", true)
-        toggleNewBucket()
-    })
-
-    source.btn.addEventListener("click", () => {
-        if (source.region.value == "none" || !source.region.value) {
-            return;
-        }
-        source.btn.disabled = true;
-        source.btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;';
-
-        fetchBucketList(source.cred.value, source.region.value, source.provider.value, source.endpoint.value)
-            .then(json => {
-                source.bucket.replaceChildren();
-                
-                if(json.objectStorage.length > 0) {
-                    json.objectStorage.forEach(optionData => {
-                        const option = document.createElement("option");
-                        option.value = optionData.name;
-                        option.textContent = optionData.name;
-                        source.bucket.appendChild(option);
-                    });
-                } else {
-                    const option = document.createElement("option");
-                    option.value = "none";
-                    option.textContent = "no buckets found";
-                    source.bucket.appendChild(option);
-                }
-            })
-            .catch(reason => {
-                console.log(reason);
-                alert(reason);
-            })
-            .finally(() => {
-                source.btn.disabled = false;
-                source.btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i>';
-            })
+document.addEventListener('DOMContentLoaded', () => {
+    // 버킷 목록/탐색/삭제는 scripts.js의 BucketPanel 공용 컴포넌트 사용
+    BucketPanel.init({
+        prefix: 'src-bkt',
+        cred: document.getElementById('sourceCredentialSelect'),
+        region: document.getElementById('sourceRegionSelect'),
+        provider: document.getElementById('sourcePoint[provider]'),
+        endpoint: document.getElementById('sourcePoint[endpoint]'),
+        bucketInput: document.getElementById('sourceBucket'),
+        deleteBtn: document.getElementById('src-bkt-deleteInstanceBtn'),
+        createBtn: document.getElementById('src-bkt-createBtn'),
     });
-
-    target.btn.addEventListener("click", () => {
-        if (target.region.value == "none" || !target.region.value) {
-            return;
-        }
-        target.btn.disabled = true;
-        target.btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;';
-
-        fetchBucketList(target.cred.value, target.region.value, target.provider.value, target.endpoint.value)
-            .then(json => {
-                resetBuckets("target", true)
-
-                json.objectStorage.forEach(optionData => {
-                    const option = document.createElement("option");
-                    option.value = optionData.name;
-                    option.textContent = optionData.name;
-                    target.bucket.appendChild(option);
-                });
-            })
-            .catch(reason => {
-                console.log(reason);
-                alert(reason);
-            })
-            .finally(() => {
-                target.btn.disabled = false;
-                target.btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i>';
-                toggleNewBucket()
-            })
+    BucketPanel.init({
+        prefix: 'tgt-bkt',
+        cred: document.getElementById('targetCredentialSelect'),
+        region: document.getElementById('targetRegionSelect'),
+        provider: document.getElementById('targetPoint[provider]'),
+        endpoint: document.getElementById('targetPoint[endpoint]'),
+        bucketInput: document.getElementById('targetBucket'),
+        deleteBtn: document.getElementById('tgt-bkt-deleteInstanceBtn'),
+        createBtn: document.getElementById('tgt-bkt-createBtn'),
     });
-
-    function resetBuckets(targetSelect, hardReset) {
-        let option = document.createElement("option");
-        if(!hardReset) {
-            option.value = "none";
-            option.textContent = "-";
-        } else {
-            option.value = "new";
-            option.textContent = "create new bucket";
-        }
-        
-        if(targetSelect == "source") {
-            source.bucket.replaceChildren(option)
-        } else {
-            target.bucket.replaceChildren(option);
-        }
-    }
-
-    function toggleNewBucket() {
-        const newBucketDiv = document.getElementById("targetNewBucket")
-        if (target.bucket.value == "new") {
-            newBucketDiv.style.display = ""
-            bucketInput.value = ""
-        } else {
-            newBucketDiv.style.display = "none"
-            bucketInput.value = target.bucket.value
-        }
-    }
-
-    function fetchBucketList(credentialId, region, provider, endpoint) {
-        let url = "/objectstorage/buckets";
-        if (provider) {
-            url += `?filterKey=providerName&filterVal=${encodeURIComponent(provider)}`;
-        }
-        const jsonData = {
-            "targetPoint": {
-                "credentialId": parseInt(credentialId),
-                "region": region,
-                "provider": provider
-            }
-        }
-        if (provider === "ncp") {
-            jsonData.targetPoint.endpoint = endpoint || "https://kr.object.ncloudstorage.com";
-        }
-        const req = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(jsonData)
-        }
-
-        return fetch(url, req)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        
-                        return response.json();
-                    });
-    }
-
-    // ["Path", "Texts"].forEach(a => {
-    //     document.getElementById("mig-filter-" + a.toLowerCase() + "-exclude").addEventListener("change", (e) => {
-    //         const pathLabel = document.getElementById(a.toLowerCase() + "Label");
-
-    //         if(e.target.checked) {
-    //             pathLabel.innerHTML = a + " To Exclude"
-    //         } else {            
-    //             pathLabel.innerHTML = a + " To Include"
-    //         }
-    //     })
-    // })
-
+});
 </script>

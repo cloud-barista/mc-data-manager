@@ -74,6 +74,18 @@ func CreateRDBInstanceHandler(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid request body"})
 	}
 
+	log.Info().
+		Str("provider", req.Provider).
+		Str("region", req.Region).
+		Str("instanceId", req.InstanceID).
+		Str("instanceClass", req.InstanceClass).
+		Str("engine", req.Engine).
+		Str("engineVersion", req.EngineVersion).
+		Str("masterUsername", req.MasterUsername).
+		Str("masterPassword", req.MasterPassword).
+		Int32("allocatedStorage", req.AllocatedStorage).
+		Msg("CreateRDBInstance request body")
+
 	missing := map[string]string{
 		"provider":       req.Provider,
 		"region":         req.Region,
@@ -89,7 +101,7 @@ func CreateRDBInstanceHandler(c echo.Context) error {
 			return c.JSON(http.StatusBadRequest, map[string]string{"error": field + " is required"})
 		}
 	}
-	if req.AllocatedStorage <= 0 {
+	if req.AllocatedStorage <= 0 && req.Provider != "ncp" {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "allocatedStorage must be greater than 0"})
 	}
 	if !supportedCreateEngines[strings.ToLower(req.Engine)] {
@@ -99,7 +111,7 @@ func CreateRDBInstanceHandler(c echo.Context) error {
 	spec := rdbinstancepkg.CreateSpec{
 		InstanceID:       req.InstanceID,
 		InstanceClass:    req.InstanceClass,
-		Engine:           strings.ToLower(req.Engine),
+		Engine:           req.Engine,
 		EngineVersion:    req.EngineVersion,
 		MasterUsername:   req.MasterUsername,
 		MasterPassword:   req.MasterPassword,

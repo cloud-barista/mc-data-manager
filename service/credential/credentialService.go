@@ -67,7 +67,7 @@ func (c *CredentialService) CreateCredential(req models.CredentialCreateRequest)
 		return nil, err
 	}
 
-	if slices.Contains([]string{"aws", "ncp", "gcp", "alibaba", "ibm", "kt", "tencent"}, req.CspType) {
+	if slices.Contains([]string{"aws", "ncp", "nhn", "gcp", "alibaba", "ibm", "kt", "tencent"}, req.CspType) {
 		terr := createTumblebugCredential(req)
 		if terr != nil {
 			return nil, terr
@@ -188,6 +188,19 @@ func getCredentialKeyValues(req models.CredentialCreateRequest) (map[string]stri
 		return map[string]string{
 			"ncloud_access_key": ncp.AccessKey,
 			"ncloud_secret_key": ncp.SecretKey,
+		}, nil
+	case "nhn":
+		var nhn models.NHNCredentials
+		if err := json.Unmarshal(req.CredentialJson, &nhn); err != nil {
+			return nil, fmt.Errorf("invalid nhn credential json: %w", err)
+		}
+
+		return map[string]string{
+			"IdentityEndpoint": nhn.IdentityEndpoint,
+			"Username":         nhn.Username,
+			"Password":         nhn.Password,
+			"DomainName":       nhn.DomainName,
+			"TenantId":         nhn.TenantID,
 		}, nil
 	case "gcp":
 		var gcp models.GCPCredentials

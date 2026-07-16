@@ -56,6 +56,22 @@ func (a *AlibabaMongoDBMS) ListTables() ([]string, error) {
 	return a.db.ListCollectionNames(a.ctx, bson.D{})
 }
 
+// list database
+func (a *AlibabaMongoDBMS) ListDatabases() ([]string, error) {
+	names, err := a.client.ListDatabaseNames(a.ctx, bson.D{})
+	if err != nil {
+		return names, err
+	}
+
+	dbList := []string{}
+	for _, name := range names {
+		if name != "admin" && name != "config" && name != "local" {
+			dbList = append(dbList, name)
+		}
+	}
+	return dbList, nil
+}
+
 // delete table
 func (a *AlibabaMongoDBMS) DeleteTables(tableName string) error {
 	return a.client.Database(a.dbName).Collection(tableName).Drop(a.ctx)
@@ -74,13 +90,17 @@ func (a *AlibabaMongoDBMS) CreateTable(tableName string) error {
 
 // import table
 func (a *AlibabaMongoDBMS) ImportTable(tableName string, srcData *[]map[string]interface{}) error {
-	for _, data := range *srcData {
-		_, err := a.db.Collection(tableName).InsertOne(a.ctx, data)
-		if err != nil {
-			return err
-		}
+	if len(*srcData) == 0 {
+		return nil
 	}
-	return nil
+
+	docs := make([]interface{}, len(*srcData))
+	for i, data := range *srcData {
+		docs[i] = data
+	}
+
+	_, err := a.db.Collection(tableName).InsertMany(a.ctx, docs)
+	return err
 }
 
 // export table

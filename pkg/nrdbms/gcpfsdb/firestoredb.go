@@ -65,6 +65,12 @@ func (f *FirestoreDBMS) ListTables() ([]string, error) {
 	return tableList, nil
 }
 
+// Firestore has a single database per connection (selected via
+// DatabaseID at connection time), so this returns an empty list.
+func (f *FirestoreDBMS) ListDatabases() ([]string, error) {
+	return []string{}, nil
+}
+
 // delete table
 func (f *FirestoreDBMS) DeleteTables(tableName string) error {
 	iter := f.client.Collection(tableName).Documents(f.ctx)
@@ -93,9 +99,20 @@ func (f *FirestoreDBMS) CreateTable(tableName string) error {
 // import table
 func (f *FirestoreDBMS) ImportTable(tableName string, srcData *[]map[string]interface{}) error {
 	collRef := f.client.Collection(tableName)
+
+	bw := f.client.BulkWriter(f.ctx)
+	jobs := make([]*firestore.BulkWriterJob, 0, len(*srcData))
 	for _, dd := range *srcData {
-		_, err := collRef.NewDoc().Set(f.ctx, dd)
+		job, err := bw.Create(collRef.NewDoc(), dd)
 		if err != nil {
+			return err
+		}
+		jobs = append(jobs, job)
+	}
+	bw.End()
+
+	for _, job := range jobs {
+		if _, err := job.Results(); err != nil {
 			return err
 		}
 	}

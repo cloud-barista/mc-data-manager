@@ -168,7 +168,11 @@ func toDBInstance(db types.DBInstance, region string) models.DBInstance {
 		Region:        region,
 	}
 	if db.Endpoint != nil {
-		inst.Endpoint = awssdk.ToString(db.Endpoint.Address)
+		if awssdk.ToBool(db.PubliclyAccessible) {
+			inst.Endpoint = awssdk.ToString(db.Endpoint.Address)
+		} else {
+			inst.Endpoint = "-"
+		}
 		inst.Port = awssdk.ToInt32(db.Endpoint.Port)
 	}
 	return inst

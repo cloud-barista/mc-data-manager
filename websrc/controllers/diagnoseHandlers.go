@@ -75,6 +75,40 @@ func (d *DiagnoseHandler) PostSysbenchDiagnose(ctx echo.Context) error {
 		})
 	}
 
+	rdb, err := auth.GetRDMS(&models.ProviderConfig{
+		MySQLParams: models.MySQLParams{
+			Host:     params.Host,
+			Port:     params.Port,
+			User:     params.User,
+			Password: params.Password,
+		},
+	})
+	if err != nil {
+		errStr := "Invalid request data"
+		logger.Error().Msg(errStr)
+		return ctx.JSON(http.StatusBadRequest, models.SysbenchResponse{
+			Result: logstrings.String(),
+			Error:  &errStr,
+		})
+	}
+
+	// Run the benchmark against a dedicated, throwaway database so a bad
+	// databaseName can't fail sysbench and can't touch real data.
+	dbName := fmt.Sprintf("sysbench_diag_%d", time.Now().UnixNano())
+	if err := rdb.Put(fmt.Sprintf("CREATE DATABASE %s", dbName)); err != nil {
+		errStr := "failed to create temporary database: " + err.Error()
+		logger.Error().Msg(errStr)
+		return ctx.JSON(http.StatusBadRequest, models.SysbenchResponse{
+			Result: logstrings.String(),
+			Error:  &errStr,
+		})
+	}
+	defer func() {
+		if err := rdb.DeleteDB(dbName); err != nil {
+			logger.Error().Err(err).Msgf("failed to drop temporary database: %s", dbName)
+		}
+	}()
+
 	_, prepareErr := sysbench.RunSysbench(ctx.Request().Context(),
 		"mysql",
 		false,
@@ -84,7 +118,7 @@ func (d *DiagnoseHandler) PostSysbenchDiagnose(ctx echo.Context) error {
 		"--mysql-port="+params.Port,
 		"--mysql-user="+params.User,
 		"--mysql-password="+params.Password,
-		"--mysql-db="+params.DatabaseName,
+		"--mysql-db="+dbName,
 		fmt.Sprintf("--tables=%d", params.TableCount),
 		fmt.Sprintf("--table-size=%d", params.TableSize),
 		fmt.Sprintf("--threads=%d", params.ThreadsCount),
@@ -110,7 +144,7 @@ func (d *DiagnoseHandler) PostSysbenchDiagnose(ctx echo.Context) error {
 		"--mysql-port="+params.Port,
 		"--mysql-user="+params.User,
 		"--mysql-password="+params.Password,
-		"--mysql-db="+params.DatabaseName,
+		"--mysql-db="+dbName,
 		fmt.Sprintf("--tables=%d", params.TableCount),
 		fmt.Sprintf("--table-size=%d", params.TableSize),
 		fmt.Sprintf("--threads=%d", params.ThreadsCount),
@@ -119,31 +153,6 @@ func (d *DiagnoseHandler) PostSysbenchDiagnose(ctx echo.Context) error {
 	)
 	if err != nil {
 		errStr := err.Error()
-		logger.Error().Msg(errStr)
-		return ctx.JSON(http.StatusBadRequest, models.SysbenchResponse{
-			Result: logstrings.String(),
-			Error:  &errStr,
-		})
-	}
-
-	_, cleanErr := sysbench.RunSysbench(ctx.Request().Context(),
-		"mysql",
-		false,
-		"oltp_read_write",
-		"--db-driver=mysql",
-		"--mysql-host="+params.Host,
-		"--mysql-port="+params.Port,
-		"--mysql-user="+params.User,
-		"--mysql-password="+params.Password,
-		"--mysql-db="+params.DatabaseName,
-		fmt.Sprintf("--tables=%d", params.TableCount),
-		fmt.Sprintf("--table-size=%d", params.TableSize),
-		fmt.Sprintf("--threads=%d", params.ThreadsCount),
-		fmt.Sprintf("--time=%d", params.Time),
-		"cleanup",
-	)
-	if cleanErr != nil {
-		errStr := cleanErr.Error()
 		logger.Error().Msg(errStr)
 		return ctx.JSON(http.StatusBadRequest, models.SysbenchResponse{
 			Result: logstrings.String(),

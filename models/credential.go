@@ -71,6 +71,14 @@ func (cr *CredentialCreateRequest) GetCredential() (string, error) {
 
 		b, _ := json.Marshal(ncp)
 		return string(b), nil
+	case "nhn":
+		var nhn NHNCredentials
+		if err := json.Unmarshal(cr.CredentialJson, &nhn); err != nil {
+			return "", fmt.Errorf("invalid nhn credential json: %w", err)
+		}
+
+		b, _ := json.Marshal(nhn)
+		return string(b), nil
 	case "gcp":
 		var gcp GCPCredentials
 		if err := json.Unmarshal(cr.CredentialJson, &gcp); err != nil {

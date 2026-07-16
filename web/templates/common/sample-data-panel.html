@@ -1,0 +1,73 @@
+<!-- SamplePanel 공용 파셜: 샘플데이터 생성 Offcanvas (SQL·NoSQL).
+     scripts.js의 SamplePanel 모듈과 짝을 이룬다. 페이지당 한 번만 include.
+     ID는 전부 nsp- 네임스페이스 (gen-mysql/gen-no-sql의 자체 구현과 충돌 방지) -->
+
+<div class="offcanvas offcanvas-end" id="nspOffcanvas" tabindex="-1" style="width: min(500px, 100vw);">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title fw-semibold">
+            <i class="bi bi-plus-circle me-2 text-primary"></i>Create Sample Data
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="alert alert-secondary py-2 px-3 mb-3 small">
+            <i class="bi bi-info-circle me-1"></i>
+            Target: <span id="nsp-context" class="fw-semibold">—</span>
+        </div>
+
+        <!-- NoSQL GCP(Firestore): Database ID = Instance ID (읽기 전용) -->
+        <div class="input-group mb-3 d-none" id="nsp-gcp-group">
+            <span class="input-group-text rounded-start"><i class="bi bi-database-fill"></i></span>
+            <div class="form-floating">
+                <input type="text" class="form-control rounded-end bg-light" id="nsp-databaseId" placeholder="Database ID" autocomplete="off" readonly>
+                <label for="nsp-databaseId">Database ID (= Instance ID)</label>
+            </div>
+        </div>
+
+        <!-- NoSQL AWS(DynamoDB): 서버리스 — Instance ID만 입력 (gen-no-sql과 동일) -->
+        <div class="d-none" id="nsp-aws-group">
+            <div class="input-group mb-3">
+                <span class="input-group-text rounded-start"><i class="bi bi-hdd-stack-fill"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control rounded-end" id="nsp-instanceId" placeholder="Instance ID" autocomplete="off">
+                    <label for="nsp-instanceId">Instance ID</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 계정 입력: SQL 전체 + NoSQL MongoDB(NCP/Alibaba) -->
+        <div id="nsp-account-fields">
+            <div class="input-group mb-1">
+                <span class="input-group-text rounded-start"><i class="bi bi-person-fill"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control rounded-end" id="nsp-username" placeholder="Username" autocomplete="username">
+                    <label for="nsp-username">Username</label>
+                </div>
+            </div>
+            <div id="nsp-username-help" class="form-text ps-2 mb-1"></div>
+            <div id="nsp-username-error" class="text-danger small ps-2 d-none mb-2"></div>
+            <div class="input-group mb-3">
+                <span class="input-group-text rounded-start"><i class="bi bi-lock-fill"></i></span>
+                <div class="form-floating">
+                    <input type="password" class="form-control rounded-end" id="nsp-password" placeholder="Password">
+                    <label for="nsp-password">Password</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Database: NoSQL MongoDB 전용 — 생성할 Database 이름 직접 입력 (insert 시 자동 생성) -->
+        <div class="d-none" id="nsp-db-group">
+            <div class="input-group mb-3">
+                <span class="input-group-text rounded-start"><i class="bi bi-database-fill"></i></span>
+                <div class="form-floating">
+                    <input type="text" class="form-control rounded-end" id="nsp-database" placeholder="Database Name" autocomplete="off">
+                    <label for="nsp-database">Database Name</label>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="offcanvas-footer p-3 border-top">
+        <button type="button" class="btn btn-primary w-100" id="nsp-submitBtn" disabled>Submit</button>
+    </div>
+</div>

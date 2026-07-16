@@ -17,6 +17,7 @@ package nrdbc
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -24,6 +25,7 @@ import (
 
 type NRDBMS interface {
 	ListTables() ([]string, error)
+	ListDatabases() ([]string, error)
 	CreateTable(tableName string) error
 	DeleteTables(tableName string) error
 	ImportTable(tableName string, srcData *[]map[string]interface{}) error
@@ -64,6 +66,15 @@ func (nrdbc *NRDBController) ListTables() ([]string, error) {
 	return tableList, nil
 }
 
+// list database
+func (nrdbc *NRDBController) ListDatabases() ([]string, error) {
+	dbList, err := nrdbc.client.ListDatabases()
+	if err != nil {
+		return dbList, err
+	}
+	return dbList, nil
+}
+
 // create table
 func (nrdbc *NRDBController) CreateTable(tableName string) error {
 	err := nrdbc.client.CreateTable(tableName)
@@ -91,21 +102,19 @@ func (nrdbc *NRDBController) Put(tableName string, srcData *[]map[string]interfa
 		return err
 	}
 
-	isTable := false
-	for _, table := range tableList {
-		if table == tableName {
-			isTable = true
-			break
+	// 기존 테이블 overwirte
+	if slices.Contains(tableList, tableName) {
+		if err := nrdbc.client.DeleteTables(tableName); err != nil {
+			nrdbc.logWrite("Error", "DeleteTables error", err)
+			return err
 		}
 	}
 
-	if !isTable {
-		if err := nrdbc.client.CreateTable(tableName); err != nil {
-			nrdbc.logWrite("Error", "CreateTable error", err)
-			return err
-		}
-		nrdbc.logWrite("Info", fmt.Sprintf("Table creation successful: %s", tableName), nil)
+	if err := nrdbc.client.CreateTable(tableName); err != nil {
+		nrdbc.logWrite("Error", "CreateTable error", err)
+		return err
 	}
+	nrdbc.logWrite("Info", fmt.Sprintf("Table creation successful: %s", tableName), nil)
 
 	if err := nrdbc.client.ImportTable(tableName, srcData); err != nil {
 		nrdbc.logWrite("Error", "ImportTable error", err)

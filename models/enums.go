@@ -22,6 +22,7 @@ const (
 	AWS     Provider = "aws"
 	GCP     Provider = "gcp"
 	NCP     Provider = "ncp"
+	NHN     Provider = "nhn"
 	OPM     Provider = "on-premise"
 	ALIBABA Provider = "alibaba"
 	IBM     Provider = "ibm"

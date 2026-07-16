@@ -26,7 +26,6 @@ import (
 	"github.com/cloud-barista/mc-data-manager/config"
 	"github.com/cloud-barista/mc-data-manager/models"
 	"github.com/cloud-barista/mc-data-manager/pkg/utils"
-
 	credsvc "github.com/cloud-barista/mc-data-manager/service/credential"
 	"github.com/cloud-barista/mc-data-manager/service/task"
 	"github.com/cloud-barista/mc-data-manager/websrc/controllers"
@@ -56,10 +55,17 @@ type TemplateRenderer struct {
 	templates *template.Template
 }
 
+// parseTemplates loads page templates and shared partials (templates/common/).
+// 템플릿 이름은 base filename이라 include 구문({{ template "x.html" }})은 폴더와 무관하다.
+func parseTemplates() *template.Template {
+	return template.Must(template.Must(
+		template.ParseGlob("./web/templates/*.html")).ParseGlob("./web/templates/common/*.html"))
+}
+
 // Render renders a template document
 func (t *TemplateRenderer) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
 	// 핫 리로드: 매 요청마다 템플릿 재파싱 (프로덕션에서는 t.templates 사용)
-	tmpl := template.Must(template.ParseGlob("./web/templates/*.html"))
+	tmpl := parseTemplates()
 
 	// Add global methods if data is a map
 	if viewContext, isMap := data.(map[string]interface{}); isMap {
@@ -133,7 +139,7 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 	e.Static("/res", "./web")
 	e.File("/favicon.ico", "./web/assets/favicon.ico")
 	renderer := &TemplateRenderer{
-		templates: template.Must(template.ParseGlob("./web/templates/*.html")),
+		templates: parseTemplates(),
 	}
 	e.Renderer = renderer
 

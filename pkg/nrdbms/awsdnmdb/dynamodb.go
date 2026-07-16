@@ -17,6 +17,7 @@ package awsdnmdb
 
 import (
 	"context"
+	"fmt"
 	"math/rand"
 	"time"
 
@@ -25,6 +26,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/cloud-barista/mc-data-manager/models"
+	"golang.org/x/sync/errgroup"
 )
 
 func init() {
@@ -58,7 +60,7 @@ func New(client *dynamodb.Client, region string, opts ...DynamoDBOption) *Dynamo
 		ctx:              context.TODO(),
 		partitionKey:     aws.String("_id"),
 		sortKey:          &[]string{},
-		billingMode:      aws.String("PROVISIONED"),
+		billingMode:      aws.String("PAY_PER_REQUEST"),
 		deleteProtection: aws.Bool(false),
 		provisionedThroughput: &types.ProvisionedThroughput{
 			ReadCapacityUnits:  aws.Int64(5),
@@ -85,6 +87,12 @@ func (d *DynamoDBMS) ListTables() ([]string, error) {
 	return tables.TableNames, nil
 }
 
+// DynamoDB has no concept of multiple databases per instance, so this
+// returns an empty list.
+func (d *DynamoDBMS) ListDatabases() ([]string, error) {
+	return []string{}, nil
+}
+
 // Delete table
 func (d *DynamoDBMS) DeleteTables(tableName string) error {
 	_, err := d.client.DeleteTable(d.ctx, &dynamodb.DeleteTableInput{
@@ -97,19 +105,22 @@ func (d *DynamoDBMS) DeleteTables(tableName string) error {
 func (d *DynamoDBMS) CreateTable(tableName string) error {
 	AD, KS := getAttrNSchema(*d.partitionKey, *d.sortKey...)
 
-	_, err := d.client.CreateTable(d.ctx,
-		&dynamodb.CreateTableInput{
-			AttributeDefinitions:      AD,
-			KeySchema:                 KS,
-			TableName:                 aws.String(tableName),
-			BillingMode:               types.BillingMode(*d.billingMode),
-			DeletionProtectionEnabled: d.deleteProtection,
-			ProvisionedThroughput:     d.provisionedThroughput,
-			SSESpecification:          d.sSESpecification,
-			TableClass:                types.TableClass(*d.tableClass),
-			Tags:                      *d.tags,
-		},
-	)
+	input := &dynamodb.CreateTableInput{
+		AttributeDefinitions:      AD,
+		KeySchema:                 KS,
+		TableName:                 aws.String(tableName),
+		BillingMode:               types.BillingMode(*d.billingMode),
+		DeletionProtectionEnabled: d.deleteProtection,
+		SSESpecification:          d.sSESpecification,
+		TableClass:                types.TableClass(*d.tableClass),
+		Tags:                      *d.tags,
+	}
+	// DynamoDB rejects ProvisionedThroughput on PAY_PER_REQUEST tables.
+	if types.BillingMode(*d.billingMode) == types.BillingModeProvisioned {
+		input.ProvisionedThroughput = d.provisionedThroughput
+	}
+
+	_, err := d.client.CreateTable(d.ctx, input)
 
 	for {
 		describeResp, err := d.client.DescribeTable(context.TODO(), &dynamodb.DescribeTableInput{
@@ -163,6 +174,10 @@ func getAttrNSchema(partition string, sort ...string) ([]types.AttributeDefiniti
 
 // import table
 func (d *DynamoDBMS) ImportTable(tableName string, srcData *[]map[string]interface{}) error {
+	const batchSize = 25
+	const maxConcurrency = 8
+
+	writeRequests := make([]types.WriteRequest, 0, len(*srcData))
 	for _, data := range *srcData {
 		if _, ok := data["_id"]; !ok {
 			data["_id"] = generateRandomString(10)
@@ -173,16 +188,49 @@ func (d *DynamoDBMS) ImportTable(tableName string, srcData *[]map[string]interfa
 			return err
 		}
 
-		input := &dynamodb.PutItemInput{
-			Item:      item,
-			TableName: aws.String(tableName),
+		writeRequests = append(writeRequests, types.WriteRequest{
+			PutRequest: &types.PutRequest{Item: item},
+		})
+	}
+
+	g, ctx := errgroup.WithContext(d.ctx)
+	g.SetLimit(maxConcurrency)
+
+	for i := 0; i < len(writeRequests); i += batchSize {
+		batch := writeRequests[i:min(i+batchSize, len(writeRequests))]
+		g.Go(func() error {
+			return d.writeBatchWithRetry(ctx, tableName, batch)
+		})
+	}
+
+	return g.Wait()
+}
+
+// writeBatchWithRetry sends a single (<=25 item) BatchWriteItem request,
+// retrying items DynamoDB reports as unprocessed (e.g. due to throttling)
+// with linear backoff, up to maxRetries.
+func (d *DynamoDBMS) writeBatchWithRetry(ctx context.Context, tableName string, batch []types.WriteRequest) error {
+	const maxRetries = 8
+
+	requestItems := map[string][]types.WriteRequest{tableName: batch}
+	for attempt := 0; len(requestItems) > 0; attempt++ {
+		if attempt >= maxRetries {
+			return fmt.Errorf("batch write to %s: %d items still unprocessed after %d retries (check the table's provisioned throughput)", tableName, len(requestItems[tableName]), maxRetries)
 		}
 
-		_, err = d.client.PutItem(d.ctx, input)
+		output, err := d.client.BatchWriteItem(ctx, &dynamodb.BatchWriteItemInput{
+			RequestItems: requestItems,
+		})
 		if err != nil {
 			return err
 		}
+
+		requestItems = output.UnprocessedItems
+		if len(requestItems) > 0 {
+			time.Sleep(time.Duration(attempt+1) * 200 * time.Millisecond)
+		}
 	}
+
 	return nil
 }
 

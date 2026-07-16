@@ -189,6 +189,8 @@ func (fpm *FileProfileManager) LoadCredentialsByProfile(profileName string, prov
 		return credentials.AWS, nil
 	case "ncp":
 		return credentials.NCP, nil
+	case "nhn":
+		return credentials.NHN, nil
 	case "gcp":
 		return credentials.GCP, nil
 	case "alibaba":
@@ -221,22 +223,6 @@ func (cred *CredentialManager) LoadCredentialsById(credentialId uint64) (interfa
 	if err != nil {
 		return nil, err
 	}
-
-	// var creds interface{}
-	// if err := json.Unmarshal([]byte(decryptedJson), &creds); err != nil {
-	// 	return nil, fmt.Errorf("failed to parse credential json: %w", err)
-	// }
-
-	// switch provider {
-	// case "aws":
-	// 	return creds.(models.AWSCredentials), nil
-	// case "ncp":
-	// 	return creds.(models.NCPCredentials), nil
-	// case "gcp":
-	// 	return creds.(models.GCPCredentials), nil
-	// default:
-	// 	return nil, errors.New("unsupported provider")
-	// }
 
 	switch strings.ToLower(credential.CspType) {
 	case "aws":

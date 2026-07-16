@@ -11376,3 +11376,6 @@ body {
     font-size: 1.1rem;
   }
 }
+
+/* 목록 행 선택 체크박스 — 클릭은 행으로 통과, checked는 scripts.js 전역 옵저버가 table-active와 동기화 */
+.row-select { pointer-events: none; }

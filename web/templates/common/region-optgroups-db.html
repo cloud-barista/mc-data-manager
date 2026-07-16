@@ -1,0 +1,31 @@
+<!-- DB(SQL·No-SQL) 화면용 region optgroup 공용 파셜 — aws/gcp/ncp/alibaba 4사.
+     사용법: select 안에서 이 파일명으로 template 액션을 호출한다.
+     (주의: html/template은 HTML 주석 안의 액션도 실행하므로 여기에
+      사용 예시를 액션 문법 그대로 적으면 자기 자신을 무한 재귀 include한다)
+
+     ibm/nhn/kt/tencent를 넣지 말 것 — scripts.js의 DB_EXCLUDED_PROVIDERS가
+     /generate/mysql, /generate/no-sql, /migrate/mysql, /migrate/no-sql 경로에서
+     해당 provider를 credential 목록에서 제외하므로, optgroup을 넣어도
+     도달 불가능한 죽은 마크업이 된다.
+
+     사용처: gen-mysql, gen-no-sql, mig-mysql(src/tgt), mig-no-sql(src/tgt) -->
+<optgroup label="AWS regions" data-provider="aws" style="display:none;">
+    {{ range $index, $value := .AWSRegions }}
+    <option value="{{ $value }}">{{ $value }}</option>
+    {{ end }}
+</optgroup>
+<optgroup label="GCP regions" data-provider="gcp" style="display:none;">
+    {{ range $index, $value := .GCPRegions }}
+    <option value="{{ $value }}">{{ $value }}</option>
+    {{ end }}
+</optgroup>
+<optgroup label="NCP regions" data-provider="ncp" style="display:none;">
+    {{ range $index, $value := .NCPRegions }}
+    <option value="{{ $value }}">{{ $value }}</option>
+    {{ end }}
+</optgroup>
+<optgroup label="ALIBABA regions" data-provider="alibaba" style="display:none;">
+    {{ range $index, $value := .ALIBABARegions }}
+    <option value="{{ $value }}">{{ $value }}</option>
+    {{ end }}
+</optgroup>

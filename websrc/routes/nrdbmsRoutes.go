@@ -21,8 +21,15 @@ import (
 )
 
 func NRDBMSRoutes(g *echo.Group) {
-	g.POST("/nrdbms", controllers.NRDBMSListTablesHandler)
-	g.PUT("/nrdbms", controllers.NRDBMSCreateTableHandler)
-	g.DELETE("/nrdbms", controllers.NRDBMSDeleteTableHandler)
-	g.POST("/nrdbms/data", controllers.NRDBMSGetTableHandler)
+	g.POST("/nrdbms", controllers.ListNRDBInstancesHandler)
+	g.PUT("/nrdbms", controllers.CreateNRDBInstanceHandler)
+	g.DELETE("/nrdbms", controllers.DeleteNRDBInstanceHandler)
+	g.POST("/nrdbms/engine-versions", controllers.ListNRDBEngineVersionsHandler)
+	g.POST("/nrdbms/instance-class", controllers.ListNRDBInstanceClassesHandler)
+	g.POST("/nrdbms/databases", controllers.NRDBMSListDatabasesHandler)
+
+	g.POST("/nrdbms/tables", controllers.NRDBMSListTablesHandler)
+	g.PUT("/nrdbms/tables", controllers.NRDBMSCreateTableHandler)
+	g.DELETE("/nrdbms/tables", controllers.NRDBMSDeleteTableHandler)
+	g.POST("/nrdbms/tables/data", controllers.NRDBMSGetTableHandler)
 }

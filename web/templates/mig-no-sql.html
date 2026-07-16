@@ -9,24 +9,19 @@
             <a class="nav-link" href="/migrate/objectstorage">Object Storage</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/migrate/mysql">
-                SQL Database
-            </a>
+            <a class="nav-link" href="/migrate/mysql">SQL Database</a>
         </li>
         <li class="nav-item">
             <a class="nav-link active" href="#">No-SQL</a>
         </li>
     </ul>
-    <!-- <div class="card-header">
-        NRDBMS Migration
-    </div> -->
     <div class="card-body">
-        <!-- <form action="/migration/mongoDB/dynamodb" method="POST"> -->
         <form id="migForm">
             <input type="hidden" id="migService" value="nrdbms">
             <input type="hidden" id="sourcePoint[provider]" value="none">
             <input type="hidden" id="targetPoint[provider]" value="none">
 
+            <!-- ── Source ─────────────────────────────────────── -->
             <div class="card rounded-3 mb-3 p-3">
                 <div class="input-group mb-3">
                     <div class="form-floating">
@@ -34,7 +29,6 @@
                         <label for="sourcePointLabel">Source</label>
                     </div>
                 </div>
-                <!-- <label for="mig-aws-region" class="form-label" id="sourcePointLabel">Source -</label> -->
                 <div class="input-group mb-3 me-1">
                     <span class="input-group-text rounded-start"><i class="fa-solid fa-user-secret"></i></span>
                     <div class="form-floating">
@@ -44,169 +38,633 @@
                         <label for="sourceCredentialSelect">provider - credential name</label>
                     </div>
                 </div>
-                <div class="input-group" id="sourceRegionDiv">
+                <div class="input-group mb-3" id="sourceRegionDiv">
                     <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span>
                     <div class="form-floating">
                         <select class="form-select form-select-sm rounded-end" id="sourceRegionSelect" name="sourcePoint[region]">
                             <option value="none" selected> - </option>
-                            <optgroup label="AWS regions" data-provider="aws" style="display: none;">
-                                {{ range $index, $value := .AWSRegions }}
-                                <option value="{{ $value }}">{{ $value }}</option>
-                                {{ end }}
-                            </optgroup>
-                            <optgroup label="GCP regions" data-provider="gcp" style="display: none;">
-                                {{ range $index, $value := .GCPRegions }}
-                                    <option value="{{ $value }}">{{ $value }}</option>
-                                {{ end }}
-                            </optgroup>
-                            <optgroup label="NCP regions" data-provider="ncp" style="display: none;">
-                                {{ range $index, $value := .NCPRegions }}
-                                    <option value="{{ $value }}">{{ $value }}</option>
-                                {{ end }}
-                            </optgroup>
-                            <optgroup label="ALIBABA regions" data-provider="alibaba" style="display: none;">
-                                {{ range $index, $value := .ALIBABARegions }}
-                                    <option value="{{ $value }}">{{ $value }}</option>
-                                {{ end }}
-                            </optgroup>
+                            {{ template "region-optgroups-db.html" . }}
                         </select>
                         <label for="sourceRegionSelect">Select Region</label>
                     </div>
                 </div>
-                <div id="sourceMongoDiv" style="display: none;">                        
-                    <div class="input-group mb-3">
-                        <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
-                        <div class="form-floating">
-                            <input type="text" class="form-control rounded-end" id="mig-source-mongodb-host" name="sourcePoint[host]" placeholder="Host / IP" required disabled>
-                            <label for="mig-source-mongodb-host">Host / IP</label>
+
+                <!-- Instance table (AWS는 서버리스라 목록 전체를 숨긴다) -->
+                <div id="src-nrdb-list-ui">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-muted small fw-semibold">Instance List</span>
+                        <div class="d-flex gap-2 align-items-center">
+                            <div class="input-group input-group-sm" style="width:200px;">
+                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control" id="src-nrdb-search" placeholder="Search by name">
+                            </div>
+                            <button type="button" class="btn btn-danger btn-sm" id="src-nrdb-deleteBtn" disabled>
+                                <i class="bi bi-trash3 me-1"></i>Delete
+                            </button>
+                            <button type="button" class="btn btn-primary btn-sm" id="src-nrdb-createBtn" disabled>
+                                <i class="bi bi-plus-lg me-1"></i>Instance
+                            </button>
                         </div>
                     </div>
-            
-                    <div class="input-group mb-3">
-                        <span class="input-group-text rounded-start"><i class="fa-solid fa-flag"></i></span>
-                        <div class="form-floating">
-                            <input type="text" class="form-control rounded-end" id="mig-source-mongodb-port" name="sourcePoint[port]" placeholder="Port" required disabled>
-                            <label for="mig-source-mongodb-port">Port</label>
+                    <table class="table table-bordered table-sm mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width:36px;"></th><th>ID</th><th>Name</th><th>Status</th><th>Version</th><th>Host</th><th>Port</th>
+                            </tr>
+                        </thead>
+                        <tbody id="src-nrdb-table-body">
+                            <tr><td colspan="7" class="text-center text-muted small py-3">Select a credential and region to list instances</td></tr>
+                        </tbody>
+                    </table>
+                    <div id="src-nrdb-pagination" class="mt-2 mb-3"></div>
+                </div>
+
+                <!-- AWS(DynamoDB) 안내: 서버리스라 인스턴스 선택 불필요 -->
+                <div id="src-nrdb-aws-note" class="alert alert-secondary py-2 px-3 small d-none">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-info-circle me-1"></i>AWS DynamoDB is serverless — no instance selection is required. Just select a credential and region.</span>
+                        <button type="button" class="btn btn-success btn-sm text-nowrap ms-2" id="src-nrdb-aws-sampleBtn" disabled>
+                            <i class="bi bi-plus-lg me-1"></i>Sample Data
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Connect section: shown after instance selected -->
+                <div id="src-nrdb-connect-section" style="display:none;" class="mt-3">
+                    <!-- NCP/Alibaba(MongoDB): 전체 접속 정보 (gen-no-sql과 동일 provider 규칙) -->
+                    <div id="src-nrdb-mongo-fields">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
+                            <div class="form-floating">
+                                <input type="text" class="form-control rounded-end bg-light" id="mig-source-mongodb-host" name="sourcePoint[host]" placeholder="Host / IP" readonly required>
+                                <label for="mig-source-mongodb-host">Host / IP</label>
+                            </div>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-flag"></i></span>
+                            <div class="form-floating">
+                                <input type="text" class="form-control rounded-end bg-light" id="mig-source-mongodb-port" name="sourcePoint[port]" placeholder="Port" readonly required>
+                                <label for="mig-source-mongodb-port">Port</label>
+                            </div>
+                        </div>
+                        <!-- Username: 사용자 직접 입력 (provider별 제약, 기본값 없음) -->
+                        <div class="input-group mb-1">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-user"></i></span>
+                            <div class="form-floating">
+                                <input type="text" class="form-control rounded-end" id="mig-source-mongodb-username" name="sourcePoint[username]" placeholder="Username" autocomplete="username" required>
+                                <label for="mig-source-mongodb-username">Username</label>
+                            </div>
+                        </div>
+                        <div id="src-nrdb-username-help" class="form-text ps-2 mb-1"></div>
+                        <div id="src-nrdb-username-error" class="text-danger small ps-2 d-none mb-2"></div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
+                            <div class="form-floating">
+                                <input type="password" class="form-control rounded-end" id="mig-source-mongodb-password" name="sourcePoint[password]" placeholder="Password" required>
+                                <label for="mig-source-mongodb-password">Password</label>
+                            </div>
+                        </div>
+                        <!-- Database: 접속 정보 입력 후 Load Databases로 목록 조회 → 선택 (mig-mysql와 동일 패턴) -->
+                        <div class="d-flex justify-content-end mb-2">
+                            <button type="button" class="btn btn-secondary btn-sm" id="src-nrdb-load-db-btn">Load Databases</button>
+                        </div>
+                        <!-- Database section: shown after Load Databases (mig-mysql의 db-section과 동일 패턴) -->
+                        <div id="src-nrdb-db-section" style="display:none;" class="mt-2">
+                            <div class="input-group">
+                                <span class="input-group-text rounded-start"><i class="fa-solid fa-database"></i></span>
+                                <div class="form-floating">
+                                    <select class="form-select rounded-end" id="mig-mongodb-databaseName" name="sourcePoint[databaseName]" required>
+                                        <option value="">- Select Database -</option>
+                                    </select>
+                                    <label for="mig-mongodb-databaseName">Database Name</label>
+                                </div>
+                            </div>
                         </div>
                     </div>
-            
-                    <div class="input-group mb-3">
-                        <span class="input-group-text rounded-start"><i class="fa-solid fa-user"></i></span>
-                        <div class="form-floating">
-                            <input type="text" class="form-control rounded-end" id="mig-source-mongodb-username" name="sourcePoint[username]" placeholder="Username" required disabled>
-                            <label for="mig-source-mongodb-username">Username</label>
+                    <!-- GCP(Firestore): Instance ID + Database ID(= Instance ID). 백엔드는 databaseId만 사용 -->
+                    <div id="src-nrdb-gcp-fields" style="display:none;">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-server"></i></span>
+                            <div class="form-floating">
+                                <input type="text" class="form-control rounded-end bg-light" id="src-nrdb-gcp-instanceId" placeholder="Instance ID" readonly>
+                                <label for="src-nrdb-gcp-instanceId">Instance ID</label>
+                            </div>
                         </div>
-                    </div>
-            
-                    <div class="input-group mb-3">
-                        <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
-                        <div class="form-floating">
-                            <input type="password" class="form-control rounded-end" id="mig-source-mongodb-password" name="sourcePoint[password]" placeholder="Password" required disabled>
-                            <label for="mig-source-mongodb-password">Password</label>
-                        </div>
-                    </div>
-            
-                    <div class="input-group">
-                        <span class="input-group-text rounded-start"><i class="fa-solid fa-database"></i></span>
-                        <div class="form-floating">
-                            <input type="text" class="form-control rounded-end" id="mig-mongodb-databaseName" name="sourcePoint[databaseName]" placeholder="DB Name" required disabled>
-                            <label for="mig-mongodb-databaseName">Database Name</label>
+                        <div class="input-group">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-database"></i></span>
+                            <div class="form-floating">
+                                <input type="text" class="form-control rounded-end bg-light" id="src-nrdb-gcp-databaseId" name="sourcePoint[databaseId]" placeholder="Database ID" readonly disabled>
+                                <label for="src-nrdb-gcp-databaseId">Database ID (= Instance ID)</label>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-    
+
+            <!-- ── Target ─────────────────────────────────────── -->
             <div class="card rounded-3 mb-3 p-3">
                 <div class="input-group mb-3">
                     <div class="form-floating">
                         <input type="text" class="form-control" id="targetPointLabel" placeholder="Target" style="border: 0; background-color: white;" value="-" required disabled>
-                        <label for="sourcePointLabel">Target</label>
+                        <label for="targetPointLabel">Target</label>
                     </div>
                 </div>
-                <!-- <label for="mig-gcp-region" class="form-label" id="targetPointLabel">Target -</label> -->
                 <div class="input-group mb-3 me-1">
                     <span class="input-group-text rounded-start"><i class="fa-solid fa-user-secret"></i></span>
                     <div class="form-floating">
-                        <!-- <input type="text" class="form-control" id="gen-s3-profile" name="targetPoint[profileName]" placeholder="profile name" required>
-                        <label for="gen-s3-profile">Profile</label> -->
                         <select class="form-select form-select-sm rounded-end" id="targetCredentialSelect" name="targetPoint[credentialId]">
                             <option value="none" data-provider="none"> - </option>
                         </select>
                         <label for="targetCredentialSelect">provider - credential name</label>
                     </div>
                 </div>
-                <div class="input-group" id="targetRegionDiv">
+                <div class="input-group mb-3" id="targetRegionDiv">
                     <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span>
                     <div class="form-floating">
                         <select class="form-select form-select-sm rounded-end" id="targetRegionSelect" name="targetPoint[region]">
                             <option value="none" selected> - </option>
-                            <optgroup label="AWS regions" data-provider="aws" style="display: none;">
-                                {{ range $index, $value := .AWSRegions }}
-                                    <option value="{{ $value }}">{{ $value }}</option>
-                                {{ end }}
-                            </optgroup>
-                            <optgroup label="GCP regions" data-provider="gcp" style="display: none;">
-                                {{ range $index, $value := .GCPRegions }}
-                                    <option value="{{ $value }}">{{ $value }}</option>
-                                {{ end }}
-                            </optgroup>
-                            <optgroup label="NCP regions" data-provider="ncp" style="display: none;">
-                                {{ range $index, $value := .NCPRegions }}
-                                    <option value="{{ $value }}">{{ $value }}</option>
-                                {{ end }}
-                            </optgroup>
-                            <optgroup label="ALIBABA regions" data-provider="alibaba" style="display: none;">
-                                {{ range $index, $value := .ALIBABARegions }}
-                                    <option value="{{ $value }}">{{ $value }}</option>
-                                {{ end }}
-                            </optgroup>
+                            {{ template "region-optgroups-db.html" . }}
                         </select>
                         <label for="targetRegionSelect">Select Region</label>
                     </div>
                 </div>
-                <div id="targetMongoDiv" style="display: none;">    
-                    <div class="input-group mb-3">
-                        <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
-                        <div class="form-floating">
-                            <input type="text" class="form-control rounded-end" id="mig-target-mongodb-host" name="targetPoint[host]" placeholder="Host / IP" required disabled>
-                            <label for="mig-target-mongodb-host">Host / IP</label>
+
+                <!-- Instance table (AWS는 서버리스라 목록 전체를 숨긴다) -->
+                <div id="tgt-nrdb-list-ui">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-muted small fw-semibold">Instance List</span>
+                        <div class="d-flex gap-2 align-items-center">
+                            <div class="input-group input-group-sm" style="width:200px;">
+                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control" id="tgt-nrdb-search" placeholder="Search by name">
+                            </div>
+                            <button type="button" class="btn btn-danger btn-sm" id="tgt-nrdb-deleteBtn" disabled>
+                                <i class="bi bi-trash3 me-1"></i>Delete
+                            </button>
+                            <button type="button" class="btn btn-primary btn-sm" id="tgt-nrdb-createBtn" disabled>
+                                <i class="bi bi-plus-lg me-1"></i>Instance
+                            </button>
                         </div>
                     </div>
-            
-                    <div class="input-group mb-3">
-                        <span class="input-group-text rounded-start"><i class="fa-solid fa-flag"></i></span>
-                        <div class="form-floating">
-                            <input type="text" class="form-control rounded-end" id="mig-target-mongodb-port" name="targetPoint[port]" placeholder="Port" required disabled>
-                            <label for="mig-target-mongodb-port">Port</label>
+                    <table class="table table-bordered table-sm mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width:36px;"></th><th>ID</th><th>Name</th><th>Status</th><th>Version</th><th>Host</th><th>Port</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tgt-nrdb-table-body">
+                            <tr><td colspan="7" class="text-center text-muted small py-3">Select a credential and region to list instances</td></tr>
+                        </tbody>
+                    </table>
+                    <div id="tgt-nrdb-pagination" class="mt-2 mb-3"></div>
+                </div>
+
+                <!-- AWS(DynamoDB) 안내: 서버리스라 인스턴스 선택 불필요 -->
+                <div id="tgt-nrdb-aws-note" class="alert alert-secondary py-2 px-3 small d-none">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-info-circle me-1"></i>AWS DynamoDB is serverless — no instance selection is required. Just select a credential and region.</span>
+                        <button type="button" class="btn btn-success btn-sm text-nowrap ms-2" id="tgt-nrdb-aws-sampleBtn" disabled>
+                            <i class="bi bi-plus-lg me-1"></i>Sample Data
+                        </button>
+                    </div>
+                </div>
+
+                <div id="tgt-nrdb-connect-section" style="display:none;" class="mt-3">
+                    <!-- NCP/Alibaba(MongoDB): 전체 접속 정보 -->
+                    <div id="tgt-nrdb-mongo-fields">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-house"></i></span>
+                            <div class="form-floating">
+                                <input type="text" class="form-control rounded-end bg-light" id="mig-target-mongodb-host" name="targetPoint[host]" placeholder="Host / IP" readonly required>
+                                <label for="mig-target-mongodb-host">Host / IP</label>
+                            </div>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-flag"></i></span>
+                            <div class="form-floating">
+                                <input type="text" class="form-control rounded-end bg-light" id="mig-target-mongodb-port" name="targetPoint[port]" placeholder="Port" readonly required>
+                                <label for="mig-target-mongodb-port">Port</label>
+                            </div>
+                        </div>
+                        <!-- Username: 사용자 직접 입력 (provider별 제약, 기본값 없음) -->
+                        <div class="input-group mb-1">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-user"></i></span>
+                            <div class="form-floating">
+                                <input type="text" class="form-control rounded-end" id="mig-target-mongodb-username" name="targetPoint[username]" placeholder="Username" autocomplete="username" required>
+                                <label for="mig-target-mongodb-username">Username</label>
+                            </div>
+                        </div>
+                        <div id="tgt-nrdb-username-help" class="form-text ps-2 mb-1"></div>
+                        <div id="tgt-nrdb-username-error" class="text-danger small ps-2 d-none mb-2"></div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
+                            <div class="form-floating">
+                                <input type="password" class="form-control rounded-end" id="mig-target-mongodb-password" name="targetPoint[password]" placeholder="Password" required>
+                                <label for="mig-target-mongodb-password">Password</label>
+                            </div>
+                        </div>
+                        <!-- Database: 접속 정보 입력 후 Load Databases로 목록 조회 → 선택 (mig-mysql와 동일 패턴) -->
+                        <div class="d-flex justify-content-end mb-2">
+                            <button type="button" class="btn btn-secondary btn-sm" id="tgt-nrdb-load-db-btn">Load Databases</button>
+                        </div>
+                        <!-- Database section: shown after Load Databases (mig-mysql의 db-section과 동일 패턴) -->
+                        <div id="tgt-nrdb-db-section" style="display:none;" class="mt-2">
+                            <div class="input-group">
+                                <span class="input-group-text rounded-start"><i class="fa-solid fa-database"></i></span>
+                                <div class="form-floating">
+                                    <select class="form-select rounded-end" id="mig-target-mongodb-databaseName" name="targetPoint[databaseName]" required>
+                                        <option value="">- Select Database -</option>
+                                    </select>
+                                    <label for="mig-target-mongodb-databaseName">Database Name</label>
+                                </div>
+                            </div>
                         </div>
                     </div>
-            
-                    <div class="input-group mb-3">
-                        <span class="input-group-text rounded-start"><i class="fa-solid fa-user"></i></span>
-                        <div class="form-floating">
-                            <input type="text" class="form-control rounded-end" id="mig-target-mongodb-username" name="targetPoint[username]" placeholder="Username" required disabled>
-                            <label for="mig-target-mongodb-username">Username</label>
+                    <!-- GCP(Firestore): Instance ID + Database ID(= Instance ID). 백엔드는 databaseId만 사용 -->
+                    <div id="tgt-nrdb-gcp-fields" style="display:none;">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-server"></i></span>
+                            <div class="form-floating">
+                                <input type="text" class="form-control rounded-end bg-light" id="tgt-nrdb-gcp-instanceId" placeholder="Instance ID" readonly>
+                                <label for="tgt-nrdb-gcp-instanceId">Instance ID</label>
+                            </div>
                         </div>
-                    </div>
-            
-                    <div class="input-group mb-3">
-                        <span class="input-group-text rounded-start"><i class="fa-solid fa-lock"></i></span>
-                        <div class="form-floating">
-                            <input type="password" class="form-control rounded-end" id="mig-target-mongodb-password" name="targetPoint[password]" placeholder="Password" required disabled>
-                            <label for="mig-target-mongodb-password">Password</label>
-                        </div>
-                    </div>
-        
-                    <div class="input-group">
-                        <span class="input-group-text rounded-start"><i class="fa-solid fa-database"></i></span>
-                        <div class="form-floating">
-                            <input type="text" class="form-control rounded-end" id="mig-target-mongodb-databaseName" name="targetPoint[databaseName]" placeholder="DB Name" required disabled>
-                            <label for="mig-target-mongodb-databaseName">Database Name</label>
+                        <div class="input-group">
+                            <span class="input-group-text rounded-start"><i class="fa-solid fa-database"></i></span>
+                            <div class="form-floating">
+                                <input type="text" class="form-control rounded-end bg-light" id="tgt-nrdb-gcp-databaseId" name="targetPoint[databaseId]" placeholder="Database ID" readonly disabled>
+                                <label for="tgt-nrdb-gcp-databaseId">Database ID (= Instance ID)</label>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>       
+            </div>
+
             <button type="submit" class="btn btn-primary rounded-3 float-end" id="submitBtn">Submit</button>
         </form>
     </div>
 </div>
+
+{{ template "instance-panel.html" . }}
+{{ template "sample-data-panel.html" . }}
+
+<style>
+@keyframes ic-spin { to { transform: rotate(360deg); } }
+.ic-spin { animation: ic-spin 1.2s linear infinite; display: inline-block; }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const PAGE_SIZE = 10;
+    const POLL_INTERVAL_MS = 5000; // creating/deleting 인스턴스가 있을 때 목록 자동 재조회 주기
+
+    // 선택 상태 (source / target 각각 단일 선택)
+    let selectedSrcInstance = null;
+    let selectedTgtInstance = null;
+
+    function providerOf(prefix) { return (document.getElementById(prefix + 'Point[provider]')?.value || '').toLowerCase(); }
+    function regionOf(prefix) {
+        const r = document.getElementById(prefix + 'RegionSelect')?.value || '';
+        return providerOf(prefix) === 'ncp' ? r.toUpperCase() : r;
+    }
+
+    // ── NoSQL Username 규칙 (provider별) ───────────────────
+    function nosqlUsernameHelper(provider) {
+        switch ((provider || '').toLowerCase()) {
+            case 'alibaba': return 'Only "root" is allowed.';
+            case 'ncp':     return '"admin" and "root" are not allowed.';
+            case 'aws':
+            case 'gcp':     return ''; // 제약 없음 → 헬퍼 텍스트 미표시
+            default:        return 'Enter a username.';
+        }
+    }
+    // 클라이언트 사전 검증 (확실한 규칙만) — AWS/GCP 예약어는 API 응답에 위임
+    function nosqlUsernameError(provider, val) {
+        const v = (val || '').trim();
+        if (!v) return '';
+        const p = (provider || '').toLowerCase();
+        const lc = v.toLowerCase();
+        if (p === 'alibaba' && lc !== 'root') return 'Only "root" is allowed for Alibaba.';
+        if (p === 'ncp' && (lc === 'admin' || lc === 'root')) return '"admin" and "root" are not allowed for NCP.';
+        return '';
+    }
+
+    // ── 공용 테이블 컨트롤러 (source/target 재사용) ──────────────
+    function makeController(cfg) {
+        // cfg: { prefix:'src'|'tgt', point:'source'|'target', hostId, portId, connectId, deleteBtnId, searchId, tbodyId, pagId, usernameId, usernameHelpId, usernameErrId }
+        let allRows = [], page = 1, pollTimer = null;
+
+        // provider별 헬퍼 텍스트 갱신 + username 재검증
+        function refreshUsernameUI() {
+            const provider = providerOf(cfg.point);
+            const help = document.getElementById(cfg.usernameHelpId);
+            if (help) help.textContent = nosqlUsernameHelper(provider);
+            const input = document.getElementById(cfg.usernameId);
+            const errEl = document.getElementById(cfg.usernameErrId);
+            if (input && errEl) {
+                const msg = nosqlUsernameError(provider, input.value);
+                errEl.textContent = msg;
+                errEl.classList.toggle('d-none', !msg);
+            }
+        }
+
+        function rowClass() { return cfg.prefix + '-nrdb-row'; }
+        function selected() { return cfg.prefix === 'src' ? selectedSrcInstance : selectedTgtInstance; }
+        function setSelected(v) { if (cfg.prefix === 'src') selectedSrcInstance = v; else selectedTgtInstance = v; }
+
+        function makeRow(inst) {
+            const available = (inst.status || '').toLowerCase() === 'available';
+            const iid = inst.instanceId || '';
+            const isSel = selected() && selected().instanceId === iid;
+            return `<tr class="${rowClass()}${isSel ? ' table-active' : ''}" style="cursor:pointer;"
+                        data-instance-id="${iid}"
+                        data-endpoint="${inst.endpoint || ''}"
+                        data-port="${inst.port || ''}"
+                        data-name="${inst.name || iid}"
+                        data-available="${available ? '1' : '0'}">
+                    <td class="text-center align-middle"><input type="checkbox" class="form-check-input row-select"${isSel ? ' checked' : ''}></td>
+                    <td class="small">${iid || '-'}</td>
+                    <td class="small">${inst.name || '-'}</td>
+                    <td>${instanceStatusBadge(inst.status)}</td>
+                    <td class="small">${inst.engineVersion || '-'}</td>
+                    <td class="small text-truncate" style="max-width:200px;" title="${inst.endpoint || ''}">${inst.endpoint || '-'}</td>
+                    <td class="small">${inst.port || '-'}</td>
+                </tr>`;
+        }
+
+        function filtered() {
+            const q = (document.getElementById(cfg.searchId).value || '').toLowerCase();
+            return q ? allRows.filter(r => (r.name || r.instanceId || '').toLowerCase().includes(q)) : allRows;
+        }
+
+        // 인자는 '아이템 수'다 — 공용 renderPagination은 페이지 수를 받으므로 여기서 변환한다.
+        // 지역 이름이 전역 renderPagination을 가리므로 이름을 구분한다.
+        function renderPager(total) {
+            renderPagination(document.getElementById(cfg.pagId),
+                Math.ceil(total / PAGE_SIZE) || 1, page,
+                p => { page = p; render(); });
+        }
+
+        function render() {
+            const list = filtered();
+            const start = (page - 1) * PAGE_SIZE;
+            const pageRows = list.slice(start, start + PAGE_SIZE);
+            const tbody = document.getElementById(cfg.tbodyId);
+            tbody.innerHTML = pageRows.length
+                ? pageRows.map(makeRow).join('')
+                : '<tr><td colspan="7" class="text-center text-muted small py-3">No instances found</td></tr>';
+            tbody.querySelectorAll('tr.' + rowClass()).forEach(row => {
+                row.addEventListener('click', () => onRowClick(row));
+            });
+            renderPager(list.length);
+        }
+
+        function clearConnect() {
+            document.getElementById(cfg.connectId).style.display = 'none';
+            document.getElementById(cfg.hostId).value = '';
+            document.getElementById(cfg.portId).value = '';
+            const gi = document.getElementById(cfg.gcpInstanceIdId); if (gi) gi.value = '';
+            const gd = document.getElementById(cfg.gcpDatabaseIdId); if (gd) gd.value = '';
+            resetDbSelect();
+        }
+
+        // ── Database 목록 (POST /db/nrdbms/databases) ──────────
+        // 접속 정보(host/port/username/password) 입력 후 Load Databases 버튼으로
+        // 서버의 실제 DB 목록을 조회해 select box에 채운다 (mig-mysql의 rdbms/databases 패턴).
+        // 모든 리셋 경로(clearFields·인스턴스 변경·조회 직전)가 이 함수를 지나므로 숨김도 여기서 처리한다.
+        // required 해제 필수: 이 폼은 collapse 단계형이 아니라 submit 직행이라,
+        // 숨겨진 required select가 남으면 검증이 non-focusable로 걸려 Submit이 조용히 막힌다.
+        function resetDbSelect() {
+            const sel = document.getElementById(cfg.databaseNameId);
+            if (sel) {
+                sel.innerHTML = '<option value="">- Select Database -</option>';
+                sel.required = false;
+            }
+            const sec = document.getElementById(cfg.dbSectionId);
+            if (sec) sec.style.display = 'none';
+        }
+
+        function loadDatabases() {
+            const host     = document.getElementById(cfg.hostId).value;
+            const port     = document.getElementById(cfg.portId).value;
+            const username = document.getElementById(cfg.usernameId).value.trim();
+            const password = document.getElementById(cfg.passwordId).value;
+            const provider = providerOf(cfg.point);
+            const region   = regionOf(cfg.point);
+            if (!host || !port || !username || !password) {
+                alert('Please enter Host, Port, Username, and Password.');
+                return;
+            }
+            const btn = document.getElementById(cfg.loadDbBtnId);
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+            fetch('/db/nrdbms/databases', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ targetPoint: { provider, region, host, port, username, password, instanceId: selected()?.instanceId || '' } })
+            })
+            .then(r => r.ok ? r.json() : Promise.reject(r.status))
+            .then(json => {
+                resetDbSelect();
+                const sel = document.getElementById(cfg.databaseNameId);
+                (Array.isArray(json) ? json : []).forEach(db => {
+                    const opt = document.createElement('option');
+                    opt.value = db; opt.textContent = db;
+                    sel.appendChild(opt);
+                });
+                sel.required = true;
+                document.getElementById(cfg.dbSectionId).style.display = '';
+            })
+            .catch(err => alert(`Failed to load databases: ${err}`))
+            .finally(() => { btn.disabled = false; btn.textContent = 'Load Databases'; });
+        }
+
+        // provider별 접속 필드 표시/제출 제어 (gen-no-sql과 동일 규칙).
+        //  - AWS(DynamoDB): 접속 정보 불필요(서버리스) → 목록/생성·삭제·접속필드 숨김, provider+region만 사용
+        //  - GCP(Firestore): Instance ID + Database ID(= Instance ID) → databaseId만 백엔드로 전송
+        //  - NCP/Alibaba(MongoDB): Host/Port/Username/Password/DB Name (기존 그대로)
+        // 사용 안 하는 입력은 disabled로 둬 FormData 제외 + required 검증 회피(제출 차단 방지).
+        function applyProviderFields() {
+            const provider = providerOf(cfg.point);
+            const isAws = provider === 'aws';
+            const isGcp = provider === 'gcp';
+            const mongo = document.getElementById(cfg.mongoFieldsId);
+            const gcp   = document.getElementById(cfg.gcpFieldsId);
+            if (mongo) mongo.style.display = (isAws || isGcp) ? 'none' : '';
+            if (gcp)   gcp.style.display   = isGcp ? '' : 'none';
+            [cfg.hostId, cfg.portId, cfg.usernameId, cfg.passwordId, cfg.databaseNameId].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.disabled = (isAws || isGcp);
+            });
+            const dbId = document.getElementById(cfg.gcpDatabaseIdId);
+            if (dbId) dbId.disabled = !isGcp;
+            // AWS: 인스턴스 개념 없음 → 목록 UI 숨기고 안내 노출
+            const listUI = document.getElementById(cfg.listUiId);
+            if (listUI) listUI.classList.toggle('d-none', isAws);
+            const awsNote = document.getElementById(cfg.awsNoteId);
+            if (awsNote) awsNote.classList.toggle('d-none', !isAws);
+        }
+
+        function onRowClick(row) {
+            const d = row.dataset;
+            if (selected() && selected().instanceId === d.instanceId) {
+                setSelected(null);
+                row.classList.remove('table-active');
+                clearConnect();
+                dbiPanel.refreshButtons();
+                return;
+            }
+            document.querySelectorAll('#' + cfg.tbodyId + ' tr.' + rowClass() + '.table-active').forEach(r => r.classList.remove('table-active'));
+            row.classList.add('table-active');
+            setSelected({ instanceId: d.instanceId, name: d.name, endpoint: d.endpoint, port: d.port });
+            const provider = providerOf(cfg.point);
+            if (provider === 'gcp') {
+                // GCP(Firestore): Instance ID = Database ID. endpoint가 없어도 선택 허용.
+                document.getElementById(cfg.gcpInstanceIdId).value = d.instanceId;
+                document.getElementById(cfg.gcpDatabaseIdId).value = d.instanceId;
+                document.getElementById(cfg.connectId).style.display = '';
+            } else if (d.available === '1') {
+                // MongoDB(ncp/alibaba): available 인스턴스만 접속 정보 자동 채움
+                document.getElementById(cfg.hostId).value = d.endpoint;
+                document.getElementById(cfg.portId).value = d.port;
+                resetDbSelect(); // 다른 인스턴스의 DB 목록이 남지 않도록 초기화
+                document.getElementById(cfg.connectId).style.display = '';
+            } else {
+                clearConnect();
+            }
+            applyProviderFields();
+            autoSelectRegion(allRows, d.instanceId, document.getElementById(cfg.point + 'RegionSelect'));
+            dbiPanel.refreshButtons();
+        }
+
+        // 진행 중 작업(creating/deleting)이 목록에 있으면 자동 재조회한다.
+        // 선택/접속정보는 보존하기 위해 load()가 아닌 refresh()로 재조회한다.
+        function hasTransitional() {
+            return allRows.some(r => {
+                const s = (r.status || '').toLowerCase();
+                return s === 'creating' || s === 'deleting';
+            });
+        }
+        function scheduleTransitionalPoll() {
+            if (pollTimer) { clearTimeout(pollTimer); pollTimer = null; }
+            if (hasTransitional()) pollTimer = setTimeout(refresh, POLL_INTERVAL_MS);
+        }
+        function stopTransitionalPoll() {
+            if (pollTimer) { clearTimeout(pollTimer); pollTimer = null; }
+        }
+        // 데이터만 갱신 (선택/페이지 보존) — 폴링용
+        function refresh() {
+            const provider = providerOf(cfg.point);
+            const region   = regionOf(cfg.point);
+            if (!provider || provider === 'none' || !region || region === 'none') { stopTransitionalPoll(); return; }
+            fetch('/db/nrdbms', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ provider, region })
+            })
+            .then(r => r.ok ? r.json() : Promise.reject(r.status))
+            .then(json => { allRows = json || []; render(); dbiPanel.refreshButtons(); scheduleTransitionalPoll(); })
+            .catch(() => { scheduleTransitionalPoll(); });
+        }
+
+        function load() {
+            const provider = providerOf(cfg.point);
+            const region   = regionOf(cfg.point);
+            const tbody = document.getElementById(cfg.tbodyId);
+            setSelected(null);
+            clearConnect();
+            applyProviderFields();
+            // AWS(DynamoDB)는 서버리스 — 인스턴스 목록/조회 없음 (provider+region만으로 마이그레이션)
+            if (provider === 'aws') {
+                allRows = []; page = 1; render(); stopTransitionalPoll();
+                return;
+            }
+            if (!provider || provider === 'none' || !region || region === 'none') {
+                allRows = []; page = 1; render(); stopTransitionalPoll();
+                return;
+            }
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center py-3"><span class="spinner-border spinner-border-sm"></span></td></tr>';
+            fetch('/db/nrdbms', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ provider, region })
+            })
+            .then(r => r.ok ? r.json() : Promise.reject(r.status))
+            .then(json => { allRows = json || []; page = 1; render(); scheduleTransitionalPoll(); })
+            .catch(err => { console.error('load nrdb:', err); allRows = []; page = 1; render(); stopTransitionalPoll(); });
+        }
+
+        // ── 인스턴스 생성/삭제 + 샘플데이터 생성 (InstancePanel/SamplePanel 공용 컴포넌트) ──
+        // 인스턴스 선택 시 '+ Instance' 버튼이 '+ Sample Data'로 전환된다 (gen-no-sql과 동일 UX).
+        const dbiPanel = InstancePanel.init({
+            kind: 'nrdbms',
+            getProvider: () => providerOf(cfg.point),
+            getRegion: () => regionOf(cfg.point),
+            getCredLabel: () => {
+                const s = document.getElementById(cfg.point + 'CredentialSelect');
+                return s?.selectedOptions?.[0]?.textContent?.trim();
+            },
+            createBtn: document.getElementById(cfg.createBtnId),
+            deleteBtn: document.getElementById(cfg.deleteBtnId),
+            // AWS(서버리스)는 목록/버튼이 숨겨지므로 안내 배너의 전용 버튼으로 진입
+            sample: { awsBtn: document.getElementById(cfg.awsSampleBtnId) },
+            getSelected: selected,
+            getRows: () => allRows,
+            onData: (instances) => {
+                allRows = instances || [];
+                // 삭제 완료 등으로 선택 인스턴스가 목록에서 사라지면 선택/접속정보 정리
+                if (selected() && !allRows.some(i => i.instanceId === selected().instanceId)) {
+                    setSelected(null);
+                    clearConnect();
+                    dbiPanel.refreshButtons();
+                }
+                render();
+                scheduleTransitionalPoll();
+            },
+        });
+
+        // 이벤트 바인딩
+        document.getElementById(cfg.searchId).addEventListener('input', () => { page = 1; render(); });
+        document.getElementById(cfg.loadDbBtnId)?.addEventListener('click', loadDatabases);
+        // username 입력 시 provider별 검증 메시지 갱신
+        const usernameInput = document.getElementById(cfg.usernameId);
+        if (usernameInput) usernameInput.addEventListener('input', refreshUsernameUI);
+        const regionSel = document.getElementById(cfg.point + 'RegionSelect');
+        if (regionSel) regionSel.addEventListener('change', () => { load(); refreshUsernameUI(); dbiPanel.refreshButtons(); });
+        const credSel = document.getElementById(cfg.point + 'CredentialSelect');
+        if (credSel) credSel.addEventListener('change', () => { allRows = []; page = 1; render(); setTimeout(() => { load(); refreshUsernameUI(); dbiPanel.refreshButtons(); }, 0); });
+        const providerHidden = document.getElementById(cfg.point + 'Point[provider]');
+        if (providerHidden) providerHidden.addEventListener('change', () => setTimeout(() => { load(); refreshUsernameUI(); dbiPanel.refreshButtons(); }, 0));
+
+        refreshUsernameUI();    // 초기 헬퍼 텍스트 노출
+        applyProviderFields();  // 초기 provider별 필드 상태
+        return { load, refreshUsernameUI, applyProviderFields };
+    }
+
+    const srcCtl = makeController({
+        prefix: 'src', point: 'source',
+        hostId: 'mig-source-mongodb-host', portId: 'mig-source-mongodb-port',
+        passwordId: 'mig-source-mongodb-password', databaseNameId: 'mig-mongodb-databaseName',
+        loadDbBtnId: 'src-nrdb-load-db-btn', dbSectionId: 'src-nrdb-db-section',
+        connectId: 'src-nrdb-connect-section',
+        mongoFieldsId: 'src-nrdb-mongo-fields', gcpFieldsId: 'src-nrdb-gcp-fields',
+        gcpInstanceIdId: 'src-nrdb-gcp-instanceId', gcpDatabaseIdId: 'src-nrdb-gcp-databaseId',
+        listUiId: 'src-nrdb-list-ui', awsNoteId: 'src-nrdb-aws-note',
+        searchId: 'src-nrdb-search', tbodyId: 'src-nrdb-table-body', pagId: 'src-nrdb-pagination',
+        usernameId: 'mig-source-mongodb-username', usernameHelpId: 'src-nrdb-username-help', usernameErrId: 'src-nrdb-username-error',
+        createBtnId: 'src-nrdb-createBtn', deleteBtnId: 'src-nrdb-deleteBtn',
+        awsSampleBtnId: 'src-nrdb-aws-sampleBtn',
+    });
+    const tgtCtl = makeController({
+        prefix: 'tgt', point: 'target',
+        hostId: 'mig-target-mongodb-host', portId: 'mig-target-mongodb-port',
+        passwordId: 'mig-target-mongodb-password', databaseNameId: 'mig-target-mongodb-databaseName',
+        loadDbBtnId: 'tgt-nrdb-load-db-btn', dbSectionId: 'tgt-nrdb-db-section',
+        connectId: 'tgt-nrdb-connect-section',
+        mongoFieldsId: 'tgt-nrdb-mongo-fields', gcpFieldsId: 'tgt-nrdb-gcp-fields',
+        gcpInstanceIdId: 'tgt-nrdb-gcp-instanceId', gcpDatabaseIdId: 'tgt-nrdb-gcp-databaseId',
+        listUiId: 'tgt-nrdb-list-ui', awsNoteId: 'tgt-nrdb-aws-note',
+        searchId: 'tgt-nrdb-search', tbodyId: 'tgt-nrdb-table-body', pagId: 'tgt-nrdb-pagination',
+        usernameId: 'mig-target-mongodb-username', usernameHelpId: 'tgt-nrdb-username-help', usernameErrId: 'tgt-nrdb-username-error',
+        createBtnId: 'tgt-nrdb-createBtn', deleteBtnId: 'tgt-nrdb-deleteBtn',
+        awsSampleBtnId: 'tgt-nrdb-aws-sampleBtn',
+    });
+});
+</script>

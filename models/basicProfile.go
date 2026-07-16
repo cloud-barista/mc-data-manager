@@ -37,6 +37,7 @@ type TumblebugCredentialCreate struct {
 type ProfileCredentials struct {
 	AWS     AWSCredentials     `json:"aws,omitempty"`
 	NCP     NCPCredentials     `json:"ncp,omitempty"`
+	NHN     NHNCredentials     `json:"nhn,omitempty"`
 	GCP     GCPCredentials     `json:"gcp,omitempty"`
 	ALIBABA AlibabaCredentials `json:"alibaba,omitempty"`
 	IBM     IBMCredentials     `json:"ibm,omitempty"`
@@ -52,6 +53,14 @@ type AWSCredentials struct {
 type NCPCredentials struct {
 	AccessKey string `json:"accessKey" form:"accessKey"`
 	SecretKey string `json:"secretKey" form:"secretKey"`
+}
+
+type NHNCredentials struct {
+	Username         string `json:"username" form:"username"`
+	Password         string `json:"password" form:"password"`
+	TenantID         string `json:"tenantId" form:"tenantId"`
+	DomainName       string `json:"domainName" form:"domainName"`
+	IdentityEndpoint string `json:"identityEndpoint" form:"identityEndpoint"`
 }
 
 type GCPCredentials struct {

@@ -1,0 +1,132 @@
+<!-- InstancePanel 공용 파셜: DB 인스턴스 생성 Offcanvas + 삭제 확인 모달.
+     scripts.js의 InstancePanel 모듈과 짝을 이룬다. 페이지당 한 번만 include.
+     ID는 전부 dbi- 네임스페이스 (gen-mysql/gen-no-sql의 자체 구현과 충돌 방지) -->
+
+<div class="offcanvas offcanvas-end" id="dbiOffcanvas" tabindex="-1" style="width: min(500px, 100vw);">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title fw-semibold" id="dbi-oc-title">
+            <i class="bi bi-plus-circle me-2 text-primary"></i>Create Instance
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="alert alert-secondary py-2 px-3 mb-3 small">
+            <i class="bi bi-info-circle me-1"></i>
+            Target: <span id="dbi-context" class="fw-semibold">—</span>
+        </div>
+
+        <div class="input-group mb-3" id="dbi-engine-group">
+            <span class="input-group-text rounded-start"><i class="bi bi-database-fill-gear"></i></span>
+            <div class="form-floating">
+                <select class="form-select rounded-end" id="dbi-engine">
+                    <option value="">-</option>
+                </select>
+                <label for="dbi-engine">Engine</label>
+            </div>
+        </div>
+        <div class="input-group mb-3" id="dbi-version-group">
+            <span class="input-group-text rounded-start"><i class="bi bi-tag-fill"></i></span>
+            <div class="form-floating">
+                <select class="form-select rounded-end" id="dbi-engineVersion">
+                    <option value="">-</option>
+                </select>
+                <label for="dbi-engineVersion">Engine Version</label>
+            </div>
+        </div>
+        <!-- Instance Class: gen-mysql/gen-no-sql과 동일한 2패널(family/size) 드롭다운 -->
+        <div class="input-group mb-3" id="dbi-class-group">
+            <span class="input-group-text rounded-start"><i class="bi bi-collection-fill"></i></span>
+            <div class="form-floating flex-grow-1 position-relative" id="dbi-icWrapper">
+                <div class="form-select rounded-end d-flex align-items-center" id="dbi-icTrigger" role="combobox" tabindex="0"
+                     style="height:58px; cursor:pointer; user-select:none;">
+                    <span id="dbi-icTriggerText" class="text-muted">-</span>
+                </div>
+                <label>Instance Class</label>
+                <div class="border rounded-2 shadow-sm bg-white position-absolute d-none" id="dbi-icPanel"
+                     style="top:calc(100% + 2px); left:0; z-index:1060; min-width:100%;">
+                    <div class="d-flex" style="max-height:200px;">
+                        <div id="dbi-icFamilyList" class="border-end" style="min-width:130px; width:45%; overflow-y:auto;"></div>
+                        <div id="dbi-icSizeList" style="flex:1; overflow-y:auto;"></div>
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" id="dbi-instanceClass">
+        </div>
+
+        <div class="input-group mb-3">
+            <span class="input-group-text rounded-start"><i class="bi bi-person-vcard-fill"></i></span>
+            <div class="form-floating">
+                <input type="text" class="form-control rounded-end" id="dbi-instanceId" autocomplete="off" placeholder="Instance ID">
+                <label for="dbi-instanceId">Instance ID</label>
+            </div>
+            <div class="invalid-feedback ps-2">This instance ID already exists.</div>
+        </div>
+        <div class="input-group mb-3" id="dbi-storage-group">
+            <span class="input-group-text rounded-start"><i class="bi bi-archive-fill"></i></span>
+            <div class="form-floating">
+                <input type="number" class="form-control rounded-end" id="dbi-storage" autocomplete="off" min="20" value="20" placeholder="20">
+                <label for="dbi-storage">Allocated Storage (GB)</label>
+            </div>
+            <div class="invalid-feedback ps-2" id="dbi-storage-error">Please enter 20 GB or more.</div>
+        </div>
+        <!-- margin은 provider별로 openCreate가 토글: 헬퍼 문구 있는 provider=mb-1, 그 외=mb-3 -->
+        <div class="input-group mb-3" id="dbi-username-group">
+            <span class="input-group-text rounded-start"><i class="bi bi-person-fill"></i></span>
+            <div class="form-floating">
+                <input type="text" class="form-control rounded-end" id="dbi-username" autocomplete="username" placeholder="Username">
+                <label for="dbi-username">Username</label>
+            </div>
+        </div>
+        <div id="dbi-username-help" class="form-text ps-2 mb-1"></div>
+        <div id="dbi-username-error" class="text-danger small ps-2 d-none mb-2"></div>
+        <div class="input-group mb-1" id="dbi-password-group">
+            <span class="input-group-text rounded-start"><i class="bi bi-lock-fill"></i></span>
+            <div class="form-floating">
+                <input type="password" class="form-control rounded-end" id="dbi-password" placeholder="Password">
+                <label for="dbi-password">Password</label>
+            </div>
+        </div>
+        <div id="dbi-password-error" class="text-danger small ps-2 d-none mb-2"></div>
+    </div>
+    <div class="offcanvas-footer p-3 border-top d-flex flex-column gap-2">
+        <button type="button" class="btn btn-primary w-100" id="dbi-createBtn" disabled>Create</button>
+    </div>
+</div>
+
+<style>
+/* gen-mysql/gen-no-sql의 Instance Class 2패널 드롭다운과 동일 스타일 */
+.ic-family-item:hover  { background: #f0f0f0; cursor: pointer; }
+.ic-family-item.active { background: #0d6efd; color: #fff; }
+.ic-size-item:hover    { background: #f8f9fa; cursor: pointer; }
+.offcanvas-footer { flex-shrink: 0; }
+#dbi-icTriggerText {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+</style>
+
+<!-- 인스턴스 삭제 확인 (이름 타이핑) -->
+<div class="modal fade" id="dbiDeleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0 pb-1">
+                <h5 class="modal-title text-danger fw-semibold">Delete Instance</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body pt-1">
+                <p class="mb-2 small">You are about to permanently delete <strong id="dbi-delete-name"></strong>.</p>
+                <p class="mb-3 small" id="dbi-delete-instruction">To delete this instance, enter its Name.</p>
+                <input type="text" class="form-control" id="dbi-delete-input" placeholder="Name" autocomplete="off">
+                <div id="dbi-delete-error" class="text-danger small mt-1 d-none">Name does not match.</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="dbi-delete-confirm" disabled>
+                    <i class="bi bi-trash3 me-1"></i>Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

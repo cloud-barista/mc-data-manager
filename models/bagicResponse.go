@@ -30,6 +30,7 @@ type BasicPageResponse struct {
 	AWSRegions     []string `json:"AWSRegions"`
 	GCPRegions     []string `json:"GCPRegions"`
 	NCPRegions     []string `json:"NCPRegions"`
+	NHNRegions     []string `json:"NHNRegions"`
 	ALIBABARegions []string `json:"ALIBABARegions"`
 	IBMRegions     []string `json:"IBMRegions"`
 	KTRegions      []string `json:"KTRegions"`

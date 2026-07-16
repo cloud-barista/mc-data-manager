@@ -204,6 +204,13 @@ func GetOS(params *models.ProviderConfig) (*osc.OSController, error) {
 		if err != nil {
 			return nil, fmt.Errorf("osc error : %v", err)
 		}
+	case "nhn":
+		log.Info().Str("Region", params.Region).Msg("NHN Region")
+		log.Info().Str("BucketName", params.Bucket).Msg("NHN BucketName")
+		OSC, err = osc.New(ktfs.New(models.NHN, params.Bucket, params.Region))
+		if err != nil {
+			return nil, fmt.Errorf("osc error : %v", err)
+		}
 	case "alibaba":
 		creds, cerr := loadCreds()
 		if cerr != nil {

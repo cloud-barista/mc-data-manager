@@ -69,8 +69,8 @@ func RequestTumblebug(path string, method string, connName string, jsonBody []by
 	body, _ := io.ReadAll(resp.Body)
 	fmt.Println(string(body))
 
-	// HTTP 코드 확인
-	if resp.StatusCode != http.StatusOK {
+	// HTTP 코드 확인 (204 No Content 등 2xx 전체를 성공으로 처리)
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return nil, fmt.Errorf("request failed: unexpected status %d, response: %s",
 			resp.StatusCode, string(body))
 	}
