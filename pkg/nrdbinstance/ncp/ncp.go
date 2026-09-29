@@ -124,17 +124,26 @@ func (p *NCPProvider) CreateInstance(_ context.Context, spec nrdbinstance.Create
 		return models.NRDBInstance{}, err
 	}
 
+	// Member product codes are only valid under the image product code they were
+	// listed with, so resolve and pass it explicitly instead of relying on NCP's
+	// implicit resolution from the engine version alone.
+	imageProductCode, err := p.resolveImageProductCode(spec.EngineVersion)
+	if err != nil {
+		return models.NRDBInstance{}, err
+	}
+
 	resp, err := p.api.CreateCloudMongoDbInstance(&vmongodb.CreateCloudMongoDbInstanceRequest{
-		RegionCode:                  ncloud.String(p.region),
-		VpcNo:                       ncloud.String(sub.VpcNo),
-		SubnetNo:                    ncloud.String(sub.SubnetNo),
-		CloudMongoDbServiceName:     ncloud.String(spec.InstanceID),
+		RegionCode:                   ncloud.String(p.region),
+		VpcNo:                        ncloud.String(sub.VpcNo),
+		SubnetNo:                     ncloud.String(sub.SubnetNo),
+		CloudMongoDbServiceName:      ncloud.String(spec.InstanceID),
 		CloudMongoDbServerNamePrefix: ncloud.String(spec.InstanceID),
-		CloudMongoDbUserName:        ncloud.String(spec.MasterUsername),
-		CloudMongoDbUserPassword:    ncloud.String(spec.MasterPassword),
-		EngineVersionCode:           ncloud.String(spec.EngineVersion),
-		MemberProductCode:           ncloud.String(spec.InstanceClass),
-		ClusterTypeCode:             ncloud.String("STAND_ALONE"),
+		CloudMongoDbUserName:         ncloud.String(spec.MasterUsername),
+		CloudMongoDbUserPassword:     ncloud.String(spec.MasterPassword),
+		CloudMongoDbImageProductCode: ncloud.String(imageProductCode),
+		EngineVersionCode:            ncloud.String(spec.EngineVersion),
+		MemberProductCode:            ncloud.String(spec.InstanceClass),
+		ClusterTypeCode:              ncloud.String("STAND_ALONE"),
 	})
 	if err != nil {
 		return models.NRDBInstance{}, fmt.Errorf("failed to create NCP MongoDB instance: %w", err)
@@ -192,8 +201,8 @@ func (p *NCPProvider) DeleteInstance(_ context.Context, instanceID string) (mode
 	}, nil
 }
 
-// ListEngineVersions returns available MongoDB engine versions from the image product list.
-func (p *NCPProvider) ListEngineVersions(_ context.Context) ([]models.NRDBEngineVersion, error) {
+// listImageProducts returns the G3 MongoDB image product list for the region.
+func (p *NCPProvider) listImageProducts() ([]*vmongodb.Product, error) {
 	resp, err := p.api.GetCloudMongoDbImageProductList(&vmongodb.GetCloudMongoDbImageProductListRequest{
 		RegionCode:     ncloud.String(p.region),
 		GenerationCode: ncloud.String("G3"),
@@ -201,10 +210,34 @@ func (p *NCPProvider) ListEngineVersions(_ context.Context) ([]models.NRDBEngine
 	if err != nil {
 		return nil, fmt.Errorf("failed to list NCP MongoDB image products: %w", err)
 	}
+	return resp.ProductList, nil
+}
+
+// resolveImageProductCode maps an engine version to its image product code.
+// Member product codes are scoped to this image code, so create must send it too.
+func (p *NCPProvider) resolveImageProductCode(engineVersion string) (string, error) {
+	products, err := p.listImageProducts()
+	if err != nil {
+		return "", err
+	}
+	for _, prod := range products {
+		if prod.EngineVersionCode != nil && *prod.EngineVersionCode == engineVersion && prod.ProductCode != nil {
+			return *prod.ProductCode, nil
+		}
+	}
+	return "", fmt.Errorf("no NCP MongoDB image found for engineVersion %q", engineVersion)
+}
+
+// ListEngineVersions returns available MongoDB engine versions from the image product list.
+func (p *NCPProvider) ListEngineVersions(_ context.Context) ([]models.NRDBEngineVersion, error) {
+	products, err := p.listImageProducts()
+	if err != nil {
+		return nil, err
+	}
 
 	seen := map[string]struct{}{}
 	var out []models.NRDBEngineVersion
-	for _, p := range resp.ProductList {
+	for _, p := range products {
 		if p.EngineVersionCode == nil || *p.EngineVersionCode == "" {
 			continue
 		}
@@ -220,23 +253,9 @@ func (p *NCPProvider) ListEngineVersions(_ context.Context) ([]models.NRDBEngine
 }
 
 func (p *NCPProvider) ListInstanceClasses(_ context.Context, engineVersion string) ([]string, error) {
-	imgResp, err := p.api.GetCloudMongoDbImageProductList(&vmongodb.GetCloudMongoDbImageProductListRequest{
-		RegionCode:     ncloud.String(p.region),
-		GenerationCode: ncloud.String("G3"),
-	})
+	imageProductCode, err := p.resolveImageProductCode(engineVersion)
 	if err != nil {
-		return nil, fmt.Errorf("failed to list NCP MongoDB image products: %w", err)
-	}
-
-	var imageProductCode string
-	for _, prod := range imgResp.ProductList {
-		if prod.EngineVersionCode != nil && *prod.EngineVersionCode == engineVersion && prod.ProductCode != nil {
-			imageProductCode = *prod.ProductCode
-			break
-		}
-	}
-	if imageProductCode == "" {
-		return nil, fmt.Errorf("no NCP MongoDB image found for engineVersion %q", engineVersion)
+		return nil, err
 	}
 
 	prodResp, err := p.api.GetCloudMongoDbProductList(&vmongodb.GetCloudMongoDbProductListRequest{
