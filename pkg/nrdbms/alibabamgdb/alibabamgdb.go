@@ -77,6 +77,12 @@ func (a *AlibabaMongoDBMS) DeleteTables(tableName string) error {
 	return a.client.Database(a.dbName).Collection(tableName).Drop(a.ctx)
 }
 
+// clear table: removes all documents but keeps the collection.
+func (a *AlibabaMongoDBMS) ClearTable(tableName string) error {
+	_, err := a.db.Collection(tableName).DeleteMany(a.ctx, bson.D{})
+	return err
+}
+
 // create table
 func (a *AlibabaMongoDBMS) CreateTable(tableName string) error {
 	_, err := a.db.Collection(tableName).InsertOne(a.ctx, map[string]interface{}{})

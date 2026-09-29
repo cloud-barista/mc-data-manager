@@ -158,6 +158,10 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 	// 데이터베이스 마이그레이션 실행
 	if err := config.DB.AutoMigrate(
 		&models.Credential{},
+		&models.RDBInstanceRecord{},
+		&models.NRDBInstanceRecord{},
+		&models.BackupRecord{},
+		&models.ExecutionLog{},
 	); err != nil {
 		log.Error().Msgf("Failed to migrate database: %v", err)
 	}
@@ -190,6 +194,8 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 	HealthHandler := controllers.NewHealthHandler(config.DB)
 	e.GET("/readyZ", HealthHandler.GetSystemReadyHandler)
 
+	e.GET("/log-management", controllers.LogManagementHandler)
+
 	migrationGroup := e.Group("/migrate")
 	routes.MigrationRoutes(migrationGroup)
 
@@ -213,6 +219,9 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 
 	credentialGroup := e.Group("/credentials")
 	routes.CredentialRoutes(credentialGroup, config.DB)
+
+	historyGroup := e.Group("/history")
+	routes.ExecutionLogRoutes(historyGroup, config.DB)
 
 	diagnoseGroup := e.Group("/diagnose")
 	routes.DiagnoseRoutes(diagnoseGroup)

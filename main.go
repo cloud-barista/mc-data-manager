@@ -21,13 +21,11 @@ import (
 	"github.com/cloud-barista/mc-data-manager/config"
 	"github.com/cloud-barista/mc-data-manager/pkg/logger"
 	"github.com/cloud-barista/mc-data-manager/websrc/serve"
-	"github.com/joho/godotenv"
 	"github.com/rs/zerolog/log"
 )
 
 func main() {
 	// cmd.Execute()
-	_ = godotenv.Load(".env")
 	config.Init()
 	loggerConfig := logger.Config{LogConfig: config.Settings.Logger}
 	logger := logger.NewLogger(loggerConfig)

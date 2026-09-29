@@ -28,6 +28,7 @@ type NRDBMS interface {
 	ListDatabases() ([]string, error)
 	CreateTable(tableName string) error
 	DeleteTables(tableName string) error
+	ClearTable(tableName string) error
 	ImportTable(tableName string, srcData *[]map[string]interface{}) error
 	ExportTable(tableName string, dstData *[]map[string]interface{}) error
 }
@@ -94,6 +95,10 @@ func (nrdbc *NRDBController) DeleteTables(tableName ...string) error {
 	return nil
 }
 
+func (nrdbc *NRDBController) ClearTable(tableName string) error {
+	return nrdbc.client.ClearTable(tableName)
+}
+
 // put
 func (nrdbc *NRDBController) Put(tableName string, srcData *[]map[string]interface{}) error {
 	tableList, err := nrdbc.client.ListTables()
@@ -102,19 +107,20 @@ func (nrdbc *NRDBController) Put(tableName string, srcData *[]map[string]interfa
 		return err
 	}
 
-	// 기존 테이블 overwirte
+	// 기존 테이블 overwrite: 테이블은 그대로 두고 안에 있는 데이터만 비움
 	if slices.Contains(tableList, tableName) {
-		if err := nrdbc.client.DeleteTables(tableName); err != nil {
-			nrdbc.logWrite("Error", "DeleteTables error", err)
+		if err := nrdbc.client.ClearTable(tableName); err != nil {
+			nrdbc.logWrite("Error", "ClearTable error", err)
 			return err
 		}
+		nrdbc.logWrite("Info", fmt.Sprintf("Table cleared: %s", tableName), nil)
+	} else {
+		if err := nrdbc.client.CreateTable(tableName); err != nil {
+			nrdbc.logWrite("Error", "CreateTable error", err)
+			return err
+		}
+		nrdbc.logWrite("Info", fmt.Sprintf("Table creation successful: %s", tableName), nil)
 	}
-
-	if err := nrdbc.client.CreateTable(tableName); err != nil {
-		nrdbc.logWrite("Error", "CreateTable error", err)
-		return err
-	}
-	nrdbc.logWrite("Info", fmt.Sprintf("Table creation successful: %s", tableName), nil)
 
 	if err := nrdbc.client.ImportTable(tableName, srcData); err != nil {
 		nrdbc.logWrite("Error", "ImportTable error", err)

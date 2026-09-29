@@ -2,6 +2,7 @@ package aws
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sort"
 
@@ -133,6 +134,9 @@ func buildDeleteInput(instanceID string) *rds.DeleteDBInstanceInput {
 func (p *AWSProvider) DeleteInstance(ctx context.Context, instanceID string) (models.DBInstance, error) {
 	out, err := p.client.DeleteDBInstance(ctx, buildDeleteInput(instanceID))
 	if err != nil {
+		if errors.As(err, new(*types.DBInstanceNotFoundFault)) {
+			return models.DBInstance{Provider: "aws", InstanceID: instanceID, Status: "deleted", Region: p.region}, nil
+		}
 		return models.DBInstance{}, fmt.Errorf("failed to delete RDS instance: %w", err)
 	}
 	if out.DBInstance == nil {

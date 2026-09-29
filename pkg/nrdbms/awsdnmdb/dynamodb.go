@@ -19,6 +19,7 @@ import (
 	"context"
 	"fmt"
 	"math/rand"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -191,6 +192,69 @@ func (d *DynamoDBMS) ImportTable(tableName string, srcData *[]map[string]interfa
 		writeRequests = append(writeRequests, types.WriteRequest{
 			PutRequest: &types.PutRequest{Item: item},
 		})
+	}
+
+	g, ctx := errgroup.WithContext(d.ctx)
+	g.SetLimit(maxConcurrency)
+
+	for i := 0; i < len(writeRequests); i += batchSize {
+		batch := writeRequests[i:min(i+batchSize, len(writeRequests))]
+		g.Go(func() error {
+			return d.writeBatchWithRetry(ctx, tableName, batch)
+		})
+	}
+
+	return g.Wait()
+}
+
+// clear table: removes all items but keeps the table, by scanning every
+// item's key and issuing batched delete requests.
+func (d *DynamoDBMS) ClearTable(tableName string) error {
+	const batchSize = 25
+	const maxConcurrency = 8
+
+	keyAttrs := append([]string{*d.partitionKey}, *d.sortKey...)
+
+	// Attribute names like "_id" aren't valid bare tokens in a
+	// ProjectionExpression, so they must go through placeholders.
+	exprNames := make(map[string]string, len(keyAttrs))
+	placeholders := make([]string, len(keyAttrs))
+	for i, attr := range keyAttrs {
+		ph := fmt.Sprintf("#k%d", i)
+		exprNames[ph] = attr
+		placeholders[i] = ph
+	}
+	projExpr := strings.Join(placeholders, ", ")
+
+	var writeRequests []types.WriteRequest
+	var exclusiveStartKey map[string]types.AttributeValue
+	for {
+		out, err := d.client.Scan(d.ctx, &dynamodb.ScanInput{
+			TableName:                aws.String(tableName),
+			ProjectionExpression:     aws.String(projExpr),
+			ExpressionAttributeNames: exprNames,
+			ExclusiveStartKey:        exclusiveStartKey,
+		})
+		if err != nil {
+			return err
+		}
+
+		for _, item := range out.Items {
+			key := make(map[string]types.AttributeValue, len(keyAttrs))
+			for _, attr := range keyAttrs {
+				if v, ok := item[attr]; ok {
+					key[attr] = v
+				}
+			}
+			writeRequests = append(writeRequests, types.WriteRequest{
+				DeleteRequest: &types.DeleteRequest{Key: key},
+			})
+		}
+
+		if out.LastEvaluatedKey == nil {
+			break
+		}
+		exclusiveStartKey = out.LastEvaluatedKey
 	}
 
 	g, ctx := errgroup.WithContext(d.ctx)

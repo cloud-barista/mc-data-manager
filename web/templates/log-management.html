@@ -1,0 +1,295 @@
+{{ define "log-management.html" }}
+
+<ol class="breadcrumb mb-1" style="margin-top: 66px;">
+    <li class="breadcrumb-item">Log Management</li>
+</ol>
+<h2 class="page-title">Log Management</h2>
+
+<div class="card rounded-3 mb-4 col-auto">
+    <div class="card-body">
+        <!-- 필터 툴바 (상단 오른쪽 정렬) -->
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+            <span class="text-muted small fw-semibold pb-1">Execution History</span>
+            <div class="d-flex flex-wrap gap-2 align-items-end">
+                <!-- Service Type -->
+                <div class="input-group input-group-sm" style="width:190px;">
+                    <span class="input-group-text"><i class="bi bi-hdd-stack"></i></span>
+                    <select class="form-select form-select-sm" id="filter-service-type">
+                        <option value="">All Services</option>
+                        <option value="objectstorage">Object Storage</option>
+                        <option value="rdbms">SQL Database</option>
+                        <option value="nrdbms">No-SQL</option>
+                    </select>
+                </div>
+                <!-- Operation -->
+                <div class="input-group input-group-sm" style="width:170px;">
+                    <span class="input-group-text"><i class="bi bi-gear"></i></span>
+                    <select class="form-select form-select-sm" id="filter-operation">
+                        <option value="">All Operations</option>
+                        <option value="generate">Generate</option>
+                        <option value="migrate">Migrate</option>
+                        <option value="backup">Backup</option>
+                        <option value="restore">Restore</option>
+                        <option value="create">Create</option>
+                        <option value="delete">Delete</option>
+                    </select>
+                </div>
+                <!-- From -->
+                <div class="input-group input-group-sm" style="width:170px;">
+                    <span class="input-group-text">From</span>
+                    <input type="date" class="form-control" id="filter-from">
+                </div>
+                <!-- To -->
+                <div class="input-group input-group-sm" style="width:170px;">
+                    <span class="input-group-text">To</span>
+                    <input type="date" class="form-control" id="filter-to">
+                </div>
+                <button type="button" class="btn btn-primary btn-sm" id="log-search-btn">
+                    <i class="bi bi-search me-1"></i>Search
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="log-reset-btn">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
+                </button>
+            </div>
+        </div>
+
+        <!-- 이력 테이블 -->
+        <table class="table table-bordered table-sm table-hover mb-0">
+            <thead>
+                <tr>
+                    <th style="width:48px; text-align: center;">#</th>
+                    <th>Service Type</th>
+                    <th>Operation</th>
+                    <th>Provider</th>
+                    <th>Region</th>
+                    <th>Resource</th>
+                    <th style="width:90px;">Duration</th>
+                    <th style="width:90px;">Result</th>
+                    <th style="width:200px;">
+                        <span id="log-sort-finished" role="button"
+                              class="user-select-none d-inline-flex align-items-center"
+                              title="Toggle sort order">
+                            Finished <i id="log-sort-icon" class="bi bi-caret-down-fill ms-1 small"></i>
+                        </span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="log-table-body">
+                <tr><td colspan="9" class="text-center text-muted small py-3">Loading history…</td></tr>
+            </tbody>
+        </table>
+        <div id="log-pagination" class="mt-2"></div>
+    </div>
+</div>
+
+<!-- 상세 Offcanvas (행 클릭 시) — 영역별 카드 섹션으로 분할 -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="logDetailOffcanvas" aria-labelledby="logDetailTitle" style="width: min(480px, 100vw);">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title fw-semibold" id="logDetailTitle">
+            <i class="bi bi-clock-history me-2 text-primary"></i>History Detail
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body bg-light" id="log-detail-body"></div>
+</div>
+
+<style>
+/* 상세 섹션 행 구분선 (마지막 행은 제거) */
+#log-detail-body .detail-item { border-bottom: 1px solid #f0f0f0; }
+#log-detail-body .card-body .detail-item:last-child { border-bottom: 0; }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const PAGE_SIZE = 20; // API 기본값
+
+    const svcSel   = document.getElementById('filter-service-type');
+    const opSel    = document.getElementById('filter-operation');
+    const fromInp  = document.getElementById('filter-from');
+    const toInp    = document.getElementById('filter-to');
+    const tbody    = document.getElementById('log-table-body');
+    const pagerEl  = document.getElementById('log-pagination');
+    const detailEl = document.getElementById('log-detail-body');
+
+    let rows = [];       // 현재 페이지 레코드 (행 클릭 시 상세 조회용)
+    let pageOffset = 0;  // 현재 페이지의 시작 순번 오프셋 = (page-1)*size
+    let sortDir = 'desc'; // finishedAt 정렬 방향 (API sort 파라미터)
+
+    // Finished 헤더 정렬 아이콘 갱신 (desc=▼ / asc=▲)
+    const sortIcon = document.getElementById('log-sort-icon');
+    function updateSortIcon() {
+        sortIcon.className = 'bi ms-1 small ' + (sortDir === 'asc' ? 'bi-caret-up-fill' : 'bi-caret-down-fill');
+    }
+
+    // ── 표시 헬퍼 (페이지 로컬) ─────────────────────────
+    // result 배지 — instanceStatusBadge(scripts.js) idiom 복제
+    function resultBadge(result) {
+        const r = (result || '').toLowerCase();
+        const map = {
+            success:  ['text-success',   'bi-check-circle-fill', 'success'],
+            failed:   ['text-danger',    'bi-x-circle-fill',     'failed'],
+            canceled: ['text-secondary', 'bi-slash-circle',      'canceled'],
+            timeout:  ['text-warning',   'bi-clock-history',     'timeout'],
+        };
+        const [cls, icon, label] = map[r] || ['text-muted', 'bi-question-circle', result || '—'];
+        return `<span class="${cls} small fw-semibold"><i class="bi ${icon} me-1"></i>${escHtml(label)}</span>`;
+    }
+
+    // 서비스 타입 표시명
+    function svcLabel(v) {
+        return ({ objectstorage: 'Object Storage', rdbms: 'SQL Database', nrdbms: 'No-SQL' })[v] || v || '—';
+    }
+
+    function fmtDuration(ms) {
+        const n = Number(ms);
+        if (!isFinite(n) || n < 0) return '—';
+        if (n < 1000) return n + ' ms';
+        const s = n / 1000;
+        if (s < 60) return s.toFixed(1) + ' s';
+        const m = Math.floor(s / 60), rem = Math.round(s % 60);
+        return m + 'm ' + rem + 's';
+    }
+
+    // ── 행 렌더 ─────────────────────────────────────────
+    function makeRow(item, idx) {
+        return `<tr class="log-row" style="cursor:pointer;" data-idx="${idx}">
+            <td class="small text-muted text-center">${pageOffset + idx + 1}</td>
+            <td class="small">${escHtml(svcLabel(item.serviceType))}</td>
+            <td class="small">${escHtml(item.operation)}</td>
+            <td class="small">${escHtml(item.provider)}</td>
+            <td class="small">${escHtml(item.region)}</td>
+            <td class="small text-truncate" style="max-width:220px;" title="${escHtml(item.resource)}">${escHtml(item.resource)}</td>
+            <td class="small">${escHtml(fmtDuration(item.durationMs))}</td>
+            <td>${resultBadge(item.result)}</td>
+            <td class="small">${escHtml(formatKstDate(item.finishedAt))}</td>
+        </tr>`;
+    }
+
+    function placeholder(msg, cls) {
+        tbody.innerHTML = `<tr><td colspan="9" class="text-center ${cls || 'text-muted'} small py-3">${escHtml(msg)}</td></tr>`;
+        pagerEl.innerHTML = '';
+    }
+
+    // ── 상세 Offcanvas (영역별 카드 섹션) ────────────────
+    // 한 줄: label(왼쪽 muted) / value(오른쪽)
+    function detailItem(label, value) {
+        return `<div class="detail-item d-flex justify-content-between align-items-start py-2">
+            <span class="text-muted small">${escHtml(label)}</span>
+            <span class="small fw-medium text-end ms-3">${value}</span>
+        </div>`;
+    }
+    // 섹션 카드: 아이콘 헤더 + 내용
+    function detailSection(icon, title, inner) {
+        return `<div class="card border-0 shadow-sm rounded-3 mb-3">
+            <div class="card-header bg-white border-bottom py-2 small fw-semibold text-secondary">
+                <i class="bi ${icon} me-1"></i>${escHtml(title)}
+            </div>
+            <div class="card-body py-1 px-3">${inner}</div>
+        </div>`;
+    }
+
+    let offcanvasInst = null;
+    function showDetail(item) {
+        detailEl.innerHTML =
+            // 상단 요약: Result 배지 + ID
+            `<div class="d-flex align-items-center justify-content-between mb-3">
+                ${resultBadge(item.result)}
+                <span class="text-muted small">#${escHtml(String(item.id))}</span>
+            </div>` +
+            detailSection('bi-hdd-stack', 'Execution',
+                detailItem('Service Type', escHtml(svcLabel(item.serviceType))) +
+                detailItem('Operation',    escHtml(item.operation)) +
+                detailItem('Provider',     escHtml(item.provider)) +
+                detailItem('Region',       escHtml(item.region)) +
+                detailItem('Resource',     `<span class="text-break">${escHtml(item.resource)}</span>`)) +
+            detailSection('bi-clock', 'Timing',
+                detailItem('Requested', escHtml(formatKstDate(item.requestedAt))) +
+                detailItem('Finished',  escHtml(formatKstDate(item.finishedAt))) +
+                detailItem('Duration',  escHtml(fmtDuration(item.durationMs)))) +
+            detailSection('bi-diagram-3', 'Context',
+                detailItem('Namespace', escHtml(item.namespaceId))) +
+            detailSection('bi-chat-left-text', 'Message',
+                `<div class="detail-item small text-break py-2">${escHtml(item.message)}</div>`);
+
+        if (!offcanvasInst) {
+            offcanvasInst = new bootstrap.Offcanvas(document.getElementById('logDetailOffcanvas'));
+        }
+        offcanvasInst.show();
+    }
+
+    // ── 데이터 로드 (서버 사이드 페이지네이션) ───────────
+    async function loadHistory(page) {
+        const from = fromInp.value;
+        const to   = toInp.value;
+        // 클라 선검사: from > to 방지 (400 왕복 회피)
+        if (from && to && from > to) {
+            placeholder('"From" date must be before "To" date.', 'text-danger');
+            return;
+        }
+
+        const params = new URLSearchParams();
+        params.set('page', page || 1);
+        params.set('size', PAGE_SIZE);
+        if (svcSel.value)  params.set('serviceType', svcSel.value);
+        if (opSel.value)   params.set('operation', opSel.value);
+        if (from)          params.set('from', from);
+        if (to)            params.set('to', to);
+        params.set('sort', sortDir);
+
+        placeholder('Loading history…');
+
+        try {
+            const res = await fetch('/history?' + params.toString());
+            if (!res.ok) {
+                if (res.status === 503) {
+                    placeholder('History storage is not configured.', 'text-warning');
+                } else if (res.status === 400) {
+                    placeholder('Invalid filter. Please check the selected values.', 'text-danger');
+                } else {
+                    placeholder('Failed to load history (HTTP ' + res.status + ').', 'text-danger');
+                }
+                return;
+            }
+            const data = await res.json();
+            rows = data.content || [];
+            pageOffset = ((data.page || 1) - 1) * PAGE_SIZE;
+            if (!rows.length) {
+                placeholder('No history found for the selected filters.');
+                return;
+            }
+            tbody.innerHTML = rows.map(makeRow).join('');
+            tbody.querySelectorAll('tr.log-row').forEach(tr => {
+                tr.addEventListener('click', () => showDetail(rows[Number(tr.dataset.idx)]));
+            });
+            // API의 totalPages는 이미 페이지 수 → renderPagination에 그대로 전달
+            renderPagination(pagerEl, data.totalPages || 1, data.page || 1, p => loadHistory(p));
+        } catch (e) {
+            console.error('loadHistory:', e);
+            placeholder('Failed to load history. Please try again.', 'text-danger');
+        }
+    }
+
+    // ── 이벤트 ──────────────────────────────────────────
+    document.getElementById('log-search-btn').addEventListener('click', () => loadHistory(1));
+    document.getElementById('log-reset-btn').addEventListener('click', () => {
+        svcSel.value = ''; opSel.value = ''; fromInp.value = ''; toInp.value = '';
+        sortDir = 'desc'; updateSortIcon();
+        loadHistory(1);
+    });
+    [svcSel, opSel].forEach(el => el.addEventListener('change', () => loadHistory(1)));
+    [fromInp, toInp].forEach(el => el.addEventListener('change', () => loadHistory(1)));
+
+    // Finished 헤더 클릭 → 정렬 방향 토글 후 1페이지부터 재조회
+    document.getElementById('log-sort-finished').addEventListener('click', () => {
+        sortDir = (sortDir === 'asc') ? 'desc' : 'asc';
+        updateSortIcon();
+        loadHistory(1);
+    });
+
+    // ── 초기 로드 (필터 없음 = 최근순 첫 페이지) ─────────
+    updateSortIcon();
+    loadHistory(1);
+});
+</script>
+
+{{ end }}

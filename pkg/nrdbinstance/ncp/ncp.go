@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/NaverCloudPlatform/ncloud-sdk-go-v2/ncloud"
 	ncpvpc "github.com/NaverCloudPlatform/ncloud-sdk-go-v2/services/vpc"
@@ -169,6 +170,9 @@ func (p *NCPProvider) DeleteInstance(_ context.Context, instanceID string) (mode
 		CloudMongoDbInstanceNo: ncloud.String(instanceID),
 	})
 	if err != nil {
+		if strings.Contains(err.Error(), "5001022") {
+			return models.NRDBInstance{Provider: "ncp", InstanceID: instanceID, Status: "deleted", Region: p.region}, nil
+		}
 		return models.NRDBInstance{}, fmt.Errorf("failed to delete NCP MongoDB instance: %w", err)
 	}
 

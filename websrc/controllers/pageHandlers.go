@@ -250,6 +250,19 @@ func GenerateCredentialGetHandler(ctx echo.Context) error {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
+// Page handlers related to log management
+
+func LogManagementHandler(ctx echo.Context) error {
+	logger := getLoggerFromContext(ctx)
+	logger.Info().Msg("log management get page accessed")
+	return ctx.Render(http.StatusOK, "index.html", models.BasicPageResponse{
+		Content: "Log-Management",
+		OS:      runtime.GOOS,
+		Error:   nil,
+	})
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////
 // Page handlers related to backup data
 
 func BackupHandler(ctx echo.Context) error {

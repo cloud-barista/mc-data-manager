@@ -24,147 +24,293 @@
             <input type="hidden" id="targetPoint[provider]" value="none">
             <input type="hidden" id="sourcePoint[endpoint]" name="sourcePoint[endpoint]" value="">
             <input type="hidden" id="targetPoint[endpoint]" name="targetPoint[endpoint]" value="">
-                <div class="card rounded-3 mb-3 p-3">
-                    <div class="input-group mb-3">
-                        <div class="form-floating">
-                            <input type="text" class="form-control" id="sourcePointLabel" placeholder="Source" style="border: 0; background-color: white;" value="-" required disabled>
-                            <label for="sourcePointLabel">Source</label>
-                        </div>
-                    </div>    
-                    <div class="input-group mb-3 me-1">
-                        <span class="input-group-text rounded-start"><i class="fa-solid fa-user-secret"></i></span>
-                        <div class="form-floating">
-                            <select class="form-select form-select-sm rounded-end" id="sourceCredentialSelect" name="sourcePoint[credentialId]">
-                                <option value="none" data-provider="none"> - </option>
-                            </select>
-                            <label for="sourceCredentialSelect">provider - credential name</label>
-                        </div>
+
+            <div class="stepper d-flex flex-column mt-2 ml-2" id="accordionExample">
+
+                <!-- ===== Step 1: Enter Source Object Storage for Migration ===== -->
+                <div class="d-flex mb-1">
+                    <div class="d-flex flex-column pr-4 align-items-center mt-2">
+                        <button class="rounded-circle py-2 px-3 bg-secondary text-white mb-1 next-btn border-0 step-btn" type="button" data-target="#collapseOne">
+                            1
+                        </button>
+                        <div class="line h-100"></div>
                     </div>
-                    <div class="input-group mb-3 me-1">
-                        <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span>
-                        <div class="form-floating">
-                            <select class="form-select form-select-sm rounded-end" id="sourceRegionSelect" name="sourcePoint[region]">
-                                <option value="none" selected> - </option>
-                                {{ template "region-optgroups-csp.html" . }}
-                            </select>
-                            <label for="sourceRegionSelect">Select Region</label>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="text-muted small fw-semibold">Bucket List</span>
-                        <div class="d-flex gap-2 align-items-center">
-                            <div class="input-group input-group-sm" style="width:200px;">
-                                <span class="input-group-text"><i class="bi bi-search"></i></span>
-                                <input type="text" class="form-control" id="src-bkt-search" placeholder="Search by name">
+                    <div class="accordion flex-grow-1 ms-4 mb-4">
+                        <div class="accordion-item rounded-3">
+                            <div class="accordion-header" id="headingOne">
+                                <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    Enter Source Object Storage for Migration
+                                </button>
                             </div>
-                            <button type="button" class="btn btn-danger btn-sm" id="src-bkt-deleteInstanceBtn" disabled>
-                                <i class="bi bi-trash3 me-1"></i>Delete
-                            </button>
-                            <button type="button" class="btn btn-primary btn-sm" id="src-bkt-createBtn" disabled>
-                                <i class="bi bi-plus-lg me-1"></i>Bucket
-                            </button>
-                        </div>
-                    </div>
-                    <table class="table table-bordered table-sm mb-0">
-                        <thead>
-                            <tr>
-                                <th style="width:36px;"></th>
-                                <th>Resource ID</th>
-                                <th>Name</th>
-                                <th>Region</th>
-                                <th>Status</th>
-                                <th>Created</th>
-                                <th style="width:76px;"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="src-bkt-body">
-                            <tr><td colspan="7" class="text-center text-muted small py-3">Select a credential to list buckets</td></tr>
-                        </tbody>
-                    </table>
-                    <div id="src-bkt-pagination" class="mt-2"></div>
-                    <div class="input-group mt-3">
-                        <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
-                        <div class="form-floating">
-                            <select class="form-select rounded-end" id="sourceBucket" name="sourcePoint[bucket]">
-                                <option value="">- Select Bucket -</option>
-                            </select>
-                            <label for="sourceBucket">Source Bucket</label>
-                        </div>
-                    </div>
-                    <div class="text-muted small ps-2 mt-1 mb-2">Click a bucket in the list or choose one from the dropdown.</div>
-                    {{ template "filter.html" . }}
-                </div>
-                <div class="card rounded-3 mb-3 p-3">
-                    <div class="input-group mb-3">
-                        <div class="form-floating">
-                            <input type="text" class="form-control" id="targetPointLabel" placeholder="Target" style="border: 0; background-color: white;" value="-" required disabled>
-                            <label for="sourcePointLabel">Target</label>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="input-group mb-3 me-1">
-                            <span class="input-group-text rounded-start"><i class="fa-solid fa-user-secret"></i></span>
-                            <div class="form-floating">
-                                <select class="form-select form-select-sm rounded-end" id="targetCredentialSelect" name="targetPoint[credentialId]">
-                                    <option value="none" data-provider="none"> - </option>
-                                </select>
-                                <label for="targetCredentialSelect">provider - credential name</label>
-                            </div>
-                        </div>
-                        <div class="input-group mb-3 me-1">
-                            <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span>
-                            <div class="form-floating">
-                                <select class="form-select form-select-sm rounded-end" id="targetRegionSelect" name="targetPoint[region]">
-                                    <option value="none" selected> - </option>
-                                    {{ template "region-optgroups-csp.html" . }}
-                                </select>
-                                <label for="targetRegionSelect">Select Region</label>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="text-muted small fw-semibold">Bucket List</span>
-                            <div class="d-flex gap-2 align-items-center">
-                                <div class="input-group input-group-sm" style="width:200px;">
-                                    <span class="input-group-text"><i class="bi bi-search"></i></span>
-                                    <input type="text" class="form-control" id="tgt-bkt-search" placeholder="Search by name">
+                            <div id="collapseOne" class="accordion-collapse rounded-bottom collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                <div class="accordion-body border-1 rounded-3 pt-0">
+                                    <div class="input-group mb-3">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="sourcePointLabel" placeholder="Source" style="border: 0; background-color: white;" value="-" required disabled>
+                                            <label for="sourcePointLabel">Source</label>
+                                        </div>
+                                    </div>
+                                    <div class="input-group mb-3 me-1">
+                                        <span class="input-group-text rounded-start"><i class="fa-solid fa-user-secret"></i></span>
+                                        <div class="form-floating">
+                                            <select class="form-select form-select-sm rounded-end" id="sourceCredentialSelect" name="sourcePoint[credentialId]">
+                                                <option value="none" data-provider="none"> - </option>
+                                            </select>
+                                            <label for="sourceCredentialSelect">provider - credential name</label>
+                                        </div>
+                                    </div>
+                                    <div class="input-group mb-3 me-1">
+                                        <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span>
+                                        <div class="form-floating">
+                                            <select class="form-select form-select-sm rounded-end" id="sourceRegionSelect" name="sourcePoint[region]">
+                                                <option value="none" selected> - </option>
+                                                {{ template "region-optgroups-csp.html" . }}
+                                            </select>
+                                            <label for="sourceRegionSelect">Select Region</label>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="text-muted small fw-semibold">Bucket List</span>
+                                        <div class="d-flex gap-2 align-items-center">
+                                            <div class="input-group input-group-sm" style="width:200px;">
+                                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                                <input type="text" class="form-control" id="src-bkt-search" placeholder="Search by name">
+                                            </div>
+                                            <button type="button" class="btn btn-danger btn-sm" id="src-bkt-deleteInstanceBtn" disabled>
+                                                <i class="bi bi-trash3 me-1"></i>Delete
+                                            </button>
+                                            <button type="button" class="btn btn-primary btn-sm" id="src-bkt-createBtn" disabled>
+                                                <i class="bi bi-plus-lg me-1"></i>Bucket
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <table class="table table-bordered table-sm mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:36px;"></th>
+                                                <th>Resource ID</th>
+                                                <th>Name</th>
+                                                <th>Region</th>
+                                                <th>Status</th>
+                                                <th>Created</th>
+                                                <th style="width:76px;"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="src-bkt-body">
+                                            <tr><td colspan="7" class="text-center text-muted small py-3">Select a credential to list buckets</td></tr>
+                                        </tbody>
+                                    </table>
+                                    <div id="src-bkt-pagination" class="mt-2"></div>
+                                    <div class="input-group mt-3">
+                                        <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
+                                        <div class="form-floating">
+                                            <select class="form-select rounded-end" id="sourceBucket" name="sourcePoint[bucket]">
+                                                <option value="">- Select Bucket -</option>
+                                            </select>
+                                            <label for="sourceBucket">Source Bucket</label>
+                                        </div>
+                                    </div>
+                                    <div class="text-muted small ps-2 mt-1 mb-2">Click a bucket in the list or choose one from the dropdown.</div>
+                                    {{ template "filter.html" . }}
+
+                                    <div class="d-flex mt-3">
+                                        <button class="btn btn-success btn-block rounded-3 next-btn ms-auto" type="button" data-current="#collapseOne" data-next="#collapseTwo">Next</button>
+                                    </div>
                                 </div>
-                                <button type="button" class="btn btn-danger btn-sm" id="tgt-bkt-deleteInstanceBtn" disabled>
-                                    <i class="bi bi-trash3 me-1"></i>Delete
-                                </button>
-                                <button type="button" class="btn btn-primary btn-sm" id="tgt-bkt-createBtn" disabled>
-                                    <i class="bi bi-plus-lg me-1"></i>Bucket
-                                </button>
                             </div>
                         </div>
-                        <table class="table table-bordered table-sm mb-0">
-                            <thead>
-                                <tr>
-                                    <th style="width:36px;"></th>
-                                    <th>Resource ID</th>
-                                    <th>Name</th>
-                                    <th>Region</th>
-                                    <th>Status</th>
-                                    <th>Created</th>
-                                    <th style="width:76px;"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="tgt-bkt-body">
-                                <tr><td colspan="7" class="text-center text-muted small py-3">Select a credential to list buckets</td></tr>
-                            </tbody>
-                        </table>
-                        <div id="tgt-bkt-pagination" class="mt-2"></div>
-                        <div class="input-group mt-3">
-                            <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
-                            <div class="form-floating">
-                                <select class="form-select rounded-end" id="targetBucket" name="targetPoint[bucket]">
-                                    <option value="">- Select Bucket -</option>
-                                </select>
-                                <label for="targetBucket">Target Bucket</label>
-                            </div>
-                        </div>
-                        <div class="text-muted small ps-2 mt-1">Click a bucket in the list or choose one from the dropdown. Use + Bucket to create a new one.</div>
                     </div>
                 </div>
+
+                <!-- ===== Step 2: Diagnose Source Object Storage ===== -->
+                <div class="d-flex mb-1">
+                    <div class="d-flex flex-column pr-4 align-items-center mt-2">
+                        <button class="rounded-circle py-2 px-3 bg-secondary text-white mb-1 next-btn border-0 step-btn" type="button" data-target="#collapseTwo">
+                            2
+                        </button>
+                        <div class="line h-100"></div>
+                    </div>
+                    <div class="accordion flex-grow-1 ms-4 mb-4">
+                        <div class="accordion-item rounded-3">
+                            <div class="accordion-header" id="headingTwo">
+                                <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    Diagnose Source Object Storage
+                                </button>
+                            </div>
+                            <div id="collapseTwo" class="accordion-collapse rounded-bottom collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                <div class="accordion-body rounded-3">
+                                    <!-- Diagnose 입력 (placeholder — name 미부여: 마이그레이션 페이로드에 미포함) -->
+                                    <div class="input-group">
+                                        <div class="form-floating mb-3 col-4">
+                                            <input type="text" class="form-control rounded-3" id="src-diag-duration" placeholder="Duration" value="5">
+                                            <label for="src-diag-duration">Duration ( Sec )</label>
+                                        </div>
+                                        <div class="form-floating mb-3 ms-3 col-4">
+                                            <input type="text" class="form-control rounded-3" id="src-diag-object" placeholder="Object" value="1024">
+                                            <label for="src-diag-object">Object ( KiB )</label>
+                                        </div>
+                                        <div class="form-floating mb-3 ms-3 col-4">
+                                            <input type="text" class="form-control rounded-3" id="src-diag-count" placeholder="Object Count" value="10">
+                                            <label for="src-diag-count">Object Count</label>
+                                        </div>
+                                        <div class="d-flex form-floating mb-3 ms-3 col-4">
+                                            <button class="btn btn-primary rounded-3 ms-auto" id="src-diag-btn" type="button">Diagnose</button>
+                                        </div>
+                                    </div>
+                                    <!-- warp 결과 (operation별 아코디언 — Diagnose 클릭 시 #warp-op-template 복제 렌더, 기본 접힘) -->
+                                    <div id="src-diag-error" class="alert alert-danger py-2 px-3 small d-none"></div>
+                                    <div class="accordion mb-3" id="src-warp-results"></div>
+
+                                    <div class="d-flex mt-3">
+                                        <button class="btn btn-success btn-block rounded-3 next-btn ms-auto" type="button" data-current="#collapseTwo" data-next="#collapseThree">Next</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== Step 3: Enter Target Object Storage for Migration ===== -->
+                <div class="d-flex mb-1">
+                    <div class="d-flex flex-column pr-4 align-items-center mt-2">
+                        <button class="rounded-circle py-2 px-3 bg-secondary text-white mb-1 next-btn border-0 step-btn" type="button" data-target="#collapseThree">
+                            3
+                        </button>
+                        <div class="line h-100"></div>
+                    </div>
+                    <div class="accordion flex-grow-1 ms-4 mb-4">
+                        <div class="accordion-item rounded-3">
+                            <div class="accordion-header" id="headingThree">
+                                <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    Enter Target Object Storage for Migration
+                                </button>
+                            </div>
+                            <div id="collapseThree" class="accordion-collapse rounded-bottom collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                                <div class="accordion-body border-1 rounded-3 pt-0">
+                                    <div class="input-group mb-3">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="targetPointLabel" placeholder="Target" style="border: 0; background-color: white;" value="-" required disabled>
+                                            <label for="sourcePointLabel">Target</label>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="input-group mb-3 me-1">
+                                            <span class="input-group-text rounded-start"><i class="fa-solid fa-user-secret"></i></span>
+                                            <div class="form-floating">
+                                                <select class="form-select form-select-sm rounded-end" id="targetCredentialSelect" name="targetPoint[credentialId]">
+                                                    <option value="none" data-provider="none"> - </option>
+                                                </select>
+                                                <label for="targetCredentialSelect">provider - credential name</label>
+                                            </div>
+                                        </div>
+                                        <div class="input-group mb-3 me-1">
+                                            <span class="input-group-text rounded-start"><i class="fa-solid fa-globe"></i></span>
+                                            <div class="form-floating">
+                                                <select class="form-select form-select-sm rounded-end" id="targetRegionSelect" name="targetPoint[region]">
+                                                    <option value="none" selected> - </option>
+                                                    {{ template "region-optgroups-csp.html" . }}
+                                                </select>
+                                                <label for="targetRegionSelect">Select Region</label>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="text-muted small fw-semibold">Bucket List</span>
+                                            <div class="d-flex gap-2 align-items-center">
+                                                <div class="input-group input-group-sm" style="width:200px;">
+                                                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                                    <input type="text" class="form-control" id="tgt-bkt-search" placeholder="Search by name">
+                                                </div>
+                                                <button type="button" class="btn btn-danger btn-sm" id="tgt-bkt-deleteInstanceBtn" disabled>
+                                                    <i class="bi bi-trash3 me-1"></i>Delete
+                                                </button>
+                                                <button type="button" class="btn btn-primary btn-sm" id="tgt-bkt-createBtn" disabled>
+                                                    <i class="bi bi-plus-lg me-1"></i>Bucket
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <table class="table table-bordered table-sm mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width:36px;"></th>
+                                                    <th>Resource ID</th>
+                                                    <th>Name</th>
+                                                    <th>Region</th>
+                                                    <th>Status</th>
+                                                    <th>Created</th>
+                                                    <th style="width:76px;"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tgt-bkt-body">
+                                                <tr><td colspan="7" class="text-center text-muted small py-3">Select a credential to list buckets</td></tr>
+                                            </tbody>
+                                        </table>
+                                        <div id="tgt-bkt-pagination" class="mt-2"></div>
+                                        <div class="input-group mt-3">
+                                            <span class="input-group-text rounded-start"><i class="fa-solid fa-bucket"></i></span>
+                                            <div class="form-floating">
+                                                <select class="form-select rounded-end" id="targetBucket" name="targetPoint[bucket]">
+                                                    <option value="">- Select Bucket -</option>
+                                                </select>
+                                                <label for="targetBucket">Target Bucket</label>
+                                            </div>
+                                        </div>
+                                        <div class="text-muted small ps-2 mt-1">Click a bucket in the list or choose one from the dropdown. Use + Bucket to create a new one.</div>
+                                    </div>
+
+                                    <div class="d-flex mt-3">
+                                        <button class="btn btn-success btn-block rounded-3 next-btn ms-auto" type="button" data-current="#collapseThree" data-next="#collapseFour">Next</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== Step 4: Diagnose Target Object Storage ===== -->
+                <div class="d-flex mb-1">
+                    <div class="d-flex flex-column pr-4 align-items-center mt-2">
+                        <button class="rounded-circle py-2 px-3 bg-secondary text-white mb-1 next-btn border-0 step-btn" type="button" data-target="#collapseFour">
+                            4
+                        </button>
+                    </div>
+                    <div class="accordion flex-grow-1 ms-4 mb-4">
+                        <div class="accordion-item rounded-3">
+                            <div class="accordion-header" id="headingFour">
+                                <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    Diagnose Target Object Storage
+                                </button>
+                            </div>
+                            <div id="collapseFour" class="accordion-collapse rounded-bottom collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+                                <div class="accordion-body rounded-3">
+                                    <!-- Diagnose 입력 (placeholder — name 미부여: 마이그레이션 페이로드에 미포함) -->
+                                    <div class="input-group">
+                                        <div class="form-floating mb-3 col-4">
+                                            <input type="text" class="form-control rounded-3" id="tgt-diag-duration" placeholder="Duration" value="5">
+                                            <label for="tgt-diag-duration">Duration ( Sec )</label>
+                                        </div>
+                                        <div class="form-floating mb-3 ms-3 col-4">
+                                            <input type="text" class="form-control rounded-3" id="tgt-diag-object" placeholder="Object" value="1024">
+                                            <label for="tgt-diag-object">Object ( KiB )</label>
+                                        </div>
+                                        <div class="form-floating mb-3 ms-3 col-4">
+                                            <input type="text" class="form-control rounded-3" id="tgt-diag-count" placeholder="Object Count" value="10">
+                                            <label for="tgt-diag-count">Object Count</label>
+                                        </div>
+                                        <div class="d-flex form-floating mb-3 ms-3 col-4">
+                                            <button class="btn btn-primary rounded-3 ms-auto" id="tgt-diag-btn" type="button">Diagnose</button>
+                                        </div>
+                                    </div>
+                                    <!-- warp 결과 (operation별 아코디언 — Diagnose 클릭 시 #warp-op-template 복제 렌더, 기본 접힘) -->
+                                    <div id="tgt-diag-error" class="alert alert-danger py-2 px-3 small d-none"></div>
+                                    <div class="accordion mb-3" id="tgt-warp-results"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
             <button type="submit" class="btn btn-primary rounded-3 float-end" id="submitBtn">Submit</button>
         </form>
     </div>
@@ -172,10 +318,88 @@
 
 {{ template "bucket-panel.html" . }}
 
+<!-- warp operation 1건 아코디언 패널 템플릿 (Source/Target 공용 — JS가 복제 후 data-k 셀에 값 주입) -->
+<template id="warp-op-template">
+    <div class="accordion-item border rounded-3 mb-3">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" aria-expanded="false">
+                <span data-k="title">-</span>
+            </button>
+        </h2>
+        <div class="accordion-collapse collapse">
+            <div class="accordion-body p-2">
+                <div class="card rounded-3">
+                    <div class="card-body p-0">
+                        <table class="table table-sm mb-0"><tbody>
+                            <tr><td class="ps-5" style="width:50%;">Duration (sec)</td><td class="value" data-k="durationSec">-</td></tr>
+                            <tr><td class="ps-5">Object per request</td><td class="value" data-k="objectsPerReq">-</td></tr>
+                            <tr><td class="ps-5">Size</td><td class="value" data-k="size">-</td></tr>
+                            <tr><td class="ps-5">Concurrency</td><td class="value" data-k="concurrency">-</td></tr>
+                        </tbody></table>
+                    </div>
+                </div>
+                <div class="card mt-2 rounded-3">
+                    <div class="card-header">Average</div>
+                    <div class="card-body p-0">
+                        <table class="table table-sm mb-0"><tbody>
+                            <tr><td class="ps-5" style="width:50%;">Avg (obj/s)</td><td class="value" data-k="avgObjPS">-</td></tr>
+                            <tr><td class="ps-5">Throughput</td><td class="value" data-k="avgThroughput">-</td></tr>
+                        </tbody></table>
+                    </div>
+                </div>
+                <div class="card mt-2 rounded-3">
+                    <div class="card-header">Reqs (ms)</div>
+                    <div class="card-body p-0">
+                        <table class="table table-sm mb-0"><tbody>
+                            <tr><td class="ps-5" style="width:50%;">Avg</td><td class="value" data-k="reqAvg">-</td></tr>
+                            <tr><td class="ps-5">50%</td><td class="value" data-k="reqP50">-</td></tr>
+                            <tr><td class="ps-5">90%</td><td class="value" data-k="reqP90">-</td></tr>
+                            <tr><td class="ps-5">99%</td><td class="value" data-k="reqP99">-</td></tr>
+                            <tr><td class="ps-5">Fastest</td><td class="value" data-k="reqFastest">-</td></tr>
+                            <tr><td class="ps-5">Slowest</td><td class="value" data-k="reqSlowest">-</td></tr>
+                            <tr><td class="ps-5">StdDev</td><td class="value" data-k="reqStdDev">-</td></tr>
+                        </tbody></table>
+                    </div>
+                </div>
+                <div class="card mt-2 rounded-3" data-sec="ttfb">
+                    <div class="card-header">TTFB (ms)</div>
+                    <div class="card-body p-0">
+                        <table class="table table-sm mb-0"><tbody>
+                            <tr><td class="ps-5" style="width:50%;">Avg</td><td class="value" data-k="ttfbAvg">-</td></tr>
+                            <tr><td class="ps-5">Best</td><td class="value" data-k="ttfbBest">-</td></tr>
+                            <tr><td class="ps-5">25th</td><td class="value" data-k="ttfbP25">-</td></tr>
+                            <tr><td class="ps-5">Median</td><td class="value" data-k="ttfbMedian">-</td></tr>
+                            <tr><td class="ps-5">75th</td><td class="value" data-k="ttfbP75">-</td></tr>
+                            <tr><td class="ps-5">90th</td><td class="value" data-k="ttfbP90">-</td></tr>
+                            <tr><td class="ps-5">99th</td><td class="value" data-k="ttfbP99">-</td></tr>
+                            <tr><td class="ps-5">Worst</td><td class="value" data-k="ttfbWorst">-</td></tr>
+                            <tr><td class="ps-5">StdDev</td><td class="value" data-k="ttfbStdDev">-</td></tr>
+                        </tbody></table>
+                    </div>
+                </div>
+                <div class="card mt-2 rounded-3">
+                    <div class="card-header">Throughput</div>
+                    <div class="card-body p-0">
+                        <table class="table table-sm mb-0"><tbody>
+                            <tr><td class="ps-5" style="width:50%;">Fastest (obj/s)</td><td class="value" data-k="tpFastestObjPS">-</td></tr>
+                            <tr><td class="ps-5">Median (obj/s)</td><td class="value" data-k="tpMedianObjPS">-</td></tr>
+                            <tr><td class="ps-5">Slowest (obj/s)</td><td class="value" data-k="tpSlowestObjPS">-</td></tr>
+                            <tr><td class="ps-5">Fastest</td><td class="value" data-k="tpFastestKib">-</td></tr>
+                            <tr><td class="ps-5">Median</td><td class="value" data-k="tpMedianKib">-</td></tr>
+                            <tr><td class="ps-5">Slowest</td><td class="value" data-k="tpSlowestKib">-</td></tr>
+                        </tbody></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // 버킷 목록/탐색/삭제는 scripts.js의 BucketPanel 공용 컴포넌트 사용
-    BucketPanel.init({
+    // 버킷 목록/탐색/삭제는 scripts.js의 BucketPanel 공용 컴포넌트 사용.
+    // init이 panel을 반환한다 → allBuckets/provider/region으로 diagnose에서 bucketId를 조회.
+    const srcPanel = BucketPanel.init({
         prefix: 'src-bkt',
         cred: document.getElementById('sourceCredentialSelect'),
         region: document.getElementById('sourceRegionSelect'),
@@ -185,7 +409,7 @@ document.addEventListener('DOMContentLoaded', () => {
         deleteBtn: document.getElementById('src-bkt-deleteInstanceBtn'),
         createBtn: document.getElementById('src-bkt-createBtn'),
     });
-    BucketPanel.init({
+    const tgtPanel = BucketPanel.init({
         prefix: 'tgt-bkt',
         cred: document.getElementById('targetCredentialSelect'),
         region: document.getElementById('targetRegionSelect'),
@@ -194,6 +418,157 @@ document.addEventListener('DOMContentLoaded', () => {
         bucketInput: document.getElementById('targetBucket'),
         deleteBtn: document.getElementById('tgt-bkt-deleteInstanceBtn'),
         createBtn: document.getElementById('tgt-bkt-createBtn'),
+    });
+
+    // ── Diagnose (POST /diagnose/warp) — Source·Target 공통 ──────────────
+    // 값 포맷: 숫자는 천단위 구분 + 소수 2자리, 빈값/0은 dash (textContent용 — 이스케이프 불필요)
+    function warpText(v) {
+        if (v === null || v === undefined || v === '' || v === 0) return '—';
+        return (typeof v === 'number') ? v.toLocaleString(undefined, { maximumFractionDigits: 2 }) : String(v);
+    }
+    // 신규 *Kib 숫자 필드 우선, 없으면 기존 문자열 필드(size/avgThroughput/throughput*)로 폴백
+    function pick(a, b) { return (a !== null && a !== undefined && a !== '') ? a : b; }
+
+    // operation 1건 → #warp-op-template 복제 후 data-k 셀에 값 주입한 아코디언 패널 반환 (기본 접힘)
+    function warpOpNode(prefix, o, idx) {
+        const node = document.getElementById('warp-op-template').content.firstElementChild.cloneNode(true);
+        const cid = `${prefix}-warp-op-${idx}`;
+        const btn = node.querySelector('.accordion-button');
+        const col = node.querySelector('.accordion-collapse');
+        btn.setAttribute('data-bs-target', '#' + cid);
+        btn.setAttribute('aria-controls', cid);
+        col.id = cid;
+
+        const set = (k, v) => { const el = node.querySelector(`[data-k="${k}"]`); if (el) el.textContent = warpText(v); };
+        set('title', `${o.operation || '—'} (${warpText(o.requests)} reqs)`);
+        set('durationSec', o.durationSec);
+        set('objectsPerReq', o.objectsPerReq);
+        set('size', pick(o.sizeKib, o.size));
+        set('concurrency', o.concurrency);
+        set('avgObjPS', o.avgObjPS);
+        set('avgThroughput', pick(o.avgThroughputKib, o.avgThroughput));
+        set('reqAvg', o.reqAvgMs);
+        set('reqP50', o.reqP50Ms);
+        set('reqP90', o.reqP90Ms);
+        set('reqP99', o.reqP99Ms);
+        set('reqFastest', o.reqFastestMs);
+        set('reqSlowest', o.reqSlowestMs);
+        set('reqStdDev', o.reqStdDevMs);
+        set('ttfbAvg', o.ttfbAvgMs);
+        set('ttfbBest', o.ttfbBestMs);
+        set('ttfbP25', o.ttfbP25Ms);
+        set('ttfbMedian', o.ttfbMedianMs);
+        set('ttfbP75', o.ttfbP75Ms);
+        set('ttfbP90', o.ttfbP90Ms);
+        set('ttfbP99', o.ttfbP99Ms);
+        set('ttfbWorst', o.ttfbWorstMs);
+        set('ttfbStdDev', o.ttfbStdDevMs);
+        set('tpFastestObjPS', o.throughputFastestObjPS);
+        set('tpFastestKib', pick(o.throughputFastestKib, o.throughputFastest));
+        set('tpMedianObjPS', o.throughputMedianObjPS);
+        set('tpMedianKib', pick(o.throughputMedianKib, o.throughputMedian));
+        set('tpSlowestObjPS', o.throughputSlowestObjPS);
+        set('tpSlowestKib', pick(o.throughputSlowestKib, o.throughputSlowest));
+
+        // DELETE/STAT은 TTFB 메트릭이 없다 → 섹션 숨김
+        const opName = (o.operation || '').toUpperCase();
+        if (opName === 'DELETE' || opName === 'STAT') {
+            node.querySelector('[data-sec="ttfb"]').classList.add('d-none');
+        }
+        return node;
+    }
+
+    // 응답의 모든 operation을 아코디언으로 렌더 → 렌더한 개수 반환
+    // (operations[] 배열·단일 operation 객체 응답 모두 처리)
+    function renderWarp(prefix, data) {
+        const box = document.getElementById(prefix + '-warp-results');
+        box.innerHTML = '';
+        if (!data) return 0;
+        const ops = Array.isArray(data.operations) ? data.operations
+                  : (data.operation ? [data] : []);
+        ops.forEach((o, i) => box.appendChild(warpOpNode(prefix, o, i)));
+        return ops.length;
+    }
+
+    // panel(BucketPanel)에서 선택 버킷의 cspResourceId·provider·region을 모아 API 호출
+    function wireDiagnose(prefix, panel) {
+        const btn  = document.getElementById(prefix + '-diag-btn');
+        const durEl = document.getElementById(prefix + '-diag-duration');
+        const objEl = document.getElementById(prefix + '-diag-object');
+        const cntEl = document.getElementById(prefix + '-diag-count');
+        const errEl = document.getElementById(prefix + '-diag-error');
+
+        btn.addEventListener('click', async () => {
+            const provider = (panel.provider.value || '').trim();
+            const name     = (panel.bucketInput.value || '').trim();
+            const bucket   = panel.allBuckets.find(x => x.name === name);
+            const bucketId = bucket ? (bucket.cspResourceId || '') : '';
+            const region   = panel.selectedRegion || panel.region.value || '';
+
+            if (!provider || provider === 'none') { alert('Select a credential first.'); return; }
+            if (!bucketId) { alert('Select a bucket first.'); return; }
+
+            const durationSec = parseInt(durEl.value, 10);
+            const objectKib   = parseInt(objEl.value, 10);
+            const objectCount = parseInt(cntEl.value, 10);
+            if (!(durationSec > 0) || !(objectKib > 0) || !(objectCount > 0)) {
+                alert('Duration, Object (KiB), and Object Count must be positive numbers.');
+                return;
+            }
+
+            const body = { provider, region, bucketId, durationSec, objectKib, objectCount };
+            const orig = btn.innerHTML;
+            errEl.classList.add('d-none');
+            errEl.textContent = '';
+            renderWarp(prefix, null); // 이전 결과 아코디언 비우기
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Running…';
+
+            const showErr = msg => { errEl.textContent = msg; errEl.classList.remove('d-none'); };
+            try {
+                const res = await fetch('/diagnose/warp', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body),
+                });
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) {
+                    showErr((data && data.error) ? data.error : ('HTTP ' + res.status));
+                    return;
+                }
+                if (renderWarp(prefix, data) === 0) { showErr('No metrics returned.'); return; }
+            } catch (e) {
+                console.error('diagnose warp:', e);
+                showErr('Request failed. Please try again.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = orig;
+            }
+        });
+    }
+    wireDiagnose('src', srcPanel);
+    wireDiagnose('tgt', tgtPanel);
+
+    // 스테퍼 진행 (mig-mysql의 .next-btn 내비게이션 이식 — 자유 진행, 게이팅 없음)
+    document.querySelectorAll('.next-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const currentId = btn.dataset.current;
+            const nextId = btn.dataset.next;
+            if (!nextId) return; // 번호 원형 버튼(step-btn)은 data-next 없음 → no-op
+
+            // 현재 스텝 번호 버튼 색상 secondary → success
+            const stepBtn = document.querySelector(`button[data-target='${currentId}']`);
+            if (stepBtn) {
+                stepBtn.classList.remove('bg-secondary');
+                stepBtn.classList.add('bg-success');
+            }
+            // 다음 스텝 열기 + 헤더 활성
+            const next = document.querySelector(nextId);
+            if (next) {
+                bootstrap.Collapse.getOrCreateInstance(next).show();
+                const headerBtn = document.querySelector(`button[data-bs-target='${nextId}']`);
+                if (headerBtn) headerBtn.disabled = false;
+            }
+        });
     });
 });
 </script>

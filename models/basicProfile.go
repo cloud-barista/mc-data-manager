@@ -61,6 +61,8 @@ type NHNCredentials struct {
 	TenantID         string `json:"tenantId" form:"tenantId"`
 	DomainName       string `json:"domainName" form:"domainName"`
 	IdentityEndpoint string `json:"identityEndpoint" form:"identityEndpoint"`
+	S3AccessKey 	 string `json:"s3AccessKey,omitempty" form:"s3AccessKey"`
+	S3SecretKey 	 string `json:"s3SecretKey,omitempty" form:"s3SecretKey"`
 }
 
 type GCPCredentials struct {
@@ -75,6 +77,8 @@ type GCPCredentials struct {
 	AuthProviderCertURL string `json:"auth_provider_x509_cert_url" form:"auth_provider_x509_cert_url"`
 	ClientCertURL       string `json:"client_x509_cert_url" form:"client_x509_cert_url"`
 	UniverseDomain      string `json:"universe_domain" form:"universe_domain"`
+	S3AccessKey 		string `json:"s3AccessKey,omitempty" form:"s3AccessKey"`
+	S3SecretKey 		string `json:"s3SecretKey,omitempty" form:"s3SecretKey"`
 }
 
 type AlibabaCredentials struct {

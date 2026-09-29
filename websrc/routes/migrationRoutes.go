@@ -46,7 +46,7 @@ func MigrationRoot(g *echo.Group) {
 	g.GET("", controllers.GetAllMigrateHandler)        // Retrieve all tasks
 	g.GET("/:id", controllers.GetMigrateHandler)       // Retrieve a single task by ID
 	g.PUT("/:id", controllers.UpdateMigrateHandler)    // Update an existing task by ID
-	g.DELETE("/:id", controllers.DeleteBackupkHandler) // Delete a task by ID
+	// g.DELETE("/:id", controllers.DeleteBackupkHandler) // Delete a task by ID
 }
 
 func MigrationFromOnpremiseToObjectStorage(g *echo.Group) {

@@ -46,7 +46,7 @@ func TracingMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		c.SetRequest(c.Request().WithContext(ctx))
 
 		// Log the incoming request
-		requestLogger.Info().Msg("[tracing] receive request")
+		requestLogger.Info().Msgf("[REQ] %s %s", c.Request().Method, c.Request().RequestURI)
 
 		// Measure the latency
 		startTime := time.Now()
@@ -73,7 +73,7 @@ func TracingMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 				Str("LatencyHuman", latency.String()).
 				Int64("BytesIn", c.Request().ContentLength).
 				Int64("BytesOut", c.Response().Size).
-				Msg("[tracing] send response")
+				Msgf("[RES] %s %s -> %d (%s)", c.Request().Method, c.Request().RequestURI, statusCode, latency.String())
 		})
 
 		// Proceed to next handler

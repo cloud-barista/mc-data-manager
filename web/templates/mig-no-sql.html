@@ -21,8 +21,25 @@
             <input type="hidden" id="sourcePoint[provider]" value="none">
             <input type="hidden" id="targetPoint[provider]" value="none">
 
-            <!-- ── Source ─────────────────────────────────────── -->
-            <div class="card rounded-3 mb-3 p-3">
+            <div class="stepper d-flex flex-column mt-2 ml-2" id="accordionExample">
+
+                <!-- ===== Step 1: Enter Source No-SQL for Migration ===== -->
+                <div class="d-flex mb-1">
+                    <div class="d-flex flex-column pr-4 align-items-center mt-2">
+                        <button class="rounded-circle py-2 px-3 bg-secondary text-white mb-1 next-btn border-0 step-btn" type="button" data-target="#collapseOne">
+                            1
+                        </button>
+                        <div class="line h-100"></div>
+                    </div>
+                    <div class="accordion flex-grow-1 ms-4 mb-4">
+                        <div class="accordion-item rounded-3">
+                            <div class="accordion-header" id="headingOne">
+                                <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    Enter Source No-SQL for Migration
+                                </button>
+                            </div>
+                            <div id="collapseOne" class="accordion-collapse rounded-bottom collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                <div class="accordion-body border-1 rounded-3 pt-0">
                 <div class="input-group mb-3">
                     <div class="form-floating">
                         <input type="text" class="form-control" id="sourcePointLabel" placeholder="Source" style="border: 0; background-color: white;" value="-" required disabled>
@@ -61,10 +78,21 @@
                             <button type="button" class="btn btn-danger btn-sm" id="src-nrdb-deleteBtn" disabled>
                                 <i class="bi bi-trash3 me-1"></i>Delete
                             </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm d-none" id="src-nrdb-refreshHostBtn" title="Reload the latest Host">
+                                <i class="bi bi-arrow-clockwise me-1"></i>Refresh Host
+                            </button>
                             <button type="button" class="btn btn-primary btn-sm" id="src-nrdb-createBtn" disabled>
                                 <i class="bi bi-plus-lg me-1"></i>Instance
                             </button>
                         </div>
+                    </div>
+                    <!-- NCP Public Domain guide (MongoDB) — 선택 인스턴스 Host가 아직 사설('pub' 미포함)이면 표시, Refresh Host로 재조회 -->
+                    <div id="src-nrdb-ncp-guide" class="alert alert-info py-2 px-3 mb-3 small d-none">
+                        <div class="fw-semibold mb-1"><i class="bi bi-info-circle-fill me-1"></i>NCP Public Domain</div>
+                        A Public Domain must be enabled in the NCP Console to connect from outside.<br>
+                        Open the <a href="https://console.ncloud.com/" target="_blank" rel="noopener noreferrer" class="fw-semibold">NCP Console &#8599;</a> and go to
+                        <strong>Cloud DB for MongoDB &gt; DB Management &gt; Public Domain Management</strong>.<br>
+                        After it is assigned, click <strong>Refresh Host</strong> to load the latest Host.
                     </div>
                     <table class="table table-bordered table-sm mb-0">
                         <thead>
@@ -159,10 +187,86 @@
                         </div>
                     </div>
                 </div>
-            </div>
+                                    <div class="d-flex mt-3">
+                                        <button class="btn btn-success btn-block rounded-3 next-btn ms-auto" type="button" data-current="#collapseOne" data-next="#collapseTwo">Next</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- ── Target ─────────────────────────────────────── -->
-            <div class="card rounded-3 mb-3 p-3">
+                <!-- ===== Step 2: Diagnose Source No-SQL (placeholder — 내용/기능 추후 추가) ===== -->
+                <div class="d-flex mb-1">
+                    <div class="d-flex flex-column pr-4 align-items-center mt-2">
+                        <button class="rounded-circle py-2 px-3 bg-secondary text-white mb-1 next-btn border-0 step-btn" type="button" data-target="#collapseTwo">
+                            2
+                        </button>
+                        <div class="line h-100"></div>
+                    </div>
+                    <div class="accordion flex-grow-1 ms-4 mb-4">
+                        <div class="accordion-item rounded-3">
+                            <div class="accordion-header" id="headingTwo">
+                                <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    Diagnose Source No-SQL
+                                </button>
+                            </div>
+                            <div id="collapseTwo" class="accordion-collapse rounded-bottom collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                <div class="accordion-body rounded-3">
+                                    <!-- go-ycsb 진단 입력 (name 미부여 → 마이그레이션 페이로드 미포함). AWS(DynamoDB)는 서버측 자격증명, NCP/Alibaba(MongoDB)는 Step 1 접속정보 재사용 -->
+                                    <div class="d-flex flex-wrap align-items-start">
+                                        <div class="form-floating mb-3 col">
+                                            <input type="number" min="1" class="form-control rounded-3" id="src-diag-recordCount" placeholder="Record Count" value="10000">
+                                            <label for="src-diag-recordCount">Record Count</label>
+                                        </div>
+                                        <div class="form-floating mb-3 ms-3 col">
+                                            <input type="number" min="1" class="form-control rounded-3" id="src-diag-threadCount" placeholder="Thread Count" value="5">
+                                            <label for="src-diag-threadCount">Thread Count</label>
+                                        </div>
+                                        <div class="form-floating mb-3 ms-3 col">
+                                            <input type="number" min="0" max="1" step="0.1" class="form-control rounded-3" id="src-diag-readProportion" placeholder="Read" value="0.5">
+                                            <label for="src-diag-readProportion">Read Proportion (0~1)</label>
+                                        </div>
+                                        <div class="form-floating mb-3 ms-3 col">
+                                            <input type="number" min="0" max="1" step="0.1" class="form-control rounded-3" id="src-diag-updateProportion" placeholder="Update" value="0.5">
+                                            <label for="src-diag-updateProportion">Update Proportion</label>
+                                        </div>
+                                        <div class="d-flex mb-3 ms-3 col-auto align-self-center">
+                                            <button class="btn btn-primary rounded-3 ms-auto" id="src-diag-btn" type="button">Diagnose</button>
+                                        </div>
+                                    </div>
+                                    <!-- GCP(Firestore)는 go-ycsb 진단 미지원 → provider 선택 즉시 안내 노출 (applyProviderFields) -->
+                                    <div id="src-diag-gcp-notice" class="alert alert-info py-2 px-3 small d-none">
+                                        <i class="bi bi-info-circle me-1"></i>Performance diagnosis is not supported for GCP (Firestore).
+                                    </div>
+                                    <div id="src-diag-error" class="alert alert-danger py-2 px-3 small d-none"></div>
+                                    <div class="accordion mb-3" id="src-ycsb-results"></div>
+                                    <div class="d-flex mt-3">
+                                        <button class="btn btn-success btn-block rounded-3 next-btn ms-auto" type="button" data-current="#collapseTwo" data-next="#collapseThree">Next</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== Step 3: Enter Target No-SQL for Migration ===== -->
+                <div class="d-flex mb-1">
+                    <div class="d-flex flex-column pr-4 align-items-center mt-2">
+                        <button class="rounded-circle py-2 px-3 bg-secondary text-white mb-1 next-btn border-0 step-btn" type="button" data-target="#collapseThree">
+                            3
+                        </button>
+                        <div class="line h-100"></div>
+                    </div>
+                    <div class="accordion flex-grow-1 ms-4 mb-4">
+                        <div class="accordion-item rounded-3">
+                            <div class="accordion-header" id="headingThree">
+                                <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    Enter Target No-SQL for Migration
+                                </button>
+                            </div>
+                            <div id="collapseThree" class="accordion-collapse rounded-bottom collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                                <div class="accordion-body border-1 rounded-3 pt-0">
                 <div class="input-group mb-3">
                     <div class="form-floating">
                         <input type="text" class="form-control" id="targetPointLabel" placeholder="Target" style="border: 0; background-color: white;" value="-" required disabled>
@@ -201,10 +305,21 @@
                             <button type="button" class="btn btn-danger btn-sm" id="tgt-nrdb-deleteBtn" disabled>
                                 <i class="bi bi-trash3 me-1"></i>Delete
                             </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm d-none" id="tgt-nrdb-refreshHostBtn" title="Reload the latest Host">
+                                <i class="bi bi-arrow-clockwise me-1"></i>Refresh Host
+                            </button>
                             <button type="button" class="btn btn-primary btn-sm" id="tgt-nrdb-createBtn" disabled>
                                 <i class="bi bi-plus-lg me-1"></i>Instance
                             </button>
                         </div>
+                    </div>
+                    <!-- NCP Public Domain guide (MongoDB) — 선택 인스턴스 Host가 아직 사설('pub' 미포함)이면 표시, Refresh Host로 재조회 -->
+                    <div id="tgt-nrdb-ncp-guide" class="alert alert-info py-2 px-3 mb-3 small d-none">
+                        <div class="fw-semibold mb-1"><i class="bi bi-info-circle-fill me-1"></i>NCP Public Domain</div>
+                        A Public Domain must be enabled in the NCP Console to connect from outside.<br>
+                        Open the <a href="https://console.ncloud.com/" target="_blank" rel="noopener noreferrer" class="fw-semibold">NCP Console &#8599;</a> and go to
+                        <strong>Cloud DB for MongoDB &gt; DB Management &gt; Public Domain Management</strong>.<br>
+                        After it is assigned, click <strong>Refresh Host</strong> to load the latest Host.
                     </div>
                     <table class="table table-bordered table-sm mb-0">
                         <thead>
@@ -298,6 +413,65 @@
                         </div>
                     </div>
                 </div>
+                                    <div class="d-flex mt-3">
+                                        <button class="btn btn-success btn-block rounded-3 next-btn ms-auto" type="button" data-current="#collapseThree" data-next="#collapseFour">Next</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== Step 4: Diagnose Target No-SQL (placeholder — 내용/기능 추후 추가) ===== -->
+                <div class="d-flex mb-3">
+                    <div class="d-flex flex-column pr-4 align-items-center mt-2">
+                        <button class="rounded-circle py-2 px-3 bg-secondary text-white mb-1 next-btn border-0 step-btn" type="button" data-target="#collapseFour">
+                            4
+                        </button>
+                    </div>
+                    <div class="accordion flex-grow-1 ms-4 mb-4">
+                        <div class="accordion-item rounded-3">
+                            <div class="accordion-header" id="headingFour">
+                                <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    Diagnose Target No-SQL
+                                </button>
+                            </div>
+                            <div id="collapseFour" class="accordion-collapse rounded-bottom collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+                                <div class="accordion-body rounded-3">
+                                    <!-- go-ycsb 진단 입력 (name 미부여 → 마이그레이션 페이로드 미포함). AWS(DynamoDB)는 서버측 자격증명, NCP/Alibaba(MongoDB)는 Step 3 접속정보 재사용 -->
+                                    <div class="d-flex flex-wrap align-items-start">
+                                        <div class="form-floating mb-3 col">
+                                            <input type="number" min="1" class="form-control rounded-3" id="tgt-diag-recordCount" placeholder="Record Count" value="10000">
+                                            <label for="tgt-diag-recordCount">Record Count</label>
+                                        </div>
+                                        <div class="form-floating mb-3 ms-3 col">
+                                            <input type="number" min="1" class="form-control rounded-3" id="tgt-diag-threadCount" placeholder="Thread Count" value="5">
+                                            <label for="tgt-diag-threadCount">Thread Count</label>
+                                        </div>
+                                        <div class="form-floating mb-3 ms-3 col">
+                                            <input type="number" min="0" max="1" step="0.1" class="form-control rounded-3" id="tgt-diag-readProportion" placeholder="Read" value="0.5">
+                                            <label for="tgt-diag-readProportion">Read Proportion (0~1)</label>
+                                        </div>
+                                        <div class="form-floating mb-3 ms-3 col">
+                                            <input type="number" min="0" max="1" step="0.1" class="form-control rounded-3" id="tgt-diag-updateProportion" placeholder="Update" value="0.5">
+                                            <label for="tgt-diag-updateProportion">Update Proportion</label>
+                                        </div>
+                                        <div class="d-flex mb-3 ms-3 col-auto align-self-center">
+                                            <button class="btn btn-primary rounded-3 ms-auto" id="tgt-diag-btn" type="button">Diagnose</button>
+                                        </div>
+                                    </div>
+                                    <!-- GCP(Firestore)는 go-ycsb 진단 미지원 → provider 선택 즉시 안내 노출 (applyProviderFields) -->
+                                    <div id="tgt-diag-gcp-notice" class="alert alert-info py-2 px-3 small d-none">
+                                        <i class="bi bi-info-circle me-1"></i>Performance diagnosis is not supported for GCP (Firestore).
+                                    </div>
+                                    <div id="tgt-diag-error" class="alert alert-danger py-2 px-3 small d-none"></div>
+                                    <div class="accordion mb-3" id="tgt-ycsb-results"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <button type="submit" class="btn btn-primary rounded-3 float-end" id="submitBtn">Submit</button>
@@ -307,6 +481,45 @@
 
 {{ template "instance-panel.html" . }}
 {{ template "sample-data-panel.html" . }}
+
+<!-- go-ycsb operation 1건 아코디언 패널 템플릿 (Source/Target 공용 — JS가 복제 후 data-k 셀에 값 주입) -->
+<template id="ycsb-op-template">
+    <div class="accordion-item border rounded-3 mb-3">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed rounded-3" type="button" data-bs-toggle="collapse" aria-expanded="false">
+                <span data-k="title">-</span>
+            </button>
+        </h2>
+        <div class="accordion-collapse collapse">
+            <div class="accordion-body p-2">
+                <div class="card rounded-3">
+                    <div class="card-body p-0">
+                        <table class="table table-sm mb-0"><tbody>
+                            <tr><td class="ps-5" style="width:50%;">Duration (sec)</td><td class="value" data-k="takesSec">-</td></tr>
+                            <tr><td class="ps-5">Operations per second</td><td class="value" data-k="ops">-</td></tr>
+                        </tbody></table>
+                    </div>
+                </div>
+                <div class="card mt-2 rounded-3">
+                    <div class="card-header">Latency (ms)</div>
+                    <div class="card-body p-0">
+                        <table class="table table-sm mb-0"><tbody>
+                            <tr><td class="ps-5" style="width:50%;">Avg</td><td class="value" data-k="avgMs">-</td></tr>
+                            <tr><td class="ps-5">Min</td><td class="value" data-k="minMs">-</td></tr>
+                            <tr><td class="ps-5">Max</td><td class="value" data-k="maxMs">-</td></tr>
+                            <tr><td class="ps-5">50%</td><td class="value" data-k="p50Ms">-</td></tr>
+                            <tr><td class="ps-5">90%</td><td class="value" data-k="p90Ms">-</td></tr>
+                            <tr><td class="ps-5">95%</td><td class="value" data-k="p95Ms">-</td></tr>
+                            <tr><td class="ps-5">99%</td><td class="value" data-k="p99Ms">-</td></tr>
+                            <tr><td class="ps-5">99.9%</td><td class="value" data-k="p999Ms">-</td></tr>
+                            <tr><td class="ps-5">99.99%</td><td class="value" data-k="p9999Ms">-</td></tr>
+                        </tbody></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
 
 <style>
 @keyframes ic-spin { to { transform: rotate(360deg); } }
@@ -326,6 +539,13 @@ document.addEventListener('DOMContentLoaded', function () {
     function regionOf(prefix) {
         const r = document.getElementById(prefix + 'RegionSelect')?.value || '';
         return providerOf(prefix) === 'ncp' ? r.toUpperCase() : r;
+    }
+
+    // Host가 접속 가능한 상태인지 (alibaba/ncp MongoDB: 공인 'pub' 도메인 필요) — gen-no-sql 이식
+    function isHostReady(endpoint, provider) {
+        const p = (provider || '').toLowerCase();
+        if (p === 'alibaba' || p === 'ncp') return (endpoint || '').includes('pub');
+        return true; // aws(DynamoDB)/gcp(Firestore)는 endpoint 개념 없음
     }
 
     // ── NoSQL Username 규칙 (provider별) ───────────────────
@@ -426,14 +646,39 @@ document.addEventListener('DOMContentLoaded', function () {
             const gi = document.getElementById(cfg.gcpInstanceIdId); if (gi) gi.value = '';
             const gd = document.getElementById(cfg.gcpDatabaseIdId); if (gd) gd.value = '';
             resetDbSelect();
+            updateNcpPublicUI();
+        }
+
+        // ── NCP Public Domain 가이드 + Refresh Host 버튼 (gen-no-sql 이식) ──────
+        // NCP MongoDB 인스턴스는 공인 도메인 활성화 전까지 Host가 사설('pub' 미포함)이다.
+        // 선택 인스턴스가 있으면 Refresh Host 노출, Host가 아직 사설이면 가이드도 함께 노출.
+        function updateNcpPublicUI() {
+            const sel = (providerOf(cfg.point) === 'ncp') ? selected() : null;
+            const needsPublic = !!sel && !isHostReady(sel.endpoint, 'ncp');
+            const guide = document.getElementById(cfg.ncpGuideId);
+            if (guide) guide.classList.toggle('d-none', !needsPublic);
+            const btn = document.getElementById(cfg.refreshHostBtnId);
+            if (btn) btn.classList.toggle('d-none', !sel);
+        }
+
+        // 재조회로 선택 인스턴스의 endpoint/port가 갱신되면 선택 상태·Host/Port 입력에 반영 (Refresh Host용)
+        function reconcileSelected() {
+            const sel = selected();
+            if (!sel) return;
+            const cur = allRows.find(i => i.instanceId === sel.instanceId);
+            if (!cur) return;
+            sel.endpoint = cur.endpoint;
+            sel.port = cur.port;
+            const h = document.getElementById(cfg.hostId); if (h) h.value = cur.endpoint || '';
+            const p = document.getElementById(cfg.portId); if (p) p.value = cur.port || '';
         }
 
         // ── Database 목록 (POST /db/nrdbms/databases) ──────────
         // 접속 정보(host/port/username/password) 입력 후 Load Databases 버튼으로
         // 서버의 실제 DB 목록을 조회해 select box에 채운다 (mig-mysql의 rdbms/databases 패턴).
         // 모든 리셋 경로(clearFields·인스턴스 변경·조회 직전)가 이 함수를 지나므로 숨김도 여기서 처리한다.
-        // required 해제 필수: 이 폼은 collapse 단계형이 아니라 submit 직행이라,
-        // 숨겨진 required select가 남으면 검증이 non-focusable로 걸려 Submit이 조용히 막힌다.
+        // required 해제 필수: 숨겨진 required select가 남으면
+        // 검증이 non-focusable로 걸려 Submit이 조용히 막힌다.
         function resetDbSelect() {
             const sel = document.getElementById(cfg.databaseNameId);
             if (sel) {
@@ -502,6 +747,15 @@ document.addEventListener('DOMContentLoaded', function () {
             if (listUI) listUI.classList.toggle('d-none', isAws);
             const awsNote = document.getElementById(cfg.awsNoteId);
             if (awsNote) awsNote.classList.toggle('d-none', !isAws);
+            // GCP(Firestore)는 go-ycsb 진단 미지원 → 안내 노출 + 진단 입력·버튼 비활성화
+            const gcpNotice = document.getElementById(cfg.prefix + '-diag-gcp-notice');
+            if (gcpNotice) gcpNotice.classList.toggle('d-none', !isGcp);
+            [cfg.prefix + '-diag-recordCount', cfg.prefix + '-diag-threadCount',
+             cfg.prefix + '-diag-readProportion', cfg.prefix + '-diag-updateProportion',
+             cfg.prefix + '-diag-btn'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.disabled = isGcp;
+            });
         }
 
         function onRowClick(row) {
@@ -534,6 +788,7 @@ document.addEventListener('DOMContentLoaded', function () {
             applyProviderFields();
             autoSelectRegion(allRows, d.instanceId, document.getElementById(cfg.point + 'RegionSelect'));
             dbiPanel.refreshButtons();
+            updateNcpPublicUI();
         }
 
         // 진행 중 작업(creating/deleting)이 목록에 있으면 자동 재조회한다.
@@ -555,13 +810,13 @@ document.addEventListener('DOMContentLoaded', function () {
         function refresh() {
             const provider = providerOf(cfg.point);
             const region   = regionOf(cfg.point);
-            if (!provider || provider === 'none' || !region || region === 'none') { stopTransitionalPoll(); return; }
-            fetch('/db/nrdbms', {
+            if (!provider || provider === 'none' || !region || region === 'none') { stopTransitionalPoll(); return Promise.resolve(); }
+            return fetch('/db/nrdbms', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ provider, region })
             })
             .then(r => r.ok ? r.json() : Promise.reject(r.status))
-            .then(json => { allRows = json || []; render(); dbiPanel.refreshButtons(); scheduleTransitionalPoll(); })
+            .then(json => { allRows = json || []; render(); reconcileSelected(); dbiPanel.refreshButtons(); updateNcpPublicUI(); scheduleTransitionalPoll(); })
             .catch(() => { scheduleTransitionalPoll(); });
         }
 
@@ -616,6 +871,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     dbiPanel.refreshButtons();
                 }
                 render();
+                reconcileSelected();
+                updateNcpPublicUI();
                 scheduleTransitionalPoll();
             },
         });
@@ -623,6 +880,16 @@ document.addEventListener('DOMContentLoaded', function () {
         // 이벤트 바인딩
         document.getElementById(cfg.searchId).addEventListener('input', () => { page = 1; render(); });
         document.getElementById(cfg.loadDbBtnId)?.addEventListener('click', loadDatabases);
+        // NCP: 콘솔에서 공인 도메인 활성화 후 Host 1회 재조회 → 최신 Host 반영 (폴링 아님)
+        const refreshHostBtn = document.getElementById(cfg.refreshHostBtnId);
+        if (refreshHostBtn) refreshHostBtn.addEventListener('click', async function () {
+            if (!selected()) return;
+            const orig = this.innerHTML;
+            this.disabled = true;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
+            try { await refresh(); } // 선택 인스턴스의 endpoint/port 재조회 + Host 입력 반영
+            finally { this.disabled = false; this.innerHTML = orig; }
+        });
         // username 입력 시 provider별 검증 메시지 갱신
         const usernameInput = document.getElementById(cfg.usernameId);
         if (usernameInput) usernameInput.addEventListener('input', refreshUsernameUI);
@@ -651,6 +918,7 @@ document.addEventListener('DOMContentLoaded', function () {
         usernameId: 'mig-source-mongodb-username', usernameHelpId: 'src-nrdb-username-help', usernameErrId: 'src-nrdb-username-error',
         createBtnId: 'src-nrdb-createBtn', deleteBtnId: 'src-nrdb-deleteBtn',
         awsSampleBtnId: 'src-nrdb-aws-sampleBtn',
+        refreshHostBtnId: 'src-nrdb-refreshHostBtn', ncpGuideId: 'src-nrdb-ncp-guide',
     });
     const tgtCtl = makeController({
         prefix: 'tgt', point: 'target',
@@ -665,6 +933,148 @@ document.addEventListener('DOMContentLoaded', function () {
         usernameId: 'mig-target-mongodb-username', usernameHelpId: 'tgt-nrdb-username-help', usernameErrId: 'tgt-nrdb-username-error',
         createBtnId: 'tgt-nrdb-createBtn', deleteBtnId: 'tgt-nrdb-deleteBtn',
         awsSampleBtnId: 'tgt-nrdb-aws-sampleBtn',
+        refreshHostBtnId: 'tgt-nrdb-refreshHostBtn', ncpGuideId: 'tgt-nrdb-ncp-guide',
+    });
+
+    // ── Diagnose (POST /diagnose/ycsb) — Source·Target 공통 ──────────────
+    // 값 포맷: 숫자는 천단위 구분 + 소수 3자리, 빈값/0은 dash (textContent용 — 이스케이프 불필요)
+    function ycsbText(v) {
+        if (v === null || v === undefined || v === '' || v === 0) return '—';
+        return (typeof v === 'number') ? v.toLocaleString(undefined, { maximumFractionDigits: 3 }) : String(v);
+    }
+
+    // operation 1건 → #ycsb-op-template 복제 후 data-k 셀에 값 주입한 아코디언 패널 반환 (기본 접힘)
+    function ycsbOpNode(prefix, o, idx) {
+        const node = document.getElementById('ycsb-op-template').content.firstElementChild.cloneNode(true);
+        const cid = `${prefix}-ycsb-op-${idx}`;
+        const btn = node.querySelector('.accordion-button');
+        const col = node.querySelector('.accordion-collapse');
+        btn.setAttribute('data-bs-target', '#' + cid);
+        btn.setAttribute('aria-controls', cid);
+        col.id = cid;
+
+        const set = (k, v) => { const el = node.querySelector(`[data-k="${k}"]`); if (el) el.textContent = ycsbText(v); };
+        set('title', `${o.operation || '—'} (${ycsbText(o.count)} reqs)`);
+        set('takesSec', o.takesSec);
+        set('ops', o.ops);
+        set('avgMs', o.avgMs);
+        set('minMs', o.minMs);
+        set('maxMs', o.maxMs);
+        set('p50Ms', o.p50Ms);
+        set('p90Ms', o.p90Ms);
+        set('p95Ms', o.p95Ms);
+        set('p99Ms', o.p99Ms);
+        set('p999Ms', o.p999Ms);
+        set('p9999Ms', o.p9999Ms);
+        return node;
+    }
+
+    // 응답의 모든 operation(INSERT/READ/UPDATE)을 아코디언으로 렌더 → 렌더한 개수 반환
+    function renderYcsb(prefix, data) {
+        const box = document.getElementById(prefix + '-ycsb-results');
+        box.innerHTML = '';
+        if (!data) return 0;
+        const ops = Array.isArray(data.operations) ? data.operations : [];
+        ops.forEach((o, i) => box.appendChild(ycsbOpNode(prefix, o, i)));
+        return ops.length;
+    }
+
+    // cfg: { prefix:'src'|'tgt', point:'source'|'target', hostId, portId, usernameId, passwordId }
+    function wireDiagnose(cfg) {
+        const btn    = document.getElementById(cfg.prefix + '-diag-btn');
+        const recEl  = document.getElementById(cfg.prefix + '-diag-recordCount');
+        const thrEl  = document.getElementById(cfg.prefix + '-diag-threadCount');
+        const readEl = document.getElementById(cfg.prefix + '-diag-readProportion');
+        const updEl  = document.getElementById(cfg.prefix + '-diag-updateProportion');
+        const errEl  = document.getElementById(cfg.prefix + '-diag-error');
+
+        // read/update는 합=1을 요구(백엔드) → 한쪽 입력 시 다른 쪽을 1-x로 자동 계산(양방향)
+        const complement = x => Math.round((1 - x) * 1000) / 1000;
+        function syncFromRead() {
+            const r = parseFloat(readEl.value);
+            if (r >= 0 && r <= 1) updEl.value = complement(r);
+        }
+        function syncFromUpdate() {
+            const u = parseFloat(updEl.value);
+            if (u >= 0 && u <= 1) readEl.value = complement(u);
+        }
+        readEl.addEventListener('input', syncFromRead);
+        updEl.addEventListener('input', syncFromUpdate);
+        syncFromRead();
+
+        btn.addEventListener('click', async () => {
+            const provider = providerOf(cfg.point);
+            const region   = regionOf(cfg.point);
+            if (!provider || provider === 'none') { alert('Select a credential first.'); return; }
+
+            const recordCount = parseInt(recEl.value, 10);
+            const threadCount = parseInt(thrEl.value, 10);
+            const readProportion = parseFloat(readEl.value);
+            const updateProportion = parseFloat(updEl.value);
+            if (!(recordCount > 0) || !(threadCount > 0)) { alert('Record Count and Thread Count must be positive.'); return; }
+            if (!(readProportion >= 0 && readProportion <= 1)) { alert('Read Proportion must be between 0 and 1.'); return; }
+
+            const body = { provider, region, recordCount, threadCount, readProportion, updateProportion };
+            // MongoDB(ncp/alibaba)만 접속 정보 전송 — AWS(DynamoDB)는 provider+region만으로 서버측 자격증명 사용
+            if (provider === 'ncp' || provider === 'alibaba') {
+                body.host     = (document.getElementById(cfg.hostId).value || '').trim();
+                body.port     = (document.getElementById(cfg.portId).value || '').trim();
+                body.username = (document.getElementById(cfg.usernameId).value || '').trim();
+                body.password = document.getElementById(cfg.passwordId).value || '';
+                if (!body.host || !body.port || !body.username || !body.password) {
+                    alert('Enter Host, Port, Username, and Password in the connection step first.');
+                    return;
+                }
+            }
+
+            const orig = btn.innerHTML;
+            errEl.classList.add('d-none');
+            errEl.textContent = '';
+            renderYcsb(cfg.prefix, null); // 이전 결과 아코디언 비우기
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Running…';
+
+            const showErr = msg => { errEl.textContent = msg; errEl.classList.remove('d-none'); };
+            try {
+                const res = await fetch('/diagnose/ycsb', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body),
+                });
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) {
+                    showErr((data && data.error) ? data.error : ('HTTP ' + res.status));
+                    return;
+                }
+                if (renderYcsb(cfg.prefix, data) === 0) { showErr('No metrics returned.'); return; }
+            } catch (e) {
+                console.error('diagnose ycsb:', e);
+                showErr('Request failed. Please try again.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = orig;
+            }
+        });
+    }
+    wireDiagnose({ prefix: 'src', point: 'source', hostId: 'mig-source-mongodb-host', portId: 'mig-source-mongodb-port', usernameId: 'mig-source-mongodb-username', passwordId: 'mig-source-mongodb-password' });
+    wireDiagnose({ prefix: 'tgt', point: 'target', hostId: 'mig-target-mongodb-host', portId: 'mig-target-mongodb-port', usernameId: 'mig-target-mongodb-username', passwordId: 'mig-target-mongodb-password' });
+
+    // 스테퍼 진행 (mig-mysql의 .next-btn 내비게이션 이식 — 자유 진행, 게이팅 없음)
+    document.querySelectorAll('.next-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const currentId = btn.dataset.current;
+            const nextId = btn.dataset.next;
+            if (!nextId) return; // 번호 원형 버튼(step-btn)은 data-next 없음 → no-op
+
+            // 현재 스텝 번호 버튼 색상 secondary → success
+            const stepBtn = document.querySelector(`button[data-target='${currentId}']`);
+            if (stepBtn) {
+                stepBtn.classList.remove('bg-secondary');
+                stepBtn.classList.add('bg-success');
+            }
+            // 다음 스텝 열기
+            const next = document.querySelector(nextId);
+            if (next) bootstrap.Collapse.getOrCreateInstance(next).show();
+        });
     });
 });
 </script>

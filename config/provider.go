@@ -147,13 +147,17 @@ func NewS3Client(accesskey, secretkey, region string) (*s3.Client, error) {
 }
 
 func NewS3ClientWithEndpoint(accesskey, secretkey, region string, endpoint string) (*s3.Client, error) {
+	return NewS3ClientWithEndpointStyle(accesskey, secretkey, region, endpoint, true)
+}
+
+func NewS3ClientWithEndpointStyle(accesskey, secretkey, region string, endpoint string, usePathStyle bool) (*s3.Client, error) {
 	cfg, err := newAWSConfigWithEndpoint(s3.ServiceID, accesskey, secretkey, region, endpoint)
 	if err != nil {
 		return nil, err
 	}
 
 	return s3.NewFromConfig(*cfg, func(o *s3.Options) {
-		o.UsePathStyle = true
+		o.UsePathStyle = usePathStyle
 	}), nil
 }
 

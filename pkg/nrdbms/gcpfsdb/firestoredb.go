@@ -90,6 +90,10 @@ func (f *FirestoreDBMS) DeleteTables(tableName string) error {
 	return nil
 }
 
+func (f *FirestoreDBMS) ClearTable(tableName string) error {
+	return f.DeleteTables(tableName)
+}
+
 // create table
 func (f *FirestoreDBMS) CreateTable(tableName string) error {
 	_, err := f.client.Collection(tableName).NewDoc().Set(f.ctx, map[string]interface{}{})

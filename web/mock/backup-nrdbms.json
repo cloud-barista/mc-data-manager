@@ -1,0 +1,24 @@
+[
+  {
+    "id": "aa11bb22-cc33-dd44-ee55-ff6677889900",
+    "backupName": "mongo-nightly",
+    "provider": "alibaba",
+    "region": "ap-southeast-1",
+    "instanceId": "mongo-inst-01",
+    "instanceName": "mongo-prod",
+    "databaseName": "catalog",
+    "status": "completed",
+    "createdAt": "2026-07-20T01:10:00Z"
+  },
+  {
+    "id": "bb22cc33-dd44-ee55-ff66-778899001122",
+    "backupName": "dynamo-snapshot",
+    "provider": "aws",
+    "region": "us-east-1",
+    "instanceId": "users-table",
+    "instanceName": "users-table",
+    "databaseName": "users",
+    "status": "in_progress",
+    "createdAt": "2026-07-20T03:25:00Z"
+  }
+]
