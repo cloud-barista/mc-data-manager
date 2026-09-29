@@ -2600,21 +2600,23 @@ const SamplePanel = (() => {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ targetPoint, dummy: targetPoint })
             });
-            if (!res.ok) {
-                const errJson = await res.json().catch(() => ({}));
-                throw new Error(errJson.Result || errJson.error || `HTTP ${res.status}`);
-            }
             const json = await res.json().catch(() => ({}));
-            // 결과는 페이지 공용 Result 패널(#resultText, result.html 파셜)에 표시 — Generate 페이지와 동일 UX
+            // 결과(로그)는 성공/실패 모두 페이지 공용 Result 패널(#resultText, result.html 파셜)에 표시
             const rt = document.getElementById('resultText');
-            if (rt) rt.value = json.Result || 'Sample data generated.';
+            if (rt) rt.value = json.Result || (res.ok ? 'Sample data generated.' : '');
             resultCollpase();
+            // 실패 원인은 BasicResponse.Error에 담겨 온다 → Alert로 노출
+            if (!res.ok) {
+                alert(json.Error || json.error || `Failed to generate sample data (HTTP ${res.status}).`);
+                return;
+            }
             refs.oc.hide(); // 성공 → offcanvas를 닫아 Result 패널 노출
         } catch (err) {
+            // 네트워크 단절 등 응답 자체를 못 받은 경우
             const rt = document.getElementById('resultText');
             if (rt) rt.value = err.message || String(err);
             resultCollpase();
-            alert('Failed to generate sample data. See the Result panel for details.');
+            alert('Failed to generate sample data: ' + (err.message || err));
         } finally {
             // 결과 표시 후 스피너 제거 → 원래 라벨 복원 → 폼 기준 재활성화
             refs.submitBtn.textContent = 'Submit';
