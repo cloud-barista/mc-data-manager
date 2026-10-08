@@ -114,6 +114,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let rows = [];       // 현재 페이지 레코드 (행 클릭 시 상세 조회용)
     let pageOffset = 0;  // 현재 페이지의 시작 순번 오프셋 = (page-1)*size
     let sortDir = 'desc'; // finishedAt 정렬 방향 (API sort 파라미터)
+    let loadSeq = 0;      // 마지막 요청만 반영 (이전 ns 응답이 늦게 도착해 덮어쓰는 것 방지)
 
     // Finished 헤더 정렬 아이콘 갱신 (desc=▼ / asc=▲)
     const sortIcon = document.getElementById('log-sort-icon');
@@ -237,9 +238,11 @@ document.addEventListener('DOMContentLoaded', function () {
         params.set('sort', sortDir);
 
         placeholder('Loading history…');
+        const seq = ++loadSeq;
 
         try {
             const res = await fetch('/history?' + params.toString());
+            if (seq !== loadSeq) return;
             if (!res.ok) {
                 if (res.status === 503) {
                     placeholder('History storage is not configured.', 'text-warning');
@@ -251,6 +254,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
             const data = await res.json();
+            if (seq !== loadSeq) return;
             rows = data.content || [];
             pageOffset = ((data.page || 1) - 1) * PAGE_SIZE;
             if (!rows.length) {
@@ -264,6 +268,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // API의 totalPages는 이미 페이지 수 → renderPagination에 그대로 전달
             renderPagination(pagerEl, data.totalPages || 1, data.page || 1, p => loadHistory(p));
         } catch (e) {
+            if (seq !== loadSeq) return;
             console.error('loadHistory:', e);
             placeholder('Failed to load history. Please try again.', 'text-danger');
         }
@@ -285,6 +290,9 @@ document.addEventListener('DOMContentLoaded', function () {
         updateSortIcon();
         loadHistory(1);
     });
+
+    // 부모 콘솔에서 namespace 전환 → 서버 반영 완료 후 재조회
+    window.addEventListener('mc:namespace-changed', () => loadHistory(1));
 
     // ── 초기 로드 (필터 없음 = 최근순 첫 페이지) ─────────
     updateSortIcon();
