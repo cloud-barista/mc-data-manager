@@ -836,11 +836,13 @@ window.addEventListener("message", async function (event) {
 
         sessionStorage.setItem("nsId", nsId);
 
-        await fetch("/namespace", {
+        const res = await fetch("/namespace", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ nsId }),
         });
+        // 서버 ns 반영 완료 알림 — 페이지 초기 조회가 이전 ns로 나간 경우 재조회용
+        if (res.ok) window.dispatchEvent(new CustomEvent("mc:namespace-changed", { detail: { nsId } }));
     } catch (error) {
         console.error("Error in processing message:", error);
     }
