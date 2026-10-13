@@ -2090,7 +2090,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/readyZ": {
+        "/readyz": {
             "get": {
                 "description": "Get System Ready",
                 "produces": [

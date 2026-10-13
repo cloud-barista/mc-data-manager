@@ -1746,6 +1746,25 @@ const InstancePanel = (() => {
     // 값은 실측이 아닌 추정치 — 체감이 맞지 않으면 이 숫자만 조정한다.
     const CREATE_SETTLE_MS = { alibaba: 5000 };
 
+    // 에러 응답({error}) → Alert용 메시지. CSP SDK의 Error() 문자열에서 사람이 읽을 본문만 남긴다.
+    // 형식은 각 SDK 소스 기준(go.mod 버전). 매칭 안 되는 에러(NCP, 자체 검증 메시지 등)는 원문 그대로.
+    const CSP_ERR_PATTERNS = [
+        // GCP googleapi: "googleapi: Error 403: <본문>\nDetails:\n[...]\n, reason" (Cloud SQL, Firestore)
+        /googleapi: Error \d+: ([\s\S]*?)(?:\nDetails:|\nMore details:|, \w+$|$)/,
+        // AWS smithy: "operation error RDS: Op, https response error StatusCode: 400, RequestID: x, api error Code: <본문>"
+        /api error [\w.]+: ([\s\S]+)$/,
+        // Alibaba dara: "SDKError:\n   ...\n   Message: code: 400, <본문> request id: x\n   Data: {...}"
+        /Message: code: \d+, ([\s\S]*?) request id:/,
+    ];
+    function apiErrMsg(json, status) {
+        const msg = (json && (json.error || json.Error)) || `HTTP ${status}`;
+        for (const re of CSP_ERR_PATTERNS) {
+            const m = msg.match(re);
+            if (m && m[1].trim()) return m[1].trim();
+        }
+        return msg;
+    }
+
     // ── provider별 계정/비밀번호 규칙 (gen-mysql/gen-no-sql과 동일 기준) ──
     // Alibaba: 클라이언트에서는 admin/root/user/test만 금지 (gen-mysql과 동일) —
     // 실제 예약어 위반은 생성 시 CSP API 응답(InvalidAccountName.Forbid)으로 안내된다.
@@ -2062,8 +2081,9 @@ const InstancePanel = (() => {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ provider: active.getProvider(), region: active.getRegion() })
             });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            engineVersionData = await res.json() || [];
+            const json = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(apiErrMsg(json, res.status));
+            engineVersionData = json || [];
             if (active.kind === 'rdbms') {
                 const engines = [...new Set(engineVersionData.map(d => d.engine))];
                 resetSelect(refs.engine);
@@ -2086,7 +2106,10 @@ const InstancePanel = (() => {
                     loadClasses();
                 }
             }
-        } catch (e) { console.error('InstancePanel.engineVersions:', e); }
+        } catch (e) {
+            console.error('InstancePanel.engineVersions:', e);
+            alert('Failed to load engine versions: ' + e.message);
+        }
     }
 
     function populateVersions() {
@@ -2116,9 +2139,13 @@ const InstancePanel = (() => {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
             });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            icLoadFamilies(await res.json() || []);
-        } catch (e) { console.error('InstancePanel.instanceClass:', e); }
+            const json = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(apiErrMsg(json, res.status));
+            icLoadFamilies(json || []);
+        } catch (e) {
+            console.error('InstancePanel.instanceClass:', e);
+            alert('Failed to load instance classes: ' + e.message);
+        }
     }
 
     // ── Instance Class 2패널 드롭다운 (gen-mysql/gen-no-sql과 동일 UX) ──
@@ -2235,7 +2262,7 @@ const InstancePanel = (() => {
                 body: JSON.stringify(body)
             });
             const json = await res.json().catch(() => ({}));
-            if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
+            if (!res.ok) throw new Error(apiErrMsg(json, res.status));
             refs.oc.hide();
             const settle = CREATE_SETTLE_MS[(panel.getProvider() || '').toLowerCase()] || 0;
             startPoll(panel, 'create', json.instanceId || body.instanceId, settle);
@@ -2267,7 +2294,7 @@ const InstancePanel = (() => {
                 })
             });
             const json = await res.json().catch(() => ({}));
-            if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
+            if (!res.ok) throw new Error(apiErrMsg(json, res.status));
             retryCtx = null;
             refs.oc.hide();
             startPoll(panel, 'create', inst.instanceId);
@@ -2303,7 +2330,7 @@ const InstancePanel = (() => {
                 body: JSON.stringify({ provider: panel.getProvider(), region: panel.getRegion(), instanceId })
             });
             const json = await res.json().catch(() => ({}));
-            if (!res.ok) throw new Error(json.error || 'Delete failed');
+            if (!res.ok) throw new Error(apiErrMsg(json, res.status));
             refs.deleteModal.hide();
             startPoll(panel, 'delete', instanceId);
         } catch (err) {
