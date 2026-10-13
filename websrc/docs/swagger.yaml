@@ -1976,7 +1976,7 @@ paths:
       summary: List objects in a bucket
       tags:
       - '[ObjectStorage]'
-  /readyZ:
+  /readyz:
     get:
       description: Get System Ready
       operationId: GetSystemReadyHandler

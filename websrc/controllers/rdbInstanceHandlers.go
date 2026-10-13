@@ -83,7 +83,6 @@ func CreateRDBInstanceHandler(c echo.Context) error {
 		Str("instanceClass", req.InstanceClass).
 		Str("engine", req.Engine).
 		Str("engineVersion", req.EngineVersion).
-		Str("masterUsername", req.MasterUsername).
 		Str("masterPassword", req.MasterPassword).
 		Int32("allocatedStorage", req.AllocatedStorage).
 		Msg("CreateRDBInstance request body")

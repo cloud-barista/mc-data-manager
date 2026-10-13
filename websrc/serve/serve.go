@@ -192,7 +192,7 @@ func InitServer(port string, addIP ...string) *echo.Echo {
 	// e.GET("/", controllers.MainGetHandler)
 
 	HealthHandler := controllers.NewHealthHandler(config.DB)
-	e.GET("/readyZ", HealthHandler.GetSystemReadyHandler)
+	e.GET("/readyz", HealthHandler.GetSystemReadyHandler)
 
 	e.GET("/log-management", controllers.LogManagementHandler)
 
