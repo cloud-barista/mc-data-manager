@@ -43,7 +43,7 @@ services:
     # Health check configuration
     # OK [ 2xx ,3xx}, ERR [4xx,5xx,...etc]
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3300/readyZ"]
+      test: ["CMD", "curl", "-f", "http://localhost:3300/readyz"]
       interval: 30s
       timeout: 10s
       retries: 3

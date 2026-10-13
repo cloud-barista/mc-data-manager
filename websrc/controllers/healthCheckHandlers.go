@@ -44,7 +44,7 @@ func NewHealthHandler(db *gorm.DB) *HealthHandler {
 //	@Produce		json
 //	@Success		200		{object}	models.BasicResponse	"System is Ready"
 //	@Failure		404		{object}	models.BasicResponse	"Profile Load , Failed: err"
-//	@Router			/readyZ [Get]
+//	@Router			/readyz [Get]
 func (h *HealthHandler) GetSystemReadyHandler(ctx echo.Context) error {
 	start := time.Now()
 	logger, logstrings := pageLogInit(ctx, "healthcheck-task", "Ready?", start)
