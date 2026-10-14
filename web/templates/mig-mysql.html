@@ -123,7 +123,7 @@
                                                 <label for="mysql-srcPort">Port</label>
                                             </div>
                                         </div>
-                                        <div class="input-group mb-1">
+                                        <div class="input-group mb-3">
                                             <span class="input-group-text rounded-start"><i class="fa-solid fa-user"></i></span>
                                             <div class="form-floating">
                                                 <input type="text" class="form-control rounded-end" id="mysql-srcUsername" name="sourcePoint[username]" placeholder="Username" autocomplete="username" required>
@@ -1188,7 +1188,6 @@
             case 'gcp':     return "Only 'root' is allowed.";
             case 'alibaba': return "'admin' and 'root' are not allowed.";
             case 'ncp':     return "Not allowed: root, admin, radmin, agent, api_admin, ha_admin, ragent, repl_admin, mysql.session, mysql.sys.";
-            case 'aws':     return "Reserved words are not allowed.";
             default:        return '';
         }
     }

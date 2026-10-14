@@ -1,16 +1,10 @@
 package ncp
 
 import (
-	"bytes"
-	"crypto"
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"strconv"
 	"time"
 
-	"github.com/NaverCloudPlatform/ncloud-sdk-go-v2/hmac"
 	"github.com/NaverCloudPlatform/ncloud-sdk-go-v2/ncloud"
 	ncpvserver "github.com/NaverCloudPlatform/ncloud-sdk-go-v2/services/vserver"
 	"github.com/cloud-barista/mc-data-manager/config"
@@ -19,9 +13,7 @@ import (
 
 const (
 	ncpPollInterval = 5 * time.Second
-	ncpPollTimeout  = 10 * time.Minute
-	ncpBasePath     = "https://vmysql.apigw.ntruss.com/api/v2"
-	// ncpBasePath = "https://console.ncloud.com/vpcCloudMysql/api/v1"
+	ncpPollTimeout  = 20 * time.Minute
 	ncpStatusRunning = "running"
 )
 
@@ -107,67 +99,4 @@ func (p *NCPProvider) instanceStatus(instanceNo string) (string, error) {
 		return "", nil
 	}
 	return *inst.CloudMysqlInstanceStatusName, nil
-}
-
-// serverInstanceNo returns the CloudMysqlServerInstanceNo of the primary server.
-func (p *NCPProvider) serverInstanceNo(instanceNo string) (string, error) {
-	inst, err := p.instanceDetail(instanceNo)
-	if err != nil {
-		return "", err
-	}
-	if len(inst.CloudMysqlServerInstanceList) == 0 {
-		return "", fmt.Errorf("no server instances found for %s", instanceNo)
-	}
-	no := ncloud.StringValue(inst.CloudMysqlServerInstanceList[0].CloudMysqlServerInstanceNo)
-	if no == "" {
-		return "", fmt.Errorf("empty server instance no for %s", instanceNo)
-	}
-	return no, nil
-}
-
-func (p *NCPProvider) createPublicDomain(instanceNo, serverInstanceNo string) error {
-	path := "/applyPublicDomainRequest"
-	body := map[string]interface{}{
-		"serviceNo":   instanceNo,
-		"computeNo":   serverInstanceNo,
-		"isPublicUse": true,
-	}
-	return p.callRawAPI(http.MethodPost, path, body)
-}
-
-func (p *NCPProvider) callRawAPI(method, path string, body interface{}) error {
-	fullURL := ncpBasePath + path
-
-	bodyBytes, err := json.Marshal(body)
-	if err != nil {
-		return fmt.Errorf("failed to marshal body: %w", err)
-	}
-
-	timestamp := strconv.FormatInt(time.Now().UnixNano()/int64(time.Millisecond), 10)
-	signer := hmac.NewSigner(p.secretKey, crypto.SHA256)
-	signature, err := signer.Sign(method, fullURL, p.accessKey, timestamp)
-	if err != nil {
-		return fmt.Errorf("hmac sign failed: %w", err)
-	}
-
-	req, err := http.NewRequest(method, fullURL, bytes.NewReader(bodyBytes))
-	if err != nil {
-		return fmt.Errorf("failed to build request: %w", err)
-	}
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("x-ncp-apigw-timestamp", timestamp)
-	req.Header.Set("x-ncp-iam-access-key", p.accessKey)
-	req.Header.Set("x-ncp-apigw-signature-v1", signature)
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return fmt.Errorf("request failed: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode >= 300 {
-		b, _ := io.ReadAll(resp.Body)
-		return fmt.Errorf("NCP API returned %d: %s", resp.StatusCode, string(b))
-	}
-	return nil
 }

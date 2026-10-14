@@ -59,7 +59,7 @@
                 <input type="text" class="form-control rounded-end" id="dbi-instanceId" autocomplete="off" placeholder="Instance ID">
                 <label for="dbi-instanceId">Instance ID</label>
             </div>
-            <div class="invalid-feedback ps-2">This instance ID already exists.</div>
+            <div class="invalid-feedback ps-2" id="dbi-instanceId-error">This instance ID already exists.</div>
         </div>
         <div class="input-group mb-3" id="dbi-storage-group">
             <span class="input-group-text rounded-start"><i class="bi bi-archive-fill"></i></span>
@@ -105,6 +105,8 @@
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+/* Instance ID: valid/invalid 우측 아이콘(체크/X) 숨김 — 테두리 색만 유지 */
+#dbi-instanceId.is-valid, #dbi-instanceId.is-invalid { background-image: none; padding-right: .75rem; }
 </style>
 
 <!-- 인스턴스 삭제 확인 (이름 타이핑) -->
@@ -117,8 +119,9 @@
             </div>
             <div class="modal-body pt-1">
                 <p class="mb-2 small">You are about to permanently delete <strong id="dbi-delete-name"></strong>.</p>
-                <p class="mb-3 small" id="dbi-delete-instruction">To delete this instance, enter its Name.</p>
-                <input type="text" class="form-control" id="dbi-delete-input" placeholder="Name" autocomplete="off">
+                <p class="mb-2 small text-danger"><i class="bi bi-exclamation-triangle-fill me-1"></i>All data associated with this instance will also be deleted.</p>
+                <p class="mb-3 small" id="dbi-delete-instruction">To delete this instance, enter its name.</p>
+                <input type="text" class="form-control" id="dbi-delete-input" placeholder="Instance name" autocomplete="off">
                 <div id="dbi-delete-error" class="text-danger small mt-1 d-none">Name does not match.</div>
             </div>
             <div class="modal-footer">

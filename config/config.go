@@ -72,6 +72,10 @@ func Init() {
 	log.Info().Str("loglevel", Settings.Logger.LogLevel).Msg("Logger initialized with loglevel")
 
 	InitOpenBao()
+
+	if err := InitOutboundIP(); err != nil {
+		log.Error().Err(err).Msg("failed to detect outbound public IP; continuing without it")
+	}
 }
 
 // ConfigManager structure definition

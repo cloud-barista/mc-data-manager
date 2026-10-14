@@ -117,6 +117,8 @@ func (cred *CredentialManager) LoadCredentialsByProvider(ctx context.Context, pr
 			TenantID:         getString(data, p, "NHN_TENANT_ID"),
 			DomainName:       getString(data, p, "NHN_DOMAIN_NAME"),
 			IdentityEndpoint: getString(data, p, "NHN_IDENTITY_ENDPOINT"),
+			S3AccessKey:      getString(data, p, "NHN_S3_ACCESS_KEY"),
+			S3SecretKey:      getString(data, p, "NHN_S3_SECRET_KEY"),
 		}, nil
 	case "gcp":
 		// OpenBao stores the private key with literal "\n" — convert to actual newlines.
@@ -128,6 +130,8 @@ func (cred *CredentialManager) LoadCredentialsByProvider(ctx context.Context, pr
 			PrivateKey:   privateKey,
 			PrivateKeyID: getString(data, p, "private_key_id"),
 			ClientID:     getString(data, p, "client_id"),
+			S3AccessKey:  getString(data, p, "GCP_S3_ACCESS_KEY"),
+			S3SecretKey:  getString(data, p, "GCP_S3_SECRET_KEY"),
 		}, nil
 	case "alibaba":
 		return models.AlibabaCredentials{

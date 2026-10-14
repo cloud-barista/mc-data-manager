@@ -75,7 +75,7 @@ func New(provider models.Provider, sqlDB *sql.DB, opts ...MysqlDBOption) *MysqlD
 func (d *MysqlDBMS) Exec(query string) error {
 	_, err := d.db.Exec(query)
 	if err != nil {
-		log.Error().Err(err).Msg("Failed to execute SQL query")
+		log.Error().Err(err).Msg("Failed to execute SQL query (Retry with NCP format)")
 		FormatNCPDatabaseCreateSQL(d.provider, &query)
 		_, retryErr := d.db.Exec(query)
 		if retryErr != nil {

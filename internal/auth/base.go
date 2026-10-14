@@ -140,8 +140,6 @@ func GetOS(params *models.ProviderConfig) (*osc.OSController, error) {
 			return nil, errors.New("credential load failed")
 		}
 
-		log.Info().Str("AccessKey", awsc.AccessKey).Msg("AWS Credentials")
-		log.Info().Str("SecretKey", awsc.SecretKey).Msg("AWS Credentials")
 		log.Info().Str("Region", params.Region).Msg("AWS Region")
 		log.Info().Str("BucketName", params.Bucket).Msg("AWS BucketName")
 		s3c, err := config.NewS3Client(awsc.AccessKey, awsc.SecretKey, params.Region)
@@ -190,8 +188,6 @@ func GetOS(params *models.ProviderConfig) (*osc.OSController, error) {
 		if !ok {
 			return nil, errors.New("credential load failed")
 		}
-		log.Info().Str("AccessKey", ncpc.AccessKey).Msg("NCP Credentials")
-		log.Info().Str("SecretKey", ncpc.SecretKey).Msg("NCP Credentials")
 		log.Info().Str("Endpoint", params.Endpoint).Msg("NCP Endpoint")
 		log.Info().Str("Region", params.Region).Msg("NCP Region")
 		log.Info().Str("BucketName", params.Bucket).Msg("NCP BucketName")
@@ -222,8 +218,6 @@ func GetOS(params *models.ProviderConfig) (*osc.OSController, error) {
 		}
 
 		log.Info().Str("Region", params.Region).Msg("Alibaba Region")
-		log.Info().Str("AccessKey", alibabac.AccessKey).Msg("Alibaba Credentials")
-		log.Info().Str("SecretKey", alibabac.SecretKey).Msg("Alibaba Credentials")
 		log.Info().Str("BucketName", params.Bucket).Msg("Alibaba BucketName")
 		ossc, err := config.NewAlibabaClient(params.Region, alibabac.AccessKey, alibabac.SecretKey)
 		if err != nil {
@@ -263,7 +257,6 @@ func GetOS(params *models.ProviderConfig) (*osc.OSController, error) {
 func GetRDMS(params *models.ProviderConfig) (*rdbc.RDBController, error) {
 	log.Info().Str("Provider", params.Provider).Msg("GetRDMS")
 	log.Info().Str("Username", params.User).Msg("GetRDMS")
-	log.Info().Str("Password", params.Password).Msg("GetRDMS")
 	log.Info().Str("Host", params.Host).Msg("GetRDMS")
 	log.Info().Str("Port", params.Port).Msg("GetRDMS")
 	dst, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/?multiStatements=true", params.User, params.Password, params.Host, params.Port))
@@ -300,8 +293,6 @@ func GetNRDMS(params *models.ProviderConfig) (*nrdbc.NRDBController, error) {
 			return nil, errors.New("credential load failed")
 		}
 
-		log.Info().Str("AccessKey", awsc.AccessKey).Msg("AWS Credentials")
-		log.Info().Str("SecretKey", awsc.SecretKey).Msg("AWS Credentials")
 		log.Info().Str("Region", params.Region).Msg("AWS Region")
 		awsnrdb, err := config.NewDynamoDBClient(awsc.AccessKey, awsc.SecretKey, params.Region)
 		if err != nil {
@@ -337,7 +328,6 @@ func GetNRDMS(params *models.ProviderConfig) (*nrdbc.NRDBController, error) {
 		}
 	case "ncp":
 		log.Info().Str("Username", params.User).Msg("NCP Credentials")
-		log.Info().Str("Password", params.Password).Msg("NCP Credentials")
 		log.Info().Str("Host", params.Host).Msg("NCP Host")
 		log.Info().Str("Port", params.Port).Msg("NCP Port")
 		port, err := strconv.Atoi(params.Port)
@@ -355,7 +345,6 @@ func GetNRDMS(params *models.ProviderConfig) (*nrdbc.NRDBController, error) {
 		}
 	case "alibaba":
 		log.Info().Str("Username", params.User).Msg("Alibaba Credentials")
-		log.Info().Str("Password", params.Password).Msg("Alibaba Credentials")
 		log.Info().Str("Host", params.Host).Msg("Alibaba Host")
 		log.Info().Str("Port", params.Port).Msg("Alibaba Port")
 		port, err := strconv.Atoi(params.Port)

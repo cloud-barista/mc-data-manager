@@ -77,6 +77,12 @@ func (n *NCPMongoDBMS) DeleteTables(tableName string) error {
 	return n.client.Database(n.dbName).Collection(tableName).Drop(n.ctx)
 }
 
+// clear table: removes all documents but keeps the collection.
+func (n *NCPMongoDBMS) ClearTable(tableName string) error {
+	_, err := n.db.Collection(tableName).DeleteMany(n.ctx, bson.D{})
+	return err
+}
+
 // create table
 func (n *NCPMongoDBMS) CreateTable(tableName string) error {
 	_, err := n.db.Collection(tableName).InsertOne(n.ctx, map[string]interface{}{})
