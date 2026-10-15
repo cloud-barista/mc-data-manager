@@ -88,10 +88,15 @@ func (osc *OSController) MPut(dirPath string) error {
 		close(resultChan)
 	}()
 
+	var failed []string
 	for ret := range resultChan {
 		if ret.err != nil {
 			osc.logWrite("Error", fmt.Sprintf("Import failed: %s", ret.name), ret.err)
+			failed = append(failed, fmt.Sprintf("%s: %v", ret.name, ret.err))
 		}
+	}
+	if len(failed) > 0 {
+		return fmt.Errorf("%d of %d objects failed:\n%s", len(failed), len(objList), strings.Join(failed, "\n"))
 	}
 	return nil
 }
@@ -140,7 +145,11 @@ func mPutWorker(osc *OSController, dirPath string, jobs chan models.Object, resu
 			continue
 		}
 
-		dst.Close()
+		if err := dst.Close(); err != nil {
+			ret.err = err
+			resultChan <- ret
+			continue
+		}
 		src.Close()
 
 		osc.logWrite("Info", fmt.Sprintf("Import success: %s -> %s", obj.Key, fileName), nil)

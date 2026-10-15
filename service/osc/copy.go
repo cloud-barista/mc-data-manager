@@ -82,10 +82,16 @@ func (src *OSController) Copy(dst *OSController, flt *filtering.ObjectFilter) er
 		close(resultChan)
 	}()
 
+	var failed []string
 	for ret := range resultChan {
 		if ret.err != nil {
 			src.logWrite("Error", fmt.Sprintf("Migration failed: %s", ret.name), ret.err)
+			failed = append(failed, fmt.Sprintf("%s: %v", ret.name, ret.err))
 		}
+	}
+
+	if len(failed) > 0 {
+		return fmt.Errorf("%d of %d objects failed:\n%s", len(failed), len(copyList), strings.Join(failed, "\n"))
 	}
 
 	return nil
