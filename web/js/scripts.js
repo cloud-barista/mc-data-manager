@@ -272,13 +272,19 @@ function generateFormSubmit() {
         };
 
         fetch(url, req)
-            .then(response => {
+            .then(async response => {
+                const json = await response.json().catch(() => ({}));
                 if (!response.ok) {
+                    // object storage put 부분 실패: 요약("N of M objects failed")은 Alert, 객체별 원인은 Result 패널
+                    const m = target === 'objectstorage'
+                        && /^(\d+ of \d+ objects failed):?\n?([\s\S]*)$/.exec(json.Error || '');
+                    if (m) {
+                        document.getElementById('resultText').value = m[2];
+                        alert(m[1]);
+                        return;
+                    }
                     throw new Error('Network response was not ok');
                 }
-                return response.json();
-            })
-            .then(json => {
                 document.getElementById('resultText').value = json.Result;
             })
             .catch(reason => {
