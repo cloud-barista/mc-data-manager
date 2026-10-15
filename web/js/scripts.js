@@ -106,13 +106,25 @@ const TaskProgress = (() => {
             body: JSON.stringify(jsonData),
         })
             .then(response => response.json().catch(() => ({})))
-            .then(json => { setResult((json && json.Result) || ''); clear(); })
+            .then(json => {
+                // object storage 부분 실패: 요약("N of M objects failed")은 Alert, 객체별 원인은 Result 패널
+                const failed = url.endsWith('/objectstorage') && splitObjectsFailed(json && json.Error);
+                setResult(failed ? failed.detail : ((json && json.Result) || ''));
+                clear();
+                if (failed) alert(failed.summary);
+            })
             .catch(reason => { console.error(kind + ' request dropped:', reason); })
             .finally(() => { loadingButtonOff(); });
     }
 
     return { newOpId, save, clear, resume, attach, submit };
 })();
+
+// osc MPut/Copy 에러("N of M objects failed:\nkey: err...")를 요약/상세로 분리. 형식이 다르면 null.
+function splitObjectsFailed(errStr) {
+    const m = /^(\d+ of \d+ objects failed):?\n?([\s\S]*)$/.exec(errStr || '');
+    return m ? { summary: m[1], detail: m[2] } : null;
+}
 
 // Result 패널을 항상 "펼침"으로 (toggle이 아니라 show — 이미 펼쳐져 있으면 유지).
 // 기존 toggle:true는 재호출 시 오히려 접히거나 인스턴스 중복으로 불안정했다.
@@ -276,11 +288,10 @@ function generateFormSubmit() {
                 const json = await response.json().catch(() => ({}));
                 if (!response.ok) {
                     // object storage put 부분 실패: 요약("N of M objects failed")은 Alert, 객체별 원인은 Result 패널
-                    const m = target === 'objectstorage'
-                        && /^(\d+ of \d+ objects failed):?\n?([\s\S]*)$/.exec(json.Error || '');
-                    if (m) {
-                        document.getElementById('resultText').value = m[2];
-                        alert(m[1]);
+                    const failed = target === 'objectstorage' && splitObjectsFailed(json.Error);
+                    if (failed) {
+                        document.getElementById('resultText').value = failed.detail;
+                        alert(failed.summary);
                         return;
                     }
                     throw new Error('Network response was not ok');
