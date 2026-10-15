@@ -67,7 +67,7 @@ func RequestTumblebug(path string, method string, connName string, jsonBody []by
 	defer resp.Body.Close()
 
 	body, _ := io.ReadAll(resp.Body)
-	fmt.Println(string(body))
+	fmt.Printf("[Tumblebug] %s %s -> %d\n%s\n", method, path, resp.StatusCode, string(body))
 
 	// HTTP 코드 확인 (204 No Content 등 2xx 전체를 성공으로 처리)
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {

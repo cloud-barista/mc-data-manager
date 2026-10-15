@@ -1,0 +1,35 @@
+[
+  {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "backupName": "daily-prod-backup",
+    "provider": "aws",
+    "region": "us-east-1",
+    "instanceId": "prod-mysql-01",
+    "instanceName": "prod-mysql",
+    "databaseName": "orders_db",
+    "status": "completed",
+    "createdAt": "2026-07-20T02:15:00Z"
+  },
+  {
+    "id": "9c858901-8a57-4791-81fe-4c455b099bc9",
+    "backupName": "weekly-report-db",
+    "provider": "gcp",
+    "region": "asia-northeast3",
+    "instanceId": "report-db",
+    "instanceName": "report-db-instance",
+    "databaseName": "reports",
+    "status": "in_progress",
+    "createdAt": "2026-07-20T03:00:00Z"
+  },
+  {
+    "id": "1b2e4d6f-1111-2222-3333-444455556666",
+    "backupName": "ncp-mysql-adhoc",
+    "provider": "ncp",
+    "region": "KR",
+    "instanceId": "ncp-mysql-02",
+    "instanceName": "ncp-mysql",
+    "databaseName": "billing",
+    "status": "failed",
+    "createdAt": "2026-07-19T21:40:00Z"
+  }
+]

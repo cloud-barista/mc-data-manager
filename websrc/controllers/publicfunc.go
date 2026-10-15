@@ -35,6 +35,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/cloud-barista/mc-data-manager/config"
 	"github.com/cloud-barista/mc-data-manager/models"
+	"github.com/cloud-barista/mc-data-manager/pkg/logger"
 	"github.com/cloud-barista/mc-data-manager/pkg/nrdbms/awsdnmdb"
 	"github.com/cloud-barista/mc-data-manager/pkg/nrdbms/gcpfsdb"
 	"github.com/cloud-barista/mc-data-manager/pkg/nrdbms/ncpmgdb"
@@ -45,6 +46,7 @@ import (
 	"github.com/cloud-barista/mc-data-manager/service/nrdbc"
 	"github.com/cloud-barista/mc-data-manager/service/osc"
 	"github.com/cloud-barista/mc-data-manager/service/rdbc"
+	"github.com/cloud-barista/mc-data-manager/service/task"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cast"
@@ -54,6 +56,25 @@ import (
 func getLoggerFromContext(c echo.Context) *zerolog.Logger {
 	// Retrieve the logger from the request context
 	return zerolog.Ctx(c.Request().Context())
+}
+
+// traceIDFromCtx extracts the request traceId set by TracingMiddleware.
+func traceIDFromCtx(c echo.Context) string {
+	if v := c.Request().Context().Value(logger.TraceIdKey); v != nil {
+		if s, ok := v.(string); ok {
+			return s
+		}
+	}
+	return ""
+}
+
+// taskErrMsg returns the real task failure cause recorded for this request
+// (looked up by traceId), falling back to the given message if none was set.
+func taskErrMsg(c echo.Context, fallback string) string {
+	if m := task.GetExecTracker().LastError(traceIDFromCtx(c)); m != "" {
+		return m
+	}
+	return fallback
 }
 
 // func pageLogInit(c echo.Context, pageName, pageInfo string, startTime time.Time) (*zerolog.Logger, *strings.Builder) {

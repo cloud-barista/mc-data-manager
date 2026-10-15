@@ -34,23 +34,24 @@ func BackupRoutes(g *echo.Group) {
 
 func BackupRoot(g *echo.Group) {
 	g.GET("/register", controllers.BackupHandler)
-	g.GET("", controllers.GetAllBackupHandler)         // Retrieve all tasks
-	g.GET("/:id", controllers.GetBackupHandler)        // Retrieve a single task by ID
-	g.PUT("/:id", controllers.UpdateBackupHandler)     // Update an existing task by ID
-	g.DELETE("/:id", controllers.DeleteBackupkHandler) // Delete a task by ID
+	g.GET("", controllers.GetAllBackupHandler)     // Retrieve all tasks
+	g.GET("/:id", controllers.GetBackupHandler)    // Retrieve a single task by ID
+	g.PUT("/:id", controllers.UpdateBackupHandler) // Update an existing task by ID
+	// g.DELETE("/:id", controllers.DeleteBackupkHandler) // superseded by backup catalog delete below
+	g.DELETE("/:id", controllers.DeleteBackupHandler) // Delete a backup catalog entry by ID
 
-}
+}	
 
 func BackupObjectStorage(g *echo.Group) {
-	// g.GET("/objectstorage", controllers.BackupOSGetHandler)
+	g.GET("/objectstorage", controllers.ListBackupObjectStorageHandler)
 	g.POST("/objectstorage", controllers.BackupOSPostHandler)
 }
 func BackupRDB(g *echo.Group) {
-	// g.GET("/rdb", controllers.BackupRDBGetHandler)
+	g.GET("/rdbms", controllers.ListBackupRDBHandler)
 	g.POST("/rdbms", controllers.BackupRDBPostHandler)
 }
 
 func BackupNRDB(g *echo.Group) {
-	// g.GET("/nrdb", controllers.BackupNRDBGetHandler)
+	g.GET("/nrdbms", controllers.ListBackupNRDBHandler)
 	g.POST("/nrdbms", controllers.BackupNRDBPostHandler)
 }

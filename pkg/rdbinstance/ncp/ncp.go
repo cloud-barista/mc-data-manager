@@ -9,6 +9,7 @@ import (
 	"context"
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/NaverCloudPlatform/ncloud-sdk-go-v2/ncloud"
 	vmysql "github.com/NaverCloudPlatform/ncloud-sdk-go-v2/services/vmysql"
@@ -61,14 +62,15 @@ func normalizeStatus(s string) string {
 	}
 }
 
-// DeleteInstance deletes an NCP Cloud DB for MySQL instance.
-// instanceID must be the CloudMysqlInstanceNo (numeric string).
 func (p *NCPProvider) DeleteInstance(_ context.Context, instanceID string) (models.DBInstance, error) {
 	resp, err := p.api.DeleteCloudMysqlInstance(&vmysql.DeleteCloudMysqlInstanceRequest{
 		RegionCode:           ncloud.String(p.region),
 		CloudMysqlInstanceNo: ncloud.String(instanceID),
 	})
 	if err != nil {
+		if strings.Contains(err.Error(), "5001017") {
+			return models.DBInstance{Provider: "ncp", InstanceID: instanceID, Status: "deleted", Region: p.region}, nil
+		}
 		return models.DBInstance{}, fmt.Errorf("failed to delete NCP Cloud MySQL instance: %w", err)
 	}
 
@@ -239,9 +241,6 @@ func (p *NCPProvider) ListEngineVersions(_ context.Context) ([]models.DBEngineVe
 	return out, nil
 }
 
-// ListInstanceClasses returns available server product codes for the given engine version.
-// NCP requires an image product code to query server products, so the image list is
-// fetched first to find a matching product code for the requested engineVersion.
 func (p *NCPProvider) ListInstanceClasses(_ context.Context, _, engineVersion string) ([]string, error) {
 	imgResp, err := p.api.GetCloudMysqlImageProductList(&vmysql.GetCloudMysqlImageProductListRequest{
 		RegionCode:     ncloud.String(p.region),

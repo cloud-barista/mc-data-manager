@@ -12,6 +12,7 @@ import (
 	"github.com/cloud-barista/mc-data-manager/pkg/objectstorage/filtering"
 	"github.com/cloud-barista/mc-data-manager/pkg/utils"
 	"github.com/cloud-barista/mc-data-manager/service/osc"
+	"github.com/cloud-barista/mc-data-manager/service/task"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 )
@@ -57,6 +58,7 @@ func ObjectstorageBucketsHandler(ctx echo.Context) error {
 
 	objectStorages, err := OSC.BucketList(filterKey, filterVal)
 	if err != nil {
+		log.Error().Msgf("BucketList error (nsId=%s, provider=%s): %v", utils.GetNsId(), params.TargetPoint.Provider, err)
 		return ctx.JSON(http.StatusInternalServerError, models.ObjectStorageListResponse{
 			ObjectStorage: []models.ObjectStorage{},
 		})
@@ -101,8 +103,21 @@ func ObjectstorageCreateBucketHandler(ctx echo.Context) error {
 
 	createBody := []byte(fmt.Sprintf(`{"bucketName":%q,"connectionName":%q}`, bucket, connName))
 	createPath := fmt.Sprintf("/tumblebug/ns/%s/resources/objectStorage", nsId)
-	if _, err := utils.RequestTumblebug(createPath, http.MethodPut, connName, createBody); err != nil {
-		log.Error().Msgf("CreateBucket error: %v", err)
+	// direct 경로(handleTask 우회) 이므로 실행 이력을 tracker 로 명시적 기록
+	createErr := task.GetExecTracker().Track(task.ExecMeta{
+		TraceID:     traceIDFromCtx(ctx),
+		NamespaceID: nsId,
+		ServiceType: "objectstorage",
+		Operation:   "create",
+		Provider:    params.TargetPoint.Provider,
+		Region:      params.TargetPoint.Region,
+		Resource:    bucket,
+	}, func() error {
+		_, e := utils.RequestTumblebug(createPath, http.MethodPut, connName, createBody)
+		return e
+	})
+	if createErr != nil {
+		log.Error().Msgf("CreateBucket error: %v", createErr)
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{Result: logstrings.String(), Error: nil})
 	}
 
@@ -139,8 +154,21 @@ func ObjectstorageDeleteBucketHandler(ctx echo.Context) error {
 	// option=force: 내용물 포함 강제 삭제 (Spider force=true).
 	// option=empty는 오브젝트만 비우고 CSP 버킷 삭제가 완료되지 않은 채 204를 반환하는 사례가 있어 사용하지 않음.
 	bucketPath := fmt.Sprintf("/tumblebug/ns/%s/resources/objectStorage/%s?option=force", nsId, bucket)
-	if _, err := utils.RequestTumblebug(bucketPath, http.MethodDelete, connName, nil); err != nil {
-		log.Error().Msgf("DeleteBucket error: %v", err)
+	// direct 경로(handleTask 우회) 이므로 실행 이력을 tracker 로 명시적 기록
+	delErr := task.GetExecTracker().Track(task.ExecMeta{
+		TraceID:     traceIDFromCtx(ctx),
+		NamespaceID: nsId,
+		ServiceType: "objectstorage",
+		Operation:   "delete",
+		Provider:    params.TargetPoint.Provider,
+		Region:      params.TargetPoint.Region,
+		Resource:    bucket,
+	}, func() error {
+		_, e := utils.RequestTumblebug(bucketPath, http.MethodDelete, connName, nil)
+		return e
+	})
+	if delErr != nil {
+		log.Error().Msgf("DeleteBucket error: %v", delErr)
 		return ctx.JSON(http.StatusInternalServerError, models.BasicResponse{Result: logstrings.String(), Error: nil})
 	}
 

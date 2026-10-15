@@ -11,7 +11,7 @@ import (
 
 const (
 	alibabaPollInterval = 30 * time.Second
-	alibabaPollTimeout  = 15 * time.Minute
+	alibabaPollTimeout  = 20 * time.Minute
 	statusRunning       = "Running"
 )
 

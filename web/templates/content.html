@@ -40,6 +40,11 @@
             {{ if eq .Content "Generate-Credential" }}
                 {{ template "gen-credential.html" . }}
             {{ end }}
+            <!-- 로그 관리 템플릿 -->
+            {{ if eq .Content "Log-Management" }}
+                {{ template "log-management.html" . }}
+            {{ end }}
+
             <!-- 백업 템플릿 -->
 
             {{ if eq .Content "Backup" }}
@@ -66,7 +71,7 @@
                 {{ template "mig-no-sql.html" . }}
             {{ end }}
 
-            {{ if ne .Content "main" }}
+            {{ if and (ne .Content "main") (ne .Content "Log-Management") }}
                 {{ template "result.html" . }}
             {{ end }}
         </div>

@@ -1,0 +1,24 @@
+[
+  {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "backupName": "bucket-snapshot",
+    "provider": "aws",
+    "region": "us-east-1",
+    "instanceId": "my-bucket",
+    "instanceName": "my-bucket",
+    "databaseName": null,
+    "status": "completed",
+    "createdAt": "2026-07-20T04:30:00Z"
+  },
+  {
+    "id": "c3d4e5f6-a7b8-9012-cdef-345678901234",
+    "backupName": "gcs-weekly",
+    "provider": "gcp",
+    "region": "asia-northeast3",
+    "instanceId": "reports-bucket",
+    "instanceName": "reports-bucket",
+    "databaseName": null,
+    "status": "in_progress",
+    "createdAt": "2026-07-20T05:00:00Z"
+  }
+]
