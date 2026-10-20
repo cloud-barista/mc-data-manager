@@ -162,7 +162,7 @@ require (
 	github.com/googleapis/enterprise-certificate-proxy v0.3.11 // indirect
 	github.com/googleapis/gax-go/v2 v2.17.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
-	github.com/klauspost/compress v1.17.9 // indirect
+	github.com/klauspost/compress v1.18.7 // indirect
 	github.com/labstack/echo/v4 v4.15.3
 	github.com/montanaflynn/stats v0.7.1 // indirect
 	github.com/spf13/cast v1.7.0
